@@ -38,6 +38,12 @@ package Awk_CLI.Diagnostics is
       Detail     : String := "";
       Hint_Id    : String := "") return Diagnostic;
 
+   function With_Source
+     (Item        : Diagnostic;
+      Source_Name : String;
+      Line        : Positive;
+      Column      : Natural := 0) return Diagnostic;
+
    function Escape (Text : String) return String;
    function Status_For (Item : Diagnostic) return Exit_Code;
 end Awk_CLI.Diagnostics;

@@ -7,6 +7,16 @@ package body Awk_CLI.Output is
    package L renames Awk_CLI.Localization;
    package D renames Awk_CLI.Diagnostics;
 
+   function Image (Value : Natural) return String is
+      Raw : constant String := Natural'Image (Value);
+   begin
+      if Raw'Length > 0 and then Raw (Raw'First) = ' ' then
+         return Raw (Raw'First + 1 .. Raw'Last);
+      else
+         return Raw;
+      end if;
+   end Image;
+
    procedure Set_Color (Mode : Awk_CLI.Options.Color_Mode) is
    begin
       case Mode is
@@ -63,6 +73,17 @@ package body Awk_CLI.Output is
         Ada.Strings.Unbounded.To_Unbounded_String
           ("awk: " & Label & ": " & L.Primary (Catalog, Item));
    begin
+      if Ada.Strings.Unbounded.Length (Item.Source_Name) > 0
+        and then Item.Line > 0
+      then
+         Ada.Strings.Unbounded.Append
+           (Result,
+            LF & D.Escape (Ada.Strings.Unbounded.To_String (Item.Source_Name))
+            & ":" & Image (Item.Line));
+         if Item.Column > 0 then
+            Ada.Strings.Unbounded.Append (Result, ":" & Image (Item.Column));
+         end if;
+      end if;
       if Ada.Strings.Unbounded.Length (Item.Detail) > 0 then
          Ada.Strings.Unbounded.Append
            (Result, LF & D.Escape (Ada.Strings.Unbounded.To_String (Item.Detail)));

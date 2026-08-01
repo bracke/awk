@@ -15,8 +15,10 @@ with Awk_CLI.Diagnostics;
 with Awk_CLI.Environment;
 with Awk_CLI.Execution;
 with Awk_CLI.Inputs;
+with Awk_CLI.Localization;
 with Awk_CLI.Operands;
 with Awk_CLI.Options;
+with Awk_CLI.Output;
 with Awk_CLI.Programs;
 with Project_Tools.Processes;
 
@@ -367,6 +369,33 @@ package body Awk_Tests.Suite is
       Assert (Contains (Awk_CLI.Standard_Error (Context), "\nawk: error: forged\e[2J"),
               "unsafe characters are rendered visibly");
    end Test_Context_Diagnostic_Sanitizing;
+
+   procedure Test_Diagnostic_Source_Rendering (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Catalog : Awk_CLI.Localization.Catalog;
+      Escape  : constant String := [1 => Character'Val (27)];
+   begin
+      Awk_CLI.Localization.Initialize
+        (Catalog, "../resources/messages/catalog.txt", "en");
+      declare
+         Item : constant Awk_CLI.Diagnostics.Diagnostic :=
+           Awk_CLI.Diagnostics.With_Source
+             (Awk_CLI.Diagnostics.Make
+                ("awk.interpreter.parse_failed",
+                 Awk_CLI.Diagnostics.Error,
+                 Awk_CLI.Diagnostics.Interpreter,
+                 Detail => "near print"),
+              "bad" & LF & "file" & Escape & "[2J.awk",
+              12,
+              3);
+         Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item);
+      begin
+         Assert (Contains (Text, "bad\nfile\e[2J.awk:12:3"),
+                 "source location is escaped and compact");
+         Assert (Contains (Text, "near print"), "technical detail is retained");
+         Assert (not Contains (Text, Escape), "source rendering has no raw escape");
+      end;
+   end Test_Diagnostic_Source_Rendering;
 
    procedure Test_Context_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1061,6 +1090,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine
         (T, Test_Context_Diagnostic_Sanitizing'Access,
          "context diagnostic sanitizing");
+      Registration.Register_Routine
+        (T, Test_Diagnostic_Source_Rendering'Access,
+         "diagnostic source rendering");
       Registration.Register_Routine (T, Test_Context_Redirection'Access, "context redirection");
       Registration.Register_Routine
         (T, Test_Context_Append_Redirection_Limitation'Access,

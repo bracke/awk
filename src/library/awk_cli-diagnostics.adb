@@ -24,6 +24,20 @@ package body Awk_CLI.Diagnostics is
          Column      => 0);
    end Make;
 
+   function With_Source
+     (Item        : Diagnostic;
+      Source_Name : String;
+      Line        : Positive;
+      Column      : Natural := 0) return Diagnostic
+   is
+      Result : Diagnostic := Item;
+   begin
+      Result.Source_Name := U.To_Unbounded_String (Source_Name);
+      Result.Line := Line;
+      Result.Column := Column;
+      return Result;
+   end With_Source;
+
    function Escape (Text : String) return String is
       Result : U.Unbounded_String;
       C      : Character;
