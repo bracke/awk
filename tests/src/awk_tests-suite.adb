@@ -630,6 +630,44 @@ package body Awk_Tests.Suite is
       Assert (Status = 2, "unknown option exits with usage status");
    end Test_Process_Usage_Status;
 
+   procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("-f"),
+         new String'("tests/fixtures/programs/no-such-program.awk")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk missing program file",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 3, "missing process program file exits with host I/O status");
+      Assert (U.To_String (Output) = "", "missing process program file writes no stdout");
+   end Test_Process_Missing_Program_File;
+
+   procedure Test_Process_Missing_Input_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("{ print }"),
+         new String'("tests/fixtures/input/no-such-input.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk missing input file",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 3, "missing process input file exits with host I/O status");
+      Assert (U.To_String (Output) = "", "missing process input file writes no stdout");
+   end Test_Process_Missing_Input_File;
+
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
@@ -779,6 +817,12 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
       Registration.Register_Routine (T, Test_Process_Usage_Status'Access, "process usage status");
+      Registration.Register_Routine
+        (T, Test_Process_Missing_Program_File'Access,
+         "process missing program file");
+      Registration.Register_Routine
+        (T, Test_Process_Missing_Input_File'Access,
+         "process missing input file");
       Registration.Register_Routine (T, Test_Process_Redirection'Access, "process redirection");
       Registration.Register_Routine (T, Test_Process_Field_Separator'Access, "process -F");
       Registration.Register_Routine (T, Test_Process_V_Assignment'Access, "process -v");
