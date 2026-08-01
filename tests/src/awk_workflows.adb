@@ -236,6 +236,15 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../README.md"), "Windows"),
          "README must include Windows quoting guidance");
       Require
+        (Contains (File_Text ("../alire.toml"), "licenses = ""MIT"""),
+         "root crate must declare MIT license");
+      Require
+        (Contains (File_Text ("alire.toml"), "licenses = ""MIT"""),
+         "tests crate must declare MIT license");
+      Require
+        (Contains (File_Text ("../LICENSE"), "MIT License"),
+         "LICENSE must contain MIT license text");
+      Require
         (Contains (File_Text ("../docs/command-line-reference.md"), "-f program-file"),
          "command-line reference must document program-file invocation");
       Require
@@ -591,6 +600,7 @@ procedure Awk_Workflows is
       Dir.Create_Path (Dist & "/resources/messages/en");
       Dir.Create_Path (Dist & "/resources/messages/da");
       Dir.Create_Path (Dist & "/docs");
+      Dir.Create_Path (Dist & "/docs/ai");
       Copy_File ("../bin/awk", Dist & "/bin/awk");
       Copy_File ("../LICENSE", Dist & "/LICENSE");
       Copy_File ("../README.md", Dist & "/README.md");
@@ -605,6 +615,11 @@ procedure Awk_Workflows is
       Copy_File ("../docs/testing.md", Dist & "/docs/testing.md");
       Copy_File ("../docs/building.md", Dist & "/docs/building.md");
       Copy_File ("../docs/releasing.md", Dist & "/docs/releasing.md");
+      Copy_File ("../docs/ai/project-map.md", Dist & "/docs/ai/project-map.md");
+      Copy_File ("../docs/ai/package-contracts.md", Dist & "/docs/ai/package-contracts.md");
+      Copy_File ("../docs/ai/invariants.md", Dist & "/docs/ai/invariants.md");
+      Copy_File ("../docs/ai/workflows.md", Dist & "/docs/ai/workflows.md");
+      Copy_File ("../docs/ai/prohibited-designs.md", Dist & "/docs/ai/prohibited-designs.md");
       Copy_File ("../resources/messages/catalog.txt", Dist & "/resources/messages/catalog.txt");
       Copy_File ("../resources/messages/en/catalog.txt", Dist & "/resources/messages/en/catalog.txt");
       Copy_File ("../resources/messages/da/catalog.txt", Dist & "/resources/messages/da/catalog.txt");
@@ -622,6 +637,11 @@ procedure Awk_Workflows is
       Require_Package_File ("docs/testing.md");
       Require_Package_File ("docs/building.md");
       Require_Package_File ("docs/releasing.md");
+      Require_Package_File ("docs/ai/project-map.md");
+      Require_Package_File ("docs/ai/package-contracts.md");
+      Require_Package_File ("docs/ai/invariants.md");
+      Require_Package_File ("docs/ai/workflows.md");
+      Require_Package_File ("docs/ai/prohibited-designs.md");
       Require_Package_File ("resources/messages/catalog.txt");
       Require_Package_File ("resources/messages/en/catalog.txt");
       Require_Package_File ("resources/messages/da/catalog.txt");
@@ -639,6 +659,11 @@ procedure Awk_Workflows is
       Add_Manifest_Line (Manifest, "docs/testing.md");
       Add_Manifest_Line (Manifest, "docs/building.md");
       Add_Manifest_Line (Manifest, "docs/releasing.md");
+      Add_Manifest_Line (Manifest, "docs/ai/project-map.md");
+      Add_Manifest_Line (Manifest, "docs/ai/package-contracts.md");
+      Add_Manifest_Line (Manifest, "docs/ai/invariants.md");
+      Add_Manifest_Line (Manifest, "docs/ai/workflows.md");
+      Add_Manifest_Line (Manifest, "docs/ai/prohibited-designs.md");
       Add_Manifest_Line (Manifest, "resources/messages/catalog.txt");
       Add_Manifest_Line (Manifest, "resources/messages/en/catalog.txt");
       Add_Manifest_Line (Manifest, "resources/messages/da/catalog.txt");
@@ -664,6 +689,11 @@ procedure Awk_Workflows is
       Require_Manifest_Entry ("docs/testing.md");
       Require_Manifest_Entry ("docs/building.md");
       Require_Manifest_Entry ("docs/releasing.md");
+      Require_Manifest_Entry ("docs/ai/project-map.md");
+      Require_Manifest_Entry ("docs/ai/package-contracts.md");
+      Require_Manifest_Entry ("docs/ai/invariants.md");
+      Require_Manifest_Entry ("docs/ai/workflows.md");
+      Require_Manifest_Entry ("docs/ai/prohibited-designs.md");
       Require_Manifest_Entry ("resources/messages/catalog.txt");
       Require_Manifest_Entry ("resources/messages/en/catalog.txt");
       Require_Manifest_Entry ("resources/messages/da/catalog.txt");

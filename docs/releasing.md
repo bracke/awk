@@ -16,5 +16,6 @@ cd tests
 The release workflow invokes `alr -n build --release --profiles=*=release`;
 it does not use `--development`. It creates `dist/awk-0.1.0` with the
 executable, license, README, changelog, contribution and security notes, core
-user/developer documentation, message catalogs, and `MANIFEST.txt` containing
-byte counts and deterministic FNV-1a-64 checksums for packaged files.
+user/developer documentation, AI-oriented maintenance docs, message catalogs,
+and `MANIFEST.txt` containing byte counts and deterministic FNV-1a-64 checksums
+for packaged files.
