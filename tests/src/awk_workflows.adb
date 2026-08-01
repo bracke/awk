@@ -236,6 +236,18 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../README.md"), "Windows"),
          "README must include Windows quoting guidance");
       Require
+        (Contains (File_Text ("../docs/command-line-reference.md"), "-f program-file"),
+         "command-line reference must document program-file invocation");
+      Require
+        (Contains (File_Text ("../docs/command-line-reference.md"), "Runtime assignment operands"),
+         "command-line reference must document runtime assignment operands");
+      Require
+        (Contains (File_Text ("../docs/architecture.md"), "Awk_CLI.Execution"),
+         "architecture docs must document execution adapter isolation");
+      Require
+        (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
+         "architecture docs must document testable invocation context");
+      Require
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-ASSIGNMENT-001"),
          "compatibility registry is missing assignment limitation");
       Require
@@ -259,6 +271,9 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
+      Require
+        (Contains (File_Text ("../docs/testing.md"), "FNV-1a-64"),
+         "testing docs must mention release checksum validation");
       Require
         (Contains (File_Text ("../docs/releasing.md"), "--release --profiles=*=release"),
          "release docs must document release-profile builds");
