@@ -517,6 +517,41 @@ procedure Awk_Workflows is
       Put_Info ("source policy checks passed");
    end Source_Policy;
 
+   procedure Install_Boundary is
+      Prefix : constant String := "/tmp/awk-install-boundary";
+      Output : Proc.Unbounded_String;
+      Install_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("-n"),
+         new String'("install"),
+         new String'("--prefix=" & Prefix)];
+      Version_Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("--version")];
+   begin
+      Require (Alr /= "", "alr executable not found");
+      if Dir.Exists (Prefix) then
+         Dir.Delete_Tree (Prefix);
+      end if;
+
+      if Proc.Run_Status ("alr install", Root, Alr, Install_Args, Output, Quiet => True) /= 0 then
+         Fail ("alr install failed");
+      end if;
+
+      Require (Dir.Exists (Prefix & "/bin/awk"), "installed awk executable missing");
+      if Proc.Run_Status
+          ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
+           Output, Quiet => True) /= 0
+      then
+         Fail ("installed awk executable failed");
+      end if;
+      Require (Contains (U.To_String (Output), "awk 0.1.0"),
+               "installed awk version output is unexpected");
+
+      if Dir.Exists (Prefix) then
+         Dir.Delete_Tree (Prefix);
+      end if;
+      Put_Info ("install boundary checks passed");
+   end Install_Boundary;
+
    procedure Verify is
    begin
       Build;
@@ -525,6 +560,7 @@ procedure Awk_Workflows is
       Catalogs;
       Conformance;
       Source_Policy;
+      Install_Boundary;
    end Verify;
 
    procedure Remove_If_Exists (Path : String) is
