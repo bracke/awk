@@ -20,6 +20,8 @@ package body Awk_Catalog_Policy is
       U.To_Unbounded_String ("awk.help.exit_statuses"),
       U.To_Unbounded_String ("awk.help.compatibility.heading"),
       U.To_Unbounded_String ("awk.help.compatibility.awklib_limitations"),
+      U.To_Unbounded_String ("awk.version.program"),
+      U.To_Unbounded_String ("awk.version.interpreter"),
       U.To_Unbounded_String ("awk.version.license"),
       U.To_Unbounded_String ("awk.diagnostic.label.info"),
       U.To_Unbounded_String ("awk.diagnostic.label.error"),

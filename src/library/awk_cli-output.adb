@@ -58,8 +58,10 @@ package body Awk_CLI.Output is
       LF : constant String := [1 => ASCII.LF];
    begin
       return
-        "awk " & Awk_Config.Crate_Version & LF &
-        "awklib " & Awk_CLI.Execution.Interpreter_Version & LF &
+        L.Text (Catalog, "awk.version.program",
+                "version", Awk_Config.Crate_Version) & LF &
+        L.Text (Catalog, "awk.version.interpreter",
+                "version", Awk_CLI.Execution.Interpreter_Version) & LF &
         L.Text (Catalog, "awk.version.license") & LF;
    end Version;
 

@@ -961,6 +961,24 @@ package body Awk_Tests.Suite is
               "AWK output is not localized");
    end Test_Awk_Output_Unchanged_By_Locale;
 
+   procedure Test_Version_Uses_Localized_Labels (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--version");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Awk_CLI.Set_Locale (Context, "da");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "localized version succeeds");
+      Assert (Contains (Awk_CLI.Standard_Output (Context), "awk 0.1.0"),
+              "program version is catalog-rendered");
+      Assert (Contains (Awk_CLI.Standard_Output (Context), "awklib 0.1.0"),
+              "interpreter version is catalog-rendered");
+      Assert (Contains (Awk_CLI.Standard_Output (Context), "licens MIT"),
+              "license label follows selected locale");
+   end Test_Version_Uses_Localized_Labels;
+
    procedure Test_Process_Version (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1490,6 +1508,9 @@ package body Awk_Tests.Suite is
         (T, Test_Unsupported_Locale_Fallback'Access,
          "unsupported locale fallback");
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
+      Registration.Register_Routine
+        (T, Test_Version_Uses_Localized_Labels'Access,
+         "version localized labels");
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
       Registration.Register_Routine
