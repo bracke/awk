@@ -1,11 +1,12 @@
 package body Awk_CLI.Inputs is
    package D renames Awk_CLI.Diagnostics;
-   use type Ada.Containers.Count_Type;
 
    function Load
      (Operands  : Awk_CLI.Operands.Operand_Vectors.Vector;
       Stdin     : String;
-      Read_File : File_Read_Access) return Load_Result
+      Read_File : not null access function
+        (Path : String; Content : out U.Unbounded_String) return Boolean)
+      return Load_Result
    is
       Result       : Input_File_Vectors.Vector;
       Had_Input    : Boolean := False;

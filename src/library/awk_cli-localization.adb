@@ -1,6 +1,5 @@
 with Messages.Arguments;
 with Messages.Result;
-with Messages.Runtime;
 
 package body Awk_CLI.Localization is
    use type Messages.Result.Render_Status;

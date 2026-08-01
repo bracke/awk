@@ -6,7 +6,7 @@ project Awk_Tests is
    for Source_Dirs use ("src");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
-   for Main use ("awk_tests_main.adb");
+   for Main use ("awk_tests_main.adb", "awk_workflows.adb");
    for Languages use ("Ada");
 
    package Compiler is

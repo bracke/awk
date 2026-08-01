@@ -3,7 +3,9 @@ package body Awk_CLI.Redirections is
 
    function Materialize
      (Outputs    : Awk_CLI.Execution.Redirection_Vectors.Vector;
-      Write_File : Write_File_Access) return Materialize_Result
+      Write_File : not null access function
+        (Path : String; Content : String; Append : Boolean) return Boolean)
+      return Materialize_Result
    is
    begin
       for Item of Outputs loop

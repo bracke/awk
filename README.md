@@ -11,15 +11,47 @@ awk '{ print }' file.txt
 awk -F, '{ print $2 }' data.csv
 awk -v limit=10 '$1 > limit { print $0 }' input.txt
 awk -f program.awk input.txt
+awk -f begin.awk -f rules.awk input1.txt input2.txt
 ```
 
-If no input file is supplied, standard input is used. Use `--` before filenames beginning with `-`.
+If no input file is supplied, standard input is used:
+
+```sh
+printf 'one two\n' | awk '{ print $2 }'
+```
+
+Use `-` as an explicit standard-input operand, and use `--` before filenames
+beginning with `-`:
+
+```sh
+awk '{ print FILENAME ":" $0 }' -- -data.txt
+```
+
+Operands after the program are named input files, `-`, or runtime assignments
+whose name matches `[A-Za-z_][A-Za-z0-9_]*`. Runtime-assignment positioning is
+limited by the current `awklib` API; see the compatibility guide.
+
+`--help` and `--version` do not initialize the interpreter. CLI-owned help and
+diagnostics use localized message catalogs and may be styled according to
+`--color=auto|always|never`. AWK program output is never localized or styled.
+
+On Windows command prompts, quoting differs by shell. For example:
+
+```cmd
+awk "{ print $1 }" input.txt
+awk -F, "{ print $2 }" data.csv
+```
 
 Build with Alire:
 
 ```sh
 alr build --development
-cd tests && alr build --development && ./bin/awk_tests
+cd tests && alr build --development && ./bin/awk_tests_main
+cd tests && ./bin/awk_workflows verify
 ```
 
-Limitations are documented in [docs/compatibility.md](docs/compatibility.md). The project is MIT licensed.
+The project uses Alire for dependency resolution and builds. Install Alire before
+building locally.
+
+Limitations are documented in [docs/compatibility.md](docs/compatibility.md).
+The project is MIT licensed.

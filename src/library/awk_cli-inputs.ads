@@ -14,8 +14,6 @@ package Awk_CLI.Inputs is
    package Input_File_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Input_File);
 
-   type File_Read_Access is access function (Path : String; Content : out U.Unbounded_String) return Boolean;
-
    type Load_Result (Ok : Boolean := False) is record
       case Ok is
          when True =>
@@ -28,5 +26,7 @@ package Awk_CLI.Inputs is
    function Load
      (Operands  : Awk_CLI.Operands.Operand_Vectors.Vector;
       Stdin     : String;
-      Read_File : File_Read_Access) return Load_Result;
+      Read_File : not null access function
+        (Path : String; Content : out U.Unbounded_String) return Boolean)
+      return Load_Result;
 end Awk_CLI.Inputs;

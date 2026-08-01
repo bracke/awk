@@ -10,4 +10,7 @@ Accepted limitations:
 - `AWK-COMPAT-GETLINE-001`: main-input `getline` from `BEGIN` is inherited from `awklib`.
 - `AWK-COMPAT-GETLINE-002`: `command | getline` is not implemented by the CLI.
 - `AWK-COMPAT-ASSIGNMENT-001`: `awklib` does not expose exact positional runtime-assignment execution. The CLI preserves operand spelling/order in ARGV but does not emulate a custom record loop.
-- `AWK-COMPAT-REDIRECTION-001`: `awklib` returns captured final redirected output, so the CLI materializes final files after interpretation rather than providing live redirection semantics.
+- `AWK-COMPAT-REDIRECTION-001`: `awklib` returns captured final redirected output without exposing whether a target used `>` or `>>`, so the CLI materializes final files after interpretation and cannot preserve append intent without parsing AWK source.
+
+The same registry is maintained as Ada data in `Awk_CLI.Compatibility` so tests
+and release tooling can validate stable IDs against this documentation.

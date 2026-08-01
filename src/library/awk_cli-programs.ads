@@ -21,8 +21,6 @@ package Awk_CLI.Programs is
       Operands : Awk_CLI.Options.Operand_Vectors.Vector;
    end record;
 
-   type File_Read_Access is access function (Path : String; Content : out U.Unbounded_String) return Boolean;
-
    type Resolve_Result (Ok : Boolean := False) is record
       case Ok is
          when True =>
@@ -34,5 +32,7 @@ package Awk_CLI.Programs is
 
    function Resolve
      (Options   : Awk_CLI.Options.Parsed_Options;
-      Read_File : File_Read_Access) return Resolve_Result;
+      Read_File : not null access function
+        (Path : String; Content : out U.Unbounded_String) return Boolean)
+      return Resolve_Result;
 end Awk_CLI.Programs;

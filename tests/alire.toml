@@ -7,7 +7,7 @@ maintainers = ["Bent Bracke <bent@bracke.dk>"]
 maintainers-logins = ["bracke"]
 licenses = "MIT"
 project-files = ["awk_tests.gpr"]
-executables = ["awk_tests_main"]
+executables = ["awk_tests_main", "awk_workflows"]
 
 [[depends-on]]
 awk = "*"
