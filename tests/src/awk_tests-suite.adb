@@ -613,6 +613,48 @@ package body Awk_Tests.Suite is
               "color=never suppresses ANSI escapes");
    end Test_Process_Help_Color_Never;
 
+   procedure Test_Process_Help_Color_Always (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("--color=always"), new String'("--help")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk help color always",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process help color always exits successfully");
+      Assert (Contains (U.To_String (Output), Character'Val (27) & "["),
+              "color=always styles CLI-owned help");
+   end Test_Process_Help_Color_Always;
+
+   procedure Test_Process_Awk_Output_Unstyled_With_Color_Always
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("--color=always"),
+         new String'("BEGIN { print ""plain"" }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk output color always",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process AWK output color always exits successfully");
+      Assert (Contains (U.To_String (Output), "plain" & LF), "AWK output is present");
+      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+              "color=always does not style AWK output");
+   end Test_Process_Awk_Output_Unstyled_With_Color_Always;
+
    procedure Test_Process_Usage_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -816,6 +858,10 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
+      Registration.Register_Routine (T, Test_Process_Help_Color_Always'Access, "process help color always");
+      Registration.Register_Routine
+        (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
+         "process AWK output color always");
       Registration.Register_Routine (T, Test_Process_Usage_Status'Access, "process usage status");
       Registration.Register_Routine
         (T, Test_Process_Missing_Program_File'Access,
