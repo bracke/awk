@@ -833,9 +833,12 @@ begin
       Run_Alr_Build (Root, Release_Mode => True);
       Run_Alr_Build (".", Release_Mode => True);
       Run_Binary (".", "./bin/awk_tests_main");
+      Metadata;
       Docs;
       Catalogs;
+      Conformance;
       Source_Policy;
+      Install_Boundary;
       Package_Artifact (Release_Mode => True);
    elsif Command = "--help" or else Command = "-h" then
       Usage;
