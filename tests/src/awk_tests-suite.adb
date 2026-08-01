@@ -722,6 +722,34 @@ package body Awk_Tests.Suite is
               "color=always styles CLI-owned help");
    end Test_Process_Help_Color_Always;
 
+   procedure Test_Process_Help_Auto_Respects_No_Color
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
+        [new String'("NO_COLOR=1"),
+         new String'("./bin/awk"),
+         new String'("--color=auto"),
+         new String'("--help")];
+      Status : Integer;
+   begin
+      Assert (Env /= "", "env executable is available for environment-bound process test");
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk help auto no color",
+           Dir     => "..",
+           Program => Env,
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "process help auto with NO_COLOR exits successfully");
+      Assert (Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
+      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+              "color=auto honors NO_COLOR through terminal_styles");
+   end Test_Process_Help_Auto_Respects_No_Color;
+
    procedure Test_Process_Awk_Output_Unstyled_With_Color_Always
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -959,6 +987,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
       Registration.Register_Routine (T, Test_Process_Help_Color_Always'Access, "process help color always");
+      Registration.Register_Routine
+        (T, Test_Process_Help_Auto_Respects_No_Color'Access,
+         "process help auto NO_COLOR");
       Registration.Register_Routine
         (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
          "process AWK output color always");

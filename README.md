@@ -33,7 +33,9 @@ limited by the current `awklib` API; see the compatibility guide.
 
 `--help` and `--version` do not initialize the interpreter. CLI-owned help and
 diagnostics use localized message catalogs and may be styled according to
-`--color=auto|always|never`. AWK program output is never localized or styled.
+`--color=auto|always|never`. In auto mode, styling follows `terminal_styles`,
+including `NO_COLOR` and stdout terminal detection. AWK program output is never
+localized or styled.
 
 On Windows command prompts, quoting differs by shell. For example:
 
