@@ -527,6 +527,44 @@ package body Awk_Tests.Suite is
               "environment entry reaches awklib");
    end Test_Context_Environment;
 
+   procedure Test_Context_Expressions_Regex_And_Builtins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { print ENVIRON[""AWK_TEST_ENV""]; print length(""abcd"") } " &
+         "/^[a-z]+ [0-9]+$/ { print $1, $2 + 3, substr($1, 2, 2) }");
+      Awk_CLI.Add_Environment (Context, "AWK_TEST_ENV", "visible");
+      Awk_CLI.Set_Standard_Input (Context, "abc 4" & LF & "NOPE" & LF);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "expression integration succeeds");
+      Assert
+        (Awk_CLI.Standard_Output (Context) =
+         "visible" & LF & "4" & LF & "abc 7 bc" & LF,
+         "ENVIRON, regex pattern, arithmetic, and builtins pass through awklib");
+   end Test_Context_Expressions_Regex_And_Builtins;
+
+   procedure Test_Context_Auxiliary_Getline_File
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context, "BEGIN { getline line < ""aux.txt""; print line }");
+      Awk_CLI.Add_Argument (Context, "aux.txt");
+      Awk_CLI.Add_File (Context, "aux.txt", "from aux" & LF);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "auxiliary getline integration succeeds");
+      Assert (Awk_CLI.Standard_Output (Context) = "from aux" & LF,
+              "getline < file uses files registered through the execution adapter");
+   end Test_Context_Auxiliary_Getline_File;
+
    procedure Test_Context_Argv_Argc (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -1042,6 +1080,12 @@ package body Awk_Tests.Suite is
          "context redirection open failure");
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
       Registration.Register_Routine (T, Test_Context_Environment'Access, "context environment");
+      Registration.Register_Routine
+        (T, Test_Context_Expressions_Regex_And_Builtins'Access,
+         "context expressions regex builtins");
+      Registration.Register_Routine
+        (T, Test_Context_Auxiliary_Getline_File'Access,
+         "context auxiliary getline file");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");
       Registration.Register_Routine
         (T, Test_Context_Runtime_Assignment_Limitation'Access,
