@@ -534,6 +534,14 @@ package body Awk_Tests.Suite is
       Awk_CLI.Fail_Standard_Output (Context, True);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "stdout failure is host I/O");
+      Assert (Awk_CLI.Standard_Output (Context) = "",
+              "failed stdout is not reported as written output");
+      Assert (Awk_CLI.Has_Diagnostic (Context), "stdout failure records a structured diagnostic");
+      Assert
+        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.standard_output.write_failed",
+         "structured diagnostic identifies stdout write failure");
+      Assert (Awk_CLI.Last_Diagnostic_Category (Context) = "OUTPUT",
+              "stdout write failure diagnostic is output-category");
    end Test_Context_Output_Failure;
 
    procedure Test_Context_Standard_Input_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -658,6 +666,10 @@ package body Awk_Tests.Suite is
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "diagnostic stderr failure is host I/O");
       Assert (Awk_CLI.Standard_Error (Context) = "", "failed stderr is not reported as written");
+      Assert (Awk_CLI.Has_Diagnostic (Context), "stderr failure preserves original diagnostic");
+      Assert
+        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
+         "stderr write failure does not replace the original diagnostic ID");
    end Test_Context_Stderr_Failure;
 
    procedure Test_Context_Environment (T : in out AUnit.Test_Cases.Test_Case'Class) is
