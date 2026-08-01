@@ -33,6 +33,11 @@ escape embedded newlines, carriage returns, tabs, ESC, and other control
 characters. AWK standard output and redirected output are never escaped,
 localized, styled, prefixed, or reformatted.
 
+Host file diagnostics distinguish open failures from read failures where the
+platform adapter can observe the difference. Missing program files and input
+files report `open_failed`; files that open but cannot be read report
+`read_failed`. Both cases keep exit status `3`.
+
 Styling is produced only through `terminal_styles`. `--color=auto` follows the
 resolved `terminal_styles` policy, including `NO_COLOR` and stdout terminal
 detection. The current dependency API exposes a process-wide stdout-oriented

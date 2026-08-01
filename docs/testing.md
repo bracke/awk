@@ -20,8 +20,10 @@ The primary suite is `awk_tests_main`. It exercises:
   placeholder compatibility, and diagnostic escaping;
 - process-level execution of the installed `awk` binary for help, version,
   direct programs, `-f`, `-F`, `-v`, parse failures, multiple input files,
-  dash-leading filenames after `--`, runtime assignment `ARGV`, and
-  redirection.
+  dash-leading filenames after `--`, runtime assignment `ARGV`, environment
+  propagation to `ENVIRON`, explicit standard-input EOF, and redirection.
+- conformance manifest validation for supported behavior, documented
+  differences, and unsupported `awklib` cases.
 
 The in-memory `Awk_CLI.Invocation_Context` lets tests provide arguments,
 standard input, virtual files, environment entries, injected stream failures,
@@ -30,10 +32,12 @@ last structured diagnostic identifier, category, and severity for tests that
 should not depend only on rendered text.
 
 The workflow command `./bin/awk_workflows verify` builds root and tests in
-development mode, runs AUnit, validates required docs, validates English and
-Danish catalogs, checks catalog placeholders and default locale policy, checks
-adapter isolation, rejects handwritten ANSI sequences in presentation code,
-rejects system-AWK fallback references, and rejects shell/script workflow files.
+development mode, runs AUnit, validates crate metadata, validates required
+docs, validates English and Danish catalogs, checks catalog placeholders and
+default locale policy, validates the conformance manifest, checks adapter
+isolation, rejects handwritten ANSI sequences in presentation code, rejects
+system-AWK fallback references, rejects shell/script workflow files, and runs an
+Alire install-boundary check into a temporary prefix.
 
 The release workflow runs the mandatory test and policy gates with release
 builds, requires a clean git working tree, and packages the executable, message

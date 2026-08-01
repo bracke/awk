@@ -278,11 +278,29 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/diagnostics.md"), "stdout-oriented"),
          "diagnostics docs must document current terminal_styles auto-policy boundary");
       Require
+        (Contains (File_Text ("../docs/diagnostics.md"), "open failures from read failures"),
+         "diagnostics docs must document open/read failure distinction");
+      Require
+        (Contains (File_Text ("../docs/architecture.md"), "memory-oriented"),
+         "architecture docs must document memory-oriented execution");
+      Require
+        (Contains (File_Text ("../docs/architecture.md"), "captured redirected output"),
+         "architecture docs must document captured redirection behavior");
+      Require
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
       Require
+        (Contains (File_Text ("../docs/testing.md"), "conformance manifest"),
+         "testing docs must mention conformance manifest validation");
+      Require
+        (Contains (File_Text ("../docs/testing.md"), "Alire install-boundary"),
+         "testing docs must mention install-boundary validation");
+      Require
         (Contains (File_Text ("../docs/testing.md"), "FNV-1a-64"),
          "testing docs must mention release checksum validation");
+      Require
+        (Contains (File_Text ("../docs/building.md"), "install boundary"),
+         "building docs must mention install boundary verification");
       Require
         (Contains (File_Text ("../docs/releasing.md"), "--release --profiles=*=release"),
          "release docs must document release-profile builds");
@@ -292,6 +310,9 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("../docs/releasing.md"), "FNV-1a-64"),
          "release docs must document manifest checksum algorithm");
+      Require
+        (Contains (File_Text ("../docs/releasing.md"), "temporary prefix"),
+         "release docs must document temporary install-prefix validation");
       Put_Info ("documentation checks passed");
    end Docs;
 
