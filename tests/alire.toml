@@ -1,0 +1,28 @@
+name = "awk_tests"
+description = "AUnit test suite for the awk command-line crate"
+version = "0.1.0"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT"
+project-files = ["awk_tests.gpr"]
+executables = ["awk_tests_main"]
+
+[[depends-on]]
+awk = "*"
+
+[[depends-on]]
+aunit = "*"
+
+[[depends-on]]
+project_tools = "*"
+
+[[pins]]
+awk = { path = ".." }
+
+[[pins]]
+project_tools = { path = "../../project_tools" }
+
+[build-profiles]
+"*" = "development"

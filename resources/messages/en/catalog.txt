@@ -1,0 +1,1 @@
+# English catalog shard. The authoritative combined catalog is ../catalog.txt.

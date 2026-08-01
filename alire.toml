@@ -1,0 +1,36 @@
+name = "awk"
+description = "Ada command-line AWK executable built on awklib"
+version = "0.1.0"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT"
+website = "https://github.com/bracke/awk"
+tags = ["awk", "cli", "text-processing"]
+project-files = ["awk.gpr"]
+executables = ["awk"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+awklib = "~0.1.0"
+
+[[depends-on]]
+terminal_styles = "*"
+
+[[depends-on]]
+messages = "*"
+
+[[pins]]
+awklib = { path = "../awklib" }
+
+[[pins]]
+terminal_styles = { path = "../terminal_styles" }
+
+[[pins]]
+messages = { path = "../messages" }
+
+[build-profiles]
+"*" = "development"

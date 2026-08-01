@@ -1,0 +1,41 @@
+with Ada.Containers.Vectors;
+with Ada.Strings.Unbounded;
+with Awk_CLI.Diagnostics;
+with Awk_CLI.Environment;
+with Awk_CLI.Inputs;
+with Awk_CLI.Operands;
+with Awk_CLI.Options;
+
+package Awk_CLI.Execution is
+   package U renames Ada.Strings.Unbounded;
+
+   type Redirected_Output is record
+      Path    : U.Unbounded_String;
+      Content : U.Unbounded_String;
+      Append  : Boolean := False;
+   end record;
+
+   package Redirection_Vectors is new Ada.Containers.Vectors
+     (Index_Type => Positive, Element_Type => Redirected_Output);
+
+   type Execution_Result (Ok : Boolean := False) is record
+      case Ok is
+         when True =>
+            Standard_Output : U.Unbounded_String;
+            Exit_Status     : Integer := 0;
+            Redirections    : Redirection_Vectors.Vector;
+         when False =>
+            Diagnostic : Awk_CLI.Diagnostics.Diagnostic;
+      end case;
+   end record;
+
+   function Execute
+     (Program_Source  : String;
+      Options         : Awk_CLI.Options.Parsed_Options;
+      Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
+      Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
+      return Execution_Result;
+
+   function Interpreter_Version return String;
+end Awk_CLI.Execution;
