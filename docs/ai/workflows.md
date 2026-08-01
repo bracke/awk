@@ -20,3 +20,7 @@ not rely on shell scripts.
 `verify` also runs source-policy checks for adapter isolation, no direct ANSI
 emission in presentation code, and no external AWK fallback references in
 production source.
+
+`release` requires a clean git working tree, builds root and tests with
+`--release --profiles=*=release`, runs the same mandatory checks, and packages
+only after those gates pass.

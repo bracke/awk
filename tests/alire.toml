@@ -10,13 +10,13 @@ project-files = ["awk_tests.gpr"]
 executables = ["awk_tests_main", "awk_workflows"]
 
 [[depends-on]]
-awk = "*"
+awk = "~0.1.0"
 
 [[depends-on]]
-aunit = "*"
+aunit = "~26.0.0"
 
 [[depends-on]]
-project_tools = "*"
+project_tools = "~0.1.0"
 
 [[pins]]
 awk = { path = ".." }

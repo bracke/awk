@@ -21,6 +21,7 @@ procedure Awk_Workflows is
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
    Env  : constant String := Proc.Locate_Command ("env");
+   Git  : constant String := Proc.Locate_Command ("git");
 
    procedure Put_Info (Message : String) is
    begin
@@ -41,7 +42,7 @@ procedure Awk_Workflows is
       end if;
    end Require;
 
-   procedure Run_Alr_Build (Directory : String) is
+   procedure Run_Alr_Build (Directory : String; Release_Mode : Boolean := False) is
       function Derived_Home return String is
          Marker : constant String := "/.getada/bin/alr";
       begin
@@ -59,14 +60,25 @@ procedure Awk_Workflows is
       Require (Alr /= "", "alr executable not found");
       if Env /= "" and then Home /= "" then
          declare
-            Args : constant GNAT.OS_Lib.Argument_List (1 .. 7) :=
-              [new String'("HOME=" & Home),
-               new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
-               new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
-               new String'(Alr),
-               new String'("-n"),
-               new String'("build"),
-               new String'("--development")];
+            Args : constant GNAT.OS_Lib.Argument_List :=
+              (if Release_Mode
+               then
+                 [new String'("HOME=" & Home),
+                  new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
+                  new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
+                  new String'(Alr),
+                  new String'("-n"),
+                  new String'("build"),
+                  new String'("--release"),
+                  new String'("--profiles=*=release")]
+               else
+                 [new String'("HOME=" & Home),
+                  new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
+                  new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
+                  new String'(Alr),
+                  new String'("-n"),
+                  new String'("build"),
+                  new String'("--development")]);
          begin
             if Proc.Run_Status ("alr build", Directory, Env, Args) /= 0 then
                Fail ("alr build failed in " & Directory);
@@ -74,8 +86,11 @@ procedure Awk_Workflows is
          end;
       else
          declare
-            Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-              [new String'("-n"), new String'("build"), new String'("--development")];
+            Args : constant GNAT.OS_Lib.Argument_List :=
+              (if Release_Mode
+               then [new String'("-n"), new String'("build"), new String'("--release"),
+                     new String'("--profiles=*=release")]
+               else [new String'("-n"), new String'("build"), new String'("--development")]);
          begin
             if Proc.Run_Status ("alr build", Directory, Alr, Args) /= 0 then
                Fail ("alr build failed in " & Directory);
@@ -103,6 +118,18 @@ procedure Awk_Workflows is
       Run_Alr_Build (".");
       Run_Binary (".", "./bin/awk_tests_main");
    end Test;
+
+   procedure Require_Clean_Repository is
+      Output : Proc.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("status"), new String'("--porcelain")];
+   begin
+      Require (Git /= "", "git executable not found");
+      if Proc.Run_Status ("git status --porcelain", Root, Git, Args, Output, Quiet => True) /= 0 then
+         Fail ("git status failed");
+      end if;
+      Require (U.Length (Output) = 0, "release requires a clean git working tree");
+   end Require_Clean_Repository;
 
    function File_Text (Path : String) return String is
       File   : Ada.Text_IO.File_Type;
@@ -181,6 +208,12 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-ASSIGNMENT-001"),
          "compatibility registry is missing assignment limitation");
+      Require
+        (Contains (File_Text ("../docs/releasing.md"), "--release --profiles=*=release"),
+         "release docs must document release-profile builds");
+      Require
+        (Contains (File_Text ("../docs/releasing.md"), "clean git working tree"),
+         "release docs must document clean-tree enforcement");
       Put_Info ("documentation checks passed");
    end Docs;
 
@@ -302,6 +335,16 @@ procedure Awk_Workflows is
       Require
         (not Files.Any_File_Contains ("../src", "nawk"),
          "production source must not invoke or reference external nawk fallback");
+      Require
+        (Contains (File_Text ("src/awk_workflows.adb"), "--release"),
+         "release workflow must use Alire release builds");
+      Require
+        (Contains (File_Text ("src/awk_workflows.adb"), "status"),
+         "release workflow must check git status");
+      Require
+        (not Contains (File_Text ("src/awk_workflows.adb"), "release"") then" & ASCII.LF &
+                                                     "      Verify;"),
+         "release workflow must not reuse development verify gate");
       Put_Info ("source policy checks passed");
    end Source_Policy;
 
@@ -341,7 +384,7 @@ procedure Awk_Workflows is
          Fail ("copy failed: " & Source & " -> " & Target);
    end Copy_File;
 
-   procedure Package_Artifact is
+   procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
 
       function Checksum (Path : String) return Natural is
@@ -391,7 +434,12 @@ procedure Awk_Workflows is
 
       Manifest : U.Unbounded_String;
    begin
-      Build;
+      if Release_Mode then
+         Run_Alr_Build (Root, Release_Mode => True);
+         Run_Alr_Build (".", Release_Mode => True);
+      else
+         Build;
+      end if;
       Remove_If_Exists ("../dist");
       Dir.Create_Path (Dist & "/bin");
       Dir.Create_Path (Dist & "/resources/messages");
@@ -445,8 +493,14 @@ begin
    elsif Command = "package" then
       Package_Artifact;
    elsif Command = "release" then
-      Verify;
-      Package_Artifact;
+      Require_Clean_Repository;
+      Run_Alr_Build (Root, Release_Mode => True);
+      Run_Alr_Build (".", Release_Mode => True);
+      Run_Binary (".", "./bin/awk_tests_main");
+      Docs;
+      Catalogs;
+      Source_Policy;
+      Package_Artifact (Release_Mode => True);
    elsif Command = "--help" or else Command = "-h" then
       Usage;
    else

@@ -18,10 +18,10 @@ gnat_native = "=15.2.1"
 awklib = "~0.1.0"
 
 [[depends-on]]
-terminal_styles = "*"
+terminal_styles = "=0.1.0-dev"
 
 [[depends-on]]
-messages = "*"
+messages = "~0.1.0"
 
 [[pins]]
 awklib = { path = "../awklib" }
