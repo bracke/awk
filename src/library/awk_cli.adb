@@ -24,6 +24,10 @@ package body Awk_CLI is
       Context.Environment.Clear;
       Context.Standard_Out := U.Null_Unbounded_String;
       Context.Standard_Err := U.Null_Unbounded_String;
+      Context.Diagnostic_Set := False;
+      Context.Diagnostic_Id := U.Null_Unbounded_String;
+      Context.Diagnostic_Category := U.Null_Unbounded_String;
+      Context.Diagnostic_Severity := U.Null_Unbounded_String;
       Context.Writes.Clear;
       Context.Use_Process := False;
       Context.Stdin_Fails := False;
@@ -107,6 +111,18 @@ package body Awk_CLI is
 
    function Standard_Error (Context : Invocation_Context) return String is
      (U.To_String (Context.Standard_Err));
+
+   function Has_Diagnostic (Context : Invocation_Context) return Boolean is
+     (Context.Diagnostic_Set);
+
+   function Last_Diagnostic_Message_Id (Context : Invocation_Context) return String is
+     (U.To_String (Context.Diagnostic_Id));
+
+   function Last_Diagnostic_Category (Context : Invocation_Context) return String is
+     (U.To_String (Context.Diagnostic_Category));
+
+   function Last_Diagnostic_Severity (Context : Invocation_Context) return String is
+     (U.To_String (Context.Diagnostic_Severity));
 
    function Written_File_Count (Context : Invocation_Context) return Natural is
      (Natural (Context.Writes.Length));
@@ -289,6 +305,10 @@ package body Awk_CLI is
 
       function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
       begin
+         Context.Diagnostic_Set := True;
+         Context.Diagnostic_Id := Item.Message_Id;
+         Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
+         Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
          if not Write_Context_Stderr (Awk_CLI.Output.Diagnostic_Text (Catalog, Item)) then
             return Exit_Code (D.IO_Exit);
          end if;

@@ -260,6 +260,7 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Standard_Output (Context) = "two" & LF & "four" & LF,
               "stdout is captured exactly");
       Assert (Awk_CLI.Standard_Error (Context) = "", "no diagnostics");
+      Assert (not Awk_CLI.Has_Diagnostic (Context), "success has no structured diagnostic");
    end Test_Context_Direct_Run;
 
    procedure Test_Context_File_Run (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -289,6 +290,14 @@ package body Awk_Tests.Suite is
       Assert (Status = 2, "usage error status");
       Assert (Awk_CLI.Standard_Output (Context) = "", "usage error does not write stdout");
       Assert (Awk_CLI.Standard_Error (Context)'Length > 0, "diagnostic is captured");
+      Assert (Awk_CLI.Has_Diagnostic (Context), "structured diagnostic is captured");
+      Assert
+        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
+         "structured diagnostic message ID is retained");
+      Assert (Awk_CLI.Last_Diagnostic_Category (Context) = "USAGE",
+              "structured diagnostic category is retained");
+      Assert (Awk_CLI.Last_Diagnostic_Severity (Context) = "ERROR",
+              "structured diagnostic severity is retained");
    end Test_Context_Diagnostics;
 
    procedure Test_Context_Diagnostic_Sanitizing (T : in out AUnit.Test_Cases.Test_Case'Class) is

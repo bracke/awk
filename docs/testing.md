@@ -15,4 +15,5 @@ The invocation context lets tests provide arguments, standard input, virtual
 files, environment entries, and injected output failures without spawning the
 real executable. It also supports injected standard-input failures so tests can
 verify controlled host I/O diagnostics without depending on process-global
-stream state.
+stream state. The context exposes the last structured diagnostic identifier,
+category, and severity for tests that should not depend only on rendered text.

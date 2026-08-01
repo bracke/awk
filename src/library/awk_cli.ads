@@ -29,6 +29,10 @@ package Awk_CLI is
    function Run (Context : in out Invocation_Context) return Exit_Code;
    function Standard_Output (Context : Invocation_Context) return String;
    function Standard_Error (Context : Invocation_Context) return String;
+   function Has_Diagnostic (Context : Invocation_Context) return Boolean;
+   function Last_Diagnostic_Message_Id (Context : Invocation_Context) return String;
+   function Last_Diagnostic_Category (Context : Invocation_Context) return String;
+   function Last_Diagnostic_Severity (Context : Invocation_Context) return String;
    function Written_File_Count (Context : Invocation_Context) return Natural;
    function Written_File_Name (Context : Invocation_Context; Index : Positive) return String;
    function Written_File_Content (Context : Invocation_Context; Index : Positive) return String;
@@ -73,6 +77,10 @@ private
       Environment  : Env_Vectors.Vector;
       Standard_Out : U.Unbounded_String;
       Standard_Err : U.Unbounded_String;
+      Diagnostic_Set : Boolean := False;
+      Diagnostic_Id       : U.Unbounded_String;
+      Diagnostic_Category : U.Unbounded_String;
+      Diagnostic_Severity : U.Unbounded_String;
       Writes       : Write_Vectors.Vector;
       Use_Process  : Boolean := False;
       Stdin_Fails  : Boolean := False;
