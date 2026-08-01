@@ -472,6 +472,23 @@ package body Awk_Tests.Suite is
          "ARGV preserves operand spelling and order");
    end Test_Context_Argv_Argc;
 
+   procedure Test_Context_Runtime_Assignment_Limitation
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "BEGIN { print X; print ARGV[1] }");
+      Awk_CLI.Add_Argument (Context, "X=42");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "runtime assignment limitation run succeeds");
+      Assert (Contains (Awk_CLI.Standard_Output (Context), LF & "X=42" & LF),
+              "AWK-COMPAT-ASSIGNMENT-001: assignment operand remains in ARGV");
+      Assert (not Contains (Awk_CLI.Standard_Output (Context), "42" & LF & "X=42"),
+              "AWK-COMPAT-ASSIGNMENT-001: CLI does not emulate positional assignment");
+   end Test_Context_Runtime_Assignment_Limitation;
+
    procedure Test_Context_Repeated_Stdin (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -886,6 +903,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
       Registration.Register_Routine (T, Test_Context_Environment'Access, "context environment");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");
+      Registration.Register_Routine
+        (T, Test_Context_Runtime_Assignment_Limitation'Access,
+         "context runtime assignment limitation");
       Registration.Register_Routine (T, Test_Context_Repeated_Stdin'Access, "context repeated stdin");
       Registration.Register_Routine (T, Test_Compatibility_Registry'Access, "compatibility registry");
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
