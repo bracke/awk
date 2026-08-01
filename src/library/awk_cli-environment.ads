@@ -13,4 +13,5 @@ package Awk_CLI.Environment is
      (Index_Type => Positive, Element_Type => Env_Entry);
 
    function Collect return Entry_Vectors.Vector;
+   function Normalize (Entries : Entry_Vectors.Vector) return Entry_Vectors.Vector;
 end Awk_CLI.Environment;

@@ -320,7 +320,7 @@ package body Awk_CLI is
               (Awk_CLI.Environment.Env_Entry'
                  (Name => Item.Name, Value => Item.Value));
          end loop;
-         return Result;
+         return Awk_CLI.Environment.Normalize (Result);
       end Current_Environment;
 
       function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
