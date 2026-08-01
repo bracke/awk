@@ -187,6 +187,40 @@ package body Awk_Tests.Suite is
       end;
    end Test_Option_Matrix;
 
+   procedure Test_Option_Order_And_Index_Preservation
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      Args.Append (U.To_Unbounded_String ("-vA=1"));
+      Args.Append (U.To_Unbounded_String ("-f"));
+      Args.Append (U.To_Unbounded_String ("a.awk"));
+      Args.Append (U.To_Unbounded_String ("-v"));
+      Args.Append (U.To_Unbounded_String ("B=2"));
+      Args.Append (U.To_Unbounded_String ("--"));
+      Args.Append (U.To_Unbounded_String ("-dash"));
+      Args.Append (U.To_Unbounded_String ("C=3"));
+      declare
+         Result : constant Opt.Parse_Result := Opt.Parse (Args);
+      begin
+         Assert (Result.Ok, "indexed option parse succeeds");
+         Assert (Result.Options.Initial_Assignments.Length = 2, "initial assignments retained");
+         Assert (Result.Options.Initial_Assignments.Element (1).Original_Index = 1,
+                 "attached -v original index retained");
+         Assert (Result.Options.Initial_Assignments.Element (2).Original_Index = 5,
+                 "separate -v value original index retained");
+         Assert (Result.Options.Program_Files.Element (1).Original_Index = 3,
+                 "program file original index retained");
+         Assert (Result.Options.Operands.Element (1).Original_Index = 7,
+                 "operand after -- original index retained");
+         Assert (U.To_String (Result.Options.Operands.Element (1).Text) = "-dash",
+                 "dash-leading operand after -- is preserved");
+         Assert (Result.Options.Operands.Element (2).Original_Index = 8,
+                 "assignment operand original index retained");
+      end;
+   end Test_Option_Order_And_Index_Preservation;
+
    procedure Test_Option_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
 
@@ -208,6 +242,8 @@ package body Awk_Tests.Suite is
       Expect_Failure ("-f", "missing -f value rejected");
       Expect_Failure ("-v1bad=x", "invalid attached -v rejected");
       Expect_Failure ("-f-", "-f - rejected");
+      Expect_Failure ("--color", "missing --color assignment rejected");
+      Expect_Failure ("--color=", "empty --color mode rejected");
    end Test_Option_Failures;
 
    procedure Test_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -272,6 +308,31 @@ package body Awk_Tests.Suite is
          Assert (Source.Source.Segments.Element (1).End_Line = 0, "empty direct has no source lines");
       end;
    end Test_Program_Source_Edges;
+
+   procedure Test_Program_File_Mode_Does_Not_Consume_Direct_Program
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      Args.Append (U.To_Unbounded_String ("-fa.awk"));
+      Args.Append (U.To_Unbounded_String ("{ print ""not source"" }"));
+      Args.Append (U.To_Unbounded_String ("input"));
+      declare
+         Parsed : constant Opt.Parse_Result := Opt.Parse (Args);
+         Source : constant Awk_CLI.Programs.Resolve_Result :=
+           Awk_CLI.Programs.Resolve (Parsed.Options, Read_Test_File'Access);
+      begin
+         Assert (Source.Ok, "program-file mode source resolves");
+         Assert (U.To_String (Source.Source.Text) = "BEGIN { print ""a"" }",
+                 "-f source does not consume a direct program operand");
+         Assert (Source.Source.Operands.Length = 2,
+                 "remaining operands are both AWK operands");
+         Assert
+           (U.To_String (Source.Source.Operands.Element (1).Text) = "{ print ""not source"" }",
+            "first remaining operand spelling is preserved");
+      end;
+   end Test_Program_File_Mode_Does_Not_Consume_Direct_Program;
 
    procedure Test_Operands (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -915,6 +976,29 @@ package body Awk_Tests.Suite is
               "color=never suppresses ANSI escapes");
    end Test_Process_Help_Color_Never;
 
+   procedure Test_Process_Help_Short_Circuits_Runtime
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
+        [new String'("--help"),
+         new String'("-f"),
+         new String'("tests/fixtures/programs/no-such-program.awk"),
+         new String'("BEGIN {")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk help short circuit",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "help ignores later runtime failures");
+      Assert (Contains (U.To_String (Output), "Usage: awk"), "help text is emitted");
+   end Test_Process_Help_Short_Circuits_Runtime;
+
    procedure Test_Process_Help_Color_Always (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -961,6 +1045,28 @@ package body Awk_Tests.Suite is
       Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=auto honors NO_COLOR through terminal_styles");
    end Test_Process_Help_Auto_Respects_No_Color;
+
+   procedure Test_Process_Version_Short_Circuits_Runtime
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("--version"),
+         new String'("-f"),
+         new String'("tests/fixtures/programs/no-such-program.awk")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk version short circuit",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "version ignores later runtime failures");
+      Assert (Contains (U.To_String (Output), "awk 0.1.0"), "version text is emitted");
+   end Test_Process_Version_Short_Circuits_Runtime;
 
    procedure Test_Process_Awk_Output_Unstyled_With_Color_Always
      (T : in out AUnit.Test_Cases.Test_Case'Class)
@@ -1216,9 +1322,15 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Options'Access, "option parser");
       Registration.Register_Routine (T, Test_Bad_Options'Access, "usage diagnostics");
       Registration.Register_Routine (T, Test_Option_Matrix'Access, "option matrix");
+      Registration.Register_Routine
+        (T, Test_Option_Order_And_Index_Preservation'Access,
+         "option order and indexes");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
       Registration.Register_Routine (T, Test_Program_Files'Access, "program sources");
       Registration.Register_Routine (T, Test_Program_Source_Edges'Access, "program source edges");
+      Registration.Register_Routine
+        (T, Test_Program_File_Mode_Does_Not_Consume_Direct_Program'Access,
+         "program file mode operands");
       Registration.Register_Routine (T, Test_Operands'Access, "operand classifier");
       Registration.Register_Routine (T, Test_Execution'Access, "awklib execution adapter");
       Registration.Register_Routine (T, Test_Context_Direct_Run'Access, "context direct run");
@@ -1275,10 +1387,16 @@ package body Awk_Tests.Suite is
          "process dash filename after terminator");
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
+      Registration.Register_Routine
+        (T, Test_Process_Help_Short_Circuits_Runtime'Access,
+         "process help short circuit");
       Registration.Register_Routine (T, Test_Process_Help_Color_Always'Access, "process help color always");
       Registration.Register_Routine
         (T, Test_Process_Help_Auto_Respects_No_Color'Access,
          "process help auto NO_COLOR");
+      Registration.Register_Routine
+        (T, Test_Process_Version_Short_Circuits_Runtime'Access,
+         "process version short circuit");
       Registration.Register_Routine
         (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
          "process AWK output color always");
