@@ -5,6 +5,7 @@ with Ada.Streams;
 with Ada.Streams.Stream_IO;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
+with Interfaces;
 
 with GNAT.OS_Lib;
 
@@ -18,6 +19,7 @@ procedure Awk_Workflows is
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package U renames Ada.Strings.Unbounded;
+   use type Interfaces.Unsigned_64;
 
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
@@ -431,28 +433,42 @@ procedure Awk_Workflows is
    procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
 
-      function Checksum (Path : String) return Natural is
+      function Hex_64 (Value : Interfaces.Unsigned_64) return String is
+         Hex_Digits : constant String := "0123456789abcdef";
+         Result     : String (1 .. 16);
+         Work       : Interfaces.Unsigned_64 := Value;
+      begin
+         for Index in reverse Result'Range loop
+            Result (Index) := Hex_Digits (Natural (Work mod 16) + 1);
+            Work := Work / 16;
+         end loop;
+         return Result;
+      end Hex_64;
+
+      function Checksum (Path : String) return String is
          package SIO renames Ada.Streams.Stream_IO;
-         File   : SIO.File_Type;
-         Buffer : Ada.Streams.Stream_Element_Array (1 .. 8192);
-         Last   : Ada.Streams.Stream_Element_Offset;
-         Result : Long_Long_Integer := 0;
+         File         : SIO.File_Type;
+         Buffer       : Ada.Streams.Stream_Element_Array (1 .. 8192);
+         Last         : Ada.Streams.Stream_Element_Offset;
+         FNV_Offset   : constant Interfaces.Unsigned_64 := 16#cbf29ce484222325#;
+         FNV_Prime    : constant Interfaces.Unsigned_64 := 16#00000100000001b3#;
+         Result       : Interfaces.Unsigned_64 := FNV_Offset;
       begin
          SIO.Open (File, SIO.In_File, Path);
          while not SIO.End_Of_File (File) loop
             SIO.Read (File, Buffer, Last);
             for Index in Buffer'First .. Last loop
-               Result := (Result * 131 + Long_Long_Integer (Buffer (Index))) mod 2_147_483_647;
+               Result := (Result xor Interfaces.Unsigned_64 (Buffer (Index))) * FNV_Prime;
             end loop;
          end loop;
          SIO.Close (File);
-         return Natural (Result);
+         return Hex_64 (Result);
       exception
          when others =>
             if SIO.Is_Open (File) then
                SIO.Close (File);
             end if;
-            return 0;
+            return "0000000000000000";
       end Checksum;
 
       function Length_Of (Path : String) return Natural is
@@ -466,7 +482,7 @@ procedure Awk_Workflows is
          U.Append
            (Buffer,
             Path & " bytes=" & Natural'Image (Length_Of (Dist & "/" & Path))
-            & " checksum=" & Natural'Image (Checksum (Dist & "/" & Path))
+            & " fnv1a64=" & Checksum (Dist & "/" & Path)
             & ASCII.LF);
       end Add_Manifest_Line;
 
