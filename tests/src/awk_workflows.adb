@@ -168,6 +168,66 @@ procedure Awk_Workflows is
       return False;
    end Contains;
 
+   function Line_Value (Text, Key : String) return String is
+      Prefix : constant String := Key & " =";
+      Start  : Positive;
+   begin
+      if Text'Length < Prefix'Length then
+         return "";
+      end if;
+
+      for Index in Text'First .. Text'Last - Prefix'Length + 1 loop
+         if (Index = Text'First or else Text (Index - 1) = ASCII.LF)
+           and then Text (Index .. Index + Prefix'Length - 1) = Prefix
+         then
+            Start := Index + Prefix'Length;
+            if Start <= Text'Last and then Text (Start) = ' ' then
+               Start := Start + 1;
+            end if;
+            for Last in Start .. Text'Last loop
+               if Text (Last) = ASCII.LF then
+                  return Text (Start .. Last - 1);
+               end if;
+            end loop;
+            return Text (Start .. Text'Last);
+         end if;
+      end loop;
+      return "";
+   end Line_Value;
+
+   function Placeholders (Text : String) return String is
+      Result : U.Unbounded_String;
+      Index  : Positive := Text'First;
+   begin
+      while Index <= Text'Last loop
+         if Text (Index) = '{' then
+            declare
+               Close : Natural := 0;
+            begin
+               for Scan in Index + 1 .. Text'Last loop
+                  if Text (Scan) = '}' then
+                     Close := Scan;
+                     exit;
+                  end if;
+               end loop;
+
+               if Close > Index + 1 then
+                  declare
+                     Name : constant String := Text (Index + 1 .. Close - 1);
+                  begin
+                     if not Contains (U.To_String (Result), "|" & Name & "|") then
+                        U.Append (Result, "|" & Name & "|");
+                     end if;
+                  end;
+                  Index := Close;
+               end if;
+            end;
+         end if;
+         Index := Index + 1;
+      end loop;
+      return U.To_String (Result);
+   end Placeholders;
+
    procedure Docs is
       procedure Require_Path (Path : String) is
       begin
@@ -268,12 +328,15 @@ procedure Awk_Workflows is
       procedure Require_Key (Key : String) is
       begin
          Require (Contains (Catalog, Key & " ="), "message catalog missing key: " & Key);
+         Require (Line_Value (Catalog, Key) /= "", "message catalog has empty key: " & Key);
       end Require_Key;
 
       procedure Require_Shard_Key (Shard, Key, Name : String) is
       begin
          Require (Contains (Shard, Key & " ="),
                   Name & " catalog shard missing key: " & Key);
+         Require (Line_Value (Shard, Key) /= "",
+                  Name & " catalog shard has empty key: " & Key);
       end Require_Shard_Key;
    begin
       Require (Catalog /= "", "message catalog is missing or empty");
@@ -287,6 +350,10 @@ procedure Awk_Workflows is
             Require_Key ("da." & Suffix);
             Require_Shard_Key (English, "en." & Suffix, "English");
             Require_Shard_Key (Danish, "da." & Suffix, "Danish");
+            Require
+              (Placeholders (Line_Value (Catalog, "en." & Suffix)) =
+               Placeholders (Line_Value (Catalog, "da." & Suffix)),
+               "placeholder mismatch between locales for " & Suffix);
          end;
       end loop;
       Put_Info ("catalog checks passed");
