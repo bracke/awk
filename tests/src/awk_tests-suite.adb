@@ -8,6 +8,7 @@ with Ada.Strings.Unbounded;
 
 with GNAT.OS_Lib;
 
+with Awk_Catalog_Policy;
 with Awk_CLI;
 with Awk_CLI.Compatibility;
 with Awk_CLI.Diagnostics;
@@ -537,25 +538,57 @@ package body Awk_Tests.Suite is
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
+      English : constant String := File_Text ("../resources/messages/en/catalog.txt");
+      Danish  : constant String := File_Text ("../resources/messages/da/catalog.txt");
 
       procedure Require_Key (Key : String) is
       begin
          Assert (Contains (Catalog, Key & " ="), "catalog contains " & Key);
       end Require_Key;
    begin
-      Require_Key ("en.awk.help.title");
-      Require_Key ("en.awk.help.summary");
-      Require_Key ("en.awk.usage.missing_program");
-      Require_Key ("en.awk.usage.unknown_option");
-      Require_Key ("en.awk.interpreter.runtime_failed");
-      Require_Key ("en.awk.standard_output.write_failed");
-      Require_Key ("da.awk.help.title");
-      Require_Key ("da.awk.help.summary");
-      Require_Key ("da.awk.usage.missing_program");
-      Require_Key ("da.awk.usage.unknown_option");
-      Require_Key ("da.awk.interpreter.runtime_failed");
-      Require_Key ("da.awk.standard_output.write_failed");
+      Assert (Awk_Catalog_Policy.Failure_Message (Catalog) = "",
+              "combined catalog has only expected keys and valid placeholders");
+      Assert
+        (Awk_Catalog_Policy.Failure_Message
+           (English, Combined_Catalog => False, Locale => "en") = "",
+         "English shard has only expected keys and valid placeholders");
+      Assert
+        (Awk_Catalog_Policy.Failure_Message
+           (Danish, Combined_Catalog => False, Locale => "da") = "",
+         "Danish shard has only expected keys and valid placeholders");
+
+      for Index in 1 .. Awk_Catalog_Policy.Required_Key_Count loop
+         declare
+            Suffix : constant String := Awk_Catalog_Policy.Required_Key (Index);
+         begin
+            Require_Key ("en." & Suffix);
+            Require_Key ("da." & Suffix);
+         end;
+      end loop;
    end Test_Catalog_Key_Coverage;
+
+   procedure Test_Catalog_Policy_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+   begin
+      Assert
+        (Contains
+           (Awk_Catalog_Policy.Failure_Message
+              ("en.awk.usage.unknown_option = bad {option"),
+            "malformed placeholder"),
+         "unclosed placeholder is rejected");
+      Assert
+        (Contains
+           (Awk_Catalog_Policy.Failure_Message
+              ("en.awk.extra = extra"),
+            "unknown catalog key"),
+         "unknown message key is rejected");
+      Assert
+        (Contains
+           (Awk_Catalog_Policy.Failure_Message
+              ("en.awk.usage.unknown_option: bad"),
+            "malformed catalog line"),
+         "malformed assignment syntax is rejected");
+   end Test_Catalog_Policy_Failures;
 
    procedure Test_Localized_Diagnostics (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -918,6 +951,7 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Context_Repeated_Stdin'Access, "context repeated stdin");
       Registration.Register_Routine (T, Test_Compatibility_Registry'Access, "compatibility registry");
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
+      Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
       Registration.Register_Routine (T, Test_Localized_Diagnostics'Access, "localized diagnostics");
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
