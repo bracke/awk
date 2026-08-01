@@ -239,11 +239,26 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-ASSIGNMENT-001"),
          "compatibility registry is missing assignment limitation");
       Require
+        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-REGEX-001"),
+         "compatibility registry is missing regex limitation");
+      Require
+        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
+         "compatibility registry is missing command-pipe getline limitation");
+      Require
+        (Contains (File_Text ("../docs/diagnostics.md"), "stdout-oriented"),
+         "diagnostics docs must document current terminal_styles auto-policy boundary");
+      Require
+        (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
+         "testing docs must mention structured diagnostic assertions");
+      Require
         (Contains (File_Text ("../docs/releasing.md"), "--release --profiles=*=release"),
          "release docs must document release-profile builds");
       Require
         (Contains (File_Text ("../docs/releasing.md"), "clean git working tree"),
          "release docs must document clean-tree enforcement");
+      Require
+        (Contains (File_Text ("../docs/releasing.md"), "FNV-1a-64"),
+         "release docs must document manifest checksum algorithm");
       Put_Info ("documentation checks passed");
    end Docs;
 
@@ -529,6 +544,12 @@ procedure Awk_Workflows is
       Add_Manifest_Line (Manifest, "resources/messages/da/catalog.txt");
       Files.Write_Text_File (Dist & "/MANIFEST.txt", U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
+      Require
+        (Contains (File_Text (Dist & "/MANIFEST.txt"), "fnv1a64="),
+         "package manifest must include FNV-1a-64 checksum fields");
+      Require
+        (not Contains (File_Text (Dist & "/MANIFEST.txt"), " checksum="),
+         "package manifest must not use legacy checksum field");
       Put_Info ("packaged " & Dist);
    end Package_Artifact;
 

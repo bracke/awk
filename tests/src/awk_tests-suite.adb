@@ -50,6 +50,15 @@ package body Awk_Tests.Suite is
       elsif Path = "b.awk" then
          Content := U.To_Unbounded_String ("BEGIN { print ""b"" }");
          return True;
+      elsif Path = "empty.awk" then
+         Content := U.Null_Unbounded_String;
+         return True;
+      elsif Path = "newline.awk" then
+         Content := U.To_Unbounded_String ("BEGIN { print ""n"" }" & LF);
+         return True;
+      elsif Path = "tail.awk" then
+         Content := U.To_Unbounded_String ("BEGIN { print ""tail"" }");
+         return True;
       elsif Path = "input" then
          Content := U.To_Unbounded_String ("x y" & LF);
          return True;
@@ -206,6 +215,45 @@ package body Awk_Tests.Suite is
          Assert (Source.Source.Segments.Element (2).End_Line = 2, "second segment end");
       end;
    end Test_Program_Files;
+
+   procedure Test_Program_Source_Edges (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      File_Args : Opt.String_Vectors.Vector;
+      Direct_Args : Opt.String_Vectors.Vector;
+   begin
+      File_Args.Append (U.To_Unbounded_String ("-fempty.awk"));
+      File_Args.Append (U.To_Unbounded_String ("-fnewline.awk"));
+      File_Args.Append (U.To_Unbounded_String ("-ftail.awk"));
+      declare
+         Parsed : constant Opt.Parse_Result := Opt.Parse (File_Args);
+         Source : constant Awk_CLI.Programs.Resolve_Result :=
+           Awk_CLI.Programs.Resolve (Parsed.Options, Read_Test_File'Access);
+      begin
+         Assert (Source.Ok, "edge source resolves");
+         Assert
+           (U.To_String (Source.Source.Text) =
+            "BEGIN { print ""n"" }" & LF & "BEGIN { print ""tail"" }",
+            "empty files do not add text and newline files do not get an extra separator");
+         Assert (Source.Source.Segments.Length = 3, "empty segment is retained");
+         Assert (Source.Source.Segments.Element (1).Start_Line = 1, "empty segment start");
+         Assert (Source.Source.Segments.Element (1).End_Line = 0, "empty segment end");
+         Assert (Source.Source.Segments.Element (2).Start_Line = 1, "newline segment start");
+         Assert (Source.Source.Segments.Element (2).End_Line = 1, "newline segment end");
+         Assert (Source.Source.Segments.Element (3).Start_Line = 2, "tail segment start");
+      end;
+
+      Direct_Args.Append (U.Null_Unbounded_String);
+      declare
+         Parsed : constant Opt.Parse_Result := Opt.Parse (Direct_Args);
+         Source : constant Awk_CLI.Programs.Resolve_Result :=
+           Awk_CLI.Programs.Resolve (Parsed.Options, Read_Test_File'Access);
+      begin
+         Assert (Source.Ok, "empty direct program is valid source");
+         Assert (U.To_String (Source.Source.Text) = "", "empty direct source preserved");
+         Assert (Source.Source.Segments.Length = 1, "empty direct segment tracked");
+         Assert (Source.Source.Segments.Element (1).End_Line = 0, "empty direct has no source lines");
+      end;
+   end Test_Program_Source_Edges;
 
    procedure Test_Operands (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -966,6 +1014,7 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Option_Matrix'Access, "option matrix");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
       Registration.Register_Routine (T, Test_Program_Files'Access, "program sources");
+      Registration.Register_Routine (T, Test_Program_Source_Edges'Access, "program source edges");
       Registration.Register_Routine (T, Test_Operands'Access, "operand classifier");
       Registration.Register_Routine (T, Test_Execution'Access, "awklib execution adapter");
       Registration.Register_Routine (T, Test_Context_Direct_Run'Access, "context direct run");
