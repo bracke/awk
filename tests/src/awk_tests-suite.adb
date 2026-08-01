@@ -435,6 +435,24 @@ package body Awk_Tests.Suite is
               "redirection diagnostic is rendered");
    end Test_Context_Redirection_Failure;
 
+   procedure Test_Context_Redirection_Open_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" > ""out.txt"" }");
+      Awk_CLI.Add_File
+        (Context, "out.txt", "", Readable => True, Writable => True, Openable => False);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "redirection open failure is host I/O");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open output file"),
+              "redirection open diagnostic is rendered");
+      Assert
+        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.output_file.open_failed",
+         "structured diagnostic identifies output open failure");
+   end Test_Context_Redirection_Open_Failure;
+
    procedure Test_Context_Stderr_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -970,6 +988,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Context_Program_File_Failure'Access, "context program file failure");
       Registration.Register_Routine (T, Test_Context_Input_File_Failure'Access, "context input file failure");
       Registration.Register_Routine (T, Test_Context_Redirection_Failure'Access, "context redirection failure");
+      Registration.Register_Routine
+        (T, Test_Context_Redirection_Open_Failure'Access,
+         "context redirection open failure");
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
       Registration.Register_Routine (T, Test_Context_Environment'Access, "context environment");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");

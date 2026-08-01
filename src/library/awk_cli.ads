@@ -17,7 +17,8 @@ package Awk_CLI is
       Path    : String;
       Content : String;
       Readable : Boolean := True;
-      Writable : Boolean := True);
+      Writable : Boolean := True;
+      Openable : Boolean := True);
    procedure Add_Environment
      (Context : in out Invocation_Context;
       Name    : String;
@@ -46,6 +47,7 @@ private
       Content  : U.Unbounded_String;
       Readable : Boolean := True;
       Writable : Boolean := True;
+      Openable : Boolean := True;
    end record;
 
    type Env_Item is record

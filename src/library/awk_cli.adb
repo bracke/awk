@@ -71,14 +71,16 @@ package body Awk_CLI is
       Path    : String;
       Content : String;
       Readable : Boolean := True;
-      Writable : Boolean := True) is
+      Writable : Boolean := True;
+      Openable : Boolean := True) is
    begin
       Context.Files.Append
         (Virtual_File'
            (Path     => U.To_Unbounded_String (Path),
             Content  => U.To_Unbounded_String (Content),
             Readable => Readable,
-            Writable => Writable));
+            Writable => Writable,
+            Openable => Openable));
    end Add_File;
 
    procedure Add_Environment
@@ -152,7 +154,7 @@ package body Awk_CLI is
       begin
          for File of Context.Files loop
             if U.To_String (File.Path) = Path then
-               if File.Readable then
+               if File.Openable and then File.Readable then
                   Content := File.Content;
                   return True;
                else
@@ -170,13 +172,20 @@ package body Awk_CLI is
          return False;
       end Read_Context_File;
 
-      function Write_Context_File (Path : String; Content : String; Append : Boolean) return Boolean is
+      function Write_Context_File
+        (Path : String;
+         Content : String;
+         Append : Boolean) return Awk_CLI.Redirections.Write_Status
+      is
       begin
          if not Context.Files.Is_Empty then
             for Position in Context.Files.First_Index .. Context.Files.Last_Index loop
                if U.To_String (Context.Files.Element (Position).Path) = Path then
+                  if not Context.Files.Element (Position).Openable then
+                     return Awk_CLI.Redirections.Open_Failed;
+                  end if;
                   if not Context.Files.Element (Position).Writable then
-                     return False;
+                     return Awk_CLI.Redirections.Write_Failed;
                   end if;
                   if Append then
                      Context.Files.Replace_Element
@@ -186,7 +195,8 @@ package body Awk_CLI is
                            Content  => Context.Files.Element (Position).Content
                              & U.To_Unbounded_String (Content),
                            Readable => Context.Files.Element (Position).Readable,
-                           Writable => Context.Files.Element (Position).Writable));
+                           Writable => Context.Files.Element (Position).Writable,
+                           Openable => Context.Files.Element (Position).Openable));
                   else
                      Context.Files.Replace_Element
                        (Position,
@@ -194,7 +204,8 @@ package body Awk_CLI is
                           (Path     => Context.Files.Element (Position).Path,
                            Content  => U.To_Unbounded_String (Content),
                            Readable => Context.Files.Element (Position).Readable,
-                           Writable => Context.Files.Element (Position).Writable));
+                           Writable => Context.Files.Element (Position).Writable,
+                           Openable => Context.Files.Element (Position).Openable));
                   end if;
                   Context.Writes.Append
                     (Write_Operation'
@@ -202,9 +213,13 @@ package body Awk_CLI is
                         Content => U.To_Unbounded_String (Content),
                         Append => Append));
                   if Context.Use_Process then
-                     return Awk_CLI.Platform.Write_File (Path, Content, Append);
+                     if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+                        return Awk_CLI.Redirections.Write_Success;
+                     else
+                        return Awk_CLI.Redirections.Write_Failed;
+                     end if;
                   end if;
-                  return True;
+                  return Awk_CLI.Redirections.Write_Success;
                end if;
             end loop;
          end if;
@@ -214,16 +229,21 @@ package body Awk_CLI is
               (Path     => U.To_Unbounded_String (Path),
                Content  => U.To_Unbounded_String (Content),
                Readable => True,
-               Writable => True));
+               Writable => True,
+               Openable => True));
          Context.Writes.Append
            (Write_Operation'
               (Path => U.To_Unbounded_String (Path),
                Content => U.To_Unbounded_String (Content),
                Append => Append));
          if Context.Use_Process then
-            return Awk_CLI.Platform.Write_File (Path, Content, Append);
+            if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+               return Awk_CLI.Redirections.Write_Success;
+            else
+               return Awk_CLI.Redirections.Write_Failed;
+            end if;
          end if;
-         return True;
+         return Awk_CLI.Redirections.Write_Success;
       end Write_Context_File;
 
       function Write_Context_Stdout (Content : String) return Boolean is
