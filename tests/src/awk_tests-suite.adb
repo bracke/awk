@@ -291,6 +291,25 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Standard_Error (Context)'Length > 0, "diagnostic is captured");
    end Test_Context_Diagnostics;
 
+   procedure Test_Context_Diagnostic_Sanitizing (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+      Escape  : constant String := [1 => Character'Val (27)];
+   begin
+      Awk_CLI.Add_Argument
+        (Context, "--bad" & LF & "awk: error: forged" & Escape & "[2J");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 2, "hostile option remains a usage error");
+      Assert (not Contains (Awk_CLI.Standard_Error (Context), LF & "awk: error: forged"),
+              "embedded newline cannot forge a diagnostic line");
+      Assert (not Contains (Awk_CLI.Standard_Error (Context), Escape),
+              "escape character is not emitted in diagnostics");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "\nawk: error: forged\e[2J"),
+              "unsafe characters are rendered visibly");
+   end Test_Context_Diagnostic_Sanitizing;
+
    procedure Test_Context_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -736,6 +755,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Context_Direct_Run'Access, "context direct run");
       Registration.Register_Routine (T, Test_Context_File_Run'Access, "context file run");
       Registration.Register_Routine (T, Test_Context_Diagnostics'Access, "context diagnostics");
+      Registration.Register_Routine
+        (T, Test_Context_Diagnostic_Sanitizing'Access,
+         "context diagnostic sanitizing");
       Registration.Register_Routine (T, Test_Context_Redirection'Access, "context redirection");
       Registration.Register_Routine
         (T, Test_Context_Append_Redirection_Limitation'Access,
