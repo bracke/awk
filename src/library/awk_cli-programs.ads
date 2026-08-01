@@ -2,6 +2,7 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Options;
+with Awk_CLI.Platform;
 
 package Awk_CLI.Programs is
    package U renames Ada.Strings.Unbounded;
@@ -33,6 +34,6 @@ package Awk_CLI.Programs is
    function Resolve
      (Options   : Awk_CLI.Options.Parsed_Options;
       Read_File : not null access function
-        (Path : String; Content : out U.Unbounded_String) return Boolean)
+        (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Resolve_Result;
 end Awk_CLI.Programs;

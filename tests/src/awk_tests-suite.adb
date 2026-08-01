@@ -19,6 +19,7 @@ with Awk_CLI.Localization;
 with Awk_CLI.Operands;
 with Awk_CLI.Options;
 with Awk_CLI.Output;
+with Awk_CLI.Platform;
 with Awk_CLI.Programs;
 with Project_Tools.Processes;
 
@@ -46,29 +47,35 @@ package body Awk_Tests.Suite is
       return AUnit.Format ("awk cli");
    end Name;
 
-   function Read_Test_File (Path : String; Content : out U.Unbounded_String) return Boolean is
+   function Read_Test_File
+     (Path : String;
+      Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
+   is
    begin
       if Path = "a.awk" then
          Content := U.To_Unbounded_String ("BEGIN { print ""a"" }");
-         return True;
+         return Awk_CLI.Platform.Read_Success;
       elsif Path = "b.awk" then
          Content := U.To_Unbounded_String ("BEGIN { print ""b"" }");
-         return True;
+         return Awk_CLI.Platform.Read_Success;
       elsif Path = "empty.awk" then
          Content := U.Null_Unbounded_String;
-         return True;
+         return Awk_CLI.Platform.Read_Success;
       elsif Path = "newline.awk" then
          Content := U.To_Unbounded_String ("BEGIN { print ""n"" }" & LF);
-         return True;
+         return Awk_CLI.Platform.Read_Success;
       elsif Path = "tail.awk" then
          Content := U.To_Unbounded_String ("BEGIN { print ""tail"" }");
-         return True;
+         return Awk_CLI.Platform.Read_Success;
       elsif Path = "input" then
          Content := U.To_Unbounded_String ("x y" & LF);
-         return True;
+         return Awk_CLI.Platform.Read_Success;
+      elsif Path = "read-fails.awk" then
+         Content := U.Null_Unbounded_String;
+         return Awk_CLI.Platform.Read_Failed;
       else
          Content := U.Null_Unbounded_String;
-         return False;
+         return Awk_CLI.Platform.Open_Failed;
       end if;
    end Read_Test_File;
 
@@ -274,6 +281,7 @@ package body Awk_Tests.Suite is
       pragma Unreferenced (T);
       File_Args : Opt.String_Vectors.Vector;
       Direct_Args : Opt.String_Vectors.Vector;
+      Failed_Args : Opt.String_Vectors.Vector;
    begin
       File_Args.Append (U.To_Unbounded_String ("-fempty.awk"));
       File_Args.Append (U.To_Unbounded_String ("-fnewline.awk"));
@@ -306,6 +314,18 @@ package body Awk_Tests.Suite is
          Assert (U.To_String (Source.Source.Text) = "", "empty direct source preserved");
          Assert (Source.Source.Segments.Length = 1, "empty direct segment tracked");
          Assert (Source.Source.Segments.Element (1).End_Line = 0, "empty direct has no source lines");
+      end;
+
+      Failed_Args.Append (U.To_Unbounded_String ("-fread-fails.awk"));
+      declare
+         Parsed : constant Opt.Parse_Result := Opt.Parse (Failed_Args);
+         Source : constant Awk_CLI.Programs.Resolve_Result :=
+           Awk_CLI.Programs.Resolve (Parsed.Options, Read_Test_File'Access);
+      begin
+         Assert (not Source.Ok, "program file read failure is reported");
+         Assert
+           (U.To_String (Source.Diagnostic.Message_Id) = "awk.program_file.read_failed",
+            "program source distinguishes read failure from open failure");
       end;
    end Test_Program_Source_Edges;
 
@@ -557,8 +577,18 @@ package body Awk_Tests.Suite is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "missing program file is host I/O");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open program file"),
+              "program file open diagnostic is rendered");
+
+      Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument (Context, "-f");
+      Awk_CLI.Add_Argument (Context, "unreadable.awk");
+      Awk_CLI.Add_File (Context, "unreadable.awk", "", Readable => False);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "unreadable program file is host I/O");
       Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read program file"),
-              "program file diagnostic is rendered");
+              "program file read diagnostic is rendered");
    end Test_Context_Program_File_Failure;
 
    procedure Test_Context_Input_File_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -571,8 +601,18 @@ package body Awk_Tests.Suite is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "missing input file is host I/O");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
+              "input file open diagnostic is rendered");
+
+      Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument (Context, "{ print }");
+      Awk_CLI.Add_Argument (Context, "unreadable.txt");
+      Awk_CLI.Add_File (Context, "unreadable.txt", "", Readable => False);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "unreadable input file is host I/O");
       Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read input file"),
-              "input file diagnostic is rendered");
+              "input file read diagnostic is rendered");
    end Test_Context_Input_File_Failure;
 
    procedure Test_Context_Redirection_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is

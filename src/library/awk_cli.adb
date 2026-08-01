@@ -150,16 +150,22 @@ package body Awk_CLI is
          return Result;
       end Parsed_Arguments;
 
-      function Read_Context_File (Path : String; Content : out U.Unbounded_String) return Boolean is
+      function Read_Context_File
+        (Path : String;
+         Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
+      is
       begin
          for File of Context.Files loop
             if U.To_String (File.Path) = Path then
-               if File.Openable and then File.Readable then
-                  Content := File.Content;
-                  return True;
-               else
+               if not File.Openable then
                   Content := U.Null_Unbounded_String;
-                  return False;
+                  return Awk_CLI.Platform.Open_Failed;
+               elsif not File.Readable then
+                  Content := U.Null_Unbounded_String;
+                  return Awk_CLI.Platform.Read_Failed;
+               else
+                  Content := File.Content;
+                  return Awk_CLI.Platform.Read_Success;
                end if;
             end if;
          end loop;
@@ -169,7 +175,7 @@ package body Awk_CLI is
          end if;
 
          Content := U.Null_Unbounded_String;
-         return False;
+         return Awk_CLI.Platform.Open_Failed;
       end Read_Context_File;
 
       function Write_Context_File

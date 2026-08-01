@@ -25,7 +25,7 @@ package body Awk_CLI.Programs is
    function Resolve
      (Options   : Awk_CLI.Options.Parsed_Options;
       Read_File : not null access function
-        (Path : String; Content : out U.Unbounded_String) return Boolean)
+        (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Resolve_Result
    is
       Source       : Program_Source;
@@ -37,14 +37,25 @@ package body Awk_CLI.Programs is
                Path    : constant String := U.To_String (File.Name);
                Content : U.Unbounded_String;
                Lines   : Natural;
+               Status  : constant Awk_CLI.Platform.Read_Status :=
+                 Read_File (Path, Content);
             begin
-               if not Read_File (Path, Content) then
-                  return
-                    (Ok => False,
-                     Diagnostic =>
-                       D.Make ("awk.program_file.read_failed", D.Error, D.Program_Source,
-                               Name => "path", Value => Path));
-               end if;
+               case Status is
+                  when Awk_CLI.Platform.Read_Success =>
+                     null;
+                  when Awk_CLI.Platform.Open_Failed =>
+                     return
+                       (Ok => False,
+                        Diagnostic =>
+                          D.Make ("awk.program_file.open_failed", D.Error, D.Program_Source,
+                                  Name => "path", Value => Path));
+                  when Awk_CLI.Platform.Read_Failed =>
+                     return
+                       (Ok => False,
+                        Diagnostic =>
+                          D.Make ("awk.program_file.read_failed", D.Error, D.Program_Source,
+                                  Name => "path", Value => Path));
+               end case;
 
                if U.Length (Source.Text) > 0
                  and then not Ends_With_LF (U.To_String (Source.Text))

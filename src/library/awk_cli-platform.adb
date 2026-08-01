@@ -32,15 +32,17 @@ package body Awk_CLI.Platform is
          return U.Null_Unbounded_String;
    end Read_Standard_Input;
 
-   function Read_File (Path : String; Content : out U.Unbounded_String) return Boolean is
-      File : SIO.File_Type;
-      Size : Ada.Streams.Stream_IO.Count;
+   function Read_File (Path : String; Content : out U.Unbounded_String) return Read_Status is
+      File   : SIO.File_Type;
+      Size   : Ada.Streams.Stream_IO.Count;
+      Opened : Boolean := False;
    begin
       Content := U.Null_Unbounded_String;
       if not Ada.Directories.Exists (Path) then
-         return False;
+         return Open_Failed;
       end if;
       SIO.Open (File, SIO.In_File, Path);
+      Opened := True;
       Size := SIO.Size (File);
       if Size > 0 then
          declare
@@ -56,14 +58,14 @@ package body Awk_CLI.Platform is
          end;
       end if;
       SIO.Close (File);
-      return True;
+      return Read_Success;
    exception
       when others =>
          if SIO.Is_Open (File) then
             SIO.Close (File);
          end if;
          Content := U.Null_Unbounded_String;
-         return False;
+         return (if Opened then Read_Failed else Open_Failed);
    end Read_File;
 
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is

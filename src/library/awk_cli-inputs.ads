@@ -2,6 +2,7 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Operands;
+with Awk_CLI.Platform;
 
 package Awk_CLI.Inputs is
    package U renames Ada.Strings.Unbounded;
@@ -27,6 +28,6 @@ package Awk_CLI.Inputs is
      (Operands  : Awk_CLI.Operands.Operand_Vectors.Vector;
       Stdin     : String;
       Read_File : not null access function
-        (Path : String; Content : out U.Unbounded_String) return Boolean)
+        (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Load_Result;
 end Awk_CLI.Inputs;

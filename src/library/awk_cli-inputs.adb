@@ -5,7 +5,7 @@ package body Awk_CLI.Inputs is
      (Operands  : Awk_CLI.Operands.Operand_Vectors.Vector;
       Stdin     : String;
       Read_File : not null access function
-        (Path : String; Content : out U.Unbounded_String) return Boolean)
+        (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Load_Result
    is
       Result       : Input_File_Vectors.Vector;
@@ -19,14 +19,25 @@ package body Awk_CLI.Inputs is
                declare
                   Path    : constant String := U.To_String (Item.Text);
                   Content : U.Unbounded_String;
+                  Status  : constant Awk_CLI.Platform.Read_Status :=
+                    Read_File (Path, Content);
                begin
-                  if not Read_File (Path, Content) then
-                     return
-                       (Ok => False,
-                        Diagnostic =>
-                          D.Make ("awk.input_file.read_failed", D.Error, D.Input,
-                                  Name => "path", Value => Path));
-                  end if;
+                  case Status is
+                     when Awk_CLI.Platform.Read_Success =>
+                        null;
+                     when Awk_CLI.Platform.Open_Failed =>
+                        return
+                          (Ok => False,
+                           Diagnostic =>
+                             D.Make ("awk.input_file.open_failed", D.Error, D.Input,
+                                     Name => "path", Value => Path));
+                     when Awk_CLI.Platform.Read_Failed =>
+                        return
+                          (Ok => False,
+                           Diagnostic =>
+                             D.Make ("awk.input_file.read_failed", D.Error, D.Input,
+                                     Name => "path", Value => Path));
+                  end case;
                   Result.Append (Input_File'(Name => Item.Text, Content => Content));
                end;
             when Awk_CLI.Operands.Standard_Input =>
