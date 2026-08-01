@@ -317,10 +317,42 @@ procedure Awk_Workflows is
    end Catalogs;
 
    procedure Source_Policy is
+      function Is_Generated_Or_Dependency_Path (Path : String) return Boolean is
+      begin
+         return Contains (Path, "/alire/")
+           or else Contains (Path, "/obj/")
+           or else Contains (Path, "/bin/")
+           or else Contains (Path, "/dist/")
+           or else Contains (Path, "/config/");
+      end Is_Generated_Or_Dependency_Path;
+
       function Allowed_Path (Path, Allowed : String) return Boolean is
       begin
          return Path = Allowed;
       end Allowed_Path;
+
+      function First_Workflow_Script return String is
+         All_Files : constant Files.Path_List := Files.List_Tree ("..", "*");
+      begin
+         for Path of All_Files loop
+            declare
+               Name : constant String := U.To_String (Path);
+           begin
+               if not Is_Generated_Or_Dependency_Path (Name)
+                 and then not Contains (Name, "/.git/")
+                 and then
+                   (Contains (Name, ".sh")
+                    or else Contains (Name, ".py")
+                    or else Contains (Name, ".ps1")
+                    or else Contains (Name, "Makefile")
+                    or else Contains (Name, ".js"))
+               then
+                  return Name;
+               end if;
+            end;
+         end loop;
+         return "";
+      end First_Workflow_Script;
 
       function First_Unexpected_Dependency
         (Pattern      : String;
@@ -406,6 +438,9 @@ procedure Awk_Workflows is
         (not Contains (File_Text ("src/awk_workflows.adb"), "release"") then" & ASCII.LF &
                                                      "      Verify;"),
          "release workflow must not reuse development verify gate");
+      Require
+        (First_Workflow_Script = "",
+         "workflow logic must not use shell or scripting files: " & First_Workflow_Script);
       Put_Info ("source policy checks passed");
    end Source_Policy;
 
@@ -507,6 +542,17 @@ procedure Awk_Workflows is
          Require (Length_Of (Dist & "/" & Path) > 0, "empty package file: " & Path);
       end Require_Package_File;
 
+      procedure Require_Manifest_Entry (Path : String) is
+         Manifest_Text : constant String := File_Text (Dist & "/MANIFEST.txt");
+         Expected_Line : constant String :=
+           Path & " bytes=" & Natural'Image (Length_Of (Dist & "/" & Path))
+           & " fnv1a64=" & Checksum (Dist & "/" & Path);
+      begin
+         Require
+           (Contains (Manifest_Text, Expected_Line),
+            "package manifest missing entry: " & Path);
+      end Require_Manifest_Entry;
+
       Manifest : U.Unbounded_String;
    begin
       if Release_Mode then
@@ -550,6 +596,13 @@ procedure Awk_Workflows is
       Require
         (not Contains (File_Text (Dist & "/MANIFEST.txt"), " checksum="),
          "package manifest must not use legacy checksum field");
+      Require_Manifest_Entry ("bin/awk");
+      Require_Manifest_Entry ("LICENSE");
+      Require_Manifest_Entry ("README.md");
+      Require_Manifest_Entry ("docs/compatibility.md");
+      Require_Manifest_Entry ("resources/messages/catalog.txt");
+      Require_Manifest_Entry ("resources/messages/en/catalog.txt");
+      Require_Manifest_Entry ("resources/messages/da/catalog.txt");
       Put_Info ("packaged " & Dist);
    end Package_Artifact;
 
