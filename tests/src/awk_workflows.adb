@@ -221,6 +221,49 @@ procedure Awk_Workflows is
       Catalog    : constant String := File_Text ("../resources/messages/catalog.txt");
       English    : constant String := File_Text ("../resources/messages/en/catalog.txt");
       Danish     : constant String := File_Text ("../resources/messages/da/catalog.txt");
+      Required   : constant array (Positive range <>) of U.Unbounded_String :=
+        [U.To_Unbounded_String ("awk.help.title"),
+         U.To_Unbounded_String ("awk.help.summary"),
+         U.To_Unbounded_String ("awk.help.usage.direct_program"),
+         U.To_Unbounded_String ("awk.help.usage.program_files"),
+         U.To_Unbounded_String ("awk.help.options.field_separator"),
+         U.To_Unbounded_String ("awk.help.options.variable"),
+         U.To_Unbounded_String ("awk.help.options.program_file"),
+         U.To_Unbounded_String ("awk.help.options.color"),
+         U.To_Unbounded_String ("awk.help.options.help"),
+         U.To_Unbounded_String ("awk.help.options.version"),
+         U.To_Unbounded_String ("awk.help.options.terminator"),
+         U.To_Unbounded_String ("awk.help.operands"),
+         U.To_Unbounded_String ("awk.help.stdin"),
+         U.To_Unbounded_String ("awk.help.exit_statuses"),
+         U.To_Unbounded_String ("awk.help.compatibility.heading"),
+         U.To_Unbounded_String ("awk.help.compatibility.awklib_limitations"),
+         U.To_Unbounded_String ("awk.version.license"),
+         U.To_Unbounded_String ("awk.diagnostic.label.info"),
+         U.To_Unbounded_String ("awk.diagnostic.label.error"),
+         U.To_Unbounded_String ("awk.diagnostic.label.warning"),
+         U.To_Unbounded_String ("awk.diagnostic.label.internal_error"),
+         U.To_Unbounded_String ("awk.diagnostic.hint"),
+         U.To_Unbounded_String ("awk.usage.missing_program"),
+         U.To_Unbounded_String ("awk.usage.unknown_option"),
+         U.To_Unbounded_String ("awk.usage.missing_option_argument"),
+         U.To_Unbounded_String ("awk.usage.invalid_assignment"),
+         U.To_Unbounded_String ("awk.usage.invalid_color_mode"),
+         U.To_Unbounded_String ("awk.usage.program_file_stdin_unsupported"),
+         U.To_Unbounded_String ("awk.program_file.open_failed"),
+         U.To_Unbounded_String ("awk.program_file.read_failed"),
+         U.To_Unbounded_String ("awk.input_file.open_failed"),
+         U.To_Unbounded_String ("awk.input_file.read_failed"),
+         U.To_Unbounded_String ("awk.output_file.open_failed"),
+         U.To_Unbounded_String ("awk.output_file.write_failed"),
+         U.To_Unbounded_String ("awk.standard_input.read_failed"),
+         U.To_Unbounded_String ("awk.standard_output.write_failed"),
+         U.To_Unbounded_String ("awk.interpreter.parse_failed"),
+         U.To_Unbounded_String ("awk.interpreter.runtime_failed"),
+         U.To_Unbounded_String ("awk.interpreter.unsupported_operation"),
+         U.To_Unbounded_String ("awk.internal.unexpected_exception"),
+         U.To_Unbounded_String ("awk.hint.use_help"),
+         U.To_Unbounded_String ("awk.hint.option_terminator")];
 
       procedure Require_Key (Key : String) is
       begin
@@ -236,22 +279,16 @@ procedure Awk_Workflows is
       Require (Catalog /= "", "message catalog is missing or empty");
       Require (English /= "", "English catalog shard is missing or empty");
       Require (Danish /= "", "Danish catalog shard is missing or empty");
-      Require_Key ("en.awk.help.title");
-      Require_Key ("en.awk.usage.missing_program");
-      Require_Key ("en.awk.interpreter.runtime_failed");
-      Require_Key ("en.awk.standard_output.write_failed");
-      Require_Key ("da.awk.help.title");
-      Require_Key ("da.awk.usage.missing_program");
-      Require_Key ("da.awk.interpreter.runtime_failed");
-      Require_Key ("da.awk.standard_output.write_failed");
-      Require_Shard_Key (English, "en.awk.help.title", "English");
-      Require_Shard_Key (English, "en.awk.usage.missing_program", "English");
-      Require_Shard_Key (English, "en.awk.interpreter.runtime_failed", "English");
-      Require_Shard_Key (English, "en.awk.standard_output.write_failed", "English");
-      Require_Shard_Key (Danish, "da.awk.help.title", "Danish");
-      Require_Shard_Key (Danish, "da.awk.usage.missing_program", "Danish");
-      Require_Shard_Key (Danish, "da.awk.interpreter.runtime_failed", "Danish");
-      Require_Shard_Key (Danish, "da.awk.standard_output.write_failed", "Danish");
+      for Key of Required loop
+         declare
+            Suffix : constant String := U.To_String (Key);
+         begin
+            Require_Key ("en." & Suffix);
+            Require_Key ("da." & Suffix);
+            Require_Shard_Key (English, "en." & Suffix, "English");
+            Require_Shard_Key (Danish, "da." & Suffix, "Danish");
+         end;
+      end loop;
       Put_Info ("catalog checks passed");
    end Catalogs;
 
