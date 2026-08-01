@@ -929,7 +929,13 @@ package body Awk_Tests.Suite is
 
    procedure Test_Compatibility_Registry (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Docs : constant String := File_Text ("../docs/compatibility.md");
+      Docs        : constant String := File_Text ("../docs/compatibility.md");
+      Conformance : constant String := File_Text ("conformance/manifest/cases.txt");
+      Has_Difference : Boolean := False;
+      Has_Unsupported : Boolean := False;
+      Has_Command_Line : Boolean := False;
+      Has_Getline : Boolean := False;
+      Has_Redirection : Boolean := False;
    begin
       Assert (Awk_CLI.Compatibility.Count >= 7, "registry has accepted limitation entries");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REGEX-001"), "regex ID present");
@@ -941,17 +947,60 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REDIRECTION-001"), "redirection ID present");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
+         declare
+            Id : constant String := Awk_CLI.Compatibility.Id (Index);
+         begin
+            Assert (Id'Length > 11 and then Id (Id'First .. Id'First + 10) = "AWK-COMPAT-",
+                    "registry ID uses stable namespace: " & Id);
+            for Other in Index + 1 .. Awk_CLI.Compatibility.Count loop
+               Assert (Id /= Awk_CLI.Compatibility.Id (Other),
+                       "registry ID is unique: " & Id);
+            end loop;
+         end;
          Assert (Contains (Docs, Awk_CLI.Compatibility.Id (Index)),
                  "documented registry ID: " & Awk_CLI.Compatibility.Id (Index));
+         Assert (Awk_CLI.Compatibility.Description (Index) /= "",
+                 "registry description is populated");
          Assert (Awk_CLI.Compatibility.Source (Index) /= "",
                  "registry source is populated");
+         Assert (Contains (Awk_CLI.Compatibility.Source (Index), "awklib"),
+                 "registry source identifies awklib capability/version");
          Assert (Awk_CLI.Compatibility.Test_Reference (Index) /= "",
                  "registry test reference is populated");
          Assert (Contains (Docs, Awk_CLI.Compatibility.Test_Reference (Index)),
                  "documented test reference: " & Awk_CLI.Compatibility.Id (Index));
          Assert (Awk_CLI.Compatibility.Documentation (Index) = "docs/compatibility.md",
                  "registry documentation path is stable");
+         case Awk_CLI.Compatibility.Status (Index) is
+            when Awk_CLI.Compatibility.Supported_With_Documented_Difference =>
+               Has_Difference := True;
+            when Awk_CLI.Compatibility.Unsupported_By_Awklib =>
+               Has_Unsupported := True;
+            when others =>
+               null;
+         end case;
+         case Awk_CLI.Compatibility.Area (Index) is
+            when Awk_CLI.Compatibility.Command_Line =>
+               Has_Command_Line := True;
+            when Awk_CLI.Compatibility.Getline =>
+               Has_Getline := True;
+            when Awk_CLI.Compatibility.Redirection =>
+               Has_Redirection := True;
+            when others =>
+               null;
+         end case;
       end loop;
+      Assert (Has_Difference, "registry includes documented differences");
+      Assert (Has_Unsupported, "registry includes unsupported awklib cases");
+      Assert (Has_Command_Line, "registry includes command-line area");
+      Assert (Has_Getline, "registry includes getline area");
+      Assert (Has_Redirection, "registry includes redirection area");
+      Assert (Contains (Conformance, "AWK-COMPAT-ASSIGNMENT-001"),
+              "conformance manifest references assignment limitation");
+      Assert (Contains (Conformance, "AWK-COMPAT-REDIRECTION-001"),
+              "conformance manifest references redirection limitation");
+      Assert (Contains (Conformance, "AWK-COMPAT-GETLINE-002"),
+              "conformance manifest references getline limitation");
       Assert
         (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Regular_Expressions,
          "regex area is explicit");
