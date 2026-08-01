@@ -960,6 +960,55 @@ package body Awk_Tests.Suite is
          "getline status is explicit");
    end Test_Compatibility_Registry;
 
+   procedure Test_Conformance_Manifest (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Manifest : constant String := File_Text ("conformance/manifest/cases.txt");
+
+      procedure Require_Case
+        (Id       : String;
+         Status   : String;
+         Case_File : String;
+         Expected : String;
+         Reference : String)
+      is
+         Line : constant String :=
+           Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
+      begin
+         Assert (Contains (Manifest, Line), "manifest contains " & Id);
+         Assert (Ada.Directories.Exists ("conformance/" & Case_File),
+                 "case file exists for " & Id);
+         Assert (Ada.Directories.Exists ("conformance/" & Expected),
+                 "expected file exists for " & Id);
+         Assert (File_Text ("conformance/" & Case_File) /= "",
+                 "case file is non-empty for " & Id);
+         Assert (File_Text ("conformance/" & Expected) /= "",
+                 "expected file is non-empty for " & Id);
+      end Require_Case;
+   begin
+      Require_Case
+        ("AWK-CONF-PRINT-001", "Supported", "cases/print_record.awk",
+         "expected/print_record.txt", "basic print through awklib");
+      Require_Case
+        ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
+         "expected/print_first_field.txt", "field processing through awklib");
+      Require_Case
+        ("AWK-CONF-ASSIGNMENT-001", "Supported_With_Documented_Difference",
+         "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
+         "AWK-COMPAT-ASSIGNMENT-001");
+      Require_Case
+        ("AWK-CONF-REDIRECTION-001", "Supported_With_Documented_Difference",
+         "cases/append_redirection.awk", "expected/append_redirection.txt",
+         "AWK-COMPAT-REDIRECTION-001");
+      Require_Case
+        ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
+         "cases/command_getline.awk", "expected/command_getline.txt",
+         "AWK-COMPAT-GETLINE-002");
+      Assert (Contains (Manifest, "Supported_With_Documented_Difference"),
+              "manifest includes documented differences");
+      Assert (Contains (Manifest, "Unsupported_By_Awklib"),
+              "manifest includes unsupported awklib cases");
+   end Test_Conformance_Manifest;
+
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
@@ -1658,6 +1707,7 @@ package body Awk_Tests.Suite is
         (T, Test_Context_Mixed_Input_Order_And_Spelling'Access,
          "context mixed input order and spelling");
       Registration.Register_Routine (T, Test_Compatibility_Registry'Access, "compatibility registry");
+      Registration.Register_Routine (T, Test_Conformance_Manifest'Access, "conformance manifest");
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
       Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
       Registration.Register_Routine (T, Test_Localized_Diagnostics'Access, "localized diagnostics");

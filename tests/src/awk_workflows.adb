@@ -349,6 +349,46 @@ procedure Awk_Workflows is
       Put_Info ("catalog checks passed");
    end Catalogs;
 
+   procedure Conformance is
+      Manifest : constant String := File_Text ("conformance/manifest/cases.txt");
+
+      procedure Require_Case (Id, Status, Case_File, Expected, Reference : String) is
+         Line : constant String :=
+           Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
+      begin
+         Require (Contains (Manifest, Line), "conformance manifest missing case: " & Id);
+         Require (Dir.Exists ("conformance/" & Case_File),
+                  "conformance case file missing: " & Case_File);
+         Require (Dir.Exists ("conformance/" & Expected),
+                  "conformance expected file missing: " & Expected);
+         Require (File_Text ("conformance/" & Case_File) /= "",
+                  "conformance case file is empty: " & Case_File);
+         Require (File_Text ("conformance/" & Expected) /= "",
+                  "conformance expected file is empty: " & Expected);
+      end Require_Case;
+   begin
+      Require (Manifest /= "", "conformance manifest is missing or empty");
+      Require_Case
+        ("AWK-CONF-PRINT-001", "Supported", "cases/print_record.awk",
+         "expected/print_record.txt", "basic print through awklib");
+      Require_Case
+        ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
+         "expected/print_first_field.txt", "field processing through awklib");
+      Require_Case
+        ("AWK-CONF-ASSIGNMENT-001", "Supported_With_Documented_Difference",
+         "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
+         "AWK-COMPAT-ASSIGNMENT-001");
+      Require_Case
+        ("AWK-CONF-REDIRECTION-001", "Supported_With_Documented_Difference",
+         "cases/append_redirection.awk", "expected/append_redirection.txt",
+         "AWK-COMPAT-REDIRECTION-001");
+      Require_Case
+        ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
+         "cases/command_getline.awk", "expected/command_getline.txt",
+         "AWK-COMPAT-GETLINE-002");
+      Put_Info ("conformance checks passed");
+   end Conformance;
+
    procedure Source_Policy is
       function Is_Generated_Or_Dependency_Path (Path : String) return Boolean is
       begin
@@ -483,6 +523,7 @@ procedure Awk_Workflows is
       Test;
       Docs;
       Catalogs;
+      Conformance;
       Source_Policy;
    end Verify;
 
