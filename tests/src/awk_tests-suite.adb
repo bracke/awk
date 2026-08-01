@@ -1368,6 +1368,54 @@ package body Awk_Tests.Suite is
       Assert (Contains (U.To_String (Output), "42" & LF), "process -v is visible before BEGIN");
    end Test_Process_V_Assignment;
 
+   procedure Test_Process_Environment_Propagation
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
+        [new String'("AWK_PROCESS_ENV=visible"),
+         new String'("./bin/awk"),
+         new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""] }"),
+         new String'("unused=value")];
+      Status : Integer;
+   begin
+      Assert (Env /= "", "env executable is available for environment-bound process test");
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process environment",
+           Dir     => "..",
+           Program => Env,
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "process environment propagation exits successfully");
+      Assert (Contains (U.To_String (Output), "visible" & LF),
+              "process environment reaches awklib ENVIRON");
+   end Test_Process_Environment_Propagation;
+
+   procedure Test_Process_Explicit_Stdin_Eof
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("{ print }"),
+         new String'("-")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process explicit stdin eof",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "explicit stdin operand accepts EOF");
+      Assert (U.To_String (Output) = "", "EOF stdin produces no records");
+   end Test_Process_Explicit_Stdin_Eof;
+
    procedure Test_Process_Runtime_Assignment_Argv
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1542,6 +1590,12 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Process_Append_Redirection'Access, "process append redirection");
       Registration.Register_Routine (T, Test_Process_Field_Separator'Access, "process -F");
       Registration.Register_Routine (T, Test_Process_V_Assignment'Access, "process -v");
+      Registration.Register_Routine
+        (T, Test_Process_Environment_Propagation'Access,
+         "process environment propagation");
+      Registration.Register_Routine
+        (T, Test_Process_Explicit_Stdin_Eof'Access,
+         "process explicit stdin eof");
       Registration.Register_Routine
         (T, Test_Process_Runtime_Assignment_Argv'Access,
          "process runtime assignment ARGV");
