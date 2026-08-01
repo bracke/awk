@@ -515,6 +515,30 @@ procedure Awk_Workflows is
 
    procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
+      Package_Files : constant array (Positive range <>) of U.Unbounded_String :=
+        [U.To_Unbounded_String ("bin/awk"),
+         U.To_Unbounded_String ("LICENSE"),
+         U.To_Unbounded_String ("README.md"),
+         U.To_Unbounded_String ("CHANGELOG.md"),
+         U.To_Unbounded_String ("CONTRIBUTING.md"),
+         U.To_Unbounded_String ("SECURITY.md"),
+         U.To_Unbounded_String ("docs/quickstart.md"),
+         U.To_Unbounded_String ("docs/command-line-reference.md"),
+         U.To_Unbounded_String ("docs/compatibility.md"),
+         U.To_Unbounded_String ("docs/architecture.md"),
+         U.To_Unbounded_String ("docs/diagnostics.md"),
+         U.To_Unbounded_String ("docs/localization.md"),
+         U.To_Unbounded_String ("docs/testing.md"),
+         U.To_Unbounded_String ("docs/building.md"),
+         U.To_Unbounded_String ("docs/releasing.md"),
+         U.To_Unbounded_String ("docs/ai/project-map.md"),
+         U.To_Unbounded_String ("docs/ai/package-contracts.md"),
+         U.To_Unbounded_String ("docs/ai/invariants.md"),
+         U.To_Unbounded_String ("docs/ai/workflows.md"),
+         U.To_Unbounded_String ("docs/ai/prohibited-designs.md"),
+         U.To_Unbounded_String ("resources/messages/catalog.txt"),
+         U.To_Unbounded_String ("resources/messages/en/catalog.txt"),
+         U.To_Unbounded_String ("resources/messages/da/catalog.txt")];
 
       function Hex_64 (Value : Interfaces.Unsigned_64) return String is
          Hex_Digits : constant String := "0123456789abcdef";
@@ -586,6 +610,29 @@ procedure Awk_Workflows is
             "package manifest missing entry: " & Path);
       end Require_Manifest_Entry;
 
+      function Manifest_Line_Count return Natural is
+         Text   : constant String := File_Text (Dist & "/MANIFEST.txt");
+         Result : Natural := 0;
+      begin
+         if Text'Length = 0 then
+            return 0;
+         end if;
+         Result := 1;
+         for Ch of Text loop
+            if Ch = ASCII.LF then
+               Result := Result + 1;
+            end if;
+         end loop;
+         return Result;
+      end Manifest_Line_Count;
+
+      procedure Copy_Package_File (Path : String) is
+         Source : constant String :=
+           (if Path = "bin/awk" then "../bin/awk" else "../" & Path);
+      begin
+         Copy_File (Source, Dist & "/" & Path);
+      end Copy_Package_File;
+
       Manifest : U.Unbounded_String;
    begin
       if Release_Mode then
@@ -601,72 +648,11 @@ procedure Awk_Workflows is
       Dir.Create_Path (Dist & "/resources/messages/da");
       Dir.Create_Path (Dist & "/docs");
       Dir.Create_Path (Dist & "/docs/ai");
-      Copy_File ("../bin/awk", Dist & "/bin/awk");
-      Copy_File ("../LICENSE", Dist & "/LICENSE");
-      Copy_File ("../README.md", Dist & "/README.md");
-      Copy_File ("../CHANGELOG.md", Dist & "/CHANGELOG.md");
-      Copy_File ("../CONTRIBUTING.md", Dist & "/CONTRIBUTING.md");
-      Copy_File ("../SECURITY.md", Dist & "/SECURITY.md");
-      Copy_File ("../docs/quickstart.md", Dist & "/docs/quickstart.md");
-      Copy_File ("../docs/command-line-reference.md", Dist & "/docs/command-line-reference.md");
-      Copy_File ("../docs/compatibility.md", Dist & "/docs/compatibility.md");
-      Copy_File ("../docs/diagnostics.md", Dist & "/docs/diagnostics.md");
-      Copy_File ("../docs/localization.md", Dist & "/docs/localization.md");
-      Copy_File ("../docs/testing.md", Dist & "/docs/testing.md");
-      Copy_File ("../docs/building.md", Dist & "/docs/building.md");
-      Copy_File ("../docs/releasing.md", Dist & "/docs/releasing.md");
-      Copy_File ("../docs/ai/project-map.md", Dist & "/docs/ai/project-map.md");
-      Copy_File ("../docs/ai/package-contracts.md", Dist & "/docs/ai/package-contracts.md");
-      Copy_File ("../docs/ai/invariants.md", Dist & "/docs/ai/invariants.md");
-      Copy_File ("../docs/ai/workflows.md", Dist & "/docs/ai/workflows.md");
-      Copy_File ("../docs/ai/prohibited-designs.md", Dist & "/docs/ai/prohibited-designs.md");
-      Copy_File ("../resources/messages/catalog.txt", Dist & "/resources/messages/catalog.txt");
-      Copy_File ("../resources/messages/en/catalog.txt", Dist & "/resources/messages/en/catalog.txt");
-      Copy_File ("../resources/messages/da/catalog.txt", Dist & "/resources/messages/da/catalog.txt");
-      Require_Package_File ("bin/awk");
-      Require_Package_File ("LICENSE");
-      Require_Package_File ("README.md");
-      Require_Package_File ("CHANGELOG.md");
-      Require_Package_File ("CONTRIBUTING.md");
-      Require_Package_File ("SECURITY.md");
-      Require_Package_File ("docs/quickstart.md");
-      Require_Package_File ("docs/command-line-reference.md");
-      Require_Package_File ("docs/compatibility.md");
-      Require_Package_File ("docs/diagnostics.md");
-      Require_Package_File ("docs/localization.md");
-      Require_Package_File ("docs/testing.md");
-      Require_Package_File ("docs/building.md");
-      Require_Package_File ("docs/releasing.md");
-      Require_Package_File ("docs/ai/project-map.md");
-      Require_Package_File ("docs/ai/package-contracts.md");
-      Require_Package_File ("docs/ai/invariants.md");
-      Require_Package_File ("docs/ai/workflows.md");
-      Require_Package_File ("docs/ai/prohibited-designs.md");
-      Require_Package_File ("resources/messages/catalog.txt");
-      Require_Package_File ("resources/messages/en/catalog.txt");
-      Require_Package_File ("resources/messages/da/catalog.txt");
-      Add_Manifest_Line (Manifest, "bin/awk");
-      Add_Manifest_Line (Manifest, "LICENSE");
-      Add_Manifest_Line (Manifest, "README.md");
-      Add_Manifest_Line (Manifest, "CHANGELOG.md");
-      Add_Manifest_Line (Manifest, "CONTRIBUTING.md");
-      Add_Manifest_Line (Manifest, "SECURITY.md");
-      Add_Manifest_Line (Manifest, "docs/quickstart.md");
-      Add_Manifest_Line (Manifest, "docs/command-line-reference.md");
-      Add_Manifest_Line (Manifest, "docs/compatibility.md");
-      Add_Manifest_Line (Manifest, "docs/diagnostics.md");
-      Add_Manifest_Line (Manifest, "docs/localization.md");
-      Add_Manifest_Line (Manifest, "docs/testing.md");
-      Add_Manifest_Line (Manifest, "docs/building.md");
-      Add_Manifest_Line (Manifest, "docs/releasing.md");
-      Add_Manifest_Line (Manifest, "docs/ai/project-map.md");
-      Add_Manifest_Line (Manifest, "docs/ai/package-contracts.md");
-      Add_Manifest_Line (Manifest, "docs/ai/invariants.md");
-      Add_Manifest_Line (Manifest, "docs/ai/workflows.md");
-      Add_Manifest_Line (Manifest, "docs/ai/prohibited-designs.md");
-      Add_Manifest_Line (Manifest, "resources/messages/catalog.txt");
-      Add_Manifest_Line (Manifest, "resources/messages/en/catalog.txt");
-      Add_Manifest_Line (Manifest, "resources/messages/da/catalog.txt");
+      for Path of Package_Files loop
+         Copy_Package_File (U.To_String (Path));
+         Require_Package_File (U.To_String (Path));
+         Add_Manifest_Line (Manifest, U.To_String (Path));
+      end loop;
       Files.Write_Text_File (Dist & "/MANIFEST.txt", U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
       Require
@@ -675,28 +661,12 @@ procedure Awk_Workflows is
       Require
         (not Contains (File_Text (Dist & "/MANIFEST.txt"), " checksum="),
          "package manifest must not use legacy checksum field");
-      Require_Manifest_Entry ("bin/awk");
-      Require_Manifest_Entry ("LICENSE");
-      Require_Manifest_Entry ("README.md");
-      Require_Manifest_Entry ("CHANGELOG.md");
-      Require_Manifest_Entry ("CONTRIBUTING.md");
-      Require_Manifest_Entry ("SECURITY.md");
-      Require_Manifest_Entry ("docs/quickstart.md");
-      Require_Manifest_Entry ("docs/command-line-reference.md");
-      Require_Manifest_Entry ("docs/compatibility.md");
-      Require_Manifest_Entry ("docs/diagnostics.md");
-      Require_Manifest_Entry ("docs/localization.md");
-      Require_Manifest_Entry ("docs/testing.md");
-      Require_Manifest_Entry ("docs/building.md");
-      Require_Manifest_Entry ("docs/releasing.md");
-      Require_Manifest_Entry ("docs/ai/project-map.md");
-      Require_Manifest_Entry ("docs/ai/package-contracts.md");
-      Require_Manifest_Entry ("docs/ai/invariants.md");
-      Require_Manifest_Entry ("docs/ai/workflows.md");
-      Require_Manifest_Entry ("docs/ai/prohibited-designs.md");
-      Require_Manifest_Entry ("resources/messages/catalog.txt");
-      Require_Manifest_Entry ("resources/messages/en/catalog.txt");
-      Require_Manifest_Entry ("resources/messages/da/catalog.txt");
+      Require
+        (Manifest_Line_Count = Package_Files'Length,
+         "package manifest must contain one line per packaged file");
+      for Path of Package_Files loop
+         Require_Manifest_Entry (U.To_String (Path));
+      end loop;
       Put_Info ("packaged " & Dist);
    end Package_Artifact;
 
