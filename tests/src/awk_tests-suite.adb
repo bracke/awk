@@ -34,6 +34,8 @@ package body Awk_Tests.Suite is
 
    use type Ada.Containers.Count_Type;
    use type Awk_CLI.Exit_Code;
+   use type Awk_CLI.Compatibility.Compatibility_Area;
+   use type Awk_CLI.Compatibility.Compatibility_Status;
    use type Awk_CLI.Diagnostics.Exit_Code;
    use type Awk_CLI.Operands.Operand_Kind;
    use type Opt.Color_Mode;
@@ -677,9 +679,21 @@ package body Awk_Tests.Suite is
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
          Assert (Contains (Docs, Awk_CLI.Compatibility.Id (Index)),
                  "documented registry ID: " & Awk_CLI.Compatibility.Id (Index));
+         Assert (Awk_CLI.Compatibility.Source (Index) /= "",
+                 "registry source is populated");
+         Assert (Awk_CLI.Compatibility.Test_Reference (Index) /= "",
+                 "registry test reference is populated");
+         Assert (Contains (Docs, Awk_CLI.Compatibility.Test_Reference (Index)),
+                 "documented test reference: " & Awk_CLI.Compatibility.Id (Index));
          Assert (Awk_CLI.Compatibility.Documentation (Index) = "docs/compatibility.md",
                  "registry documentation path is stable");
       end loop;
+      Assert
+        (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Regular_Expressions,
+         "regex area is explicit");
+      Assert
+        (Awk_CLI.Compatibility.Status (2) = Awk_CLI.Compatibility.Unsupported_By_Awklib,
+         "getline status is explicit");
    end Test_Compatibility_Registry;
 
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is

@@ -8,6 +8,7 @@ package body Awk_CLI.Compatibility is
       Description   : Text_Access;
       Source        : Text_Access;
       Documentation : Text_Access;
+      Test_Reference : Text_Access;
    end record;
 
    Entries : constant array (Positive range <>) of Registry_Entry :=
@@ -16,43 +17,50 @@ package body Awk_CLI.Compatibility is
        Status        => Supported_With_Documented_Difference,
        Description   => new String'("regular-expression matching follows awklib and regexp behavior"),
        Source        => new String'("awklib 0.1.0 and regexp"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("context expressions regex builtins")),
       (Id            => new String'("AWK-COMPAT-GETLINE-001"),
        Area          => Getline,
        Status        => Unsupported_By_Awklib,
        Description   => new String'("main-input getline from BEGIN is inherited from awklib"),
        Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("compatibility registry")),
       (Id            => new String'("AWK-COMPAT-GETLINE-002"),
        Area          => Getline,
        Status        => Unsupported_By_Awklib,
        Description   => new String'("command-pipe getline is not implemented by the CLI"),
        Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("compatibility registry")),
       (Id            => new String'("AWK-COMPAT-UTF8-001"),
        Area          => Encoding,
        Status        => Supported_With_Documented_Difference,
        Description   => new String'("malformed UTF-8 handling is inherited from awklib"),
        Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("compatibility registry")),
       (Id            => new String'("AWK-COMPAT-PRINTF-001"),
        Area          => Output_Formatting,
        Status        => Supported_With_Documented_Difference,
        Description   => new String'("printf %c field-width behavior is inherited from awklib"),
        Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("compatibility registry")),
       (Id            => new String'("AWK-COMPAT-ASSIGNMENT-001"),
        Area          => Command_Line,
        Status        => Supported_With_Documented_Difference,
        Description   => new String'("positional runtime assignment execution cannot be represented exactly"),
        Source        => new String'("awklib 0.1.0 Arguments API"),
-       Documentation => new String'("docs/compatibility.md")),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("context runtime assignment limitation")),
       (Id            => new String'("AWK-COMPAT-REDIRECTION-001"),
        Area          => Redirection,
        Status        => Supported_With_Documented_Difference,
        Description   => new String'("redirection output is captured without exposing append intent"),
        Source        => new String'("awklib 0.1.0 Output_Files API"),
-       Documentation => new String'("docs/compatibility.md"))];
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("context append redirection limitation"))];
 
    function Count return Natural is (Entries'Length);
 
@@ -62,6 +70,7 @@ package body Awk_CLI.Compatibility is
    function Description (Index : Positive) return String is (Entries (Index).Description.all);
    function Source (Index : Positive) return String is (Entries (Index).Source.all);
    function Documentation (Index : Positive) return String is (Entries (Index).Documentation.all);
+   function Test_Reference (Index : Positive) return String is (Entries (Index).Test_Reference.all);
 
    function Has_Id (Value : String) return Boolean is
    begin

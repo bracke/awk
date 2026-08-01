@@ -27,5 +27,6 @@ package Awk_CLI.Compatibility is
    function Description (Index : Positive) return String with Pre => Index <= Count;
    function Source (Index : Positive) return String with Pre => Index <= Count;
    function Documentation (Index : Positive) return String with Pre => Index <= Count;
+   function Test_Reference (Index : Positive) return String with Pre => Index <= Count;
    function Has_Id (Value : String) return Boolean;
 end Awk_CLI.Compatibility;

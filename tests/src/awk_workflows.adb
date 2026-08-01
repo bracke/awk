@@ -245,6 +245,15 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
          "compatibility registry is missing command-pipe getline limitation");
       Require
+        (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
+         "compatibility docs must include test references");
+      Require
+        (Contains (File_Text ("../docs/compatibility.md"), "Unsupported by awklib"),
+         "compatibility docs must include status names");
+      Require
+        (Contains (File_Text ("../docs/compatibility.md"), "Source"),
+         "compatibility docs must include limitation source");
+      Require
         (Contains (File_Text ("../docs/diagnostics.md"), "stdout-oriented"),
          "diagnostics docs must document current terminal_styles auto-policy boundary");
       Require
