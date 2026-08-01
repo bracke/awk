@@ -295,6 +295,45 @@ procedure Awk_Workflows is
       Put_Info ("documentation checks passed");
    end Docs;
 
+   procedure Metadata is
+      Root_Alire  : constant String := File_Text ("../alire.toml");
+      Tests_Alire : constant String := File_Text ("alire.toml");
+      Root_Gpr    : constant String := File_Text ("../awk.gpr");
+      Tests_Gpr   : constant String := File_Text ("awk_tests.gpr");
+   begin
+      Require (Contains (Root_Alire, "name = ""awk"""),
+               "root crate name must be awk");
+      Require (Contains (Root_Alire, "executables = [""awk""]"),
+               "root crate must install executable awk");
+      Require (Contains (Root_Alire, "project-files = [""awk.gpr""]"),
+               "root crate must use awk.gpr");
+      Require (Contains (Root_Alire, "awklib = "),
+               "root crate must depend on awklib");
+      Require (Contains (Root_Alire, "terminal_styles = "),
+               "root crate must depend on terminal_styles");
+      Require (Contains (Root_Alire, "messages = "),
+               "root crate must depend on messages");
+      Require (Contains (Tests_Alire, "name = ""awk_tests"""),
+               "tests crate name must be awk_tests");
+      Require (Contains (Tests_Alire, "awk = "),
+               "tests crate must depend on awk");
+      Require (Contains (Tests_Alire, "aunit = "),
+               "tests crate must depend on AUnit");
+      Require (Contains (Tests_Alire, "project_tools = "),
+               "tests crate must depend on project_tools");
+      Require (Contains (Tests_Alire, "awk = { path = "".."" }"),
+               "tests crate must pin awk relatively");
+      Require (Contains (Root_Gpr, "-gnat2022"),
+               "root project must compile with Ada 2022");
+      Require (Contains (Tests_Gpr, "-gnat2022"),
+               "tests project must compile with Ada 2022");
+      Require (Contains (Root_Gpr, "for Main use (""awk.adb"")"),
+               "root project main must be awk.adb");
+      Require (Contains (Tests_Gpr, "awk_workflows.adb"),
+               "tests project must build workflow executable");
+      Put_Info ("metadata checks passed");
+   end Metadata;
+
    procedure Catalogs is
       Catalog    : constant String := File_Text ("../resources/messages/catalog.txt");
       English    : constant String := File_Text ("../resources/messages/en/catalog.txt");
@@ -556,6 +595,7 @@ procedure Awk_Workflows is
    begin
       Build;
       Test;
+      Metadata;
       Docs;
       Catalogs;
       Conformance;
