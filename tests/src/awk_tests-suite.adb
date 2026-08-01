@@ -91,6 +91,20 @@ package body Awk_Tests.Suite is
          return "";
    end File_Text;
 
+   procedure Write_Text_File (Path, Content : String) is
+      File : Ada.Text_IO.File_Type;
+   begin
+      Ada.Text_IO.Create (File, Ada.Text_IO.Out_File, Path);
+      Ada.Text_IO.Put (File, Content);
+      Ada.Text_IO.Close (File);
+   exception
+      when others =>
+         if Ada.Text_IO.Is_Open (File) then
+            Ada.Text_IO.Close (File);
+         end if;
+         raise;
+   end Write_Text_File;
+
    function Contains (Text, Pattern : String) return Boolean is
    begin
       if Pattern'Length = 0 then
@@ -811,6 +825,36 @@ package body Awk_Tests.Suite is
               "process direct file input output");
    end Test_Process_Direct_File_Input;
 
+   procedure Test_Process_Dash_Filename_After_Terminator
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Target : constant String := "tests/fixtures/filesystem/-dash-input.txt";
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("--"),
+         new String'("{ print FILENAME "":"" $1 }"),
+         new String'(Target)];
+      Status : Integer;
+   begin
+      Write_Text_File ("../" & Target, "dash data" & LF);
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process dash filename",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "dash-leading filename exits successfully after --");
+      Assert
+        (Contains (U.To_String (Output), Target & ":dash"),
+         "dash-leading filename is treated as an operand");
+      if Ada.Directories.Exists ("../" & Target) then
+         Ada.Directories.Delete_File ("../" & Target);
+      end if;
+   end Test_Process_Dash_Filename_After_Terminator;
+
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1012,6 +1056,39 @@ package body Awk_Tests.Suite is
       end if;
    end Test_Process_Redirection;
 
+   procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Target : constant String := "tests/fixtures/filesystem/process_append.txt";
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
+      Status : Integer;
+   begin
+      if Ada.Directories.Exists ("../" & Target) then
+         Ada.Directories.Delete_File ("../" & Target);
+      end if;
+      Write_Text_File ("../" & Target, "existing" & LF);
+
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process append redirection",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+
+      Assert (Status = 0, "process append redirection exits successfully");
+      Assert (U.To_String (Output) = "", "process append redirection not on stdout");
+      Assert
+        (Contains (File_Text ("../" & Target), "first" & LF & "second"),
+         "captured redirected content is materialized");
+
+      if Ada.Directories.Exists ("../" & Target) then
+         Ada.Directories.Delete_File ("../" & Target);
+      end if;
+   end Test_Process_Append_Redirection;
+
    procedure Test_Process_Field_Separator (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1052,6 +1129,31 @@ package body Awk_Tests.Suite is
       Assert (Status = 0, "process -v exits successfully");
       Assert (Contains (U.To_String (Output), "42" & LF), "process -v is visible before BEGIN");
    end Test_Process_V_Assignment;
+
+   procedure Test_Process_Runtime_Assignment_Argv
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("BEGIN { print ARGC; print ARGV[1]; print ARGV[2] }"),
+         new String'("name=value"),
+         new String'("tests/fixtures/input/basic.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process runtime assignment argv",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process runtime assignment ARGV exits successfully");
+      Assert (Contains (U.To_String (Output), "3" & LF & "name=value" & LF),
+              "runtime assignment spelling is preserved in ARGV");
+      Assert (Contains (U.To_String (Output), "tests/fixtures/input/basic.txt"),
+              "input filename remains ordered after runtime assignment");
+   end Test_Process_Runtime_Assignment_Argv;
 
    procedure Test_Process_Parse_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1154,6 +1256,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
+      Registration.Register_Routine
+        (T, Test_Process_Dash_Filename_After_Terminator'Access,
+         "process dash filename after terminator");
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
       Registration.Register_Routine (T, Test_Process_Help_Color_Always'Access, "process help color always");
@@ -1171,8 +1276,12 @@ package body Awk_Tests.Suite is
         (T, Test_Process_Missing_Input_File'Access,
          "process missing input file");
       Registration.Register_Routine (T, Test_Process_Redirection'Access, "process redirection");
+      Registration.Register_Routine (T, Test_Process_Append_Redirection'Access, "process append redirection");
       Registration.Register_Routine (T, Test_Process_Field_Separator'Access, "process -F");
       Registration.Register_Routine (T, Test_Process_V_Assignment'Access, "process -v");
+      Registration.Register_Routine
+        (T, Test_Process_Runtime_Assignment_Argv'Access,
+         "process runtime assignment ARGV");
       Registration.Register_Routine (T, Test_Process_Parse_Failure'Access, "process parse failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
    end Register_Tests;
