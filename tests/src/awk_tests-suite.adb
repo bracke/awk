@@ -785,6 +785,45 @@ package body Awk_Tests.Suite is
               "second stdin operand observes end of file");
    end Test_Context_Repeated_Stdin;
 
+   procedure Test_Context_Assignment_Only_Uses_Implicit_Stdin
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "{ print FILENAME ""="" $0 }");
+      Awk_CLI.Add_Argument (Context, "X=not-applied-by-cli");
+      Awk_CLI.Set_Standard_Input (Context, "implicit" & LF);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "assignment-only operands still use implicit stdin");
+      Assert (Awk_CLI.Standard_Output (Context) = "=implicit" & LF,
+              "implicit stdin keeps awklib's empty FILENAME behavior");
+   end Test_Context_Assignment_Only_Uses_Implicit_Stdin;
+
+   procedure Test_Context_Mixed_Input_Order_And_Spelling
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "{ print FILENAME "":"" FNR "":"" $0 }");
+      Awk_CLI.Add_Argument (Context, "-");
+      Awk_CLI.Add_Argument (Context, "dir/input name.txt");
+      Awk_CLI.Add_Argument (Context, "-");
+      Awk_CLI.Add_File (Context, "dir/input name.txt", "file one" & LF & "file two" & LF);
+      Awk_CLI.Set_Standard_Input (Context, "stdin one" & LF);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "mixed stdin and named file input succeeds");
+      Assert
+        (Awk_CLI.Standard_Output (Context) =
+           "-:1:stdin one" & LF &
+           "dir/input name.txt:1:file one" & LF &
+           "dir/input name.txt:2:file two" & LF,
+         "input ordering and original filename spelling are preserved");
+   end Test_Context_Mixed_Input_Order_And_Spelling;
+
    procedure Test_Compatibility_Registry (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Docs : constant String := File_Text ("../docs/compatibility.md");
@@ -1437,6 +1476,12 @@ package body Awk_Tests.Suite is
         (T, Test_Context_Runtime_Assignment_Limitation'Access,
          "context runtime assignment limitation");
       Registration.Register_Routine (T, Test_Context_Repeated_Stdin'Access, "context repeated stdin");
+      Registration.Register_Routine
+        (T, Test_Context_Assignment_Only_Uses_Implicit_Stdin'Access,
+         "context assignment-only implicit stdin");
+      Registration.Register_Routine
+        (T, Test_Context_Mixed_Input_Order_And_Spelling'Access,
+         "context mixed input order and spelling");
       Registration.Register_Routine (T, Test_Compatibility_Registry'Access, "compatibility registry");
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
       Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
