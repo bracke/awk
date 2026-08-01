@@ -509,6 +509,30 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Standard_Output (Context) = "", "redirected output not sent to stdout");
    end Test_Context_Redirection;
 
+   procedure Test_Context_Multiple_Redirections
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { print ""a1"" > ""a.txt""; print ""b1"" > ""b.txt""; print ""a2"" > ""a.txt"" }");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "multiple redirections succeed");
+      Assert (Awk_CLI.Written_File_Count (Context) = 2,
+              "awklib exposes final captured output per target");
+      Assert (Awk_CLI.Written_File_Name (Context, 1) = "a.txt",
+              "first redirection target is materialized first");
+      Assert (Awk_CLI.Written_File_Content (Context, 1) = "a1" & LF & "a2" & LF,
+              "same-target redirected output preserves captured order");
+      Assert (Awk_CLI.Written_File_Name (Context, 2) = "b.txt",
+              "second redirection target is materialized second");
+      Assert (Awk_CLI.Written_File_Content (Context, 2) = "b1" & LF,
+              "second target content is exact");
+   end Test_Context_Multiple_Redirections;
+
    procedure Test_Context_Append_Redirection_Limitation (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -636,6 +660,33 @@ package body Awk_Tests.Suite is
       Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot write output file"),
               "redirection diagnostic is rendered");
    end Test_Context_Redirection_Failure;
+
+   procedure Test_Context_Redirection_Fails_After_Partial_Materialization
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { print ""ok"" > ""first.txt""; print ""blocked"" > ""second.txt""; print ""stdout"" }");
+      Awk_CLI.Add_File (Context, "second.txt", "", Readable => True, Writable => False);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "later redirection write failure is fatal");
+      Assert (Awk_CLI.Written_File_Count (Context) = 1,
+              "successful prior redirection write is recorded");
+      Assert (Awk_CLI.Written_File_Name (Context, 1) = "first.txt",
+              "prior redirection target is retained");
+      Assert (Awk_CLI.Written_File_Content (Context, 1) = "ok" & LF,
+              "prior redirection content is exact");
+      Assert (Awk_CLI.Standard_Output (Context) = "",
+              "stdout is not emitted after required redirection failure");
+      Assert
+        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.output_file.write_failed",
+         "structured diagnostic identifies later redirection write failure");
+   end Test_Context_Redirection_Fails_After_Partial_Materialization;
 
    procedure Test_Context_Redirection_Open_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1562,6 +1613,9 @@ package body Awk_Tests.Suite is
          "diagnostic source rendering");
       Registration.Register_Routine (T, Test_Context_Redirection'Access, "context redirection");
       Registration.Register_Routine
+        (T, Test_Context_Multiple_Redirections'Access,
+         "context multiple redirections");
+      Registration.Register_Routine
         (T, Test_Context_Append_Redirection_Limitation'Access,
          "context append redirection limitation");
       Registration.Register_Routine (T, Test_Context_Output_Failure'Access, "context output failure");
@@ -1574,6 +1628,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Context_Program_File_Failure'Access, "context program file failure");
       Registration.Register_Routine (T, Test_Context_Input_File_Failure'Access, "context input file failure");
       Registration.Register_Routine (T, Test_Context_Redirection_Failure'Access, "context redirection failure");
+      Registration.Register_Routine
+        (T, Test_Context_Redirection_Fails_After_Partial_Materialization'Access,
+         "context redirection partial failure");
       Registration.Register_Routine
         (T, Test_Context_Redirection_Open_Failure'Access,
          "context redirection open failure");
