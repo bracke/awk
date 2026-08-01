@@ -352,6 +352,37 @@ package body Awk_Tests.Suite is
       Assert (Status = 3, "stdout failure is host I/O");
    end Test_Context_Output_Failure;
 
+   procedure Test_Context_Standard_Input_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "{ print }");
+      Awk_CLI.Fail_Standard_Input (Context, True);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "stdin failure is host I/O");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read standard input"),
+              "stdin diagnostic is rendered");
+   end Test_Context_Standard_Input_Failure;
+
+   procedure Test_Context_Named_File_Does_Not_Read_Stdin
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "{ print $1 }");
+      Awk_CLI.Add_Argument (Context, "input.txt");
+      Awk_CLI.Add_File (Context, "input.txt", "file data" & LF);
+      Awk_CLI.Fail_Standard_Input (Context, True);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "named-file input does not require stdin");
+      Assert (Awk_CLI.Standard_Output (Context) = "file" & LF,
+              "named-file input still reaches awklib");
+   end Test_Context_Named_File_Does_Not_Read_Stdin;
+
    procedure Test_Context_Program_File_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -843,6 +874,12 @@ package body Awk_Tests.Suite is
         (T, Test_Context_Append_Redirection_Limitation'Access,
          "context append redirection limitation");
       Registration.Register_Routine (T, Test_Context_Output_Failure'Access, "context output failure");
+      Registration.Register_Routine
+        (T, Test_Context_Standard_Input_Failure'Access,
+         "context standard input failure");
+      Registration.Register_Routine
+        (T, Test_Context_Named_File_Does_Not_Read_Stdin'Access,
+         "context named file skips stdin");
       Registration.Register_Routine (T, Test_Context_Program_File_Failure'Access, "context program file failure");
       Registration.Register_Routine (T, Test_Context_Input_File_Failure'Access, "context input file failure");
       Registration.Register_Routine (T, Test_Context_Redirection_Failure'Access, "context redirection failure");

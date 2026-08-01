@@ -13,4 +13,6 @@ limitation.
 
 The invocation context lets tests provide arguments, standard input, virtual
 files, environment entries, and injected output failures without spawning the
-real executable.
+real executable. It also supports injected standard-input failures so tests can
+verify controlled host I/O diagnostics without depending on process-global
+stream state.

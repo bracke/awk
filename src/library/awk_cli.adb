@@ -26,6 +26,7 @@ package body Awk_CLI is
       Context.Standard_Err := U.Null_Unbounded_String;
       Context.Writes.Clear;
       Context.Use_Process := False;
+      Context.Stdin_Fails := False;
       Context.Stdout_Fails := False;
       Context.Stderr_Fails := False;
    end Clear;
@@ -95,6 +96,11 @@ package body Awk_CLI is
    begin
       Context.Stderr_Fails := Enabled;
    end Fail_Standard_Error;
+
+   procedure Fail_Standard_Input (Context : in out Invocation_Context; Enabled : Boolean) is
+   begin
+      Context.Stdin_Fails := Enabled;
+   end Fail_Standard_Input;
 
    function Standard_Output (Context : Invocation_Context) return String is
      (U.To_String (Context.Standard_Out));
@@ -228,14 +234,43 @@ package body Awk_CLI is
          return True;
       end Write_Context_Stderr;
 
-      function Current_Stdin return String is
+      function Current_Stdin (Content : out U.Unbounded_String) return Boolean is
       begin
-         if Context.Use_Process then
-            return U.To_String (Awk_CLI.Platform.Read_Standard_Input);
-         else
-            return U.To_String (Context.Standard_In);
+         if Context.Stdin_Fails then
+            Content := U.Null_Unbounded_String;
+            return False;
          end if;
+
+         if Context.Use_Process then
+            Content := Awk_CLI.Platform.Read_Standard_Input;
+         else
+            Content := Context.Standard_In;
+         end if;
+         return True;
       end Current_Stdin;
+
+      function Requires_Stdin
+        (Operands : Awk_CLI.Operands.Operand_Vectors.Vector) return Boolean
+      is
+         Has_Named_Input : Boolean := False;
+      begin
+         if Operands.Is_Empty then
+            return True;
+         end if;
+
+         for Item of Operands loop
+            case Item.Kind is
+               when Awk_CLI.Operands.Standard_Input =>
+                  return True;
+               when Awk_CLI.Operands.Named_File =>
+                  Has_Named_Input := True;
+               when Awk_CLI.Operands.Runtime_Assignment =>
+                  null;
+            end case;
+         end loop;
+
+         return not Has_Named_Input;
+      end Requires_Stdin;
 
       function Current_Environment return Awk_CLI.Environment.Entry_Vectors.Vector is
          Result : Awk_CLI.Environment.Entry_Vectors.Vector;
@@ -297,10 +332,20 @@ package body Awk_CLI is
          declare
             Classified : constant Awk_CLI.Operands.Operand_Vectors.Vector :=
               Awk_CLI.Operands.Classify (Source_Result.Source.Operands);
-            Input_Result : constant Awk_CLI.Inputs.Load_Result :=
-              Awk_CLI.Inputs.Load
-                (Classified, Current_Stdin, Read_Context_File'Access);
+            Stdin_Content : U.Unbounded_String;
          begin
+            if Requires_Stdin (Classified)
+              and then not Current_Stdin (Stdin_Content)
+            then
+               return Emit_Diagnostic
+                 (D.Make ("awk.standard_input.read_failed", D.Error, D.Input));
+            end if;
+
+            declare
+               Input_Result : constant Awk_CLI.Inputs.Load_Result :=
+                 Awk_CLI.Inputs.Load
+                   (Classified, U.To_String (Stdin_Content), Read_Context_File'Access);
+            begin
             if not Input_Result.Ok then
                return Emit_Diagnostic (Input_Result.Diagnostic);
             end if;
@@ -335,6 +380,7 @@ package body Awk_CLI is
                else
                   return Exit_Code (Exec_Result.Exit_Status);
                end if;
+            end;
             end;
          end;
       end;
