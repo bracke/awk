@@ -721,6 +721,13 @@ package body Awk_Tests.Suite is
               ("en.awk.usage.unknown_option: bad"),
             "malformed catalog line"),
          "malformed assignment syntax is rejected");
+      Assert
+        (Contains
+           (Awk_Catalog_Policy.Failure_Message
+              ("default_locale = da" & LF &
+               "en.awk.usage.unknown_option = bad {option}"),
+            "invalid default locale"),
+         "combined catalog default locale is fixed to English");
    end Test_Catalog_Policy_Failures;
 
    procedure Test_Localized_Diagnostics (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -736,6 +743,20 @@ package body Awk_Tests.Suite is
       Assert (Contains (Awk_CLI.Standard_Error (Context), "ukendt tilvalg"),
               "Danish diagnostic is selected");
    end Test_Localized_Diagnostics;
+
+   procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--bad");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Awk_CLI.Set_Locale (Context, "fr_FR.UTF-8");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 2, "unsupported locale usage status");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "unknown option"),
+              "unsupported locale falls back to catalog default");
+   end Test_Unsupported_Locale_Fallback;
 
    procedure Test_Awk_Output_Unchanged_By_Locale (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1127,6 +1148,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
       Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
       Registration.Register_Routine (T, Test_Localized_Diagnostics'Access, "localized diagnostics");
+      Registration.Register_Routine
+        (T, Test_Unsupported_Locale_Fallback'Access,
+         "unsupported locale fallback");
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");

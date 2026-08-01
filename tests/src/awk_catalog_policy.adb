@@ -227,6 +227,7 @@ package body Awk_Catalog_Policy is
    is
       Line_Start : Positive := Text'First;
       Line_No    : Positive := 1;
+      Default_Locale_Count : Natural := 0;
    begin
       if Text'Length = 0 then
          return "catalog is empty";
@@ -259,6 +260,11 @@ package body Awk_Catalog_Policy is
                      begin
                         if not Key_Allowed (Key, Combined_Catalog, Locale) then
                            return "unknown catalog key: " & Key;
+                        elsif Key = "default_locale" then
+                           Default_Locale_Count := Default_Locale_Count + 1;
+                           if Value /= "en" then
+                              return "invalid default locale: " & Value;
+                           end if;
                         elsif Value = "" then
                            return "empty catalog value: " & Key;
                         elsif not Placeholder_Syntax_Ok (Value) then
@@ -273,6 +279,10 @@ package body Awk_Catalog_Policy is
             Line_No := Line_No + 1;
          end;
       end loop;
+
+      if Combined_Catalog and then Default_Locale_Count /= 1 then
+         return "combined catalog must declare default_locale exactly once";
+      end if;
 
       return "";
    end Failure_Message;
