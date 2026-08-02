@@ -6,6 +6,7 @@ with Ada.Directories;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 
+with GNAT.Expect;
 with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
@@ -1624,6 +1625,26 @@ package body Awk_Tests.Suite is
       Assert (U.To_String (Output) = "", "EOF stdin produces no records");
    end Test_Process_Explicit_Stdin_Eof;
 
+   procedure Test_Process_Explicit_Stdin_Data
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("{ print NR "":"" $2 }"),
+         new String'("-")];
+      Status : aliased Integer := -1;
+      Output : constant String :=
+        GNAT.Expect.Get_Command_Output
+          (Command   => "../bin/awk",
+           Arguments => Args,
+           Input     => "one two" & LF & "three four" & LF,
+           Status    => Status'Access);
+   begin
+      Assert (Status = 0, "explicit stdin data exits successfully");
+      Assert (Output = "1:two" & LF & "2:four",
+              "process stdin data reaches installed executable");
+   end Test_Process_Explicit_Stdin_Data;
+
    procedure Test_Process_Runtime_Assignment_Argv
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1811,6 +1832,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine
         (T, Test_Process_Explicit_Stdin_Eof'Access,
          "process explicit stdin eof");
+      Registration.Register_Routine
+        (T, Test_Process_Explicit_Stdin_Data'Access,
+         "process explicit stdin data");
       Registration.Register_Routine
         (T, Test_Process_Runtime_Assignment_Argv'Access,
          "process runtime assignment ARGV");

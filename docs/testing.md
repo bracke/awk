@@ -21,7 +21,8 @@ The primary suite is `awk_tests_main`. It exercises:
 - process-level execution of the installed `awk` binary for help, version,
   direct programs, `-f`, `-F`, `-v`, parse failures, multiple input files,
   dash-leading filenames after `--`, runtime assignment `ARGV`, environment
-  propagation to `ENVIRON`, explicit standard-input EOF, and redirection.
+  propagation to `ENVIRON`, explicit standard-input EOF, non-empty
+  standard-input data, and redirection.
 - conformance manifest validation for supported behavior, documented
   differences, and unsupported `awklib` cases.
 
