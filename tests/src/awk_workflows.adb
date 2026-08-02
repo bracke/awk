@@ -597,8 +597,15 @@ procedure Awk_Workflows is
          and then Files.File_Exists ("src/awk_tests-program_sources.adb"),
          "program source tests must live in a subsystem test package");
       Require
+        (Files.File_Exists ("src/awk_tests-operands.ads")
+         and then Files.File_Exists ("src/awk_tests-operands.adb"),
+         "operand tests must live in a subsystem test package");
+      Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
          "aggregate suite must include CLI option subsystem tests");
+      Require
+        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Operands.Case_Type"),
+         "aggregate suite must include operand subsystem tests");
       Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Program_Sources.Case_Type"),
          "aggregate suite must include program source subsystem tests");

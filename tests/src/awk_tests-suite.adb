@@ -28,6 +28,7 @@ with Awk_CLI.Programs;
 with Awk_CLI.Redirections;
 with Project_Tools.Processes;
 with Awk_Tests.CLI_Options;
+with Awk_Tests.Operands;
 with Awk_Tests.Program_Sources;
 
 package body Awk_Tests.Suite is
@@ -85,7 +86,6 @@ package body Awk_Tests.Suite is
 
    use type Ada.Containers.Count_Type;
    use type Awk_CLI.Exit_Code;
-   use type Awk_CLI.Operands.Operand_Kind;
 
    overriding function Name (T : CLI_Case) return AUnit.Message_String is
       pragma Unreferenced (T);
@@ -175,24 +175,6 @@ package body Awk_Tests.Suite is
       end loop;
       return False;
    end Contains;
-
-   procedure Test_Operands (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Raw : Opt.Operand_Vectors.Vector;
-   begin
-      Raw.Append (Opt.Operand'(Text => U.To_Unbounded_String ("input"), Original_Index => 1));
-      Raw.Append (Opt.Operand'(Text => U.To_Unbounded_String ("-"), Original_Index => 2));
-      Raw.Append (Opt.Operand'(Text => U.To_Unbounded_String ("name=a=b"), Original_Index => 3));
-      Raw.Append (Opt.Operand'(Text => U.To_Unbounded_String ("./X=value"), Original_Index => 4));
-      declare
-         Items : constant Awk_CLI.Operands.Operand_Vectors.Vector := Awk_CLI.Operands.Classify (Raw);
-      begin
-         Assert (Items.Element (1).Kind = Awk_CLI.Operands.Named_File, "file");
-         Assert (Items.Element (2).Kind = Awk_CLI.Operands.Standard_Input, "stdin");
-         Assert (Items.Element (3).Kind = Awk_CLI.Operands.Runtime_Assignment, "assignment");
-         Assert (Items.Element (4).Kind = Awk_CLI.Operands.Named_File, "path with equals is file");
-      end;
-   end Test_Operands;
 
    procedure Test_Execution (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1714,7 +1696,6 @@ package body Awk_Tests.Suite is
    overriding procedure Register_Tests (T : in out CLI_Case) is
       use AUnit.Test_Cases;
    begin
-      Registration.Register_Routine (T, Test_Operands'Access, "operand classifier");
       Registration.Register_Routine (T, Test_Execution'Access, "awklib execution adapter");
       Registration.Register_Routine
         (T, Test_Execution_Live_Callbacks'Access,
@@ -1850,6 +1831,7 @@ package body Awk_Tests.Suite is
    begin
       pragma Warnings (Off, "use of an anonymous access type allocator");
       Result.Add_Test (new Awk_Tests.CLI_Options.Case_Type);
+      Result.Add_Test (new Awk_Tests.Operands.Case_Type);
       Result.Add_Test (new Awk_Tests.Program_Sources.Case_Type);
       Result.Add_Test (new CLI_Case);
       pragma Warnings (On, "use of an anonymous access type allocator");
