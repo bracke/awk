@@ -692,6 +692,10 @@ package body Awk_Tests.Process is
               (Output,
                "cannot open program file: tests/fixtures/programs/no-such-program.awk"),
             "missing process program file reports the original path");
+         Assert (Contains (Output, "awk: error:"),
+                 "missing process program file uses the CLI diagnostic wrapper");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "default captured program-file diagnostic is unstyled");
       end;
    end Test_Process_Missing_Program_File;
 
@@ -717,6 +721,10 @@ package body Awk_Tests.Process is
               (Output,
                "cannot open input file: tests/fixtures/input/no-such-input.txt"),
             "missing process input file reports the original path");
+         Assert (Contains (Output, "awk: error:"),
+                 "missing process input file uses the CLI diagnostic wrapper");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "default captured input-file diagnostic is unstyled");
       end;
    end Test_Process_Missing_Input_File;
 
