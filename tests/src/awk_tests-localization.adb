@@ -137,6 +137,32 @@ package body Awk_Tests.Localization is
       end;
    end Test_Localized_Parameters_Are_Escaped;
 
+   procedure Test_Render_Failure_Uses_Catalog_Fallback
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Catalog_Path : constant String := "/tmp/awk-localization-fallback.catalog";
+      Catalog      : Awk_CLI.Localization.Catalog;
+   begin
+      Write_Text_File
+        (Catalog_Path,
+         "default_locale = en" & LF
+         & "en.awk.internal.localization_failed = localization failed for message key: {detail}" & LF
+         & "da.awk.internal.localization_failed = lokalisering fejlede for beskednoegle: {detail}" & LF);
+
+      Awk_CLI.Localization.Initialize (Catalog, Catalog_Path, "en");
+      Assert
+        (Awk_CLI.Localization.Text (Catalog, "awk.missing.key") =
+         "localization failed for message key: awk.missing.key",
+         "missing message key uses catalog-backed English fallback");
+
+      Awk_CLI.Localization.Initialize (Catalog, Catalog_Path, "da");
+      Assert
+        (Awk_CLI.Localization.Text (Catalog, "awk.missing.key") =
+         "lokalisering fejlede for beskednoegle: awk.missing.key",
+         "missing message key uses selected-locale fallback");
+   end Test_Render_Failure_Uses_Catalog_Fallback;
+
    procedure Test_Awk_Output_Unchanged_By_Locale (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -181,6 +207,9 @@ package body Awk_Tests.Localization is
       Registration.Register_Routine
         (T, Test_Localized_Parameters_Are_Escaped'Access,
          "localized parameter escaping");
+      Registration.Register_Routine
+        (T, Test_Render_Failure_Uses_Catalog_Fallback'Access,
+         "render failure catalog fallback");
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
       Registration.Register_Routine
         (T, Test_Version_Uses_Localized_Labels'Access,

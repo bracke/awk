@@ -44,6 +44,7 @@ en.awk.standard_output.write_failed = cannot write standard output
 en.awk.interpreter.parse_failed = AWK parse failed
 en.awk.interpreter.runtime_failed = AWK execution failed
 en.awk.interpreter.unsupported_operation = unsupported awklib operation
+en.awk.internal.localization_failed = localization failed for message key: {detail}
 en.awk.internal.unexpected_exception = unexpected internal software failure
 en.awk.hint.use_help = use --help for command-line syntax
 en.awk.hint.option_terminator = use -- before filenames that begin with '-'

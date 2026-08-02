@@ -20,6 +20,7 @@ package body Awk_CLI.Localization is
       Value : String := "";
       Detail : String := "") return String
    is
+      Fallback_Key : constant String := "awk.internal.localization_failed";
       Args   : Messages.Arguments.Arguments;
       Result : Messages.Result.Render_Result;
    begin
@@ -32,8 +33,23 @@ package body Awk_CLI.Localization is
       Result := Messages.Runtime.Render (Item.Runtime, U.To_String (Item.Locale), Key, Args);
       if Result.Status = Messages.Result.Success then
          return Messages.Result.Output_Text (Result.Text);
+      elsif Key /= Fallback_Key then
+         declare
+            Fallback_Args   : Messages.Arguments.Arguments;
+            Fallback_Result : Messages.Result.Render_Result;
+         begin
+            Messages.Arguments.Set
+              (Fallback_Args, "detail", Awk_CLI.Diagnostics.Escape (Key));
+            Fallback_Result :=
+              Messages.Runtime.Render
+                (Item.Runtime, U.To_String (Item.Locale), Fallback_Key, Fallback_Args);
+            if Fallback_Result.Status = Messages.Result.Success then
+               return Messages.Result.Output_Text (Fallback_Result.Text);
+            end if;
+         end;
+         return Awk_CLI.Diagnostics.Escape (Key);
       else
-         return Key;
+         return Awk_CLI.Diagnostics.Escape (Key);
       end if;
    end Text;
 

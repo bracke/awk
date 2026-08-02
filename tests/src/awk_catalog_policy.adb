@@ -49,6 +49,7 @@ package body Awk_Catalog_Policy is
       U.To_Unbounded_String ("awk.interpreter.parse_failed"),
       U.To_Unbounded_String ("awk.interpreter.runtime_failed"),
       U.To_Unbounded_String ("awk.interpreter.unsupported_operation"),
+      U.To_Unbounded_String ("awk.internal.localization_failed"),
       U.To_Unbounded_String ("awk.internal.unexpected_exception"),
       U.To_Unbounded_String ("awk.hint.use_help"),
       U.To_Unbounded_String ("awk.hint.option_terminator")];

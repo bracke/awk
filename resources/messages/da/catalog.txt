@@ -44,6 +44,7 @@ da.awk.standard_output.write_failed = kan ikke skrive standard output
 da.awk.interpreter.parse_failed = AWK-parsing fejlede
 da.awk.interpreter.runtime_failed = AWK-koersel fejlede
 da.awk.interpreter.unsupported_operation = awklib-operation understottes ikke
+da.awk.internal.localization_failed = lokalisering fejlede for beskednoegle: {detail}
 da.awk.internal.unexpected_exception = uventet intern softwarefejl
 da.awk.hint.use_help = brug --help for kommandolinjesyntaks
 da.awk.hint.option_terminator = brug -- foer filnavne der begynder med '-'
