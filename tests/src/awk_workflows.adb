@@ -1321,9 +1321,10 @@ procedure Awk_Workflows is
       end loop;
       Files.Write_Text_File (Manifest_Path, U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
-      Require
-        (Files.File_Contains (Manifest_Path, "fnv1a64="),
-         "package manifest must include FNV-1a-64 checksum fields");
+      Files.Require_Contains
+        (Manifest_Path, "fnv1a64=",
+         "package manifest must include FNV-1a-64 checksum fields",
+         Quiet => True);
       Require
         (not Files.File_Contains (Manifest_Path, " checksum="),
          "package manifest must not use legacy checksum field");
