@@ -12,14 +12,7 @@ package body Awk_CLI.Compatibility is
    end record;
 
    Entries : constant array (Positive range <>) of Registry_Entry :=
-     [(Id            => new String'("AWK-COMPAT-REGEX-001"),
-       Area          => Regular_Expressions,
-       Status        => Supported_With_Documented_Difference,
-       Description   => new String'("regular-expression matching follows awklib and regexp behavior"),
-       Source        => new String'("awklib 0.1.0 and regexp"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("context expressions regex builtins")),
-      (Id            => new String'("AWK-COMPAT-GETLINE-001"),
+     [(Id            => new String'("AWK-COMPAT-GETLINE-001"),
        Area          => Getline,
        Status        => Unsupported_By_Awklib,
        Description   => new String'("main-input getline from BEGIN is inherited from awklib"),

@@ -11,7 +11,6 @@ closest current test reference.
 
 | ID | Area | Status | Source | Test reference | Description |
 | --- | --- | --- | --- | --- | --- |
-| `AWK-COMPAT-REGEX-001` | Regular expressions | Supported with documented difference | `awklib 0.1.0` and `regexp` | `context expressions regex builtins` | Regular-expression matching follows resolved `awklib` and `regexp` behavior rather than adding CLI-side matching. |
 | `AWK-COMPAT-GETLINE-001` | Getline | Unsupported by awklib | `awklib 0.1.0` | `compatibility registry` | Main-input `getline` from `BEGIN` is inherited from `awklib`. |
 | `AWK-COMPAT-GETLINE-002` | Getline | Unsupported by awklib | `awklib 0.1.0` | `compatibility registry` | `command | getline` is not implemented by the CLI. |
 | `AWK-COMPAT-UTF8-001` | Encoding | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | Malformed UTF-8 handling is inherited from `awklib`. |

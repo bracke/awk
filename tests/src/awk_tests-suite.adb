@@ -957,6 +957,14 @@ package body Awk_Tests.Suite is
         (Awk_CLI.Standard_Output (Context) =
          "visible" & LF & "4" & LF & "abc 7 bc" & LF,
          "ENVIRON, regex pattern, arithmetic, and builtins pass through awklib");
+
+      Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument
+        (Context, "BEGIN { s = ""aa""; sub(/a|aa/, ""X"", s); print s }");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "leftmost-longest regex integration succeeds");
+      Assert (Awk_CLI.Standard_Output (Context) = "X" & LF,
+              "regex replacement uses awklib leftmost-longest selection");
    end Test_Context_Expressions_Regex_And_Builtins;
 
    procedure Test_Context_Auxiliary_Getline_File
@@ -1089,8 +1097,7 @@ package body Awk_Tests.Suite is
       Has_Unsupported : Boolean := False;
       Has_Getline : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 5, "registry has accepted limitation entries");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REGEX-001"), "regex ID present");
+      Assert (Awk_CLI.Compatibility.Count >= 4, "registry has accepted limitation entries");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"), "getline BEGIN ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"), "pipe getline ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
@@ -1142,8 +1149,8 @@ package body Awk_Tests.Suite is
       Assert (Contains (Conformance, "AWK-COMPAT-GETLINE-002"),
               "conformance manifest references getline limitation");
       Assert
-        (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Regular_Expressions,
-         "regex area is explicit");
+        (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Getline,
+         "getline area is explicit");
       Assert
         (Awk_CLI.Compatibility.Status (2) = Awk_CLI.Compatibility.Unsupported_By_Awklib,
          "getline status is explicit");

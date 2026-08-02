@@ -278,9 +278,6 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
          "architecture docs must document testable invocation context");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-REGEX-001"),
-         "compatibility registry is missing regex limitation");
-      Require
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
          "compatibility registry is missing command-pipe getline limitation");
       Require
