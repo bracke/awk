@@ -20,7 +20,8 @@ package owns in-memory standard-input, named-input, file-failure, and input
 ordering tests. The `awk_tests-environment` package owns `ENVIRON`,
 environment normalization, and environment-confidentiality tests. The
 `awk_tests-terminal_styles` package owns destination-aware terminal styling
-tests.
+tests. The `awk_tests-compatibility` package owns compatibility-registry and
+conformance-manifest tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 in-memory integration coverage.
 
