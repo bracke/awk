@@ -1171,39 +1171,54 @@ package body Awk_Tests.Process is
 
    procedure Test_Process_Parse_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN {")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk process parse failure",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
    begin
-      Assert (Status = 1, "process parse failure exits with interpreter status");
-      Assert (U.To_String (Output) = "", "parse failure does not write stdout");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 1, "process parse failure exits with interpreter status");
+         Assert (Contains (Output, "awk: error: AWK execution failed"),
+                 "parse failure reports localized interpreter context");
+         Assert (Contains (Output, "expected '}'"),
+                 "parse failure preserves interpreter detail");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "default captured parse diagnostic is unstyled");
+      end;
    end Test_Process_Parse_Failure;
 
    procedure Test_Process_Runtime_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { print 1 / 0 }")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk process runtime failure",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
    begin
-      Assert (Status = 1, "process runtime failure exits with interpreter status");
-      Assert (not Contains (U.To_String (Output), "successful"),
-              "runtime failure does not report false success");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 1, "process runtime failure exits with interpreter status");
+         Assert (Contains (Output, "awk: error: AWK execution failed"),
+                 "runtime failure reports localized interpreter context");
+         Assert (Contains (Output, "division by zero"),
+                 "runtime failure preserves interpreter detail");
+         Assert (not Contains (Output, "successful"),
+                 "runtime failure does not report false success");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "default captured runtime diagnostic is unstyled");
+      end;
    end Test_Process_Runtime_Failure;
 
    procedure Test_Process_Multiple_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
