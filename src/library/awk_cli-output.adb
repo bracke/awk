@@ -73,33 +73,60 @@ package body Awk_CLI.Output is
         L.Text (Catalog, "awk.version.license") & LF;
    end Version;
 
+   function Source_Display_Name (Catalog : L.Catalog; Source_Name : String) return String is
+   begin
+      if Source_Name = "awk.source.command_line" then
+         return L.Text (Catalog, Source_Name);
+      else
+         return Source_Name;
+      end if;
+   end Source_Display_Name;
+
    function Diagnostic_Text
      (Catalog : L.Catalog;
       Item    : D.Diagnostic;
       Destination_Is_Terminal : Boolean) return String
    is
       LF     : constant String := [1 => ASCII.LF];
-      Label  : constant String :=
-        Styled (L.Label (Catalog, Item.Severity), Terminal_Styles.Role_Error,
-                Destination_Is_Terminal);
+      Label  : constant String := L.Label (Catalog, Item.Severity);
       Result : Ada.Strings.Unbounded.Unbounded_String :=
         Ada.Strings.Unbounded.To_Unbounded_String
-          ("awk: " & Label & ": " & L.Primary (Catalog, Item));
+          (Styled
+             (L.Text
+                (Catalog,
+                 "awk.diagnostic.header",
+                 "severity",
+                 Label,
+                 L.Primary (Catalog, Item)),
+              Terminal_Styles.Role_Error,
+              Destination_Is_Terminal));
    begin
       if Ada.Strings.Unbounded.Length (Item.Source_Name) > 0
         and then Item.Line > 0
       then
-         Ada.Strings.Unbounded.Append
-           (Result,
-            LF & D.Escape (Ada.Strings.Unbounded.To_String (Item.Source_Name))
-            & ":" & Image (Item.Line));
-         if Item.Column > 0 then
-            Ada.Strings.Unbounded.Append (Result, ":" & Image (Item.Column));
-         end if;
+         declare
+            Location : constant String :=
+              Image (Item.Line)
+              & (if Item.Column > 0 then ":" & Image (Item.Column) else "");
+         begin
+            Ada.Strings.Unbounded.Append
+              (Result,
+               LF & L.Text
+                 (Catalog,
+                  "awk.diagnostic.source_location",
+                  "path",
+                  Source_Display_Name
+                    (Catalog, Ada.Strings.Unbounded.To_String (Item.Source_Name)),
+                  Location));
+         end;
       end if;
       if Ada.Strings.Unbounded.Length (Item.Detail) > 0 then
          Ada.Strings.Unbounded.Append
-           (Result, LF & D.Escape (Ada.Strings.Unbounded.To_String (Item.Detail)));
+           (Result,
+            LF & L.Text
+              (Catalog,
+               "awk.diagnostic.detail",
+               Detail => Ada.Strings.Unbounded.To_String (Item.Detail)));
       end if;
       if Ada.Strings.Unbounded.Length (Item.Hint_Id) > 0 then
          Ada.Strings.Unbounded.Append

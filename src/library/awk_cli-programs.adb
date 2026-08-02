@@ -88,7 +88,7 @@ package body Awk_CLI.Programs is
          Source.Text := Options.Operands.First_Element.Text;
          Source.Segments.Append
            (Source_Segment'
-              (Display_Name => U.To_Unbounded_String ("command line"),
+              (Display_Name => U.To_Unbounded_String ("awk.source.command_line"),
                Start_Line => 1,
                End_Line => Count_Lines (U.To_String (Source.Text))));
 

@@ -114,6 +114,10 @@ package body Awk_Tests.Program_Sources is
          Assert (Source.Ok, "empty direct program is valid source");
          Assert (U.To_String (Source.Source.Text) = "", "empty direct source preserved");
          Assert (Source.Source.Segments.Length = 1, "empty direct segment tracked");
+         Assert
+           (U.To_String (Source.Source.Segments.Element (1).Display_Name) =
+            "awk.source.command_line",
+            "direct source segment uses localized display-name key");
          Assert (Source.Source.Segments.Element (1).End_Line = 0, "empty direct has no source lines");
       end;
 

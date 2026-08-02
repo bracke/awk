@@ -84,6 +84,24 @@ package body Awk_Tests.Diagnostics is
          Assert (Contains (Text, "near print"), "technical detail is retained");
          Assert (not Contains (Text, Escape), "source rendering has no raw escape");
       end;
+
+      Awk_CLI.Localization.Initialize
+        (Catalog, "../resources/messages/catalog.txt", "da");
+      declare
+         Item : constant Awk_CLI.Diagnostics.Diagnostic :=
+           Awk_CLI.Diagnostics.With_Source
+             (Awk_CLI.Diagnostics.Make
+                ("awk.interpreter.parse_failed",
+                 Awk_CLI.Diagnostics.Error,
+                 Awk_CLI.Diagnostics.Interpreter),
+              "awk.source.command_line",
+              1);
+         Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item, False);
+      begin
+         Assert
+           (Contains (Text, "kommandolinje:1"),
+            "catalog source display key is localized in diagnostics");
+      end;
    end Test_Diagnostic_Source_Rendering;
 
    procedure Test_Diagnostic_Escape_Control_Characters

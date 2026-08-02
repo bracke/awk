@@ -497,6 +497,12 @@ procedure Awk_Workflows is
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],
          Quiet => True);
+      Require
+        (not File_Has ("../src/library/awk_cli-output.adb", """awk: """),
+         "diagnostic header text must be catalog-backed");
+      Require
+        (not File_Has ("../src/library/awk_cli-programs.adb", """command line"""),
+         "direct source display name must be catalog-backed");
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          ([U.To_Unbounded_String ("gawk"),
