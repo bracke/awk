@@ -1122,6 +1122,27 @@ package body Awk_Tests.Process is
               "process match updates RSTART and RLENGTH through awklib");
    end Test_Process_Match_And_Sprintf;
 
+   procedure Test_Process_Output_Separators_And_Numeric_Builtins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { OFS="":""; ORS=""|""; print tolower(""ADA""), int(3.9), sqrt(9) }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process separators and numeric builtins",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process separators and numeric builtins exit successfully");
+      Assert (Contains (U.To_String (Output), "ada:3:3|"),
+              "OFS, ORS, and numeric builtins are applied by awklib");
+   end Test_Process_Output_Separators_And_Numeric_Builtins;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1280,6 +1301,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Match_And_Sprintf'Access,
          "process match and sprintf");
+      Registration.Register_Routine
+        (T, Test_Process_Output_Separators_And_Numeric_Builtins'Access,
+         "process output separators and numeric builtins");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
