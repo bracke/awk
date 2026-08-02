@@ -173,6 +173,55 @@ package body Awk_Tests.Localization is
       end loop;
    end Test_All_Supported_Locales_Render_Diagnostics;
 
+   procedure Test_All_Supported_Locales_Render_Help
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Escape : constant String := [1 => Character'Val (27)];
+
+      procedure Require_Token (Output, Locale, Token : String) is
+      begin
+         Assert (Contains (Output, Token), Locale & " help contains " & Token);
+      end Require_Token;
+   begin
+      for Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+         declare
+            Locale  : constant String := Awk_Catalog_Policy.Supported_Locale (Index);
+            Context : Awk_CLI.Invocation_Context;
+            Status  : Awk_CLI.Exit_Code;
+         begin
+            Awk_CLI.Add_Argument (Context, "--color=never");
+            Awk_CLI.Add_Argument (Context, "--help");
+            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Awk_CLI.Set_Locale (Context, Locale);
+            Status := Awk_CLI.Run (Context);
+            declare
+               Output : constant String := Awk_CLI.Standard_Output (Context);
+            begin
+               Assert (Status = 0, Locale & " help status");
+               Assert (Awk_CLI.Standard_Error (Context) = "",
+                       Locale & " help writes no standard error");
+               Require_Token (Output, Locale, "awk");
+               Require_Token (Output, Locale, "-F");
+               Require_Token (Output, Locale, "-v");
+               Require_Token (Output, Locale, "-f");
+               Require_Token (Output, Locale, "--help");
+               Require_Token (Output, Locale, "--version");
+               Require_Token (Output, Locale, "--color=auto|always|never");
+               Require_Token (Output, Locale, "BEGIN");
+               Require_Token (Output, Locale, "getline");
+               Require_Token (Output, Locale, "POSIX");
+               Assert (not Contains (Output, "awk.help."),
+                       Locale & " help does not expose raw help keys");
+               Assert (not Contains (Output, "localization_failed"),
+                       Locale & " help does not use localization failure fallback");
+               Assert (not Contains (Output, Escape),
+                       Locale & " color=never help emits no raw escape character");
+            end;
+         end;
+      end loop;
+   end Test_All_Supported_Locales_Render_Help;
+
    procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -285,6 +334,9 @@ package body Awk_Tests.Localization is
       Registration.Register_Routine
         (T, Test_All_Supported_Locales_Render_Diagnostics'Access,
          "all supported locale diagnostics render");
+      Registration.Register_Routine
+        (T, Test_All_Supported_Locales_Render_Help'Access,
+         "all supported locale help renders");
       Registration.Register_Routine
         (T, Test_Unsupported_Locale_Fallback'Access,
          "unsupported locale fallback");
