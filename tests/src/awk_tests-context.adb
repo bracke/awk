@@ -65,6 +65,48 @@ package body Awk_Tests.Context is
               "stdout write failure diagnostic is output-category");
    end Test_Context_Output_Failure;
 
+   procedure Test_Context_Clear_Resets_Runtime_State
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--bad");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 2, "first run records a usage diagnostic");
+      Assert (Awk_CLI.Has_Diagnostic (Context), "first run has structured diagnostic");
+      Assert (Awk_CLI.Standard_Error (Context)'Length > 0, "first run writes stderr");
+
+      Awk_CLI.Clear (Context);
+      Assert (Awk_CLI.Standard_Output (Context) = "", "clear resets stdout buffer");
+      Assert (Awk_CLI.Standard_Error (Context) = "", "clear resets stderr buffer");
+      Assert (not Awk_CLI.Has_Diagnostic (Context), "clear resets diagnostic state");
+      Assert (Awk_CLI.Written_File_Count (Context) = 0, "clear resets redirected writes");
+
+      Awk_CLI.Add_Argument (Context, "BEGIN { print ENVIRON[""LEAK""] }");
+      Awk_CLI.Add_Environment (Context, "LEAK", "second");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "second run succeeds after clear");
+      Assert (Awk_CLI.Standard_Output (Context) = "second" & LF,
+              "second run uses only post-clear runtime state");
+      Assert (Awk_CLI.Standard_Error (Context) = "", "second run has no old stderr");
+
+      Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" }");
+      Awk_CLI.Fail_Standard_Output (Context, True);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "stdout failure can be enabled after clear");
+
+      Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument (Context, "BEGIN { print ""ok"" }");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "clear resets stdout failure flag");
+      Assert (Awk_CLI.Standard_Output (Context) = "ok" & LF,
+              "stdout works after clear resets failure flag");
+   end Test_Context_Clear_Resets_Runtime_State;
+
    procedure Test_Context_Stderr_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -266,6 +308,9 @@ package body Awk_Tests.Context is
       Registration.Register_Routine (T, Test_Context_Direct_Run'Access, "context direct run");
       Registration.Register_Routine (T, Test_Context_File_Run'Access, "context file run");
       Registration.Register_Routine (T, Test_Context_Output_Failure'Access, "context output failure");
+      Registration.Register_Routine
+        (T, Test_Context_Clear_Resets_Runtime_State'Access,
+         "context clear resets runtime state");
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
       Registration.Register_Routine
         (T, Test_Context_Help_Short_Circuits_Runtime_State'Access,
