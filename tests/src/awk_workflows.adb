@@ -504,7 +504,8 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("input standard"),
             U.To_Unbounded_String ("error AWK"),
             U.To_Unbounded_String ("AWK error"),
-            U.To_Unbounded_String ("[operand...]")];
+            U.To_Unbounded_String ("[operand...]"),
+            U.To_Unbounded_String ("-f file, -ffile")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
