@@ -1,4 +1,5 @@
 with Ada.Strings.Unbounded;
+with Project_Tools.Text;
 
 package body Awk_Catalog_Policy is
    package U renames Ada.Strings.Unbounded;
@@ -98,22 +99,6 @@ package body Awk_Catalog_Policy is
       U.To_Unbounded_String ("sv"),
       U.To_Unbounded_String ("tr"),
       U.To_Unbounded_String ("uk")];
-
-   function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
 
    function Required_Key_Count return Positive is
    begin
@@ -221,7 +206,8 @@ package body Awk_Catalog_Policy is
                      Name : constant String := Text (Index + 1 .. Close - 1);
                   begin
                      if Placeholder_Name_Ok (Name)
-                       and then not Contains (U.To_String (Result), "|" & Name & "|")
+                       and then not Project_Tools.Text.Contains
+                         (U.To_String (Result), "|" & Name & "|")
                      then
                         U.Append (Result, "|" & Name & "|");
                      end if;
