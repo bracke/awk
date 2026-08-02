@@ -13,6 +13,11 @@ apostrophe escape hazards. Process-level tests also render a non-ASCII locale
 diagnostic and reject the doubled UTF-8 lead-byte sequence that indicates
 mojibake at the executable boundary.
 
+The AUnit localization suite renders a real usage diagnostic for every
+supported locale in the combined catalog. For each locale it checks that the
+selected catalog text is used, the option argument is interpolated, raw message
+keys are not exposed, and no raw terminal escape character is emitted.
+
 Locales outside the supported European state-language locale set fall back
 through the `messages` runtime to the catalog default locale. If a requested
 message key cannot render but the catalog is otherwise usable, the CLI renders

@@ -1,5 +1,7 @@
 with AUnit.Assertions;
 
+with Ada.Strings.Fixed;
+
 with Awk_Catalog_Policy;
 with Awk_CLI;
 with Awk_CLI.Localization;
@@ -110,6 +112,67 @@ package body Awk_Tests.Localization is
               "French diagnostic is selected through locale fallback");
    end Test_European_Locale_Diagnostics;
 
+   procedure Test_All_Supported_Locales_Render_Diagnostics
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
+      Escape  : constant String := [1 => Character'Val (27)];
+
+      function Catalog_Value (Key : String) return String is
+         Prefix : constant String := Key & " = ";
+         Start  : constant Natural := Ada.Strings.Fixed.Index (Catalog, Prefix);
+         Stop   : Natural;
+      begin
+         Assert (Start /= 0, "catalog contains " & Key);
+         Stop := Ada.Strings.Fixed.Index
+           (Catalog (Start + Prefix'Length .. Catalog'Last), LF);
+         if Stop = 0 then
+            return Catalog (Start + Prefix'Length .. Catalog'Last);
+         end if;
+         return Catalog (Start + Prefix'Length .. Stop - 1);
+      end Catalog_Value;
+
+      function Before_Option (Text : String) return String is
+         Mark : constant Natural := Ada.Strings.Fixed.Index (Text, "{option}");
+      begin
+         if Mark <= Text'First then
+            return "";
+         end if;
+         return Text (Text'First .. Mark - 1);
+      end Before_Option;
+   begin
+      for Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+         declare
+            Locale  : constant String := Awk_Catalog_Policy.Supported_Locale (Index);
+            Context : Awk_CLI.Invocation_Context;
+            Status  : Awk_CLI.Exit_Code;
+            Prefix  : constant String :=
+              Before_Option (Catalog_Value (Locale & ".awk.usage.unknown_option"));
+         begin
+            Awk_CLI.Add_Argument (Context, "--bad");
+            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Awk_CLI.Set_Locale (Context, Locale);
+            Status := Awk_CLI.Run (Context);
+            Assert (Status = 2, Locale & " usage diagnostic status");
+            Assert
+              (Prefix = "" or else Contains (Awk_CLI.Standard_Error (Context), Prefix),
+               Locale & " diagnostic renders localized catalog prefix");
+            Assert (Contains (Awk_CLI.Standard_Error (Context), "--bad"),
+                    Locale & " diagnostic interpolates option argument");
+            Assert
+              (not Contains (Awk_CLI.Standard_Error (Context), "awk.usage.unknown_option"),
+               Locale & " diagnostic does not expose raw message key");
+            Assert
+              (not Contains (Awk_CLI.Standard_Error (Context), "localization_failed"),
+               Locale & " diagnostic does not use localization failure fallback");
+            Assert
+              (not Contains (Awk_CLI.Standard_Error (Context), Escape),
+               Locale & " diagnostic emits no raw escape character");
+         end;
+      end loop;
+   end Test_All_Supported_Locales_Render_Diagnostics;
+
    procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -219,6 +282,9 @@ package body Awk_Tests.Localization is
       Registration.Register_Routine
         (T, Test_European_Locale_Diagnostics'Access,
          "European locale diagnostics");
+      Registration.Register_Routine
+        (T, Test_All_Supported_Locales_Render_Diagnostics'Access,
+         "all supported locale diagnostics render");
       Registration.Register_Routine
         (T, Test_Unsupported_Locale_Fallback'Access,
          "unsupported locale fallback");
