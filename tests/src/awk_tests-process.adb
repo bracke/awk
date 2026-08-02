@@ -1055,6 +1055,29 @@ package body Awk_Tests.Process is
               "process sub replacement follows awklib regex behavior");
    end Test_Process_Sub_Replacement;
 
+   procedure Test_Process_String_Builtins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { s = ""banana""; print gsub(/a/, ""A"", s), s; print index(s, ""nA""), toupper(""Ada"") }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process string builtins",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process string builtins exit successfully");
+      Assert (Contains (U.To_String (Output), "3 bAnAnA" & LF),
+              "process gsub replacement count and result follow awklib behavior");
+      Assert (Contains (U.To_String (Output), "3 ADA" & LF),
+              "process index and toupper follow awklib behavior");
+   end Test_Process_String_Builtins;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1204,6 +1227,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Sub_Replacement'Access,
          "process sub replacement");
+      Registration.Register_Routine
+        (T, Test_Process_String_Builtins'Access,
+         "process string builtins");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
