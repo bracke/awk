@@ -3,11 +3,10 @@ with AUnit.Assertions;
 with Ada.Environment_Variables;
 
 with Awk_CLI;
-with Awk_Tests.Support;
+with Project_Tools.Text;
 
 package body Awk_Tests.Terminal_Styles is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
    use type Awk_CLI.Exit_Code;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
@@ -39,7 +38,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 0, "auto-color help succeeds");
             Assert
-              (Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
+              (Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
                "auto color styles terminal stdout help");
             Assert (Awk_CLI.Standard_Error (Context) = "", "help writes no stderr");
          end;
@@ -55,7 +54,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 2, "usage diagnostic exits with usage status");
             Assert
-              (not Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
                "auto color leaves non-terminal stderr diagnostic plain");
          end;
 
@@ -70,7 +69,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 2, "terminal stderr diagnostic exits with usage status");
             Assert
-              (Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+              (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
                "auto color styles terminal stderr diagnostic");
             Assert (Awk_CLI.Standard_Output (Context) = "", "diagnostic writes no stdout");
          end;
@@ -113,7 +112,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 2, "color=always diagnostic exits with usage status");
             Assert
-              (Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+              (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
                "color=always styles diagnostics even for non-terminal stderr");
             Assert (Awk_CLI.Standard_Output (Context) = "", "diagnostic writes no stdout");
          end;
@@ -129,7 +128,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 2, "color=never diagnostic exits with usage status");
             Assert
-              (not Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
                "color=never leaves terminal stderr diagnostics plain");
             Assert (Awk_CLI.Standard_Output (Context) = "", "diagnostic writes no stdout");
          end;
@@ -172,7 +171,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 0, "color=always help exits successfully");
             Assert
-              (Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
+              (Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
                "color=always styles help for non-terminal stdout");
             Assert (Awk_CLI.Standard_Error (Context) = "", "help writes no stderr");
          end;
@@ -188,7 +187,7 @@ package body Awk_Tests.Terminal_Styles is
             Status := Awk_CLI.Run (Context);
             Assert (Status = 0, "color=never help exits successfully");
             Assert
-              (not Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
+              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
                "color=never leaves terminal stdout help plain");
             Assert (Awk_CLI.Standard_Error (Context) = "", "help writes no stderr");
          end;

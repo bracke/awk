@@ -8,11 +8,10 @@ with Awk_CLI.Inputs;
 with Awk_CLI.Operands;
 with Awk_CLI.Options;
 with Awk_CLI.Platform;
-with Awk_Tests.Support;
+with Project_Tools.Text;
 
 package body Awk_Tests.Inputs is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
    package U renames Ada.Strings.Unbounded;
    package Opt renames Awk_CLI.Options;
 
@@ -53,7 +52,7 @@ package body Awk_Tests.Inputs is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "stdin failure is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read standard input"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot read standard input"),
               "stdin diagnostic is rendered");
    end Test_Context_Standard_Input_Failure;
 
@@ -84,7 +83,7 @@ package body Awk_Tests.Inputs is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "missing program file is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open program file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot open program file"),
               "program file open diagnostic is rendered");
 
       Awk_CLI.Clear (Context);
@@ -94,7 +93,7 @@ package body Awk_Tests.Inputs is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "unreadable program file is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read program file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot read program file"),
               "program file read diagnostic is rendered");
    end Test_Context_Program_File_Failure;
 
@@ -108,7 +107,7 @@ package body Awk_Tests.Inputs is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "missing input file is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
               "input file open diagnostic is rendered");
 
       Awk_CLI.Clear (Context);
@@ -119,7 +118,7 @@ package body Awk_Tests.Inputs is
       Assert (Status = 3, "lazy missing input file is still host I/O");
       Assert (Awk_CLI.Standard_Output (Context) = "begin" & LF,
               "BEGIN output is emitted before lazy input open failure");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
               "lazy input file open diagnostic is rendered");
 
       Awk_CLI.Clear (Context);
@@ -129,7 +128,7 @@ package body Awk_Tests.Inputs is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "unreadable input file is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot read input file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot read input file"),
               "input file read diagnostic is rendered");
    end Test_Context_Input_File_Failure;
 

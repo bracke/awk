@@ -5,11 +5,10 @@ with Ada.Strings.Unbounded;
 with Awk_CLI;
 with Awk_CLI.Execution;
 with Awk_CLI.Redirections;
-with Awk_Tests.Support;
+with Project_Tools.Text;
 
 package body Awk_Tests.Redirections is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
@@ -190,7 +189,7 @@ package body Awk_Tests.Redirections is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "redirection write failure is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot write output file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot write output file"),
               "redirection diagnostic is rendered");
    end Test_Context_Redirection_Failure;
 
@@ -232,7 +231,7 @@ package body Awk_Tests.Redirections is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "redirection open failure is host I/O");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open output file"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot open output file"),
               "redirection open diagnostic is rendered");
       Assert
         (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.output_file.open_failed",

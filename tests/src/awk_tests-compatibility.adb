@@ -3,6 +3,7 @@ with AUnit.Assertions;
 with Awk_CLI.Compatibility;
 with Awk_Tests.Support;
 with Project_Tools.Files;
+with Project_Tools.Text;
 
 package body Awk_Tests.Compatibility is
    use AUnit.Assertions;
@@ -24,7 +25,7 @@ package body Awk_Tests.Compatibility is
       begin
          Assert (Awk_CLI.Compatibility.Has_Id (Id),
                  "registry contains reviewed entry " & Id);
-         Assert (Contains (Docs, Id), "compatibility docs contain " & Id);
+         Assert (Project_Tools.Text.Contains (Docs, Id), "compatibility docs contain " & Id);
       end Require_Reviewed;
    begin
       Assert (Awk_CLI.Compatibility.Count = 7, "registry has reviewed compatibility entries");
@@ -50,10 +51,10 @@ package body Awk_Tests.Compatibility is
       Require_Reviewed ("AWK-COMPAT-ASSIGNMENT-001");
       Require_Reviewed ("AWK-COMPAT-REDIRECTION-001");
       Assert
-        (Contains (Docs, "No current entries are classified as unsupported"),
+        (Project_Tools.Text.Contains (Docs, "No current entries are classified as unsupported"),
          "compatibility docs state the active limitation position");
       Assert
-        (Contains (Conformance, "AWK-CONF-GETLINE-001|Supported"),
+        (Project_Tools.Text.Contains (Conformance, "AWK-CONF-GETLINE-001|Supported"),
          "conformance manifest marks command getline supported");
    end Test_Compatibility_Registry;
 
@@ -71,7 +72,7 @@ package body Awk_Tests.Compatibility is
          Line : constant String :=
            Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
       begin
-         Assert (Contains (Manifest, Line), "manifest contains " & Id);
+         Assert (Project_Tools.Text.Contains (Manifest, Line), "manifest contains " & Id);
          Assert (Project_Tools.Files.File_Exists ("conformance/" & Case_File),
                  "case file exists for " & Id);
          Assert (Project_Tools.Files.File_Exists ("conformance/" & Expected),

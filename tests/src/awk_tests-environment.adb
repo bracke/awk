@@ -5,11 +5,10 @@ with Ada.Strings.Unbounded;
 
 with Awk_CLI;
 with Awk_CLI.Environment;
-with Awk_Tests.Support;
+with Project_Tools.Text;
 
 package body Awk_Tests.Environment is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
@@ -135,7 +134,7 @@ package body Awk_Tests.Environment is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "missing input remains host I/O");
-      Assert (not Contains (Awk_CLI.Standard_Error (Context), "do-not-leak"),
+      Assert (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "do-not-leak"),
               "environment values are not emitted in unrelated diagnostics");
    end Test_Context_Environment_Normalization_And_Confidentiality;
 

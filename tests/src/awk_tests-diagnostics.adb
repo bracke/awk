@@ -4,11 +4,10 @@ with Awk_CLI;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Localization;
 with Awk_CLI.Output;
-with Awk_Tests.Support;
+with Project_Tools.Text;
 
 package body Awk_Tests.Diagnostics is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
 
    LF : constant String := [1 => ASCII.LF];
    use type Awk_CLI.Exit_Code;
@@ -51,11 +50,11 @@ package body Awk_Tests.Diagnostics is
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "hostile option remains a usage error");
-      Assert (not Contains (Awk_CLI.Standard_Error (Context), LF & "awk: error: forged"),
+      Assert (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), LF & "awk: error: forged"),
               "embedded newline cannot forge a diagnostic line");
-      Assert (not Contains (Awk_CLI.Standard_Error (Context), Escape),
+      Assert (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Escape),
               "escape character is not emitted in diagnostics");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "\nawk: error: forged\e[2J"),
+      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "\nawk: error: forged\e[2J"),
               "unsafe characters are rendered visibly");
    end Test_Context_Diagnostic_Sanitizing;
 
@@ -79,10 +78,10 @@ package body Awk_Tests.Diagnostics is
               3);
          Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item, False);
       begin
-         Assert (Contains (Text, "bad\nfile\e[2J.awk:12:3"),
+         Assert (Project_Tools.Text.Contains (Text, "bad\nfile\e[2J.awk:12:3"),
                  "source location is escaped and compact");
-         Assert (Contains (Text, "near print"), "technical detail is retained");
-         Assert (not Contains (Text, Escape), "source rendering has no raw escape");
+         Assert (Project_Tools.Text.Contains (Text, "near print"), "technical detail is retained");
+         Assert (not Project_Tools.Text.Contains (Text, Escape), "source rendering has no raw escape");
       end;
 
       Awk_CLI.Localization.Initialize
@@ -99,7 +98,7 @@ package body Awk_Tests.Diagnostics is
          Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item, False);
       begin
          Assert
-           (Contains (Text, "kommandolinje:1"),
+           (Project_Tools.Text.Contains (Text, "kommandolinje:1"),
             "catalog source display key is localized in diagnostics");
       end;
    end Test_Diagnostic_Source_Rendering;
@@ -116,11 +115,11 @@ package body Awk_Tests.Diagnostics is
    begin
       Assert (Text = "a\rb\tc\ed?e?",
               "diagnostic escaping renders unsafe controls deterministically");
-      Assert (not Contains (Text, [1 => ASCII.CR]), "raw carriage return is not emitted");
-      Assert (not Contains (Text, [1 => ASCII.HT]), "raw tab is not emitted");
-      Assert (not Contains (Text, Escape), "raw escape is not emitted");
-      Assert (not Contains (Text, [1 => Character'Val (0)]), "raw NUL is not emitted");
-      Assert (not Contains (Text, [1 => Character'Val (127)]), "raw DEL is not emitted");
+      Assert (not Project_Tools.Text.Contains (Text, [1 => ASCII.CR]), "raw carriage return is not emitted");
+      Assert (not Project_Tools.Text.Contains (Text, [1 => ASCII.HT]), "raw tab is not emitted");
+      Assert (not Project_Tools.Text.Contains (Text, Escape), "raw escape is not emitted");
+      Assert (not Project_Tools.Text.Contains (Text, [1 => Character'Val (0)]), "raw NUL is not emitted");
+      Assert (not Project_Tools.Text.Contains (Text, [1 => Character'Val (127)]), "raw DEL is not emitted");
    end Test_Diagnostic_Escape_Control_Characters;
 
    procedure Test_Diagnostic_Status_Registry (T : in out AUnit.Test_Cases.Test_Case'Class) is

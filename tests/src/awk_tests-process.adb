@@ -7,6 +7,7 @@ with GNAT.OS_Lib;
 
 with Project_Tools.Files;
 with Project_Tools.Processes;
+with Project_Tools.Text;
 with Awk_Tests.Support;
 
 package body Awk_Tests.Process is
@@ -37,13 +38,13 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process version exits successfully");
-      Assert (Contains (U.To_String (Output), "awk 0.1.0" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0" & LF),
               "process version includes awk version");
-      Assert (Contains (U.To_String (Output), "awklib 0.1.0" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awklib 0.1.0" & LF),
               "process version includes awklib version");
-      Assert (Contains (U.To_String (Output), "license MIT" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "license MIT" & LF),
               "process version includes license");
-      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "version output is not terminal-styled");
    end Test_Process_Version;
 
@@ -69,11 +70,11 @@ package body Awk_Tests.Process is
            Output  => Output,
            Quiet   => True);
       Assert (Status = 0, "localized process version exits successfully");
-      Assert (Contains (U.To_String (Output), "awk 0.1.0"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"),
               "localized version includes awk version");
-      Assert (Contains (U.To_String (Output), "awklib 0.1.0"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awklib 0.1.0"),
               "localized version includes awklib version");
-      Assert (Contains (U.To_String (Output), "licens MIT"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "licens MIT"),
               "process version follows LC_ALL locale");
    end Test_Process_Localized_Version_From_Locale;
 
@@ -140,7 +141,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
       Assert (Status = 0, "dash-leading filename exits successfully after --");
       Assert
-        (Contains (U.To_String (Output), Target & ":dash"),
+        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":dash"),
          "dash-leading filename is treated as an operand");
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Dash_Filename_After_Terminator;
@@ -167,15 +168,15 @@ package body Awk_Tests.Process is
    begin
       Assert (Status = 0, "option terminator long operands exit successfully");
       Assert
-        (Contains
+        (Project_Tools.Text.Contains
            (U.To_String (Output),
             "--help" & LF & "--version" & LF & "--color=always" & LF),
          "long-option-looking values after -- remain AWK operands");
-      Assert (not Contains (U.To_String (Output), "Usage: awk"),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"),
               "--help after -- does not request help");
-      Assert (not Contains (U.To_String (Output), "awk 0.1.0"),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"),
               "--version after -- does not request version output");
-      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "--color after -- does not style AWK output");
    end Test_Process_Option_Terminator_Long_Operands;
 
@@ -202,7 +203,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
       Assert (Status = 0, "option-looking filename after program exits successfully");
       Assert
-        (Contains (U.To_String (Output), Target & ":operand-file" & LF),
+        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":operand-file" & LF),
          "post-program --version is read as an input file");
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Option_Looking_File_After_Program;
@@ -230,7 +231,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
       Assert (Status = 0, "short option-looking filename after program exits successfully");
       Assert
-        (Contains (U.To_String (Output), Target & ":short-option-file" & LF),
+        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":short-option-file" & LF),
          "post-program -F is read as an input file");
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Short_Option_Looking_File_After_Program;
@@ -255,9 +256,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process -f exits successfully");
-      Assert (Contains (U.To_String (Output), "begin" & LF & "one" & LF & "three"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "begin" & LF & "one" & LF & "three"),
               "process -f loads files in order and reads first input");
-      Assert (Contains (U.To_String (Output), "five" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "five" & LF),
               "process -f reads second input after runtime assignment operand");
    end Test_Process_Program_Files;
 
@@ -286,11 +287,11 @@ package body Awk_Tests.Process is
            Output  => Output,
            Quiet   => True);
       Assert (Status = 0, "file-mode late option-looking operand exits successfully");
-      Assert (Contains (U.To_String (Output), "one" & LF & "three"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "one" & LF & "three"),
               "first input file is processed");
-      Assert (Contains (U.To_String (Output), "late-option-file" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "late-option-file" & LF),
               "late option-looking operand is processed as a filename");
-      Assert (Contains (U.To_String (Output), "five" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "five" & LF),
               "input after late runtime assignment is processed");
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Option_Looking_Operand_After_File_Mode_Input;
@@ -310,18 +311,18 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process help exits successfully");
-      Assert (Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
-      Assert (Contains (U.To_String (Output), "--                     end option processing"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "--                     end option processing"),
               "help documents the option terminator");
-      Assert (Contains (U.To_String (Output), "Operands after the program"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Operands after the program"),
               "help documents operand classification");
-      Assert (Contains (U.To_String (Output), "standard input is used implicitly"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "standard input is used implicitly"),
               "help documents implicit standard input");
-      Assert (Contains (U.To_String (Output), "Exit statuses: 0 success"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Exit statuses: 0 success"),
               "help documents exit statuses");
-      Assert (Contains (U.To_String (Output), "does not claim complete POSIX conformance"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "does not claim complete POSIX conformance"),
               "help documents the compatibility position");
-      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=never suppresses ANSI escapes");
    end Test_Process_Help_Color_Never;
 
@@ -345,7 +346,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "help ignores later runtime failures");
-      Assert (Contains (U.To_String (Output), "Usage: awk"), "help text is emitted");
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help text is emitted");
    end Test_Process_Help_Short_Circuits_Runtime;
 
    procedure Test_Process_Help_Color_Always (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -363,7 +364,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process help color always exits successfully");
-      Assert (Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=always styles CLI-owned help");
    end Test_Process_Help_Color_Always;
 
@@ -390,8 +391,8 @@ package body Awk_Tests.Process is
            Output  => Output,
            Quiet   => True);
       Assert (Status = 0, "process help auto with NO_COLOR exits successfully");
-      Assert (Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
-      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=auto honors NO_COLOR through terminal_styles");
    end Test_Process_Help_Auto_Respects_No_Color;
 
@@ -414,7 +415,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "version ignores later runtime failures");
-      Assert (Contains (U.To_String (Output), "awk 0.1.0"), "version text is emitted");
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"), "version text is emitted");
    end Test_Process_Version_Short_Circuits_Runtime;
 
    procedure Test_Process_Awk_Output_Unstyled_With_Color_Always
@@ -435,8 +436,8 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process AWK output color always exits successfully");
-      Assert (Contains (U.To_String (Output), "plain" & LF), "AWK output is present");
-      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "plain" & LF), "AWK output is present");
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=always does not style AWK output");
    end Test_Process_Awk_Output_Unstyled_With_Color_Always;
 
@@ -456,11 +457,11 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "unknown option exits with usage status");
-         Assert (Contains (Output, "awk: error: unknown option: --bad-option"),
+         Assert (Project_Tools.Text.Contains (Output, "awk: error: unknown option: --bad-option"),
                  "unknown option reports the offending option");
-         Assert (Contains (Output, "hint: use --help for command-line syntax"),
+         Assert (Project_Tools.Text.Contains (Output, "hint: use --help for command-line syntax"),
                  "unknown option emits the usage hint");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured usage diagnostic is unstyled");
       end;
    end Test_Process_Usage_Status;
@@ -490,9 +491,9 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Contains (Output, "unknown option: --bad"),
+            Assert (Project_Tools.Text.Contains (Output, "unknown option: --bad"),
                     Message & " includes localized diagnostic text");
-            Assert ((Contains (Output, Escape & "[") = Styled),
+            Assert ((Project_Tools.Text.Contains (Output, Escape & "[") = Styled),
                     Message & " follows diagnostic color policy");
          end;
       end Expect;
@@ -527,9 +528,9 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Contains (Output, "unknown option: --bad"),
+            Assert (Project_Tools.Text.Contains (Output, "unknown option: --bad"),
                     Message & " includes localized diagnostic text");
-            Assert ((Contains (Output, Escape & "[") = Styled),
+            Assert ((Project_Tools.Text.Contains (Output, Escape & "[") = Styled),
                     Message & " follows final color option");
          end;
       end Expect;
@@ -557,11 +558,11 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "no arguments exits with usage status");
-         Assert (Contains (Output, "missing AWK program"),
+         Assert (Project_Tools.Text.Contains (Output, "missing AWK program"),
                  "no arguments reports missing program");
-         Assert (Contains (Output, "hint: use --help"),
+         Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
                  "no arguments emits the usage hint");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "no-argument diagnostic is not styled by default capture");
       end;
    end Test_Process_No_Arguments_Missing_Program;
@@ -584,9 +585,9 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Contains (Output, "invalid color mode: " & Value),
+            Assert (Project_Tools.Text.Contains (Output, "invalid color mode: " & Value),
                     Message & " reports the invalid color value");
-            Assert (Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
                     Message & " emits the usage hint");
          end;
       end Expect_Invalid;
@@ -615,9 +616,9 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Option & " exits with usage status");
-            Assert (Contains (Output, "missing argument for " & Option),
+            Assert (Project_Tools.Text.Contains (Output, "missing argument for " & Option),
                     Option & " explains the missing argument");
-            Assert (Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
                     Option & " emits the usage hint");
          end;
       end Expect_Missing;
@@ -649,11 +650,11 @@ package body Awk_Tests.Process is
          begin
             Assert (Status = 2, Message & " exits with usage status");
             Assert
-              (Contains
+              (Project_Tools.Text.Contains
                  (Output,
                   "program file '-' is unsupported because standard input is reserved for AWK data"),
                Message & " explains why stdin program files are rejected");
-            Assert (Contains (Output, "hint: use -- before filenames that begin with '-'"),
+            Assert (Project_Tools.Text.Contains (Output, "hint: use -- before filenames that begin with '-'"),
                     Message & " emits the option-terminator hint");
          end;
       end Expect_Unsupported;
@@ -688,13 +689,13 @@ package body Awk_Tests.Process is
       begin
          Assert (Status = 3, "missing process program file exits with host I/O status");
          Assert
-           (Contains
+           (Project_Tools.Text.Contains
               (Output,
                "cannot open program file: tests/fixtures/programs/no-such-program.awk"),
             "missing process program file reports the original path");
-         Assert (Contains (Output, "awk: error:"),
+         Assert (Project_Tools.Text.Contains (Output, "awk: error:"),
                  "missing process program file uses the CLI diagnostic wrapper");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured program-file diagnostic is unstyled");
       end;
    end Test_Process_Missing_Program_File;
@@ -717,13 +718,13 @@ package body Awk_Tests.Process is
       begin
          Assert (Status = 3, "missing process input file exits with host I/O status");
          Assert
-           (Contains
+           (Project_Tools.Text.Contains
               (Output,
                "cannot open input file: tests/fixtures/input/no-such-input.txt"),
             "missing process input file reports the original path");
-         Assert (Contains (Output, "awk: error:"),
+         Assert (Project_Tools.Text.Contains (Output, "awk: error:"),
                  "missing process input file uses the CLI diagnostic wrapper");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured input-file diagnostic is unstyled");
       end;
    end Test_Process_Missing_Input_File;
@@ -752,9 +753,9 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process redirection exits successfully");
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
       Assert (File_Text ("../" & Target) = "saved", "process redirection file content");
-      Assert (not Contains (File_Text ("../" & Target), "old"),
+      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
-      Assert (not Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), Character'Val (27) & "["),
               "color=always does not style redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -784,12 +785,12 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process append redirection exits successfully");
       Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
-        (Contains (File_Text ("../" & Target), "existing") and then
-         Contains (File_Text ("../" & Target), "first" & LF & "second"),
+        (Project_Tools.Text.Contains (File_Text ("../" & Target), "existing") and then
+         Project_Tools.Text.Contains (File_Text ("../" & Target), "first" & LF & "second"),
          "append redirection preserves existing content and write order");
       Assert (File_Text ("../" & Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
-      Assert (not Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), Character'Val (27) & "["),
               "color=always does not style appended redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -817,11 +818,11 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 3, Message & " exits with host I/O status");
-            Assert (Contains (Output, "awk: error: cannot write output file: " & Target),
+            Assert (Project_Tools.Text.Contains (Output, "awk: error: cannot write output file: " & Target),
                     Message & " reports the redirected output target");
-            Assert (not Contains (Output, "after"),
+            Assert (not Project_Tools.Text.Contains (Output, "after"),
                     Message & " does not continue after required output failure");
-            Assert (not Contains (Output, Character'Val (27) & "["),
+            Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                     Message & " diagnostic is unstyled by default capture");
          end;
       end Expect_Failure;
@@ -848,7 +849,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process -F exits successfully");
-      Assert (Contains (U.To_String (Output), "one/two" & LF & "three/four"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "one/two" & LF & "three/four"),
               "process -F splits fields");
    end Test_Process_Field_Separator;
 
@@ -872,7 +873,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "attached -F process run exits successfully");
-      Assert (Contains (U.To_String (Output), "two" & LF & "four"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "two" & LF & "four"),
               "later attached -F value wins at process boundary");
    end Test_Process_Attached_Field_Separator_Final_Wins;
 
@@ -892,7 +893,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process -v exits successfully");
-      Assert (Contains (U.To_String (Output), "42" & LF), "process -v is visible before BEGIN");
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "42" & LF), "process -v is visible before BEGIN");
    end Test_Process_V_Assignment;
 
    procedure Test_Process_Repeated_V_Assignments
@@ -916,7 +917,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process repeated -v exits successfully");
-      Assert (Contains (U.To_String (Output), "second" & LF & "a=b"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "second" & LF & "a=b"),
               "process -v assignments are applied in order and preserve extra equals");
    end Test_Process_Repeated_V_Assignments;
 
@@ -941,11 +942,11 @@ package body Awk_Tests.Process is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Contains (Output, "invalid assignment: 1bad=value"),
+            Assert (Project_Tools.Text.Contains (Output, "invalid assignment: 1bad=value"),
                     Message & " explains the invalid assignment");
-            Assert (Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
                     Message & " emits the usage hint");
-            Assert (not Contains (Output, "1" & LF),
+            Assert (not Project_Tools.Text.Contains (Output, "1" & LF),
                     Message & " does not execute the AWK program");
          end;
       end Expect_Invalid;
@@ -988,9 +989,9 @@ package body Awk_Tests.Process is
            Output  => Output,
            Quiet   => True);
       Assert (Status = 0, "process environment propagation exits successfully");
-      Assert (Contains (U.To_String (Output), "visible" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "visible" & LF),
               "process environment reaches awklib ENVIRON");
-      Assert (Contains (U.To_String (Output), "empty=" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "empty=" & LF),
               "empty process environment values are preserved");
    end Test_Process_Environment_Propagation;
 
@@ -1016,9 +1017,9 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "Danish process diagnostic exits with usage status");
-         Assert (Contains (Output, "ukendt tilvalg"),
+         Assert (Project_Tools.Text.Contains (Output, "ukendt tilvalg"),
                  "process diagnostic follows LC_ALL locale");
-         Assert (Contains (Output, "tip:"),
+         Assert (Project_Tools.Text.Contains (Output, "tip:"),
                  "localized process hint is emitted");
       end;
    end Test_Process_Danish_Diagnostic_From_Locale;
@@ -1048,9 +1049,9 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "Greek process diagnostic exits with usage status");
-         Assert (Contains (Output, "άγνωστη επιλογή"),
+         Assert (Project_Tools.Text.Contains (Output, "άγνωστη επιλογή"),
                  "process diagnostic renders Greek catalog text");
-         Assert (not Contains (Output, Doubled),
+         Assert (not Project_Tools.Text.Contains (Output, Doubled),
                  "localized process diagnostic is not doubled UTF-8");
       end;
    end Test_Process_Localized_UTF8_Diagnostic;
@@ -1077,9 +1078,9 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "unsupported locale diagnostic exits with usage status");
-         Assert (Contains (Output, "unknown option"),
+         Assert (Project_Tools.Text.Contains (Output, "unknown option"),
                  "unsupported locale falls back to English at process boundary");
-         Assert (Contains (Output, "hint:"),
+         Assert (Project_Tools.Text.Contains (Output, "hint:"),
                  "fallback process hint is emitted");
       end;
    end Test_Process_Unsupported_Locale_Fallback;
@@ -1104,12 +1105,12 @@ package body Awk_Tests.Process is
       begin
          Assert (Status = 2, "hostile process argument exits with usage status");
          Assert
-           (not Contains (Output, LF & "awk: error: forged"),
+           (not Project_Tools.Text.Contains (Output, LF & "awk: error: forged"),
             "process diagnostic cannot be forged with an embedded newline");
-         Assert (not Contains (Output, Escape),
+         Assert (not Project_Tools.Text.Contains (Output, Escape),
                  "process diagnostic emits no raw terminal escape");
          Assert
-           (Contains (Output, "\nawk: error: forged\e[2J"),
+           (Project_Tools.Text.Contains (Output, "\nawk: error: forged\e[2J"),
             "process diagnostic renders unsafe characters visibly");
       end;
    end Test_Process_Diagnostic_Sanitizes_Hostile_Argument;
@@ -1214,9 +1215,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process runtime assignment ARGV exits successfully");
-      Assert (Contains (U.To_String (Output), "3" & LF & "name=value" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "3" & LF & "name=value" & LF),
               "runtime assignment spelling is preserved in ARGV");
-      Assert (Contains (U.To_String (Output), "tests/fixtures/input/basic.txt"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/basic.txt"),
               "input filename remains ordered after runtime assignment");
    end Test_Process_Runtime_Assignment_Argv;
 
@@ -1241,15 +1242,15 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process runtime assignment positions exits successfully");
-      Assert (Contains (U.To_String (Output), "begin " & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "begin " & LF),
               "initial runtime assignment value is empty before input");
       Assert
-        (Contains (U.To_String (Output), "tests/fixtures/input/basic.txt 1  one two"),
+        (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/basic.txt 1  one two"),
          "first file is processed before interspersed assignment");
       Assert
-        (Contains (U.To_String (Output), "tests/fixtures/input/second.txt 1 42 five six"),
+        (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/second.txt 1 42 five six"),
          "interspersed assignment affects following input file");
-      Assert (Contains (U.To_String (Output), "end 99" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "end 99" & LF),
               "final runtime assignment is visible in END");
    end Test_Process_Runtime_Assignment_Positions;
 
@@ -1269,11 +1270,11 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 1, "process parse failure exits with interpreter status");
-         Assert (Contains (Output, "awk: error: AWK execution failed"),
+         Assert (Project_Tools.Text.Contains (Output, "awk: error: AWK execution failed"),
                  "parse failure reports localized interpreter context");
-         Assert (Contains (Output, "expected '}'"),
+         Assert (Project_Tools.Text.Contains (Output, "expected '}'"),
                  "parse failure preserves interpreter detail");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured parse diagnostic is unstyled");
       end;
    end Test_Process_Parse_Failure;
@@ -1294,13 +1295,13 @@ package body Awk_Tests.Process is
               Err_To_Out => True);
       begin
          Assert (Status = 1, "process runtime failure exits with interpreter status");
-         Assert (Contains (Output, "awk: error: AWK execution failed"),
+         Assert (Project_Tools.Text.Contains (Output, "awk: error: AWK execution failed"),
                  "runtime failure reports localized interpreter context");
-         Assert (Contains (Output, "division by zero"),
+         Assert (Project_Tools.Text.Contains (Output, "division by zero"),
                  "runtime failure preserves interpreter detail");
-         Assert (not Contains (Output, "successful"),
+         Assert (not Project_Tools.Text.Contains (Output, "successful"),
                  "runtime failure does not report false success");
-         Assert (not Contains (Output, Character'Val (27) & "["),
+         Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured runtime diagnostic is unstyled");
       end;
    end Test_Process_Runtime_Failure;
@@ -1322,9 +1323,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process multiple files exits successfully");
-      Assert (Contains (U.To_String (Output), "tests/fixtures/input/basic.txt:1:one"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/basic.txt:1:one"),
               "first file FILENAME/FNR visible");
-      Assert (Contains (U.To_String (Output), "tests/fixtures/input/second.txt:1:five"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/second.txt:1:five"),
               "second file FILENAME/FNR visible");
    end Test_Process_Multiple_Files;
 
@@ -1352,11 +1353,11 @@ package body Awk_Tests.Process is
            Output  => Output,
            Quiet   => True);
       Assert (Status = 0, "process regex arithmetic builtins exits successfully");
-      Assert (Contains (U.To_String (Output), "alpha 10 lp 5"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "alpha 10 lp 5"),
               "regex pattern, arithmetic, substr, and length process first record");
-      Assert (Contains (U.To_String (Output), "beta 14 et 4"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "beta 14 et 4"),
               "regex pattern, arithmetic, substr, and length process second record");
-      Assert (not Contains (U.To_String (Output), "skip"),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "skip"),
               "non-matching process input is not emitted");
       Project_Tools.Files.Delete_File_If_Present ("../tests/fixtures/input/regex_numbers.txt");
    end Test_Process_Regex_Arithmetic_And_Builtins;
@@ -1378,7 +1379,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process printf formatting exits successfully");
-      Assert (Contains (U.To_String (Output), "n:007"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "n:007"),
               "process printf formatted text is forwarded");
    end Test_Process_Printf_Formatting;
 
@@ -1399,11 +1400,11 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process comparisons exit successfully");
-      Assert (Contains (U.To_String (Output), "string" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "string" & LF),
               "process string comparison is evaluated by awklib");
-      Assert (Contains (U.To_String (Output), "number" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "number" & LF),
               "process numeric comparison is evaluated by awklib");
-      Assert (Contains (U.To_String (Output), "coerce" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "coerce" & LF),
               "process mixed comparison follows awklib conversion behavior");
    end Test_Process_Comparisons;
 
@@ -1424,7 +1425,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process sub replacement exits successfully");
-      Assert (Contains (U.To_String (Output), "X" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "X" & LF),
               "process sub replacement follows awklib regex behavior");
    end Test_Process_Sub_Replacement;
 
@@ -1445,9 +1446,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process string builtins exit successfully");
-      Assert (Contains (U.To_String (Output), "3 bAnAnA" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "3 bAnAnA" & LF),
               "process gsub replacement count and result follow awklib behavior");
-      Assert (Contains (U.To_String (Output), "3 ADA" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "3 ADA" & LF),
               "process index and toupper follow awklib behavior");
    end Test_Process_String_Builtins;
 
@@ -1468,7 +1469,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process split builtin exits successfully");
-      Assert (Contains (U.To_String (Output), "3 b" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "3 b" & LF),
               "process split populates array values through awklib");
    end Test_Process_Split_Builtin;
 
@@ -1489,9 +1490,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process match and sprintf exits successfully");
-      Assert (Contains (U.To_String (Output), "x-04" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "x-04" & LF),
               "process sprintf result is forwarded");
-      Assert (Contains (U.To_String (Output), "4 4 3" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "4 4 3" & LF),
               "process match updates RSTART and RLENGTH through awklib");
    end Test_Process_Match_And_Sprintf;
 
@@ -1512,7 +1513,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process separators and numeric builtins exit successfully");
-      Assert (Contains (U.To_String (Output), "ada:3:3|"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "ada:3:3|"),
               "OFS, ORS, and numeric builtins are applied by awklib");
    end Test_Process_Output_Separators_And_Numeric_Builtins;
 
@@ -1533,7 +1534,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process math builtins exit successfully");
-      Assert (Contains (U.To_String (Output), "0 1 1 0 3.14159" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "0 1 1 0 3.14159" & LF),
               "process math builtins follow awklib output formatting");
    end Test_Process_Math_Builtins;
 
@@ -1554,13 +1555,13 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process arrays delete and while exits successfully");
-      Assert (Contains (U.To_String (Output), "y 2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "y 2" & LF),
               "process array iteration observes deleted element");
-      Assert (Contains (U.To_String (Output), "w 0" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "w 0" & LF),
               "process while loop emits first iteration");
-      Assert (Contains (U.To_String (Output), "w 1" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "w 1" & LF),
               "process while loop emits second iteration");
-      Assert (not Contains (U.To_String (Output), "x 1" & LF),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "x 1" & LF),
               "deleted array element is not emitted");
    end Test_Process_Arrays_Delete_And_While;
 
@@ -1582,13 +1583,13 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process next ternary break continue exits successfully");
-      Assert (Contains (U.To_String (Output), "loop 0" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "loop 0" & LF),
               "process for loop emits first retained iteration");
-      Assert (Contains (U.To_String (Output), "loop 2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "loop 2" & LF),
               "process continue skips and break stops the loop");
-      Assert (Contains (U.To_String (Output), "three" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "three" & LF),
               "process next skips the first input record");
-      Assert (not Contains (U.To_String (Output), "one" & LF),
+      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "one" & LF),
               "record skipped by next is not emitted");
    end Test_Process_Next_Ternary_Break_And_Continue;
 
@@ -1610,9 +1611,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process field assignment rebuild exits successfully");
-      Assert (Contains (U.To_String (Output), "one|TWO|2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "one|TWO|2" & LF),
               "first record is rebuilt by awklib after field assignment");
-      Assert (Contains (U.To_String (Output), "three|FOUR|2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "three|FOUR|2" & LF),
               "second record is rebuilt by awklib after field assignment");
    end Test_Process_Field_Assignment_Rebuilds_Record;
 
@@ -1634,9 +1635,9 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process record assignment resplit exits successfully");
-      Assert (Contains (U.To_String (Output), "ONE:TWO:2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "ONE:TWO:2" & LF),
               "first record assignment is resplit by awklib");
-      Assert (Contains (U.To_String (Output), "THREE:FOUR:2" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "THREE:FOUR:2" & LF),
               "second record assignment is resplit by awklib");
    end Test_Process_Record_Assignment_Resplits_Fields;
 
@@ -1655,7 +1656,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process command getline exits successfully");
-      Assert (Contains (U.To_String (Output), "x"),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "x"),
               "process command getline reads command output");
    end Test_Process_Command_Getline;
 
@@ -1676,7 +1677,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process auxiliary file getline exits successfully");
-      Assert (Contains (U.To_String (Output), "one two" & LF),
+      Assert (Project_Tools.Text.Contains (U.To_String (Output), "one two" & LF),
               "process getline < file reads registered host file");
    end Test_Process_Auxiliary_File_Getline;
 

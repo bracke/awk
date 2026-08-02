@@ -5,9 +5,6 @@ with Project_Tools.Text;
 package body Awk_Tests.Support is
    package U renames Ada.Strings.Unbounded;
 
-   function Contains (Text, Pattern : String) return Boolean is
-     (Project_Tools.Text.Contains (Text, Pattern));
-
    function File_Text (Path : String) return String is
       Result : constant String :=
         U.To_String (Project_Tools.Text.Read_Text_File (Path));
