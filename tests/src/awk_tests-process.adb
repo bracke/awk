@@ -422,6 +422,30 @@ package body Awk_Tests.Process is
               "process -F splits fields");
    end Test_Process_Field_Separator;
 
+   procedure Test_Process_Attached_Field_Separator_Final_Wins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
+        [new String'("-F:"),
+         new String'("-F "),
+         new String'("{ print $2 }"),
+         new String'("tests/fixtures/input/basic.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process attached -F final wins",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "attached -F process run exits successfully");
+      Assert (Contains (U.To_String (Output), "two" & LF & "four"),
+              "later attached -F value wins at process boundary");
+   end Test_Process_Attached_Field_Separator_Final_Wins;
+
    procedure Test_Process_V_Assignment (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -652,6 +676,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine (T, Test_Process_Redirection'Access, "process redirection");
       Registration.Register_Routine (T, Test_Process_Append_Redirection'Access, "process append redirection");
       Registration.Register_Routine (T, Test_Process_Field_Separator'Access, "process -F");
+      Registration.Register_Routine
+        (T, Test_Process_Attached_Field_Separator_Final_Wins'Access,
+         "process attached -F final wins");
       Registration.Register_Routine (T, Test_Process_V_Assignment'Access, "process -v");
       Registration.Register_Routine
         (T, Test_Process_Environment_Propagation'Access,
