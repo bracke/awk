@@ -1,4 +1,5 @@
 with Awk_Config;
+with Ada.Environment_Variables;
 with Ada.Strings.Unbounded;
 with Awk_CLI.Execution;
 with Terminal_Styles;
@@ -32,8 +33,38 @@ package body Awk_CLI.Output is
    function Styled
      (Text : String;
       Role : Terminal_Styles.Style_Role;
-      Destination_Is_Terminal : Boolean) return String is
-     (Terminal_Styles.Decorate (Text, Role, Destination_Is_Terminal));
+      Destination_Is_Terminal : Boolean) return String
+   is
+      Policy : constant Terminal_Styles.Color_Policy :=
+        Terminal_Styles.Current_Color_Policy;
+   begin
+      case Policy is
+         when Terminal_Styles.Color_Never =>
+            return Text;
+
+         when Terminal_Styles.Color_Always =>
+            return Terminal_Styles.Decorate (Text, Role);
+
+         when Terminal_Styles.Color_Auto =>
+            if (not Destination_Is_Terminal)
+              or else Ada.Environment_Variables.Exists ("NO_COLOR")
+            then
+               return Text;
+            end if;
+
+            Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Always);
+            declare
+               Result : constant String := Terminal_Styles.Decorate (Text, Role);
+            begin
+               Terminal_Styles.Set_Color_Policy (Policy);
+               return Result;
+            exception
+               when others =>
+                  Terminal_Styles.Set_Color_Policy (Policy);
+                  raise;
+            end;
+      end case;
+   end Styled;
 
    function Help
      (Catalog : L.Catalog;
