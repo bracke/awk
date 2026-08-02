@@ -7,12 +7,12 @@ with GNAT.OS_Lib;
 
 with Project_Tools.Files;
 with Project_Tools.Processes;
+with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
-with Awk_Tests.Support;
 
 package body Awk_Tests.Process is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
+   package Fixtures renames Project_Tools.Test_Fixtures;
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
@@ -752,10 +752,10 @@ package body Awk_Tests.Process is
 
       Assert (Status = 0, "process redirection exits successfully");
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
-      Assert (Trimmed_File_Text ("../" & Target) = "saved", "process redirection file content");
-      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "old"),
+      Assert (Fixtures.Read_Text_File ("../" & Target) = "saved", "process redirection file content");
+      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
-      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), Character'Val (27) & "["),
               "color=always does not style redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -785,12 +785,12 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process append redirection exits successfully");
       Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
-        (Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "existing") and then
-         Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "first" & LF & "second"),
+        (Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "existing") and then
+         Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "first" & LF & "second"),
          "append redirection preserves existing content and write order");
-      Assert (Trimmed_File_Text ("../" & Target) /= "first" & LF & "second",
+      Assert (Fixtures.Read_Text_File ("../" & Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
-      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), Character'Val (27) & "["),
               "color=always does not style appended redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);

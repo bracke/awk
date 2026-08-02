@@ -5,9 +5,8 @@ is Ada code and is invoked through `awk_workflows`.
 
 The primary suite is `awk_tests_main`. It exercises:
 
-Subsystem-focused AUnit packages live alongside the aggregate suite. The
-`awk_tests-support` package owns shared test helpers for string search, file
-reading, and fixture file writing. The
+Subsystem-focused AUnit packages live alongside the aggregate suite. Shared
+test file reads and file writes use `project_tools` helpers directly. The
 `awk_tests-cli_options` package owns option-parser tests, and
 `awk_tests-program_sources` owns program-source resolution tests. The
 `awk_tests-operands` package owns operand classification tests, and

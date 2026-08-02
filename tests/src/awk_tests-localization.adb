@@ -3,16 +3,16 @@ with AUnit.Assertions;
 with Ada.Strings.Fixed;
 
 with Project_Tools.Files;
+with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
 
 with Awk_Catalog_Policy;
 with Awk_CLI;
 with Awk_CLI.Localization;
-with Awk_Tests.Support;
 
 package body Awk_Tests.Localization is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
+   package Fixtures renames Project_Tools.Test_Fixtures;
 
    LF : constant String := [1 => ASCII.LF];
 
@@ -26,9 +26,9 @@ package body Awk_Tests.Localization is
 
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Catalog : constant String := Trimmed_File_Text ("../resources/messages/catalog.txt");
-      English : constant String := Trimmed_File_Text ("../resources/messages/en/catalog.txt");
-      Danish  : constant String := Trimmed_File_Text ("../resources/messages/da/catalog.txt");
+      Catalog : constant String := Fixtures.Read_Text_File ("../resources/messages/catalog.txt");
+      English : constant String := Fixtures.Read_Text_File ("../resources/messages/en/catalog.txt");
+      Danish  : constant String := Fixtures.Read_Text_File ("../resources/messages/da/catalog.txt");
 
       procedure Require_Key (Key : String) is
       begin
@@ -119,7 +119,7 @@ package body Awk_Tests.Localization is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Catalog : constant String := Trimmed_File_Text ("../resources/messages/catalog.txt");
+      Catalog : constant String := Fixtures.Read_Text_File ("../resources/messages/catalog.txt");
       Escape  : constant String := [1 => Character'Val (27)];
 
       function Catalog_Value (Key : String) return String is

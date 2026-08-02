@@ -1,13 +1,13 @@
 with AUnit.Assertions;
 
 with Awk_CLI.Compatibility;
-with Awk_Tests.Support;
 with Project_Tools.Files;
+with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
 
 package body Awk_Tests.Compatibility is
    use AUnit.Assertions;
-   use Awk_Tests.Support;
+   package Fixtures renames Project_Tools.Test_Fixtures;
    use type Awk_CLI.Compatibility.Compatibility_Status;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
@@ -18,8 +18,8 @@ package body Awk_Tests.Compatibility is
 
    procedure Test_Compatibility_Registry (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Docs        : constant String := Trimmed_File_Text ("../docs/compatibility.md");
-      Conformance : constant String := Trimmed_File_Text ("conformance/manifest/cases.txt");
+      Docs        : constant String := Fixtures.Read_Text_File ("../docs/compatibility.md");
+      Conformance : constant String := Fixtures.Read_Text_File ("conformance/manifest/cases.txt");
 
       procedure Require_Reviewed (Id : String) is
       begin
@@ -60,7 +60,7 @@ package body Awk_Tests.Compatibility is
 
    procedure Test_Conformance_Manifest (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Manifest : constant String := Trimmed_File_Text ("conformance/manifest/cases.txt");
+      Manifest : constant String := Fixtures.Read_Text_File ("conformance/manifest/cases.txt");
 
       procedure Require_Case
         (Id        : String;
@@ -77,9 +77,9 @@ package body Awk_Tests.Compatibility is
                  "case file exists for " & Id);
          Assert (Project_Tools.Files.File_Exists ("conformance/" & Expected),
                  "expected file exists for " & Id);
-         Assert (Trimmed_File_Text ("conformance/" & Case_File) /= "",
+         Assert (Fixtures.Read_Text_File ("conformance/" & Case_File) /= "",
                  "case file is non-empty for " & Id);
-         Assert (Trimmed_File_Text ("conformance/" & Expected) /= "",
+         Assert (Fixtures.Read_Text_File ("conformance/" & Expected) /= "",
                  "expected file is non-empty for " & Id);
       end Require_Case;
    begin
