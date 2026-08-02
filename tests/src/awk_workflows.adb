@@ -205,6 +205,9 @@ procedure Awk_Workflows is
         (File_Has ("../docs/building.md", "install boundary"),
          "building docs must mention install boundary verification");
       Require
+        (File_Has ("../docs/building.md", "generated release packages"),
+         "building docs must mention generated release package cleanup");
+      Require
         (File_Has ("../docs/building.md", "local Alire workspace pins"),
          "building docs must mention workspace pin verification");
       Require
@@ -571,6 +574,7 @@ procedure Awk_Workflows is
    begin
       Files.Delete_Tree ("../obj");
       Files.Delete_Tree ("../bin");
+      Files.Delete_Tree ("../dist");
       Files.Delete_Tree ("obj");
       Files.Delete_Tree ("bin");
       Put_Info ("cleaned build outputs");
