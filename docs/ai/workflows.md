@@ -22,8 +22,9 @@ dependency-prefix variables from the outer process cannot conflict with the
 root and tests crate resolutions.
 
 `verify` also runs source-policy checks for adapter isolation through parsed
-Ada `with` clauses, no handwritten ANSI code tokens in presentation code, no
-external AWK fallback code tokens in production source, and expected local
+Ada `with` clauses, no handwritten ANSI code tokens in production source
+except diagnostic ESC recognition for escaping, no external AWK fallback code
+tokens in production source, and expected local
 Alire workspace pins.
 
 `release` requires a clean git working tree, builds root and tests with

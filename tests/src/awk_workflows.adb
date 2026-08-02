@@ -251,6 +251,14 @@ procedure Awk_Workflows is
                                              "Alire workspace pins"),
          "AI workflow docs must mention workspace pin validation");
       Require
+        (File_Has ("../docs/testing.md", "production source while allowing the diagnostic" & ASCII.LF &
+                                      "sanitizer to recognize ESC")
+         and then File_Has ("../docs/ai/workflows.md",
+                            "no handwritten ANSI code tokens in production source")
+         and then File_Has ("../docs/ai/workflows.md",
+                            "diagnostic ESC recognition for escaping"),
+         "workflow docs must describe production-wide ANSI source policy");
+      Require
         (File_Has ("../docs/ai/traceability.md", "| 1 | Project identity |"),
          "traceability docs must map project identity");
       Require
