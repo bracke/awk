@@ -608,6 +608,13 @@ procedure Awk_Workflows is
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
          "low-level OS process helpers must stay in platform adapter");
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            """/bin/sh""",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "shell command execution must stay in platform adapter");
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],
