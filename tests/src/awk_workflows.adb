@@ -314,6 +314,9 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
       Require
+        (Contains (File_Text ("../docs/testing.md"), "awk_tests-cli_options"),
+         "testing docs must document subsystem test packages");
+      Require
         (Contains (File_Text ("../docs/testing.md"), "conformance manifest"),
          "testing docs must mention conformance manifest validation");
       Require
@@ -585,6 +588,13 @@ procedure Awk_Workflows is
       Require
         (not Files.Any_File_Contains ("../src", "nawk"),
          "production source must not invoke or reference external nawk fallback");
+      Require
+        (Files.File_Exists ("src/awk_tests-cli_options.ads")
+         and then Files.File_Exists ("src/awk_tests-cli_options.adb"),
+         "option parser tests must live in a subsystem test package");
+      Require
+        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
+         "aggregate suite must include CLI option subsystem tests");
       Require
         (Contains (File_Text ("src/awk_workflows.adb"), "--release"),
          "release workflow must use Alire release builds");

@@ -5,6 +5,11 @@ is Ada code and is invoked through `awk_workflows`.
 
 The primary suite is `awk_tests_main`. It exercises:
 
+Subsystem-focused AUnit packages live alongside the aggregate suite. The
+`awk_tests-cli_options` package owns option-parser tests, while
+`awk_tests-suite` remains the top-level aggregator and still contains broader
+integration and process-boundary coverage.
+
 - option parsing, option failure diagnostics, original argument indexes, and
   `--` handling;
 - program source resolution, including empty direct programs, multiple `-f`
