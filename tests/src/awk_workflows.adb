@@ -1316,20 +1316,13 @@ procedure Awk_Workflows is
       declare
          Alr : constant String := Proc.Locate_Command ("alr");
       begin
-         if Proc.Run_Status
-             ("alr install", Root, Alr, Install_Args, Output, Quiet => True) /= 0
-         then
-            Fail ("alr install failed");
-         end if;
+         Proc.Run ("alr install", Root, Alr, Install_Args, Quiet => True);
       end;
 
       Files.Require_File (Prefix & "/bin/awk", "installed awk executable missing");
-      if Proc.Run_Status
-          ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
-           Output, Quiet => True) /= 0
-      then
-         Fail ("installed awk executable failed");
-      end if;
+      Proc.Run
+        ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
+         Output, Quiet => True);
       Require (Text.Contains (U.To_String (Output), "awk 0.1.0"),
                "installed awk version output is unexpected");
 
