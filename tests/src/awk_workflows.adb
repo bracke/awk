@@ -1,5 +1,6 @@
 with Ada.Command_Line;
 with Ada.Directories;
+with Ada.Environment_Variables;
 with Ada.Exceptions;
 with Ada.Streams;
 with Ada.Streams.Stream_IO;
@@ -46,6 +47,8 @@ procedure Awk_Workflows is
    end Require;
 
    procedure Run_Alr_Build (Directory : String; Release_Mode : Boolean := False) is
+      package Env_Vars renames Ada.Environment_Variables;
+
       function Derived_Home return String is
          Marker : constant String := "/.getada/bin/alr";
       begin
@@ -58,7 +61,17 @@ procedure Awk_Workflows is
          end if;
       end Derived_Home;
 
+      function Value_Or_Empty (Name : String) return String is
+      begin
+         if Env_Vars.Exists (Name) then
+            return Env_Vars.Value (Name);
+         else
+            return "";
+         end if;
+      end Value_Or_Empty;
+
       Home : constant String := Derived_Home;
+      Path : constant String := Value_Or_Empty ("PATH");
    begin
       Require (Alr /= "", "alr executable not found");
       if Env /= "" and then Home /= "" then
@@ -66,18 +79,22 @@ procedure Awk_Workflows is
             Args : constant GNAT.OS_Lib.Argument_List :=
               (if Release_Mode
                then
-                 [new String'("HOME=" & Home),
+                 [new String'("-i"),
+                  new String'("HOME=" & Home),
                   new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
                   new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
+                  new String'("PATH=" & Path),
                   new String'(Alr),
                   new String'("-n"),
                   new String'("build"),
                   new String'("--release"),
                   new String'("--profiles=*=release")]
                else
-                 [new String'("HOME=" & Home),
+                 [new String'("-i"),
+                  new String'("HOME=" & Home),
                   new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
                   new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
+                  new String'("PATH=" & Path),
                   new String'(Alr),
                   new String'("-n"),
                   new String'("build"),

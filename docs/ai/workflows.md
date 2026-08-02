@@ -17,6 +17,10 @@ release
 It uses `project_tools` process helpers for child-process execution and does
 not rely on shell scripts.
 
+Nested Alire builds are launched through a scrubbed environment so `alr exec`
+dependency-prefix variables from the outer process cannot conflict with the
+root and tests crate resolutions.
+
 `verify` also runs source-policy checks for adapter isolation, no direct ANSI
 emission in presentation code, and no external AWK fallback references in
 production source.
