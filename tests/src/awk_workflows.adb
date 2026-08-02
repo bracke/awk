@@ -637,10 +637,14 @@ procedure Awk_Workflows is
 
       procedure Require_Reference_Cue (Suffix, Cue : String) is
       begin
-         Require
-           (Files.File_Contains ("../docs/localization-reference.md", Suffix)
-            and then Files.File_Contains ("../docs/localization-reference.md", Cue),
-            "localization reference missing cue " & Cue & " for " & Suffix);
+         Files.Require_Contains
+           ("../docs/localization-reference.md", Suffix,
+            "localization reference missing cue " & Cue & " for " & Suffix,
+            Quiet => True);
+         Files.Require_Contains
+           ("../docs/localization-reference.md", Cue,
+            "localization reference missing cue " & Cue & " for " & Suffix,
+            Quiet => True);
 
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
@@ -925,11 +929,15 @@ procedure Awk_Workflows is
       Require_Packaged ("docs/compatibility.md");
       Require_Packaged ("docs/final-acceptance.md");
       Require_Packaged ("LICENSE");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "message catalogs")
-         and then Files.File_Contains ("../docs/releasing.md", "MANIFEST.txt")
-         and then Files.File_Contains ("../docs/testing.md", "package manifest"),
-         "release/testing docs must describe packaged resources");
+      Files.Require_Contains
+        ("../docs/releasing.md", "message catalogs",
+         "release/testing docs must describe packaged resources", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "MANIFEST.txt",
+         "release/testing docs must describe packaged resources", Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "package manifest",
+         "release/testing docs must describe packaged resources", Quiet => True);
       Put_Info ("package manifest policy checks passed");
    end Package_Manifest_Policy;
 
