@@ -537,7 +537,8 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("standard output"),
             U.To_Unbounded_String ("is unsupported because"),
             U.To_Unbounded_String ("is reserved for AWK data"),
-            U.To_Unbounded_String ("error: {")];
+            U.To_Unbounded_String ("error: {"),
+            U.To_Unbounded_String (" / {option}")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
