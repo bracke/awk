@@ -23,6 +23,11 @@ or terminal escapes.
 The release workflow also rejects known English fallback help sentences in
 non-English catalog entries so generated or temporary text cannot silently
 replace localized help.
+Translation review also uses the checked-in
+[Localization Reference](localization-reference.md), which records comparable
+POSIX, GNU awk, BWK awk, and BusyBox awk text families to consult for AWK
+terminology and help phrasing. These references guide wording only; tests do
+not execute another AWK implementation.
 
 Locales outside the supported European state-language locale set fall back
 through the `messages` runtime to the catalog default locale. If a requested

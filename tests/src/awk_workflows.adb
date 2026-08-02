@@ -45,6 +45,7 @@ procedure Awk_Workflows is
       U.To_Unbounded_String ("docs/architecture.md"),
       U.To_Unbounded_String ("docs/diagnostics.md"),
       U.To_Unbounded_String ("docs/localization.md"),
+      U.To_Unbounded_String ("docs/localization-reference.md"),
       U.To_Unbounded_String ("docs/testing.md"),
       U.To_Unbounded_String ("docs/building.md"),
       U.To_Unbounded_String ("docs/releasing.md"),
@@ -130,6 +131,7 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/architecture.md"),
          U.To_Unbounded_String ("../docs/diagnostics.md"),
          U.To_Unbounded_String ("../docs/localization.md"),
+         U.To_Unbounded_String ("../docs/localization-reference.md"),
          U.To_Unbounded_String ("../docs/testing.md"),
          U.To_Unbounded_String ("../docs/building.md"),
          U.To_Unbounded_String ("../docs/releasing.md"),
@@ -200,6 +202,14 @@ procedure Awk_Workflows is
         (File_Has ("../docs/localization.md", "awk.internal.localization_failed")
          and then File_Has ("../docs/localization.md", "last-resort containment"),
          "localization docs must document catalog-backed render fallback");
+      Require
+        (File_Has ("../docs/localization.md", "Localization Reference")
+         and then File_Has ("../docs/localization-reference.md", "POSIX `awk` utility text")
+         and then File_Has ("../docs/localization-reference.md", "GNU awk")
+         and then File_Has ("../docs/localization-reference.md", "BWK awk")
+         and then File_Has ("../docs/localization-reference.md", "BusyBox awk")
+         and then File_Has ("../docs/localization-reference.md", "Reference comparison checklist"),
+         "localization docs must require comparison with other AWK reference text");
       Require
         (File_Has ("../docs/localization.md", "supported European state-language locale set")
          and then File_Has ("../docs/testing.md", "every supported European" & ASCII.LF &
