@@ -1,9 +1,11 @@
 with AUnit.Assertions;
 
 with Awk_CLI;
+with Awk_Tests.Support;
 
 package body Awk_Tests.Inputs is
    use AUnit.Assertions;
+   use Awk_Tests.Support;
 
    LF : constant String := [1 => ASCII.LF];
    use type Awk_CLI.Exit_Code;
@@ -13,22 +15,6 @@ package body Awk_Tests.Inputs is
    begin
       return AUnit.Format ("awk inputs");
    end Name;
-
-   function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
 
    procedure Test_Context_Standard_Input_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);

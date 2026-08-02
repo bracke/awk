@@ -3,9 +3,11 @@ with AUnit.Assertions;
 with Ada.Environment_Variables;
 
 with Awk_CLI;
+with Awk_Tests.Support;
 
 package body Awk_Tests.Terminal_Styles is
    use AUnit.Assertions;
+   use Awk_Tests.Support;
    use type Awk_CLI.Exit_Code;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
@@ -13,22 +15,6 @@ package body Awk_Tests.Terminal_Styles is
    begin
       return AUnit.Format ("awk terminal styles");
    end Name;
-
-   function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
 
    procedure Test_Context_Auto_Color_Destinations
      (T : in out AUnit.Test_Cases.Test_Case'Class)

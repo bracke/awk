@@ -4,9 +4,11 @@ with Awk_CLI;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Localization;
 with Awk_CLI.Output;
+with Awk_Tests.Support;
 
 package body Awk_Tests.Diagnostics is
    use AUnit.Assertions;
+   use Awk_Tests.Support;
 
    LF : constant String := [1 => ASCII.LF];
    use type Awk_CLI.Exit_Code;
@@ -16,22 +18,6 @@ package body Awk_Tests.Diagnostics is
    begin
       return AUnit.Format ("awk diagnostics");
    end Name;
-
-   function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
 
    procedure Test_Context_Diagnostics (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);

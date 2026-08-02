@@ -5,9 +5,11 @@ with Ada.Strings.Unbounded;
 
 with Awk_CLI;
 with Awk_CLI.Environment;
+with Awk_Tests.Support;
 
 package body Awk_Tests.Environment is
    use AUnit.Assertions;
+   use Awk_Tests.Support;
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
@@ -19,22 +21,6 @@ package body Awk_Tests.Environment is
    begin
       return AUnit.Format ("awk environment");
    end Name;
-
-   function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
 
    procedure Test_Context_Environment (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);

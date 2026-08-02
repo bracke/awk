@@ -637,6 +637,10 @@ procedure Awk_Workflows is
          and then Files.File_Exists ("src/awk_tests-compatibility.adb"),
          "compatibility tests must live in a subsystem test package");
       Require
+        (Files.File_Exists ("src/awk_tests-support.ads")
+         and then Files.File_Exists ("src/awk_tests-support.adb"),
+         "shared test helpers must live in a support package");
+      Require
         (Files.File_Exists ("src/awk_tests-context.ads")
          and then Files.File_Exists ("src/awk_tests-context.adb"),
          "context integration tests must live in a subsystem test package");
