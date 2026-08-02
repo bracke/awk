@@ -271,7 +271,8 @@ package body Awk_Tests.Localization is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Catalog_Path : constant String := "/tmp/awk-localization-fallback.catalog";
+      Catalog_Path : constant String :=
+        Project_Tools.Files.Temp_Dir & "/awk-localization-fallback.catalog";
       Catalog      : Awk_CLI.Localization.Catalog;
    begin
       Project_Tools.Files.Write_Text_File

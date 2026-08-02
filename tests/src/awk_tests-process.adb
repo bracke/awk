@@ -1,5 +1,6 @@
 with AUnit.Assertions;
 
+with Ada.Command_Line;
 with Ada.Strings.Unbounded;
 
 with GNAT.Expect;
@@ -16,6 +17,26 @@ package body Awk_Tests.Process is
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
+
+   function Executable_Suffix return String is
+      Self : constant String := Ada.Command_Line.Command_Name;
+   begin
+      if Self'Length >= 4 and then Self (Self'Last - 3 .. Self'Last) = ".exe" then
+         return ".exe";
+      end if;
+
+      return "";
+   end Executable_Suffix;
+
+   function Awk_From_Repository_Root return String is
+   begin
+      return "./bin/awk" & Executable_Suffix;
+   end Awk_From_Repository_Root;
+
+   function Awk_From_Tests_Directory return String is
+   begin
+      return "../bin/awk" & Executable_Suffix;
+   end Awk_From_Tests_Directory;
 
    procedure Ensure_Filesystem_Fixture_Directory is
    begin
@@ -37,7 +58,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk --version",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -61,7 +82,7 @@ package body Awk_Tests.Process is
       Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=da"),
-         new String'("./bin/awk"),
+         new String'(Awk_From_Repository_Root),
          new String'("--version")];
       Status : Integer;
    begin
@@ -93,7 +114,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk direct file input",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -114,7 +135,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk empty direct program",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -141,7 +162,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process dash filename",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -167,7 +188,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process terminator long operands",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -203,7 +224,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk option-looking file after program",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -231,7 +252,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk short option-looking file after program",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -256,7 +277,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process -f",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -288,7 +309,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process file-mode late option operand",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -311,7 +332,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk help no color",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -346,7 +367,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk help short circuit",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -364,7 +385,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk help color always",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -382,7 +403,7 @@ package body Awk_Tests.Process is
       Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
         [new String'("NO_COLOR=1"),
-         new String'("./bin/awk"),
+         new String'(Awk_From_Repository_Root),
          new String'("--color=auto"),
          new String'("--help")];
       Status : Integer;
@@ -415,7 +436,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk version short circuit",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -436,7 +457,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk output color always",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -456,7 +477,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -490,7 +511,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -527,7 +548,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -557,7 +578,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -584,7 +605,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -615,7 +636,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -648,7 +669,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -687,7 +708,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -716,7 +737,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -752,7 +773,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process redirection",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -785,7 +806,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process append redirection",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -819,7 +840,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -852,7 +873,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process -F",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -876,7 +897,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process attached -F final wins",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -896,7 +917,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process -v",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -920,7 +941,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process repeated -v",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -944,7 +965,7 @@ package body Awk_Tests.Process is
             Status : aliased Integer := -1;
             Output : constant String :=
               GNAT.Expect.Get_Command_Output
-                (Command    => "../bin/awk",
+                (Command    => Awk_From_Tests_Directory,
                  Arguments  => Args,
                  Input      => "",
                  Status     => Status'Access,
@@ -983,7 +1004,7 @@ package body Awk_Tests.Process is
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("AWK_PROCESS_ENV=visible"),
          new String'("AWK_PROCESS_EMPTY="),
-         new String'("./bin/awk"),
+         new String'(Awk_From_Repository_Root),
          new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
          new String'("unused=value")];
       Status : Integer;
@@ -1011,7 +1032,7 @@ package body Awk_Tests.Process is
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=da"),
-         new String'("../bin/awk"),
+         new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
    begin
       Assert (Env /= "", "env executable is available for locale-bound process test");
@@ -1043,7 +1064,7 @@ package body Awk_Tests.Process is
         & Character'Val (16#C2#);
       Args    : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=el"),
-         new String'("../bin/awk"),
+         new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
    begin
       Assert (Env /= "", "env executable is available for UTF-8 locale process test");
@@ -1072,7 +1093,7 @@ package body Awk_Tests.Process is
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=zz_ZZ.UTF-8"),
-         new String'("../bin/awk"),
+         new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
    begin
       Assert (Env /= "", "env executable is available for unsupported-locale process test");
@@ -1106,7 +1127,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -1136,7 +1157,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process explicit stdin eof",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1155,7 +1176,7 @@ package body Awk_Tests.Process is
       Status : aliased Integer := -1;
       Output : constant String :=
         GNAT.Expect.Get_Command_Output
-          (Command   => "../bin/awk",
+          (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
            Input     => "one two" & LF & "three four" & LF,
            Status    => Status'Access);
@@ -1174,7 +1195,7 @@ package body Awk_Tests.Process is
       Status : aliased Integer := -1;
       Output : constant String :=
         GNAT.Expect.Get_Command_Output
-          (Command   => "../bin/awk",
+          (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
            Input     => "red blue" & LF & "green yellow" & LF,
            Status    => Status'Access);
@@ -1195,7 +1216,7 @@ package body Awk_Tests.Process is
       Status : aliased Integer := -1;
       Output : constant String :=
         GNAT.Expect.Get_Command_Output
-          (Command   => "../bin/awk",
+          (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
            Input     => "alpha" & LF & "beta" & LF,
            Status    => Status'Access);
@@ -1218,7 +1239,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process runtime assignment argv",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1245,7 +1266,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process runtime assignment positions",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1272,7 +1293,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -1297,7 +1318,7 @@ package body Awk_Tests.Process is
          Status : aliased Integer := -1;
          Output : constant String :=
            GNAT.Expect.Get_Command_Output
-             (Command    => "../bin/awk",
+             (Command    => Awk_From_Tests_Directory,
               Arguments  => Args,
               Input      => "",
               Status     => Status'Access,
@@ -1326,7 +1347,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process multiple files",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1357,7 +1378,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process regex arithmetic builtins",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1382,7 +1403,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process printf formatting",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1403,7 +1424,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process comparisons",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1428,7 +1449,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process sub replacement",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1449,7 +1470,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process string builtins",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1472,7 +1493,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process split builtin",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1493,7 +1514,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process match and sprintf",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1516,7 +1537,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process separators and numeric builtins",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1537,7 +1558,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process math builtins",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1558,7 +1579,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process arrays delete and while",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1586,7 +1607,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process next ternary break continue",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1614,7 +1635,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process field assignment rebuilds record",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1638,7 +1659,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process record assignment resplits fields",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1659,7 +1680,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process command getline",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
@@ -1680,7 +1701,7 @@ package body Awk_Tests.Process is
         Project_Tools.Processes.Run_Status
           (Label   => "awk process auxiliary getline",
            Dir     => "..",
-           Program => "./bin/awk",
+           Program => Awk_From_Repository_Root,
            Args    => Args,
            Output  => Output,
            Quiet   => True);
