@@ -421,6 +421,58 @@ procedure Awk_Workflows is
    end Conformance;
 
    procedure Source_Policy is
+      function Required_Message_Key (Key : String) return Boolean is
+      begin
+         for Index in 1 .. Awk_Catalog_Policy.Required_Key_Count loop
+            if Key = Awk_Catalog_Policy.Required_Key (Index) then
+               return True;
+            end if;
+         end loop;
+         return False;
+      end Required_Message_Key;
+
+      function First_Unknown_Message_Key_Literal return String is
+         Sources : constant Files.Path_List :=
+           Files.List_Tree ("../src", "*.adb");
+         Prefix  : constant String := """awk.";
+      begin
+         for Path of Sources loop
+            declare
+               Name         : constant String := U.To_String (Path);
+               Source_Text  : constant String := File_Text (Name);
+               Start        : Natural := Project_Tools.Text.Index (Source_Text, Prefix);
+            begin
+               while Start /= 0 loop
+                  declare
+                     Key_First : constant Positive := Start + 1;
+                     Key_Last  : Natural := 0;
+                  begin
+                     for Scan in Key_First .. Source_Text'Last loop
+                        if Source_Text (Scan) = '"' then
+                           Key_Last := Scan - 1;
+                           exit;
+                        end if;
+                     end loop;
+
+                     if Key_Last >= Key_First then
+                        declare
+                           Key : constant String := Source_Text (Key_First .. Key_Last);
+                        begin
+                           if not Required_Message_Key (Key) then
+                              return Name & ": " & Key;
+                           end if;
+                        end;
+                     end if;
+
+                     exit when Start = Source_Text'Last;
+                     Start := Project_Tools.Text.Index_From (Source_Text, Prefix, Start + 1);
+                  end;
+               end loop;
+            end;
+         end loop;
+         return "";
+      end First_Unknown_Message_Key_Literal;
+
       function First_Workflow_Script return String is
       begin
          return Files.First_File_Name_Containing
@@ -507,6 +559,13 @@ procedure Awk_Workflows is
       Require
         (not File_Has ("../src/library/awk_cli-programs.adb", """command line"""),
          "direct source display name must be catalog-backed");
+      declare
+         Unknown_Key : constant String := First_Unknown_Message_Key_Literal;
+      begin
+         Require
+           (Unknown_Key = "",
+            "production message key literal must be catalog-required: " & Unknown_Key);
+      end;
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          ([U.To_Unbounded_String ("gawk"),
