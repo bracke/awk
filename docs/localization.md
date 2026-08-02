@@ -20,6 +20,9 @@ keys are not exposed, and no raw terminal escape character is emitted.
 The same suite renders `--help` for every supported locale with color disabled
 and checks that required CLI/AWK tokens remain visible without raw message keys
 or terminal escapes.
+The release workflow also rejects known English fallback help sentences in
+non-English catalog entries so generated or temporary text cannot silently
+replace localized help.
 
 Locales outside the supported European state-language locale set fall back
 through the `messages` runtime to the catalog default locale. If a requested

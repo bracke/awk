@@ -469,6 +469,44 @@ procedure Awk_Workflows is
            (not Findings.Overflow,
             "translation consistency produced more findings than the report holds");
       end Require_Consistent_Translations;
+
+      procedure Require_No_English_Help_Fallbacks is
+         Banned : constant array (Positive range <>) of U.Unbounded_String :=
+           [U.To_Unbounded_String ("Ada command-line AWK implementation"),
+            U.To_Unbounded_String ("Operands after the program are named input files"),
+            U.To_Unbounded_String ("If no input operand is present"),
+            U.To_Unbounded_String ("Exit statuses: 0 success"),
+            U.To_Unbounded_String ("This program does not claim complete POSIX conformance"),
+            U.To_Unbounded_String ("getline behavior follows awklib.")];
+      begin
+         for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+            declare
+               Locale : constant String := Awk_Catalog_Policy.Supported_Locale (Locale_Index);
+            begin
+               if Locale /= "en" then
+                  for Key_Index in 1 .. Awk_Catalog_Policy.Required_Key_Count loop
+                     declare
+                        Suffix : constant String := Awk_Catalog_Policy.Required_Key (Key_Index);
+                     begin
+                        if Contains (Suffix, "awk.help.") then
+                           declare
+                              Value : constant String :=
+                                Text.Line_Value (Catalog, Locale & "." & Suffix);
+                           begin
+                              for Pattern of Banned loop
+                                 Require
+                                   (not Contains (Value, U.To_String (Pattern)),
+                                    "non-English help catalog contains English fallback text: "
+                                    & Locale & "." & Suffix);
+                              end loop;
+                           end;
+                        end if;
+                     end;
+                  end loop;
+               end if;
+            end;
+         end loop;
+      end Require_No_English_Help_Fallbacks;
    begin
       Require (Catalog /= "", "message catalog is missing or empty");
       Require (English /= "", "English catalog shard is missing or empty");
@@ -508,6 +546,7 @@ procedure Awk_Workflows is
          end;
       end loop;
       Require_Consistent_Translations;
+      Require_No_English_Help_Fallbacks;
       Put_Info ("catalog checks passed");
    end Catalogs;
 

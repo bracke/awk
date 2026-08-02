@@ -65,7 +65,7 @@ da.awk.help.operands = Operander efter programmet er navngivne inputfiler, '-' f
 da.awk.help.stdin = Hvis ingen inputoperand findes, bruges standard input implicit. Gentagne '-' operander laeser den ene standard-input-stroem en gang; senere brug ser filslut.
 da.awk.help.exit_statuses = Afslutningskoder: 0 succes, 1 fortolkerfejl, 2 brugsfejl, 3 vaerts-I/O-fejl, 70 intern fejl.
 da.awk.help.compatibility.heading = Kompatibilitet
-da.awk.help.compatibility.awklib_limitations = Programmet paastaar ikke fuld POSIX-konformitet. AWK-sprog og runtime-adfaerd er begraenset til den valgte awklib-version og de aktuelt registrerede begraensninger dokumenteret af projektet. getline behavior follows awklib.
+da.awk.help.compatibility.awklib_limitations = Programmet paastaar ikke fuld POSIX-konformitet. AWK-sprog og runtime-adfaerd er begraenset til den valgte awklib-version og de aktuelt registrerede begraensninger dokumenteret af projektet. getline: awklib.
 da.awk.version.program = awk {version}
 da.awk.version.interpreter = awklib {version}
 da.awk.version.license = licens MIT
@@ -117,7 +117,7 @@ az.awk.help.operands = Proqramdan sonrakı operandlar adlı giriş faylları, st
 az.awk.help.stdin = Giriş operandı yoxdursa, standart giriş gizli istifadə olunur. Təkrar - operandları tək standart giriş axınını bir dəfə oxuyur; sonrakılar fayl sonunu görür.
 az.awk.help.exit_statuses = Çıxış kodları: 0 uğur, 1 interpretator xətası, 2 istifadə xətası, 3 host I/O xətası, 70 daxili xəta.
 az.awk.help.compatibility.heading = Uyğunluq
-az.awk.help.compatibility.awklib_limitations = Bu proqram tam POSIX uyğunluğu iddia etmir. AWK dili və icra davranışı seçilmiş awklib versiyası və layihənin sənədləşdirdiyi qeydli məhdudiyyətlərlə məhdudlaşır. getline behavior follows awklib.
+az.awk.help.compatibility.awklib_limitations = Bu proqram tam POSIX uyğunluğu iddia etmir. AWK dili və icra davranışı seçilmiş awklib versiyası və layihənin sənədləşdirdiyi qeydli məhdudiyyətlərlə məhdudlaşır. getline: awklib.
 az.awk.version.program = awk {version}
 az.awk.version.interpreter = awklib {version}
 az.awk.version.license = lisenziya MIT
@@ -167,7 +167,7 @@ be.awk.help.operands = Операнды пасля праграмы - гэта �
 be.awk.help.stdin = Калі ўваходны операнд адсутнічае, стандартны ўваход выкарыстоўваецца няяўна. Паўторныя - чытаюць адзін паток стандартнага ўваходу адзін раз; наступныя бачаць канец файла.
 be.awk.help.exit_statuses = Коды выхаду: 0 поспех, 1 памылка інтэрпрэтатара, 2 памылка выкарыстання, 3 памылка I/O хоста, 70 унутраная памылка.
 be.awk.help.compatibility.heading = Сумяшчальнасць
-be.awk.help.compatibility.awklib_limitations = Гэта праграма не заяўляе поўнай сумяшчальнасці з POSIX. Мова AWK і выкананне абмежаваныя абранай версіяй awklib і задакументаванымі абмежаваннямі праекта. getline behavior follows awklib.
+be.awk.help.compatibility.awklib_limitations = Гэта праграма не заяўляе поўнай сумяшчальнасці з POSIX. Мова AWK і выкананне абмежаваныя абранай версіяй awklib і задакументаванымі абмежаваннямі праекта. getline: awklib.
 be.awk.version.program = awk {version}
 be.awk.version.interpreter = awklib {version}
 be.awk.version.license = ліцэнзія MIT
@@ -217,7 +217,7 @@ bg.awk.help.operands = Операндите след програмата са �
 bg.awk.help.stdin = Ако няма входен операнд, стандартният вход се използва неявно. Повторни - четат единствения поток на стандартния вход веднъж; следващите виждат край на файл.
 bg.awk.help.exit_statuses = Кодове за изход: 0 успех, 1 грешка на интерпретатора, 2 грешка в употребата, 3 I/O грешка на хоста, 70 вътрешна грешка.
 bg.awk.help.compatibility.heading = Съвместимост
-bg.awk.help.compatibility.awklib_limitations = Тази програма не претендира за пълна POSIX съвместимост. Езикът AWK и поведението при изпълнение са ограничени до избраната версия на awklib и документираните ограничения. getline behavior follows awklib.
+bg.awk.help.compatibility.awklib_limitations = Тази програма не претендира за пълна POSIX съвместимост. Езикът AWK и поведението при изпълнение са ограничени до избраната версия на awklib и документираните ограничения. getline: awklib.
 bg.awk.version.program = awk {version}
 bg.awk.version.interpreter = awklib {version}
 bg.awk.version.license = лиценз MIT
@@ -253,7 +253,7 @@ bg.awk.hint.use_help = използвайте --help за синтаксиса �
 bg.awk.hint.option_terminator = използвайте -- преди имена на файлове, които започват с -
 
 bs.awk.help.title = awk
-bs.awk.help.summary = Bosanski: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+bs.awk.help.summary = Bosanski: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 bs.awk.help.usage.direct_program = Upotreba: awk [options] 'program' [operand...]
 bs.awk.help.usage.program_files = Upotreba: awk [options] -f program-file [-f program-file...] [operand...]
 bs.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -263,11 +263,11 @@ bs.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 bs.awk.help.options.help =   --help                 upotreba help and exit
 bs.awk.help.options.version =   --version              show version information and exit
 bs.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-bs.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-bs.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-bs.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+bs.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+bs.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+bs.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 bs.awk.help.compatibility.heading = Compatibility
-bs.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+bs.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 bs.awk.version.program = awk {version}
 bs.awk.version.interpreter = awklib {version}
 bs.awk.version.license = licenca MIT
@@ -303,7 +303,7 @@ bs.awk.hint.use_help = use --help for command-line syntax
 bs.awk.hint.option_terminator = use -- before filenames that begin with -
 
 ca.awk.help.title = awk
-ca.awk.help.summary = Català: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+ca.awk.help.summary = Català: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 ca.awk.help.usage.direct_program = Ús: awk [options] 'program' [operand...]
 ca.awk.help.usage.program_files = Ús: awk [options] -f program-file [-f program-file...] [operand...]
 ca.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -313,11 +313,11 @@ ca.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 ca.awk.help.options.help =   --help                 ús help and exit
 ca.awk.help.options.version =   --version              show version information and exit
 ca.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-ca.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-ca.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-ca.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+ca.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+ca.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+ca.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 ca.awk.help.compatibility.heading = Compatibility
-ca.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+ca.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 ca.awk.version.program = awk {version}
 ca.awk.version.interpreter = awklib {version}
 ca.awk.version.license = llicència MIT
@@ -353,7 +353,7 @@ ca.awk.hint.use_help = use --help for command-line syntax
 ca.awk.hint.option_terminator = use -- before filenames that begin with -
 
 cnr.awk.help.title = awk
-cnr.awk.help.summary = Crnogorski: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+cnr.awk.help.summary = Crnogorski: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 cnr.awk.help.usage.direct_program = Upotreba: awk [options] 'program' [operand...]
 cnr.awk.help.usage.program_files = Upotreba: awk [options] -f program-file [-f program-file...] [operand...]
 cnr.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -363,11 +363,11 @@ cnr.awk.help.options.color =   --color=auto|always|never  style only CLI-owned h
 cnr.awk.help.options.help =   --help                 upotreba help and exit
 cnr.awk.help.options.version =   --version              show version information and exit
 cnr.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-cnr.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-cnr.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-cnr.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+cnr.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+cnr.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+cnr.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 cnr.awk.help.compatibility.heading = Compatibility
-cnr.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+cnr.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 cnr.awk.version.program = awk {version}
 cnr.awk.version.interpreter = awklib {version}
 cnr.awk.version.license = licenca MIT
@@ -403,7 +403,7 @@ cnr.awk.hint.use_help = use --help for command-line syntax
 cnr.awk.hint.option_terminator = use -- before filenames that begin with -
 
 cs.awk.help.title = awk
-cs.awk.help.summary = Česky: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+cs.awk.help.summary = Česky: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 cs.awk.help.usage.direct_program = Použití: awk [options] 'program' [operand...]
 cs.awk.help.usage.program_files = Použití: awk [options] -f program-file [-f program-file...] [operand...]
 cs.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -413,11 +413,11 @@ cs.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 cs.awk.help.options.help =   --help                 použití help and exit
 cs.awk.help.options.version =   --version              show version information and exit
 cs.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-cs.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-cs.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-cs.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+cs.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+cs.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+cs.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 cs.awk.help.compatibility.heading = Compatibility
-cs.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+cs.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 cs.awk.version.program = awk {version}
 cs.awk.version.interpreter = awklib {version}
 cs.awk.version.license = licence MIT
@@ -453,7 +453,7 @@ cs.awk.hint.use_help = use --help for command-line syntax
 cs.awk.hint.option_terminator = use -- before filenames that begin with -
 
 de.awk.help.title = awk
-de.awk.help.summary = Deutsch: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+de.awk.help.summary = Deutsch: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 de.awk.help.usage.direct_program = Verwendung: awk [options] 'program' [operand...]
 de.awk.help.usage.program_files = Verwendung: awk [options] -f program-file [-f program-file...] [operand...]
 de.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -463,11 +463,11 @@ de.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 de.awk.help.options.help =   --help                 verwendung help and exit
 de.awk.help.options.version =   --version              show version information and exit
 de.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-de.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-de.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-de.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+de.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+de.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+de.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 de.awk.help.compatibility.heading = Compatibility
-de.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+de.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 de.awk.version.program = awk {version}
 de.awk.version.interpreter = awklib {version}
 de.awk.version.license = Lizenz MIT
@@ -517,7 +517,7 @@ el.awk.help.operands = Οι τελεστέοι μετά το πρόγραμμα 
 el.awk.help.stdin = Αν δεν υπάρχει τελεστέος εισόδου, χρησιμοποιείται έμμεσα η τυπική είσοδος. Επαναλαμβανόμενοι τελεστέοι - διαβάζουν μία φορά το μοναδικό ρεύμα τυπικής εισόδου· οι επόμενες χρήσεις βλέπουν τέλος αρχείου.
 el.awk.help.exit_statuses = Κωδικοί εξόδου: 0 επιτυχία, 1 αποτυχία διερμηνέα, 2 σφάλμα χρήσης, 3 σφάλμα I/O του συστήματος, 70 εσωτερική αποτυχία.
 el.awk.help.compatibility.heading = Συμβατότητα
-el.awk.help.compatibility.awklib_limitations = Αυτό το πρόγραμμα δεν δηλώνει πλήρη συμβατότητα με POSIX. Η γλώσσα AWK και η συμπεριφορά εκτέλεσης περιορίζονται από την επιλεγμένη έκδοση awklib και τους τεκμηριωμένους περιορισμούς του έργου. getline behavior follows awklib.
+el.awk.help.compatibility.awklib_limitations = Αυτό το πρόγραμμα δεν δηλώνει πλήρη συμβατότητα με POSIX. Η γλώσσα AWK και η συμπεριφορά εκτέλεσης περιορίζονται από την επιλεγμένη έκδοση awklib και τους τεκμηριωμένους περιορισμούς του έργου. getline: awklib.
 el.awk.version.program = awk {version}
 el.awk.version.interpreter = awklib {version}
 el.awk.version.license = άδεια MIT
@@ -553,7 +553,7 @@ el.awk.hint.use_help = χρησιμοποιήστε --help για τη σύντ�
 el.awk.hint.option_terminator = χρησιμοποιήστε -- πριν από ονόματα αρχείων που αρχίζουν με -
 
 es.awk.help.title = awk
-es.awk.help.summary = Español: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+es.awk.help.summary = Español: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 es.awk.help.usage.direct_program = Uso: awk [options] 'program' [operand...]
 es.awk.help.usage.program_files = Uso: awk [options] -f program-file [-f program-file...] [operand...]
 es.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -563,11 +563,11 @@ es.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 es.awk.help.options.help =   --help                 uso help and exit
 es.awk.help.options.version =   --version              show version information and exit
 es.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-es.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-es.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-es.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+es.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+es.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+es.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 es.awk.help.compatibility.heading = Compatibility
-es.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+es.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 es.awk.version.program = awk {version}
 es.awk.version.interpreter = awklib {version}
 es.awk.version.license = licencia MIT
@@ -603,7 +603,7 @@ es.awk.hint.use_help = use --help for command-line syntax
 es.awk.hint.option_terminator = use -- before filenames that begin with -
 
 et.awk.help.title = awk
-et.awk.help.summary = Eesti: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+et.awk.help.summary = Eesti: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 et.awk.help.usage.direct_program = Kasutus: awk [options] 'program' [operand...]
 et.awk.help.usage.program_files = Kasutus: awk [options] -f program-file [-f program-file...] [operand...]
 et.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -613,11 +613,11 @@ et.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 et.awk.help.options.help =   --help                 kasutus help and exit
 et.awk.help.options.version =   --version              show version information and exit
 et.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-et.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-et.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-et.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+et.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+et.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+et.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 et.awk.help.compatibility.heading = Compatibility
-et.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+et.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 et.awk.version.program = awk {version}
 et.awk.version.interpreter = awklib {version}
 et.awk.version.license = MIT litsents
@@ -653,7 +653,7 @@ et.awk.hint.use_help = use --help for command-line syntax
 et.awk.hint.option_terminator = use -- before filenames that begin with -
 
 fi.awk.help.title = awk
-fi.awk.help.summary = Suomi: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+fi.awk.help.summary = Suomi: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 fi.awk.help.usage.direct_program = Käyttö: awk [options] 'program' [operand...]
 fi.awk.help.usage.program_files = Käyttö: awk [options] -f program-file [-f program-file...] [operand...]
 fi.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -663,11 +663,11 @@ fi.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 fi.awk.help.options.help =   --help                 käyttö help and exit
 fi.awk.help.options.version =   --version              show version information and exit
 fi.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-fi.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-fi.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-fi.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+fi.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+fi.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+fi.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 fi.awk.help.compatibility.heading = Compatibility
-fi.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+fi.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 fi.awk.version.program = awk {version}
 fi.awk.version.interpreter = awklib {version}
 fi.awk.version.license = lisenssi MIT
@@ -703,7 +703,7 @@ fi.awk.hint.use_help = use --help for command-line syntax
 fi.awk.hint.option_terminator = use -- before filenames that begin with -
 
 fr.awk.help.title = awk
-fr.awk.help.summary = Français: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+fr.awk.help.summary = Français: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 fr.awk.help.usage.direct_program = Utilisation: awk [options] 'program' [operand...]
 fr.awk.help.usage.program_files = Utilisation: awk [options] -f program-file [-f program-file...] [operand...]
 fr.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -713,11 +713,11 @@ fr.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 fr.awk.help.options.help =   --help                 utilisation help and exit
 fr.awk.help.options.version =   --version              show version information and exit
 fr.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-fr.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-fr.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-fr.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+fr.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+fr.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+fr.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 fr.awk.help.compatibility.heading = Compatibility
-fr.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+fr.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 fr.awk.version.program = awk {version}
 fr.awk.version.interpreter = awklib {version}
 fr.awk.version.license = licence MIT
@@ -753,7 +753,7 @@ fr.awk.hint.use_help = use --help for command-line syntax
 fr.awk.hint.option_terminator = use -- before filenames that begin with -
 
 ga.awk.help.title = awk
-ga.awk.help.summary = Gaeilge: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+ga.awk.help.summary = Gaeilge: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 ga.awk.help.usage.direct_program = Úsáid: awk [options] 'program' [operand...]
 ga.awk.help.usage.program_files = Úsáid: awk [options] -f program-file [-f program-file...] [operand...]
 ga.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -763,11 +763,11 @@ ga.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 ga.awk.help.options.help =   --help                 úsáid help and exit
 ga.awk.help.options.version =   --version              show version information and exit
 ga.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-ga.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-ga.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-ga.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+ga.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+ga.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+ga.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 ga.awk.help.compatibility.heading = Compatibility
-ga.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+ga.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 ga.awk.version.program = awk {version}
 ga.awk.version.interpreter = awklib {version}
 ga.awk.version.license = ceadúnas MIT
@@ -803,7 +803,7 @@ ga.awk.hint.use_help = use --help for command-line syntax
 ga.awk.hint.option_terminator = use -- before filenames that begin with -
 
 hr.awk.help.title = awk
-hr.awk.help.summary = Hrvatski: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+hr.awk.help.summary = Hrvatski: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 hr.awk.help.usage.direct_program = Uporaba: awk [options] 'program' [operand...]
 hr.awk.help.usage.program_files = Uporaba: awk [options] -f program-file [-f program-file...] [operand...]
 hr.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -813,11 +813,11 @@ hr.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 hr.awk.help.options.help =   --help                 uporaba help and exit
 hr.awk.help.options.version =   --version              show version information and exit
 hr.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-hr.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-hr.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-hr.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+hr.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+hr.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+hr.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 hr.awk.help.compatibility.heading = Compatibility
-hr.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+hr.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 hr.awk.version.program = awk {version}
 hr.awk.version.interpreter = awklib {version}
 hr.awk.version.license = licenca MIT
@@ -853,7 +853,7 @@ hr.awk.hint.use_help = use --help for command-line syntax
 hr.awk.hint.option_terminator = use -- before filenames that begin with -
 
 hu.awk.help.title = awk
-hu.awk.help.summary = Magyar: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+hu.awk.help.summary = Magyar: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 hu.awk.help.usage.direct_program = Használat: awk [options] 'program' [operand...]
 hu.awk.help.usage.program_files = Használat: awk [options] -f program-file [-f program-file...] [operand...]
 hu.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -863,11 +863,11 @@ hu.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 hu.awk.help.options.help =   --help                 használat help and exit
 hu.awk.help.options.version =   --version              show version information and exit
 hu.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-hu.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-hu.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-hu.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+hu.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+hu.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+hu.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 hu.awk.help.compatibility.heading = Compatibility
-hu.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+hu.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 hu.awk.version.program = awk {version}
 hu.awk.version.interpreter = awklib {version}
 hu.awk.version.license = MIT licenc
@@ -917,7 +917,7 @@ hy.awk.help.operands = Ծրագրից հետո օպերանդները անուն
 hy.awk.help.stdin = Եթե մուտքային օպերանդ չկա, ստանդարտ մուտքը օգտագործվում է անուղղակիորեն։ Կրկնվող - օպերանդները մեկ անգամ են կարդում նույն ստանդարտ մուտքի հոսքը· հաջորդները տեսնում են ֆայլի վերջը։
 hy.awk.help.exit_statuses = Ելքի կոդեր՝ 0 հաջողություն, 1 մեկնիչի սխալ, 2 օգտագործման սխալ, 3 հյուրընկալ I/O սխալ, 70 ներքին սխալ։
 hy.awk.help.compatibility.heading = Համատեղելիություն
-hy.awk.help.compatibility.awklib_limitations = Այս ծրագիրը չի հայտարարում POSIX-ի ամբողջական համատեղելիություն։ AWK լեզուն և կատարման վարքը սահմանափակված են ընտրված awklib տարբերակով և նախագծի փաստագրված սահմանափակումներով։ getline behavior follows awklib.
+hy.awk.help.compatibility.awklib_limitations = Այս ծրագիրը չի հայտարարում POSIX-ի ամբողջական համատեղելիություն։ AWK լեզուն և կատարման վարքը սահմանափակված են ընտրված awklib տարբերակով և նախագծի փաստագրված սահմանափակումներով։ getline: awklib.
 hy.awk.version.program = awk {version}
 hy.awk.version.interpreter = awklib {version}
 hy.awk.version.license = MIT արտոնագիր
@@ -953,7 +953,7 @@ hy.awk.hint.use_help = հրամանային տողի շարահյուսությ�
 hy.awk.hint.option_terminator = - նշանով սկսվող ֆայլանուններից առաջ օգտագործեք --
 
 is.awk.help.title = awk
-is.awk.help.summary = Íslenska: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+is.awk.help.summary = Íslenska: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 is.awk.help.usage.direct_program = Notkun: awk [options] 'program' [operand...]
 is.awk.help.usage.program_files = Notkun: awk [options] -f program-file [-f program-file...] [operand...]
 is.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -963,11 +963,11 @@ is.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 is.awk.help.options.help =   --help                 notkun help and exit
 is.awk.help.options.version =   --version              show version information and exit
 is.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-is.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-is.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-is.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+is.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+is.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+is.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 is.awk.help.compatibility.heading = Compatibility
-is.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+is.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 is.awk.version.program = awk {version}
 is.awk.version.interpreter = awklib {version}
 is.awk.version.license = MIT leyfi
@@ -1003,7 +1003,7 @@ is.awk.hint.use_help = use --help for command-line syntax
 is.awk.hint.option_terminator = use -- before filenames that begin with -
 
 it.awk.help.title = awk
-it.awk.help.summary = Italiano: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+it.awk.help.summary = Italiano: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 it.awk.help.usage.direct_program = Uso: awk [options] 'program' [operand...]
 it.awk.help.usage.program_files = Uso: awk [options] -f program-file [-f program-file...] [operand...]
 it.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1013,11 +1013,11 @@ it.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 it.awk.help.options.help =   --help                 uso help and exit
 it.awk.help.options.version =   --version              show version information and exit
 it.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-it.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-it.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-it.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+it.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+it.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+it.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 it.awk.help.compatibility.heading = Compatibility
-it.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+it.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 it.awk.version.program = awk {version}
 it.awk.version.interpreter = awklib {version}
 it.awk.version.license = licenza MIT
@@ -1067,7 +1067,7 @@ ka.awk.help.operands = პროგრამის შემდეგ ოპე�
 ka.awk.help.stdin = თუ შემავალი ოპერანდი არ არის, სტანდარტული შეყვანა გამოიყენება ფარულად. განმეორებული - ოპერანდები ერთხელ კითხულობენ ერთ სტანდარტულ შეყვანის ნაკადს· შემდეგი გამოყენებები ხედავს ფაილის ბოლოს.
 ka.awk.help.exit_statuses = გასვლის კოდები: 0 წარმატება, 1 ინტერპრეტატორის შეცდომა, 2 გამოყენების შეცდომა, 3 მასპინძლის I/O შეცდომა, 70 შიდა შეცდომა.
 ka.awk.help.compatibility.heading = თავსებადობა
-ka.awk.help.compatibility.awklib_limitations = ეს პროგრამა არ აცხადებს POSIX-თან სრულ თავსებადობას. AWK ენა და შესრულების ქცევა შეზღუდულია არჩეული awklib ვერსიით და პროექტის დოკუმენტირებული შეზღუდვებით. getline behavior follows awklib.
+ka.awk.help.compatibility.awklib_limitations = ეს პროგრამა არ აცხადებს POSIX-თან სრულ თავსებადობას. AWK ენა და შესრულების ქცევა შეზღუდულია არჩეული awklib ვერსიით და პროექტის დოკუმენტირებული შეზღუდვებით. getline: awklib.
 ka.awk.version.program = awk {version}
 ka.awk.version.interpreter = awklib {version}
 ka.awk.version.license = MIT ლიცენზია
@@ -1117,7 +1117,7 @@ kk.awk.help.operands = Бағдарламадан кейінгі операнд�
 kk.awk.help.stdin = Егер кіріс операнды жоқ болса, стандартты кіріс жасырын қолданылады. Қайталанған - операндтары бір стандартты кіріс ағынын бір рет оқиды· кейінгілері файл соңын көреді.
 kk.awk.help.exit_statuses = Шығу кодтары: 0 сәтті, 1 интерпретатор қатесі, 2 қолдану қатесі, 3 хост I/O қатесі, 70 ішкі қате.
 kk.awk.help.compatibility.heading = Үйлесімділік
-kk.awk.help.compatibility.awklib_limitations = Бұл бағдарлама POSIX-пен толық үйлесімділікті мәлімдемейді. AWK тілі мен орындалу әрекеті таңдалған awklib нұсқасымен және жобаның құжатталған шектеулерімен шектеледі. getline behavior follows awklib.
+kk.awk.help.compatibility.awklib_limitations = Бұл бағдарлама POSIX-пен толық үйлесімділікті мәлімдемейді. AWK тілі мен орындалу әрекеті таңдалған awklib нұсқасымен және жобаның құжатталған шектеулерімен шектеледі. getline: awklib.
 kk.awk.version.program = awk {version}
 kk.awk.version.interpreter = awklib {version}
 kk.awk.version.license = MIT лицензиясы
@@ -1153,7 +1153,7 @@ kk.awk.hint.use_help = командалық жол синтаксисі үшін
 kk.awk.hint.option_terminator = - таңбасымен басталатын файл атауларының алдында -- пайдаланыңыз
 
 la.awk.help.title = awk
-la.awk.help.summary = Latine: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+la.awk.help.summary = Latine: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 la.awk.help.usage.direct_program = Usus: awk [options] 'program' [operand...]
 la.awk.help.usage.program_files = Usus: awk [options] -f program-file [-f program-file...] [operand...]
 la.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1163,11 +1163,11 @@ la.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 la.awk.help.options.help =   --help                 usus help and exit
 la.awk.help.options.version =   --version              show version information and exit
 la.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-la.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-la.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-la.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+la.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+la.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+la.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 la.awk.help.compatibility.heading = Compatibility
-la.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+la.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 la.awk.version.program = awk {version}
 la.awk.version.interpreter = awklib {version}
 la.awk.version.license = licentia MIT
@@ -1203,7 +1203,7 @@ la.awk.hint.use_help = use --help for command-line syntax
 la.awk.hint.option_terminator = use -- before filenames that begin with -
 
 lb.awk.help.title = awk
-lb.awk.help.summary = Lëtzebuergesch: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+lb.awk.help.summary = Lëtzebuergesch: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 lb.awk.help.usage.direct_program = Benotzung: awk [options] 'program' [operand...]
 lb.awk.help.usage.program_files = Benotzung: awk [options] -f program-file [-f program-file...] [operand...]
 lb.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1213,11 +1213,11 @@ lb.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 lb.awk.help.options.help =   --help                 benotzung help and exit
 lb.awk.help.options.version =   --version              show version information and exit
 lb.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-lb.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-lb.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-lb.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+lb.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+lb.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+lb.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 lb.awk.help.compatibility.heading = Compatibility
-lb.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+lb.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 lb.awk.version.program = awk {version}
 lb.awk.version.interpreter = awklib {version}
 lb.awk.version.license = MIT Lizenz
@@ -1253,7 +1253,7 @@ lb.awk.hint.use_help = use --help for command-line syntax
 lb.awk.hint.option_terminator = use -- before filenames that begin with -
 
 lt.awk.help.title = awk
-lt.awk.help.summary = Lietuvių: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+lt.awk.help.summary = Lietuvių: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 lt.awk.help.usage.direct_program = Naudojimas: awk [options] 'program' [operand...]
 lt.awk.help.usage.program_files = Naudojimas: awk [options] -f program-file [-f program-file...] [operand...]
 lt.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1263,11 +1263,11 @@ lt.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 lt.awk.help.options.help =   --help                 naudojimas help and exit
 lt.awk.help.options.version =   --version              show version information and exit
 lt.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-lt.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-lt.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-lt.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+lt.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+lt.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+lt.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 lt.awk.help.compatibility.heading = Compatibility
-lt.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+lt.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 lt.awk.version.program = awk {version}
 lt.awk.version.interpreter = awklib {version}
 lt.awk.version.license = MIT licencija
@@ -1303,7 +1303,7 @@ lt.awk.hint.use_help = use --help for command-line syntax
 lt.awk.hint.option_terminator = use -- before filenames that begin with -
 
 lv.awk.help.title = awk
-lv.awk.help.summary = Latviešu: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+lv.awk.help.summary = Latviešu: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 lv.awk.help.usage.direct_program = Lietojums: awk [options] 'program' [operand...]
 lv.awk.help.usage.program_files = Lietojums: awk [options] -f program-file [-f program-file...] [operand...]
 lv.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1313,11 +1313,11 @@ lv.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 lv.awk.help.options.help =   --help                 lietojums help and exit
 lv.awk.help.options.version =   --version              show version information and exit
 lv.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-lv.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-lv.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-lv.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+lv.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+lv.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+lv.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 lv.awk.help.compatibility.heading = Compatibility
-lv.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+lv.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 lv.awk.version.program = awk {version}
 lv.awk.version.interpreter = awklib {version}
 lv.awk.version.license = MIT licence
@@ -1367,7 +1367,7 @@ mk.awk.help.operands = Операндите по програмата се им�
 mk.awk.help.stdin = Ако нема влезен операнд, стандардниот влез се користи имплицитно. Повторени - операнди еднаш го читаат единствениот тек на стандарден влез· подоцнежните употреби гледаат крај на датотека.
 mk.awk.help.exit_statuses = Излезни кодови: 0 успех, 1 грешка на интерпретаторот, 2 грешка при употреба, 3 хост I/O грешка, 70 внатрешна грешка.
 mk.awk.help.compatibility.heading = Компатибилност
-mk.awk.help.compatibility.awklib_limitations = Оваа програма не тврди целосна POSIX компатибилност. Јазикот AWK и однесувањето при извршување се ограничени со избраната верзија на awklib и документираните ограничувања на проектот. getline behavior follows awklib.
+mk.awk.help.compatibility.awklib_limitations = Оваа програма не тврди целосна POSIX компатибилност. Јазикот AWK и однесувањето при извршување се ограничени со избраната верзија на awklib и документираните ограничувања на проектот. getline: awklib.
 mk.awk.version.program = awk {version}
 mk.awk.version.interpreter = awklib {version}
 mk.awk.version.license = лиценца MIT
@@ -1403,7 +1403,7 @@ mk.awk.hint.use_help = користете --help за синтакса на ко
 mk.awk.hint.option_terminator = користете -- пред имиња на датотеки што почнуваат со -
 
 mt.awk.help.title = awk
-mt.awk.help.summary = Malti: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+mt.awk.help.summary = Malti: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 mt.awk.help.usage.direct_program = Użu: awk [options] 'program' [operand...]
 mt.awk.help.usage.program_files = Użu: awk [options] -f program-file [-f program-file...] [operand...]
 mt.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1413,11 +1413,11 @@ mt.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 mt.awk.help.options.help =   --help                 użu help and exit
 mt.awk.help.options.version =   --version              show version information and exit
 mt.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-mt.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-mt.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-mt.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+mt.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+mt.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+mt.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 mt.awk.help.compatibility.heading = Compatibility
-mt.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+mt.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 mt.awk.version.program = awk {version}
 mt.awk.version.interpreter = awklib {version}
 mt.awk.version.license = liċenzja MIT
@@ -1453,7 +1453,7 @@ mt.awk.hint.use_help = use --help for command-line syntax
 mt.awk.hint.option_terminator = use -- before filenames that begin with -
 
 nl.awk.help.title = awk
-nl.awk.help.summary = Nederlands: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+nl.awk.help.summary = Nederlands: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 nl.awk.help.usage.direct_program = Gebruik: awk [options] 'program' [operand...]
 nl.awk.help.usage.program_files = Gebruik: awk [options] -f program-file [-f program-file...] [operand...]
 nl.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1463,11 +1463,11 @@ nl.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 nl.awk.help.options.help =   --help                 gebruik help and exit
 nl.awk.help.options.version =   --version              show version information and exit
 nl.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-nl.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-nl.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-nl.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+nl.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+nl.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+nl.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 nl.awk.help.compatibility.heading = Compatibility
-nl.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+nl.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 nl.awk.version.program = awk {version}
 nl.awk.version.interpreter = awklib {version}
 nl.awk.version.license = licentie MIT
@@ -1503,7 +1503,7 @@ nl.awk.hint.use_help = use --help for command-line syntax
 nl.awk.hint.option_terminator = use -- before filenames that begin with -
 
 no.awk.help.title = awk
-no.awk.help.summary = Norsk: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+no.awk.help.summary = Norsk: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 no.awk.help.usage.direct_program = Bruk: awk [options] 'program' [operand...]
 no.awk.help.usage.program_files = Bruk: awk [options] -f program-file [-f program-file...] [operand...]
 no.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1513,11 +1513,11 @@ no.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 no.awk.help.options.help =   --help                 bruk help and exit
 no.awk.help.options.version =   --version              show version information and exit
 no.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-no.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-no.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-no.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+no.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+no.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+no.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 no.awk.help.compatibility.heading = Compatibility
-no.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+no.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 no.awk.version.program = awk {version}
 no.awk.version.interpreter = awklib {version}
 no.awk.version.license = lisens MIT
@@ -1553,7 +1553,7 @@ no.awk.hint.use_help = use --help for command-line syntax
 no.awk.hint.option_terminator = use -- before filenames that begin with -
 
 pl.awk.help.title = awk
-pl.awk.help.summary = Polski: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+pl.awk.help.summary = Polski: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 pl.awk.help.usage.direct_program = Użycie: awk [options] 'program' [operand...]
 pl.awk.help.usage.program_files = Użycie: awk [options] -f program-file [-f program-file...] [operand...]
 pl.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1563,11 +1563,11 @@ pl.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 pl.awk.help.options.help =   --help                 użycie help and exit
 pl.awk.help.options.version =   --version              show version information and exit
 pl.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-pl.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-pl.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-pl.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+pl.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+pl.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+pl.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 pl.awk.help.compatibility.heading = Compatibility
-pl.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+pl.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 pl.awk.version.program = awk {version}
 pl.awk.version.interpreter = awklib {version}
 pl.awk.version.license = licencja MIT
@@ -1603,7 +1603,7 @@ pl.awk.hint.use_help = use --help for command-line syntax
 pl.awk.hint.option_terminator = use -- before filenames that begin with -
 
 pt.awk.help.title = awk
-pt.awk.help.summary = Português: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+pt.awk.help.summary = Português: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 pt.awk.help.usage.direct_program = Uso: awk [options] 'program' [operand...]
 pt.awk.help.usage.program_files = Uso: awk [options] -f program-file [-f program-file...] [operand...]
 pt.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1613,11 +1613,11 @@ pt.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 pt.awk.help.options.help =   --help                 uso help and exit
 pt.awk.help.options.version =   --version              show version information and exit
 pt.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-pt.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-pt.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-pt.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+pt.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+pt.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+pt.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 pt.awk.help.compatibility.heading = Compatibility
-pt.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+pt.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 pt.awk.version.program = awk {version}
 pt.awk.version.interpreter = awklib {version}
 pt.awk.version.license = licença MIT
@@ -1653,7 +1653,7 @@ pt.awk.hint.use_help = use --help for command-line syntax
 pt.awk.hint.option_terminator = use -- before filenames that begin with -
 
 rm.awk.help.title = awk
-rm.awk.help.summary = Rumantsch: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+rm.awk.help.summary = Rumantsch: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 rm.awk.help.usage.direct_program = Utilisaziun: awk [options] 'program' [operand...]
 rm.awk.help.usage.program_files = Utilisaziun: awk [options] -f program-file [-f program-file...] [operand...]
 rm.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1663,11 +1663,11 @@ rm.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 rm.awk.help.options.help =   --help                 utilisaziun help and exit
 rm.awk.help.options.version =   --version              show version information and exit
 rm.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-rm.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-rm.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-rm.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+rm.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+rm.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+rm.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 rm.awk.help.compatibility.heading = Compatibility
-rm.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+rm.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 rm.awk.version.program = awk {version}
 rm.awk.version.interpreter = awklib {version}
 rm.awk.version.license = licenza MIT
@@ -1703,7 +1703,7 @@ rm.awk.hint.use_help = use --help for command-line syntax
 rm.awk.hint.option_terminator = use -- before filenames that begin with -
 
 ro.awk.help.title = awk
-ro.awk.help.summary = Română: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+ro.awk.help.summary = Română: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 ro.awk.help.usage.direct_program = Utilizare: awk [options] 'program' [operand...]
 ro.awk.help.usage.program_files = Utilizare: awk [options] -f program-file [-f program-file...] [operand...]
 ro.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1713,11 +1713,11 @@ ro.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 ro.awk.help.options.help =   --help                 utilizare help and exit
 ro.awk.help.options.version =   --version              show version information and exit
 ro.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-ro.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-ro.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-ro.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+ro.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+ro.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+ro.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 ro.awk.help.compatibility.heading = Compatibility
-ro.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+ro.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 ro.awk.version.program = awk {version}
 ro.awk.version.interpreter = awklib {version}
 ro.awk.version.license = licență MIT
@@ -1767,7 +1767,7 @@ ru.awk.help.operands = Операнды после программы являю
 ru.awk.help.stdin = Если входной операнд отсутствует, стандартный ввод используется неявно. Повторные операнды - читают единственный поток стандартного ввода один раз· последующие использования видят конец файла.
 ru.awk.help.exit_statuses = Коды выхода: 0 успех, 1 ошибка интерпретатора, 2 ошибка использования, 3 ошибка I/O хоста, 70 внутренняя ошибка.
 ru.awk.help.compatibility.heading = Совместимость
-ru.awk.help.compatibility.awklib_limitations = Эта программа не заявляет полной совместимости с POSIX. Язык AWK и поведение выполнения ограничены выбранной версией awklib и документированными ограничениями проекта. getline behavior follows awklib.
+ru.awk.help.compatibility.awklib_limitations = Эта программа не заявляет полной совместимости с POSIX. Язык AWK и поведение выполнения ограничены выбранной версией awklib и документированными ограничениями проекта. getline: awklib.
 ru.awk.version.program = awk {version}
 ru.awk.version.interpreter = awklib {version}
 ru.awk.version.license = лицензия MIT
@@ -1803,7 +1803,7 @@ ru.awk.hint.use_help = используйте --help для синтаксиса
 ru.awk.hint.option_terminator = используйте -- перед именами файлов, начинающимися с -
 
 sk.awk.help.title = awk
-sk.awk.help.summary = Slovenčina: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+sk.awk.help.summary = Slovenčina: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 sk.awk.help.usage.direct_program = Použitie: awk [options] 'program' [operand...]
 sk.awk.help.usage.program_files = Použitie: awk [options] -f program-file [-f program-file...] [operand...]
 sk.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1813,11 +1813,11 @@ sk.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 sk.awk.help.options.help =   --help                 použitie help and exit
 sk.awk.help.options.version =   --version              show version information and exit
 sk.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-sk.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-sk.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-sk.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+sk.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+sk.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+sk.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 sk.awk.help.compatibility.heading = Compatibility
-sk.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+sk.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 sk.awk.version.program = awk {version}
 sk.awk.version.interpreter = awklib {version}
 sk.awk.version.license = licencia MIT
@@ -1853,7 +1853,7 @@ sk.awk.hint.use_help = use --help for command-line syntax
 sk.awk.hint.option_terminator = use -- before filenames that begin with -
 
 sl.awk.help.title = awk
-sl.awk.help.summary = Slovenščina: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+sl.awk.help.summary = Slovenščina: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 sl.awk.help.usage.direct_program = Uporaba: awk [options] 'program' [operand...]
 sl.awk.help.usage.program_files = Uporaba: awk [options] -f program-file [-f program-file...] [operand...]
 sl.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1863,11 +1863,11 @@ sl.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 sl.awk.help.options.help =   --help                 uporaba help and exit
 sl.awk.help.options.version =   --version              show version information and exit
 sl.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-sl.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-sl.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-sl.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+sl.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+sl.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+sl.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 sl.awk.help.compatibility.heading = Compatibility
-sl.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+sl.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 sl.awk.version.program = awk {version}
 sl.awk.version.interpreter = awklib {version}
 sl.awk.version.license = licenca MIT
@@ -1903,7 +1903,7 @@ sl.awk.hint.use_help = use --help for command-line syntax
 sl.awk.hint.option_terminator = use -- before filenames that begin with -
 
 sq.awk.help.title = awk
-sq.awk.help.summary = Shqip: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+sq.awk.help.summary = Shqip: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 sq.awk.help.usage.direct_program = Përdorimi: awk [options] 'program' [operand...]
 sq.awk.help.usage.program_files = Përdorimi: awk [options] -f program-file [-f program-file...] [operand...]
 sq.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -1913,11 +1913,11 @@ sq.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 sq.awk.help.options.help =   --help                 përdorimi help and exit
 sq.awk.help.options.version =   --version              show version information and exit
 sq.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-sq.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-sq.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-sq.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+sq.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+sq.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+sq.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 sq.awk.help.compatibility.heading = Compatibility
-sq.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+sq.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 sq.awk.version.program = awk {version}
 sq.awk.version.interpreter = awklib {version}
 sq.awk.version.license = licencë MIT
@@ -1967,7 +1967,7 @@ sr.awk.help.operands = Операнди после програма су име�
 sr.awk.help.stdin = Ако нема улазног операнда, стандардни улаз се користи подразумевано. Поновљени - операнди једном читају једини ток стандардног улаза· касније употребе виде крај датотеке.
 sr.awk.help.exit_statuses = Излазни кодови: 0 успех, 1 грешка интерпретатора, 2 грешка употребе, 3 грешка I/O хоста, 70 унутрашња грешка.
 sr.awk.help.compatibility.heading = Компатибилност
-sr.awk.help.compatibility.awklib_limitations = Овај програм не тврди потпуну POSIX компатибилност. AWK језик и понашање при извршавању ограничени су изабраном верзијом awklib и документованим ограничењима пројекта. getline behavior follows awklib.
+sr.awk.help.compatibility.awklib_limitations = Овај програм не тврди потпуну POSIX компатибилност. AWK језик и понашање при извршавању ограничени су изабраном верзијом awklib и документованим ограничењима пројекта. getline: awklib.
 sr.awk.version.program = awk {version}
 sr.awk.version.interpreter = awklib {version}
 sr.awk.version.license = лиценца MIT
@@ -2003,7 +2003,7 @@ sr.awk.hint.use_help = користите --help за синтаксу кома�
 sr.awk.hint.option_terminator = користите -- пре имена датотека која почињу са -
 
 sv.awk.help.title = awk
-sv.awk.help.summary = Svenska: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
+sv.awk.help.summary = Svenska: AWK CLI (Ada/awklib); POSIX awk workflow; awklib defines behavior.
 sv.awk.help.usage.direct_program = Användning: awk [options] 'program' [operand...]
 sv.awk.help.usage.program_files = Användning: awk [options] -f program-file [-f program-file...] [operand...]
 sv.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
@@ -2013,11 +2013,11 @@ sv.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 sv.awk.help.options.help =   --help                 användning help and exit
 sv.awk.help.options.version =   --version              show version information and exit
 sv.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-sv.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-sv.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-sv.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+sv.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+sv.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+sv.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 sv.awk.help.compatibility.heading = Compatibility
-sv.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+sv.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 sv.awk.version.program = awk {version}
 sv.awk.version.interpreter = awklib {version}
 sv.awk.version.license = licens MIT
@@ -2063,11 +2063,11 @@ tr.awk.help.options.color =   --color=auto|always|never  style only CLI-owned he
 tr.awk.help.options.help =   --help                 kullanım help and exit
 tr.awk.help.options.version =   --version              show version information and exit
 tr.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-tr.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-tr.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-tr.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
+tr.awk.help.operands = Input operands: files, -, or name=value matching [A-Za-z_][A-Za-z0-9_]*.
+tr.awk.help.stdin = No input operand uses standard input. Repeated - operands consume the same stream once; later uses see EOF.
+tr.awk.help.exit_statuses = Status: 0 OK, 1 AWK, 2 usage, 3 host I/O, 70 internal.
 tr.awk.help.compatibility.heading = Compatibility
-tr.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations. getline behavior follows awklib.
+tr.awk.help.compatibility.awklib_limitations = POSIX: no full conformance claim. AWK language and runtime behavior follow awklib and documented project limitations. getline: awklib.
 tr.awk.version.program = awk {version}
 tr.awk.version.interpreter = awklib {version}
 tr.awk.version.license = MIT lisansı
@@ -2117,7 +2117,7 @@ uk.awk.help.operands = Операнди після програми є імен�
 uk.awk.help.stdin = Якщо вхідного операнда немає, стандартний ввід використовується неявно. Повторні операнди - один раз читають єдиний потік стандартного вводу· наступні використання бачать кінець файлу.
 uk.awk.help.exit_statuses = Коди виходу: 0 успіх, 1 помилка інтерпретатора, 2 помилка використання, 3 помилка I/O хоста, 70 внутрішня помилка.
 uk.awk.help.compatibility.heading = Сумісність
-uk.awk.help.compatibility.awklib_limitations = Ця програма не заявляє повної сумісності з POSIX. Мова AWK і поведінка виконання обмежені вибраною версією awklib та документованими обмеженнями проєкту. getline behavior follows awklib.
+uk.awk.help.compatibility.awklib_limitations = Ця програма не заявляє повної сумісності з POSIX. Мова AWK і поведінка виконання обмежені вибраною версією awklib та документованими обмеженнями проєкту. getline: awklib.
 uk.awk.version.program = awk {version}
 uk.awk.version.interpreter = awklib {version}
 uk.awk.version.license = ліцензія MIT
