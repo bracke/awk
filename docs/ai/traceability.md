@@ -11,7 +11,7 @@ resolved `awklib` behavior, and the release workflow.
 | 2 | Core compatibility position | `README.md`, `docs/compatibility.md`, `src/library/awk_cli-compatibility.*`, `tests/src/awk_tests-compatibility.adb` |
 | 3 | Architectural boundary | `docs/architecture.md`, `docs/ai/package-contracts.md`, source-policy checks in `tests/src/awk_workflows.adb` |
 | 4 | Repository structure | root docs, `src/main`, `src/library`, `resources/messages`, `tests/src`, `tests/fixtures`, `tests/conformance` |
-| 5 | Alire requirements | root and test `alire.toml`, local pin checks in `tests/src/awk_workflows.adb` |
+| 5 | Alire requirements | root and test `alire.toml`, `docs/dependency-policy.md`, local pin checks in `tests/src/awk_workflows.adb` |
 | 6 | Command-line interface | `src/library/awk_cli-options.*`, `tests/src/awk_tests-cli_options.adb`, process tests in `tests/src/awk_tests-process.adb` |
 | 7 | Program source resolution | `src/library/awk_cli-programs.*`, `tests/src/awk_tests-program_sources.adb`, process `-f` tests |
 | 8 | Assignment recognition | `Awk_CLI.Options.Is_Assignment_Text`, `Awk_CLI.Operands.Classify`, option and operand tests |
@@ -46,8 +46,8 @@ resolved `awklib` behavior, and the release workflow.
 | 37 | Regression policy | `docs/testing.md`, compatibility/conformance IDs, AUnit package registration checks |
 | 38 | Compatibility registry | `src/library/awk_cli-compatibility.*`, `docs/compatibility.md`, compatibility workflow checks |
 | 39 | Tooling requirements | `tests/src/awk_workflows.adb`, `project_tools` dependencies, source-policy script checks |
-| 40 | Development build policy | development profile settings in `alire.toml`, build/verify workflows |
-| 41 | Release build policy | release command path in `tests/src/awk_workflows.adb`, `docs/releasing.md`, package manifest checks |
+| 40 | Development build policy | development profile settings in `alire.toml`, `docs/dependency-policy.md`, build/verify workflows |
+| 41 | Release build policy | release command path in `tests/src/awk_workflows.adb`, `docs/releasing.md`, `docs/dependency-policy.md`, package manifest checks |
 | 42 | Source style | Ada 2022 project files, source-policy checks, package-boundary docs |
 | 43 | Documentation requirements | required docs list and content checks in `tests/src/awk_workflows.adb` |
 | 44 | Core invariants | `docs/ai/invariants.md`, source-policy checks, output/localization/styling tests |
@@ -57,6 +57,6 @@ resolved `awklib` behavior, and the release workflow.
 | 48 | Implementation order | git history, passing `verify` and `release`, maintained runnable executable |
 | 49 | Definition of done | `alr exec -- ./bin/awk_workflows release`, this traceability matrix, clean working tree |
 
-Known remaining release-hardening item: the development workspace still uses
-local Alire pins and a dev dependency constraint for `terminal_styles`; those
-must be reviewed before publishing outside this workspace.
+Release dependency policy is documented in `docs/dependency-policy.md`.
+Workspace release and publish readiness are separate gates because the current
+workspace still depends on the local `terminal_styles = "=0.1.0-dev"` crate.

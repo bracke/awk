@@ -190,6 +190,7 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/testing.md"),
          U.To_Unbounded_String ("../docs/building.md"),
          U.To_Unbounded_String ("../docs/releasing.md"),
+         U.To_Unbounded_String ("../docs/dependency-policy.md"),
          U.To_Unbounded_String ("../docs/ai/project-map.md"),
          U.To_Unbounded_String ("../docs/ai/package-contracts.md"),
          U.To_Unbounded_String ("../docs/ai/invariants.md"),
@@ -308,6 +309,15 @@ procedure Awk_Workflows is
         (File_Has ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
       Require
+        (File_Has ("../docs/dependency-policy.md", "workspace release model"),
+         "dependency policy must document workspace release model");
+      Require
+        (File_Has ("../docs/dependency-policy.md", "No direct dependency may use an unrestricted wildcard"),
+         "dependency policy must reject wildcard release constraints");
+      Require
+        (File_Has ("../docs/dependency-policy.md", "Publish readiness is a separate gate"),
+         "dependency policy must document publish readiness separation");
+      Require
         (File_Has ("../docs/ai/workflows.md", "parsed" & ASCII.LF &
                                              "Ada `with` clauses"),
          "AI workflow docs must mention parsed Ada source-policy validation");
@@ -346,6 +356,15 @@ procedure Awk_Workflows is
                "root crate must depend on terminal_styles");
       Require (File_Has ("../alire.toml", "messages = "),
                "root crate must depend on messages");
+      Require (not Contains (Root_Alire, "awklib = ""*"""),
+               "root awklib dependency must not use wildcard constraint");
+      Require (not Contains (Root_Alire, "terminal_styles = ""*"""),
+               "root terminal_styles dependency must not use wildcard constraint");
+      Require (not Contains (Root_Alire, "messages = ""*"""),
+               "root messages dependency must not use wildcard constraint");
+      Require
+        (File_Has ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev"""),
+         "dependency policy must document the current terminal_styles dev constraint");
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
       Require (File_Has ("alire.toml", "awk = "),

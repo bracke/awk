@@ -13,3 +13,8 @@ package, and release workflow gates.
 crate metadata, local Alire workspace pins, conformance manifest, source-policy
 invariants, and Alire install boundary. `release` requires a clean git working
 tree and uses Alire release profiles.
+
+Dependency constraints and local workspace pins are documented in
+`docs/dependency-policy.md`. The current workflow release is reproducible inside
+this workspace; publishing outside the workspace requires the separate publish
+readiness checklist in that document.

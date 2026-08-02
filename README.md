@@ -53,7 +53,8 @@ cd tests && ./bin/awk_workflows verify
 ```
 
 The project uses Alire for dependency resolution and builds. Install Alire before
-building locally.
+building locally. Workspace dependency pins and publish readiness policy are
+documented in [docs/dependency-policy.md](docs/dependency-policy.md).
 
 Limitations are documented in [docs/compatibility.md](docs/compatibility.md).
 The project is MIT licensed.
