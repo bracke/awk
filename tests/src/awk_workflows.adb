@@ -522,6 +522,44 @@ procedure Awk_Workflows is
          end loop;
       end Require_No_English_Help_Fallbacks;
 
+      procedure Require_No_English_Diagnostic_Fallbacks is
+         Banned : constant array (Positive range <>) of U.Unbounded_String :=
+           [U.To_Unbounded_String ("AWK parse failed"),
+            U.To_Unbounded_String ("AWK execution failed"),
+            U.To_Unbounded_String ("unsupported awklib operation"),
+            U.To_Unbounded_String ("localization failed for message key"),
+            U.To_Unbounded_String ("use --help for command-line syntax"),
+            U.To_Unbounded_String ("use -- before filenames that begin with")];
+      begin
+         for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+            declare
+               Locale : constant String := Awk_Catalog_Policy.Supported_Locale (Locale_Index);
+            begin
+               if Locale /= "en" then
+                  for Key_Index in 1 .. Awk_Catalog_Policy.Required_Key_Count loop
+                     declare
+                        Suffix : constant String := Awk_Catalog_Policy.Required_Key (Key_Index);
+                     begin
+                        if not Contains (Suffix, "awk.help.") then
+                           declare
+                              Value : constant String :=
+                                Text.Line_Value (Catalog, Locale & "." & Suffix);
+                           begin
+                              for Pattern of Banned loop
+                                 Require
+                                   (not Contains (Value, U.To_String (Pattern)),
+                                    "non-English diagnostic catalog contains English fallback text: "
+                                    & Locale & "." & Suffix);
+                              end loop;
+                           end;
+                        end if;
+                     end;
+                  end loop;
+               end if;
+            end;
+         end loop;
+      end Require_No_English_Diagnostic_Fallbacks;
+
       procedure Require_Reference_Cue (Suffix, Cue : String) is
       begin
          Require
@@ -613,6 +651,7 @@ procedure Awk_Workflows is
       end loop;
       Require_Consistent_Translations;
       Require_No_English_Help_Fallbacks;
+      Require_No_English_Diagnostic_Fallbacks;
       Require_Reference_Cues;
       Put_Info ("catalog checks passed");
    end Catalogs;
