@@ -955,6 +955,27 @@ package body Awk_Tests.Process is
       Project_Tools.Files.Delete_File_If_Present ("../tests/fixtures/input/regex_numbers.txt");
    end Test_Process_Regex_Arithmetic_And_Builtins;
 
+   procedure Test_Process_Printf_Formatting
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { printf ""%s:%03d\n"", ""n"", 7 }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process printf formatting",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process printf formatting exits successfully");
+      Assert (Contains (U.To_String (Output), "n:007"),
+              "process printf formatted text is forwarded");
+   end Test_Process_Printf_Formatting;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1092,6 +1113,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Regex_Arithmetic_And_Builtins'Access,
          "process regex arithmetic builtins");
+      Registration.Register_Routine
+        (T, Test_Process_Printf_Formatting'Access,
+         "process printf formatting");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
