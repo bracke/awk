@@ -17,6 +17,11 @@ package body Awk_Tests.Process is
 
    LF : constant String := [1 => ASCII.LF];
 
+   procedure Ensure_Filesystem_Fixture_Directory is
+   begin
+      Fixtures.Make_Directory ("../tests/fixtures/filesystem");
+   end Ensure_Filesystem_Fixture_Directory;
+
    overriding function Name (T : Case_Type) return AUnit.Message_String is
       pragma Unreferenced (T);
    begin
@@ -130,6 +135,7 @@ package body Awk_Tests.Process is
          new String'(Target)];
       Status : Integer;
    begin
+      Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Write_Text_File ("../" & Target, "dash data" & LF);
       Status :=
         Project_Tools.Processes.Run_Status
@@ -738,6 +744,7 @@ package body Awk_Tests.Process is
          new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
       Status : Integer;
    begin
+      Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Text_File ("../" & Target, "old" & LF & "content" & LF);
 
@@ -770,6 +777,7 @@ package body Awk_Tests.Process is
          new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
       Status : Integer;
    begin
+      Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Text_File ("../" & Target, "existing" & LF);
 
@@ -827,6 +835,7 @@ package body Awk_Tests.Process is
          end;
       end Expect_Failure;
    begin
+      Ensure_Filesystem_Fixture_Directory;
       Expect_Failure (">", "overwrite redirection to directory");
       Expect_Failure (">>", "append redirection to directory");
    end Test_Process_Redirection_Target_Directory_Failure;
