@@ -1099,6 +1099,29 @@ package body Awk_Tests.Process is
               "process split populates array values through awklib");
    end Test_Process_Split_Builtin;
 
+   procedure Test_Process_Match_And_Sprintf
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { print sprintf(""%s-%02d"", ""x"", 4); print match(""abc123"", /[0-9]+/), RSTART, RLENGTH }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process match and sprintf",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process match and sprintf exits successfully");
+      Assert (Contains (U.To_String (Output), "x-04" & LF),
+              "process sprintf result is forwarded");
+      Assert (Contains (U.To_String (Output), "4 4 3" & LF),
+              "process match updates RSTART and RLENGTH through awklib");
+   end Test_Process_Match_And_Sprintf;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1254,6 +1277,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Split_Builtin'Access,
          "process split builtin");
+      Registration.Register_Routine
+        (T, Test_Process_Match_And_Sprintf'Access,
+         "process match and sprintf");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
