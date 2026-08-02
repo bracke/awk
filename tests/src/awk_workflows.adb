@@ -1,6 +1,5 @@
 with Ada.Command_Line;
 with Ada.Directories;
-with Ada.Environment_Variables;
 with Ada.Exceptions;
 with Ada.Streams;
 with Ada.Streams.Stream_IO;
@@ -11,21 +10,23 @@ with Interfaces;
 with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
+with Project_Tools.Alire;
 with Project_Tools.Files;
 with Project_Tools.Processes;
+with Project_Tools.Release_Checks;
+with Project_Tools.Text;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
    package Dir renames Ada.Directories;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
+   package Text renames Project_Tools.Text;
    package U renames Ada.Strings.Unbounded;
    use type Interfaces.Unsigned_64;
 
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
-   Env  : constant String := Proc.Locate_Command ("env");
-   Git  : constant String := Proc.Locate_Command ("git");
 
    procedure Put_Info (Message : String) is
    begin
@@ -47,75 +48,17 @@ procedure Awk_Workflows is
    end Require;
 
    procedure Run_Alr_Build (Directory : String; Release_Mode : Boolean := False) is
-      package Env_Vars renames Ada.Environment_Variables;
-
-      function Derived_Home return String is
-         Marker : constant String := "/.getada/bin/alr";
-      begin
-         if Alr'Length > Marker'Length
-           and then Alr (Alr'Last - Marker'Length + 1 .. Alr'Last) = Marker
-         then
-            return Alr (Alr'First .. Alr'Last - Marker'Length);
-         else
-            return "";
-         end if;
-      end Derived_Home;
-
-      function Value_Or_Empty (Name : String) return String is
-      begin
-         if Env_Vars.Exists (Name) then
-            return Env_Vars.Value (Name);
-         else
-            return "";
-         end if;
-      end Value_Or_Empty;
-
-      Home : constant String := Derived_Home;
-      Path : constant String := Value_Or_Empty ("PATH");
+      Args : constant GNAT.OS_Lib.Argument_List :=
+        (if Release_Mode
+         then [new String'("--non-interactive"),
+               new String'("build"),
+               new String'("--release"),
+               new String'("--profiles=*=release")]
+         else Project_Tools.Alire.Noninteractive_Build_Args);
    begin
       Require (Alr /= "", "alr executable not found");
-      if Env /= "" and then Home /= "" then
-         declare
-            Args : constant GNAT.OS_Lib.Argument_List :=
-              (if Release_Mode
-               then
-                 [new String'("-i"),
-                  new String'("HOME=" & Home),
-                  new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
-                  new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
-                  new String'("PATH=" & Path),
-                  new String'(Alr),
-                  new String'("-n"),
-                  new String'("build"),
-                  new String'("--release"),
-                  new String'("--profiles=*=release")]
-               else
-                 [new String'("-i"),
-                  new String'("HOME=" & Home),
-                  new String'("XDG_DATA_HOME=" & Home & "/.local/share"),
-                  new String'("XDG_CONFIG_HOME=" & Home & "/.config"),
-                  new String'("PATH=" & Path),
-                  new String'(Alr),
-                  new String'("-n"),
-                  new String'("build"),
-                  new String'("--development")]);
-         begin
-            if Proc.Run_Status ("alr build", Directory, Env, Args) /= 0 then
-               Fail ("alr build failed in " & Directory);
-            end if;
-         end;
-      else
-         declare
-            Args : constant GNAT.OS_Lib.Argument_List :=
-              (if Release_Mode
-               then [new String'("-n"), new String'("build"), new String'("--release"),
-                     new String'("--profiles=*=release")]
-               else [new String'("-n"), new String'("build"), new String'("--development")]);
-         begin
-            if Proc.Run_Status ("alr build", Directory, Alr, Args) /= 0 then
-               Fail ("alr build failed in " & Directory);
-            end if;
-         end;
+      if Proc.Run_Status ("alr build", Directory, Alr, Args) /= 0 then
+         Fail ("alr build failed in " & Directory);
       end if;
    end Run_Alr_Build;
 
@@ -140,53 +83,16 @@ procedure Awk_Workflows is
    end Test;
 
    procedure Require_Clean_Repository is
-      Output : Proc.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("status"), new String'("--porcelain")];
    begin
-      Require (Git /= "", "git executable not found");
-      if Proc.Run_Status ("git status --porcelain", Root, Git, Args, Output, Quiet => True) /= 0 then
-         Fail ("git status failed");
-      end if;
-      Require (U.Length (Output) = 0, "release requires a clean git working tree");
+      Project_Tools.Release_Checks.Require_Clean_Git_Worktree
+        ("awk", Root, Quiet => True);
    end Require_Clean_Repository;
 
    function File_Text (Path : String) return String is
-      File   : Ada.Text_IO.File_Type;
-      Buffer : U.Unbounded_String;
-   begin
-      Ada.Text_IO.Open (File, Ada.Text_IO.In_File, Path);
-      while not Ada.Text_IO.End_Of_File (File) loop
-         U.Append (Buffer, Ada.Text_IO.Get_Line (File));
-         if not Ada.Text_IO.End_Of_File (File) then
-            U.Append (Buffer, ASCII.LF);
-         end if;
-      end loop;
-      Ada.Text_IO.Close (File);
-      return U.To_String (Buffer);
-   exception
-      when others =>
-         if Ada.Text_IO.Is_Open (File) then
-            Ada.Text_IO.Close (File);
-         end if;
-         return "";
-   end File_Text;
+     (U.To_String (Text.Read_Text_File (Path)));
 
    function Contains (Text, Pattern : String) return Boolean is
-   begin
-      if Pattern'Length = 0 then
-         return True;
-      end if;
-      if Text'Length < Pattern'Length then
-         return False;
-      end if;
-      for Index in Text'First .. Text'Last - Pattern'Length + 1 loop
-         if Text (Index .. Index + Pattern'Length - 1) = Pattern then
-            return True;
-         end if;
-      end loop;
-      return False;
-   end Contains;
+     (Project_Tools.Text.Contains (Text, Pattern));
 
    function Line_Value (Text, Key : String) return String is
       Prefix : constant String := Key & " =";
@@ -216,30 +122,28 @@ procedure Awk_Workflows is
    end Line_Value;
 
    procedure Docs is
-      procedure Require_Path (Path : String) is
-      begin
-         Require (Dir.Exists (Path), "missing required documentation: " & Path);
-      end Require_Path;
+      Required_Docs : constant Files.Path_List :=
+        [U.To_Unbounded_String ("../README.md"),
+         U.To_Unbounded_String ("../CHANGELOG.md"),
+         U.To_Unbounded_String ("../CONTRIBUTING.md"),
+         U.To_Unbounded_String ("../SECURITY.md"),
+         U.To_Unbounded_String ("../LICENSE"),
+         U.To_Unbounded_String ("../docs/quickstart.md"),
+         U.To_Unbounded_String ("../docs/command-line-reference.md"),
+         U.To_Unbounded_String ("../docs/compatibility.md"),
+         U.To_Unbounded_String ("../docs/architecture.md"),
+         U.To_Unbounded_String ("../docs/diagnostics.md"),
+         U.To_Unbounded_String ("../docs/localization.md"),
+         U.To_Unbounded_String ("../docs/testing.md"),
+         U.To_Unbounded_String ("../docs/building.md"),
+         U.To_Unbounded_String ("../docs/releasing.md"),
+         U.To_Unbounded_String ("../docs/ai/project-map.md"),
+         U.To_Unbounded_String ("../docs/ai/package-contracts.md"),
+         U.To_Unbounded_String ("../docs/ai/invariants.md"),
+         U.To_Unbounded_String ("../docs/ai/workflows.md"),
+         U.To_Unbounded_String ("../docs/ai/prohibited-designs.md")];
    begin
-      Require_Path ("../README.md");
-      Require_Path ("../CHANGELOG.md");
-      Require_Path ("../CONTRIBUTING.md");
-      Require_Path ("../SECURITY.md");
-      Require_Path ("../LICENSE");
-      Require_Path ("../docs/quickstart.md");
-      Require_Path ("../docs/command-line-reference.md");
-      Require_Path ("../docs/compatibility.md");
-      Require_Path ("../docs/architecture.md");
-      Require_Path ("../docs/diagnostics.md");
-      Require_Path ("../docs/localization.md");
-      Require_Path ("../docs/testing.md");
-      Require_Path ("../docs/building.md");
-      Require_Path ("../docs/releasing.md");
-      Require_Path ("../docs/ai/project-map.md");
-      Require_Path ("../docs/ai/package-contracts.md");
-      Require_Path ("../docs/ai/invariants.md");
-      Require_Path ("../docs/ai/workflows.md");
-      Require_Path ("../docs/ai/prohibited-designs.md");
+      Files.Require_Files (Required_Docs, "missing required documentation");
       Require
         (Contains (File_Text ("../README.md"), "does not claim complete POSIX conformance"),
          "README must not claim full POSIX conformance");
@@ -700,7 +604,7 @@ procedure Awk_Workflows is
    end Source_Policy;
 
    procedure Install_Boundary is
-      Prefix : constant String := "/tmp/awk-install-boundary";
+      Prefix : constant String := Files.Join (Files.Temp_Dir, "awk-install-boundary");
       Output : Proc.Unbounded_String;
       Install_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("-n"),
@@ -710,15 +614,13 @@ procedure Awk_Workflows is
         [new String'("--version")];
    begin
       Require (Alr /= "", "alr executable not found");
-      if Dir.Exists (Prefix) then
-         Dir.Delete_Tree (Prefix);
-      end if;
+      Files.Delete_Tree (Prefix);
 
       if Proc.Run_Status ("alr install", Root, Alr, Install_Args, Output, Quiet => True) /= 0 then
          Fail ("alr install failed");
       end if;
 
-      Require (Dir.Exists (Prefix & "/bin/awk"), "installed awk executable missing");
+      Require (Files.File_Exists (Prefix & "/bin/awk"), "installed awk executable missing");
       if Proc.Run_Status
           ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
            Output, Quiet => True) /= 0
@@ -728,9 +630,7 @@ procedure Awk_Workflows is
       Require (Contains (U.To_String (Output), "awk 0.1.0"),
                "installed awk version output is unexpected");
 
-      if Dir.Exists (Prefix) then
-         Dir.Delete_Tree (Prefix);
-      end if;
+      Files.Delete_Tree (Prefix);
       Put_Info ("install boundary checks passed");
    end Install_Boundary;
 
@@ -748,9 +648,7 @@ procedure Awk_Workflows is
 
    procedure Remove_If_Exists (Path : String) is
    begin
-      if Dir.Exists (Path) then
-         Dir.Delete_Tree (Path);
-      end if;
+      Files.Delete_Tree (Path);
    end Remove_If_Exists;
 
    procedure Clean is
@@ -764,9 +662,7 @@ procedure Awk_Workflows is
 
    procedure Copy_File (Source, Target : String) is
    begin
-      if Dir.Exists (Target) then
-         Dir.Delete_File (Target);
-      end if;
+      Files.Delete_File_If_Present (Target);
       Dir.Copy_File (Source, Target);
    exception
       when others =>
