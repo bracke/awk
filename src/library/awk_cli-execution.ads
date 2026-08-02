@@ -1,5 +1,6 @@
 with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
+with System;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Environment;
 with Awk_CLI.Inputs;
@@ -29,12 +30,33 @@ package Awk_CLI.Execution is
       end case;
    end record;
 
+   type Live_Output_Writer is access function
+     (User_Data : System.Address;
+      Content   : String) return Boolean;
+
+   type Live_Redirection_Writer is access function
+     (User_Data : System.Address;
+      Path      : String;
+      Content   : String;
+      Append    : Boolean) return Boolean;
+
    function Execute
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
       Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
       Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
+      return Execution_Result;
+
+   function Execute_Live
+     (Program_Source  : String;
+      Options         : Awk_CLI.Options.Parsed_Options;
+      Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
+      Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
+      Write_Output    : not null Live_Output_Writer;
+      Write_Redirection : not null Live_Redirection_Writer;
+      User_Data       : System.Address := System.Null_Address)
       return Execution_Result;
 
    function Supports_Positional_Runtime_Assignments return Boolean;

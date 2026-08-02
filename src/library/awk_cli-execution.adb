@@ -1,6 +1,5 @@
 with Awklib.Interpreter;
 with Awklib;
-with System;
 with System.Address_To_Access_Conversions;
 
 package body Awk_CLI.Execution is
@@ -19,6 +18,11 @@ package body Awk_CLI.Execution is
       Inputs      : Input_Vector_Access;
       Output      : Output_Access;
       Redirs      : Redirection_Vector_Access;
+      Live_Output : Live_Output_Writer := null;
+      Live_Redirection : Live_Redirection_Writer := null;
+      Live_User_Data : System.Address := System.Null_Address;
+      Failed     : Boolean := False;
+      Failure    : Awk_CLI.Diagnostics.Diagnostic;
       Input_Index : Natural := 0;
    end record;
 
@@ -49,7 +53,16 @@ package body Awk_CLI.Execution is
       State : constant Stream_State_Access.Object_Pointer :=
         Stream_State_Access.To_Pointer (User_Data);
    begin
-      U.Append (State.Output.all, Text);
+      if State.Live_Output = null then
+         U.Append (State.Output.all, Text);
+      elsif not State.Live_Output.all (State.Live_User_Data, Text) then
+         State.Failed := True;
+         State.Failure :=
+           Awk_CLI.Diagnostics.Make
+             ("awk.standard_output.write_failed",
+              Awk_CLI.Diagnostics.Error,
+              Awk_CLI.Diagnostics.Output);
+      end if;
    end Write_Output;
 
    procedure Write_Redirection
@@ -63,19 +76,33 @@ package body Awk_CLI.Execution is
       State : constant Stream_State_Access.Object_Pointer :=
         Stream_State_Access.To_Pointer (User_Data);
    begin
-      State.Redirs.Append
-        (Redirected_Output'
-           (Path    => U.To_Unbounded_String (Name),
-            Content => U.To_Unbounded_String (Text),
-            Append  => Append));
+      if State.Live_Redirection = null then
+         State.Redirs.Append
+           (Redirected_Output'
+              (Path    => U.To_Unbounded_String (Name),
+               Content => U.To_Unbounded_String (Text),
+               Append  => Append));
+      elsif not State.Live_Redirection.all (State.Live_User_Data, Name, Text, Append) then
+         State.Failed := True;
+         State.Failure :=
+           Awk_CLI.Diagnostics.Make
+             ("awk.output_file.write_failed",
+              Awk_CLI.Diagnostics.Error,
+              Awk_CLI.Diagnostics.Output,
+              Name => "path",
+              Value => Name);
+      end if;
    end Write_Redirection;
 
-   function Execute
+   function Execute_Core
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
       Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
       Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
-      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
+      Live_Output     : Live_Output_Writer;
+      Live_Redirection : Live_Redirection_Writer;
+      Live_User_Data  : System.Address)
       return Execution_Result
    is
       Assignments  : I.Assignment_Vectors.Vector;
@@ -91,6 +118,15 @@ package body Awk_CLI.Execution is
         (Inputs      => Inputs'Unchecked_Access,
          Output      => Output'Unchecked_Access,
          Redirs      => Redirs'Unchecked_Access,
+         Live_Output => Live_Output,
+         Live_Redirection => Live_Redirection,
+         Live_User_Data => Live_User_Data,
+         Failed      => False,
+         Failure     =>
+           Awk_CLI.Diagnostics.Make
+             ("awk.internal.unexpected_exception",
+              Awk_CLI.Diagnostics.Internal_Error,
+              Awk_CLI.Diagnostics.Internal),
          Input_Index => 0);
    begin
       if Options.Has_Field_Separator then
@@ -141,6 +177,10 @@ package body Awk_CLI.Execution is
                  Detail => U.To_String (Message)));
       end if;
 
+      if State.Failed then
+         return (Ok => False, Diagnostic => State.Failure);
+      end if;
+
       return
         (Ok => True, Standard_Output => Output, Exit_Status => Exit_Code,
          Redirections => Redirs);
@@ -153,7 +193,42 @@ package body Awk_CLI.Execution is
                 ("awk.internal.unexpected_exception",
                  Awk_CLI.Diagnostics.Internal_Error,
                  Awk_CLI.Diagnostics.Internal));
+   end Execute_Core;
+
+   function Execute
+     (Program_Source  : String;
+      Options         : Awk_CLI.Options.Parsed_Options;
+      Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
+      Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
+      return Execution_Result
+   is
+   begin
+      return Execute_Core
+        (Program_Source, Options, Operands, Inputs, Environment,
+         Live_Output => null,
+         Live_Redirection => null,
+         Live_User_Data => System.Null_Address);
    end Execute;
+
+   function Execute_Live
+     (Program_Source  : String;
+      Options         : Awk_CLI.Options.Parsed_Options;
+      Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
+      Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
+      Write_Output    : not null Live_Output_Writer;
+      Write_Redirection : not null Live_Redirection_Writer;
+      User_Data       : System.Address := System.Null_Address)
+      return Execution_Result
+   is
+   begin
+      return Execute_Core
+        (Program_Source, Options, Operands, Inputs, Environment,
+         Live_Output => Write_Output,
+         Live_Redirection => Write_Redirection,
+         Live_User_Data => User_Data);
+   end Execute_Live;
 
    function Interpreter_Version return String is (Awklib.Version);
 
