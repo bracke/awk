@@ -922,6 +922,39 @@ package body Awk_Tests.Process is
               "second file FILENAME/FNR visible");
    end Test_Process_Multiple_Files;
 
+   procedure Test_Process_Regex_Arithmetic_And_Builtins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("/^[a-z]+ [0-9]+$/ { print $1, $2 + 3, substr($1, 2, 2), length($1) }"),
+         new String'("tests/fixtures/input/regex_numbers.txt")];
+      Status : Integer;
+   begin
+      Write_Text_File
+        ("../tests/fixtures/input/regex_numbers.txt",
+         "alpha 7" & LF &
+         "skip me" & LF &
+         "beta 11" & LF);
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process regex arithmetic builtins",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "process regex arithmetic builtins exits successfully");
+      Assert (Contains (U.To_String (Output), "alpha 10 lp 5"),
+              "regex pattern, arithmetic, substr, and length process first record");
+      Assert (Contains (U.To_String (Output), "beta 14 et 4"),
+              "regex pattern, arithmetic, substr, and length process second record");
+      Assert (not Contains (U.To_String (Output), "skip"),
+              "non-matching process input is not emitted");
+      Project_Tools.Files.Delete_File_If_Present ("../tests/fixtures/input/regex_numbers.txt");
+   end Test_Process_Regex_Arithmetic_And_Builtins;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1056,6 +1089,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine (T, Test_Process_Parse_Failure'Access, "process parse failure");
       Registration.Register_Routine (T, Test_Process_Runtime_Failure'Access, "process runtime failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
+      Registration.Register_Routine
+        (T, Test_Process_Regex_Arithmetic_And_Builtins'Access,
+         "process regex arithmetic builtins");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
