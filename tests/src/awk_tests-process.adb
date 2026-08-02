@@ -1170,6 +1170,34 @@ package body Awk_Tests.Process is
               "deleted array element is not emitted");
    end Test_Process_Arrays_Delete_And_While;
 
+   procedure Test_Process_Next_Ternary_Break_And_Continue
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("BEGIN { for (i = 0; i < 4; i++) { if (i == 1) continue; if (i == 3) break; print ""loop"", i } } { if ($1 == ""one"") next; print (NF ? $1 : ""empty"") }"),
+         new String'("tests/fixtures/input/basic.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process next ternary break continue",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process next ternary break continue exits successfully");
+      Assert (Contains (U.To_String (Output), "loop 0" & LF),
+              "process for loop emits first retained iteration");
+      Assert (Contains (U.To_String (Output), "loop 2" & LF),
+              "process continue skips and break stops the loop");
+      Assert (Contains (U.To_String (Output), "three" & LF),
+              "process next skips the first input record");
+      Assert (not Contains (U.To_String (Output), "one" & LF),
+              "record skipped by next is not emitted");
+   end Test_Process_Next_Ternary_Break_And_Continue;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1334,6 +1362,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Arrays_Delete_And_While'Access,
          "process arrays delete and while");
+      Registration.Register_Routine
+        (T, Test_Process_Next_Ternary_Break_And_Continue'Access,
+         "process next ternary break continue");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
