@@ -862,6 +862,39 @@ package body Awk_Tests.Process is
               "input filename remains ordered after runtime assignment");
    end Test_Process_Runtime_Assignment_Argv;
 
+   procedure Test_Process_Runtime_Assignment_Positions
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
+        [new String'("BEGIN { print ""begin"", X } { print FILENAME, FNR, X, $0 } END { print ""end"", X }"),
+         new String'("tests/fixtures/input/basic.txt"),
+         new String'("X=42"),
+         new String'("tests/fixtures/input/second.txt"),
+         new String'("X=99")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process runtime assignment positions",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process runtime assignment positions exits successfully");
+      Assert (Contains (U.To_String (Output), "begin " & LF),
+              "initial runtime assignment value is empty before input");
+      Assert
+        (Contains (U.To_String (Output), "tests/fixtures/input/basic.txt 1  one two"),
+         "first file is processed before interspersed assignment");
+      Assert
+        (Contains (U.To_String (Output), "tests/fixtures/input/second.txt 1 42 five six"),
+         "interspersed assignment affects following input file");
+      Assert (Contains (U.To_String (Output), "end 99" & LF),
+              "final runtime assignment is visible in END");
+   end Test_Process_Runtime_Assignment_Positions;
+
    procedure Test_Process_Parse_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1107,6 +1140,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Runtime_Assignment_Argv'Access,
          "process runtime assignment ARGV");
+      Registration.Register_Routine
+        (T, Test_Process_Runtime_Assignment_Positions'Access,
+         "process runtime assignment positions");
       Registration.Register_Routine (T, Test_Process_Parse_Failure'Access, "process parse failure");
       Registration.Register_Routine (T, Test_Process_Runtime_Failure'Access, "process runtime failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
