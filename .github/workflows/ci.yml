@@ -33,6 +33,55 @@ jobs:
         with:
           toolchain: gnat_native=15.2.1 gprbuild
 
+      - name: Install OpenSSL for macOS C bridges
+        if: matrix.os == 'macos-15-intel'
+        shell: bash
+        run: |
+          brew list openssl@3 >/dev/null 2>&1 || brew install openssl@3
+          echo "CPATH=$(brew --prefix openssl@3)/include" >> "$GITHUB_ENV"
+          echo "LIBRARY_PATH=$(brew --prefix openssl@3)/lib" >> "$GITHUB_ENV"
+
+      - name: Install OpenSSL for Windows C bridges
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          pacman() { /c/msys64/usr/bin/pacman "$@"; }
+          pacman-key() { /c/msys64/usr/bin/pacman-key "$@"; }
+          pacman-key --init || true
+          pacman-key --populate msys2 || true
+
+          packages="mingw-w64-x86_64-openssl"
+          sync() {
+            pacman -Sy --noconfirm --needed --disable-download-timeout "$@" $packages
+          }
+
+          synced=no
+          for attempt in 1 2 3; do
+            if sync; then synced=yes; break; fi
+            echo "::warning::pacman sync attempt ${attempt} failed"
+            sleep 5
+          done
+
+          if [ "$synced" != yes ]; then
+            echo "::warning::signed pacman sync failed; retrying without signature checks"
+            sed 's/^SigLevel.*/SigLevel = Never/' /c/msys64/etc/pacman.conf \
+              > /c/msys64/tmp/pacman-nosig.conf
+            for attempt in 1 2; do
+              if sync --config C:/msys64/tmp/pacman-nosig.conf; then synced=yes; break; fi
+              echo "::warning::unsigned pacman sync attempt ${attempt} failed"
+              sleep 5
+            done
+          fi
+
+          if [ "$synced" != yes ]; then
+            echo "::error::failed to install MSYS2 OpenSSL development package"
+            exit 1
+          fi
+
+          echo "CPATH=C:/msys64/mingw64/include" >> "$GITHUB_ENV"
+          echo "LIBRARY_PATH=C:/msys64/mingw64/lib" >> "$GITHUB_ENV"
+          echo "C:\msys64\mingw64\bin" >> "$GITHUB_PATH"
+
       - name: Raise Alire solver timeout
         shell: bash
         run: alr settings --global --set solver.timeout 600
