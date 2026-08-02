@@ -230,8 +230,11 @@ procedure Awk_Workflows is
          "architecture docs must document testable invocation context");
       Require
         (File_Has ("../docs/compatibility.md",
-                   "No current compatibility-registry entries are active"),
-         "compatibility docs must state the empty active registry");
+                   "No current entries are classified as unsupported"),
+         "compatibility docs must state the active limitation position");
+      Require
+        (File_Has ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002"),
+         "compatibility docs must include reviewed compatibility IDs");
       Require
         (File_Has ("../docs/compatibility.md", "Test reference"),
          "compatibility docs must include test references");

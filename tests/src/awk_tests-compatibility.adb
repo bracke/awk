@@ -7,6 +7,7 @@ with Project_Tools.Files;
 package body Awk_Tests.Compatibility is
    use AUnit.Assertions;
    use Awk_Tests.Support;
+   use type Awk_CLI.Compatibility.Compatibility_Status;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
       pragma Unreferenced (T);
@@ -18,19 +19,39 @@ package body Awk_Tests.Compatibility is
       pragma Unreferenced (T);
       Docs        : constant String := File_Text ("../docs/compatibility.md");
       Conformance : constant String := File_Text ("conformance/manifest/cases.txt");
+
+      procedure Require_Reviewed (Id : String) is
+      begin
+         Assert (Awk_CLI.Compatibility.Has_Id (Id),
+                 "registry contains reviewed entry " & Id);
+         Assert (Contains (Docs, Id), "compatibility docs contain " & Id);
+      end Require_Reviewed;
    begin
-      Assert (Awk_CLI.Compatibility.Count = 0, "registry has no active limitation entries");
-      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"),
-              "main-input getline from BEGIN is no longer a compatibility limitation");
-      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"),
-              "command getline is no longer a compatibility limitation");
-      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"),
-              "malformed UTF-8 is no longer a compatibility limitation");
-      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"),
-              "printf %c field width is no longer a compatibility limitation");
+      Assert (Awk_CLI.Compatibility.Count = 7, "registry has reviewed compatibility entries");
+      for Index in 1 .. Awk_CLI.Compatibility.Count loop
+         Assert (Awk_CLI.Compatibility.Id (Index) /= "",
+                 "registry entry has stable ID");
+         Assert (Awk_CLI.Compatibility.Status (Index) = Awk_CLI.Compatibility.Supported,
+                 "reviewed compatibility entry is supported by resolved awklib");
+         Assert (Awk_CLI.Compatibility.Description (Index) /= "",
+                 "registry entry has description");
+         Assert (Awk_CLI.Compatibility.Source (Index) /= "",
+                 "registry entry has limitation source or capability source");
+         Assert (Awk_CLI.Compatibility.Documentation (Index) = "docs/compatibility.md",
+                 "registry entry has documentation reference");
+         Assert (Awk_CLI.Compatibility.Test_Reference (Index) /= "",
+                 "registry entry has test reference");
+      end loop;
+      Require_Reviewed ("AWK-COMPAT-REGEX-001");
+      Require_Reviewed ("AWK-COMPAT-GETLINE-001");
+      Require_Reviewed ("AWK-COMPAT-GETLINE-002");
+      Require_Reviewed ("AWK-COMPAT-UTF8-001");
+      Require_Reviewed ("AWK-COMPAT-PRINTF-001");
+      Require_Reviewed ("AWK-COMPAT-ASSIGNMENT-001");
+      Require_Reviewed ("AWK-COMPAT-REDIRECTION-001");
       Assert
-        (Contains (Docs, "No current compatibility-registry entries are active"),
-         "compatibility docs state the empty registry");
+        (Contains (Docs, "No current entries are classified as unsupported"),
+         "compatibility docs state the active limitation position");
       Assert
         (Contains (Conformance, "AWK-CONF-GETLINE-001|Supported"),
          "conformance manifest marks command getline supported");
