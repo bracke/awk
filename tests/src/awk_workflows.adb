@@ -188,21 +188,37 @@ procedure Awk_Workflows is
         ("../docs/diagnostics.md", "open failures from read failures",
          "diagnostics docs must document open/read failure distinction",
          Quiet => True);
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
-                                               "  `hostkit`")
-         and then Files.File_Contains ("../docs/dependency-policy.md", "Platform-access dependency")
-         and then Files.File_Contains ("../docs/ai/package-contracts.md",
-                            "Only `Awk_CLI.Platform` may call `hostkit`"),
-         "platform docs must document the hostkit adapter boundary");
-      Require
-        (Files.File_Contains ("../docs/localization.md", "awk.internal.localization_failed")
-         and then Files.File_Contains ("../docs/localization.md", "last-resort containment"),
-         "localization docs must document catalog-backed render fallback");
-      Require
-        (Files.File_Contains ("../docs/localization.md", "English fallback help and diagnostic")
-         and then Files.File_Contains ("../docs/localization.md", "localized CLI text"),
-         "localization docs must document help and diagnostic fallback checks");
+      Files.Require_Contains
+        ("../docs/architecture.md",
+         "only production package that directly depends on" & ASCII.LF &
+         "  `hostkit`",
+         "platform docs must document the hostkit adapter boundary",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md", "Platform-access dependency",
+         "platform docs must document the hostkit adapter boundary",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/package-contracts.md",
+         "Only `Awk_CLI.Platform` may call `hostkit`",
+         "platform docs must document the hostkit adapter boundary",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/localization.md", "awk.internal.localization_failed",
+         "localization docs must document catalog-backed render fallback",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/localization.md", "last-resort containment",
+         "localization docs must document catalog-backed render fallback",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/localization.md", "English fallback help and diagnostic",
+         "localization docs must document help and diagnostic fallback checks",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/localization.md", "localized CLI text",
+         "localization docs must document help and diagnostic fallback checks",
+         Quiet => True);
       Require
         (Files.File_Contains ("../docs/localization.md", "Localization Reference")
          and then Files.File_Contains ("../docs/localization-reference.md", "POSIX `awk` utility text")
