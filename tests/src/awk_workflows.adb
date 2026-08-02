@@ -459,12 +459,29 @@ procedure Awk_Workflows is
         TOML.String_Value_After (Root_Alire, "version =", Root_Alire'First);
       Tests_Version : constant String :=
         TOML.String_Value_After (Tests_Alire, "version =", Tests_Alire'First);
+      Awklib_Constraint : constant String :=
+        TOML.String_Value_After (Root_Alire, "awklib =", Root_Alire'First);
+
+      function Constraint_Version (Constraint : String) return String is
+      begin
+         if Constraint'Length > 0
+           and then (Constraint (Constraint'First) = '~'
+                     or else Constraint (Constraint'First) = '=')
+         then
+            return Constraint (Constraint'First + 1 .. Constraint'Last);
+         else
+            return Constraint;
+         end if;
+      end Constraint_Version;
+
+      Awklib_Version : constant String := Constraint_Version (Awklib_Constraint);
    begin
       Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
       Require (Root_Version /= "", "root crate version must be declared");
       Require (Tests_Version = Root_Version,
                "tests crate version must match root crate version");
+      Require (Awklib_Version /= "", "awklib dependency version must be declared");
       Files.Require_Contains
         ("../config/awk_config.ads",
          "Crate_Version : constant String := """ & Root_Version & """",
@@ -476,6 +493,16 @@ procedure Awk_Workflows is
       Files.Require_Contains
         ("../docs/releasing.md", "dist/awk-" & Root_Version,
          "release docs must document the current package directory",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-compatibility.adb",
+         "resolved awklib " & Awklib_Version & " behavior",
+         "compatibility registry must document the current awklib version",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md",
+         "resolved awklib " & Awklib_Version & " behavior",
+         "compatibility docs must document the current awklib version",
          Quiet => True);
       Files.Require_Contains
         ("../alire.toml", "executables = [""awk""]",

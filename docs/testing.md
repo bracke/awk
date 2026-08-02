@@ -61,7 +61,8 @@ state-language locale in the combined catalog, checks catalog placeholders and d
 locale policy, runs translation consistency and English-fallback checks, verifies
 the AWK translation-reference comparison guide, validates the conformance
 manifest, renders diagnostics and help for every supported locale, checks localized UTF-8 process rendering, checks exit-status and option/help documentation drift, checks the
-package manifest policy, checks public GNATdoc coverage, checks local Alire workspace pins, checks adapter
+package manifest policy, checks version metadata and compatibility registry
+drift, checks public GNATdoc coverage, checks local Alire workspace pins, checks adapter
 isolation through parsed Ada `with` clauses, checks GPR main inventory against
 source files and documentation, rejects non-empty generated `.stderr` build logs,
 rejects
