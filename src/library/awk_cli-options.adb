@@ -82,6 +82,7 @@ package body Awk_CLI.Options is
          begin
             if Stop_Options or else Current = "" or else Current (Current'First) /= '-' or else Current = "-" then
                Add_Operand (Current, Index);
+               Stop_Options := True;
             elsif Current = "--" then
                Stop_Options := True;
             elsif Current = "--help" then

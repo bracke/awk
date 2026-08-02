@@ -38,7 +38,9 @@ package body Awk_Tests.CLI_Options is
          Assert (Result.Options.Has_Field_Separator, "FS present");
          Assert (U.To_String (Result.Options.Field_Separator) = ",", "attached -F");
          Assert (Result.Options.Initial_Assignments.Length = 1, "-v retained");
-         Assert (Result.Options.Operands.Length = 2, "operands retained after --");
+         Assert (Result.Options.Operands.Length = 3, "operands retained after direct program");
+         Assert (U.To_String (Result.Options.Operands.Element (2).Text) = "--",
+                 "-- after direct program is an operand");
       end;
    end Test_Options;
 
@@ -150,6 +152,32 @@ package body Awk_Tests.CLI_Options is
       end;
    end Test_Option_Terminator_Treats_Long_Options_As_Operands;
 
+   procedure Test_Options_After_Direct_Program_Are_Operands
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      Args.Append (U.To_Unbounded_String ("BEGIN { print ARGV[1] }"));
+      Args.Append (U.To_Unbounded_String ("--version"));
+      Args.Append (U.To_Unbounded_String ("--color=always"));
+      declare
+         Result : constant Opt.Parse_Result := Opt.Parse (Args);
+      begin
+         Assert (Result.Ok, "post-program option-looking operands parse");
+         Assert (not Result.Options.Version_Requested,
+                 "--version after direct program is an operand");
+         Assert (Result.Options.Color = Opt.Color_Auto,
+                 "--color after direct program does not alter color policy");
+         Assert (Result.Options.Operands.Length = 3,
+                 "direct program and later option-looking operands are retained");
+         Assert (U.To_String (Result.Options.Operands.Element (2).Text) = "--version",
+                 "post-program --version spelling is preserved");
+         Assert (Result.Options.Operands.Element (2).Original_Index = 2,
+                 "post-program operand index is preserved");
+      end;
+   end Test_Options_After_Direct_Program_Are_Operands;
+
    procedure Test_Option_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
 
@@ -248,6 +276,9 @@ package body Awk_Tests.CLI_Options is
       Registration.Register_Routine
         (T, Test_Option_Terminator_Treats_Long_Options_As_Operands'Access,
          "option terminator long operands");
+      Registration.Register_Routine
+        (T, Test_Options_After_Direct_Program_Are_Operands'Access,
+         "options after direct program are operands");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
       Registration.Register_Routine
         (T, Test_Option_Failure_Color_Preservation'Access,
