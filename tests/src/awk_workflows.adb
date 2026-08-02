@@ -124,8 +124,13 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/ai/workflows.md"),
          U.To_Unbounded_String ("../docs/ai/prohibited-designs.md"),
          U.To_Unbounded_String ("../docs/ai/traceability.md")];
+      Stale_Docs : constant String :=
+        Project_Tools.Release_Checks.Stale_Doc_Scaffolding ("..");
    begin
       Files.Require_Files (Required_Docs, "missing required documentation");
+      Require
+        (Stale_Docs = "",
+         "documentation contains stale scaffolding language: " & Stale_Docs);
       Files.Require_Contains
         ("../README.md", "does not claim complete POSIX conformance",
          "README must not claim full POSIX conformance", Quiet => True);

@@ -55,6 +55,7 @@ should not depend only on rendered text.
 
 The workflow command `./bin/awk_workflows verify` builds root and tests in
 development mode, runs AUnit, validates crate metadata, validates required docs,
+rejects stale documentation scaffolding language,
 validates English and Danish shard catalogs, checks every supported European
 state-language locale in the combined catalog, checks catalog placeholders and default
 locale policy, runs translation consistency and English-fallback checks, verifies
