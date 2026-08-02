@@ -1,16 +1,37 @@
 with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
+with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with Interfaces.C_Streams;
-with GNAT.Expect;
-with GNAT.OS_Lib;
+with Hostkit;
+with Hostkit.Fs;
+with Hostkit.Host;
+with Hostkit.Process;
+with Hostkit.Shell;
 
 package body Awk_CLI.Platform is
    use type SIO.Count;
    use type Ada.Streams.Stream_Element_Offset;
 
    Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
+   Command_Capture_Count : Natural := 0;
+
+   function Image (Value : Natural) return String is
+     (Ada.Strings.Fixed.Trim (Natural'Image (Value), Ada.Strings.Left));
+
+   function Join (Directory, Name : String) return String is
+     (Ada.Directories.Compose (Containing_Directory => Directory, Name => Name));
+
+   procedure Delete_If_Present (Path : String) is
+   begin
+      if Path /= "" and then Ada.Directories.Exists (Path) then
+         Ada.Directories.Delete_File (Path);
+      end if;
+   exception
+      when others =>
+         null;
+   end Delete_If_Present;
 
    function Process_Arguments return Awk_CLI.Options.String_Vectors.Vector is
       Result : Awk_CLI.Options.String_Vectors.Vector;
@@ -180,21 +201,58 @@ package body Awk_CLI.Platform is
    end Close_Input;
 
    function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean is
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("-c"), new String'(Command)];
-      Status : aliased Integer := -1;
+      Args        : Hostkit.String_Vectors.Vector;
+      Status      : Hostkit.Process.Process_Outcome;
+      Ignored     : Integer := -1;
+      Temp        : constant String := Hostkit.Fs.Temp_Directory;
+      Prefix      : constant String := "awk-command-getline-" & Image (Command_Capture_Count + 1);
+      Stdin_Path  : constant String := Join (Temp, Prefix & ".in");
+      Stdout_Path : constant String := Join (Temp, Prefix & ".out");
+      Stderr_Path : constant String := Join (Temp, Prefix & ".err");
    begin
-      Output :=
-        U.To_Unbounded_String
-          (GNAT.Expect.Get_Command_Output
-             (Command   => "/bin/sh",
-              Arguments => Args,
-              Input     => "",
-              Status    => Status'Access));
-      return Status >= 0;
+      Output := U.Null_Unbounded_String;
+      Command_Capture_Count := Command_Capture_Count + 1;
+
+      if Hostkit.Shell.Executable = "" then
+         return False;
+      end if;
+
+      if not Write_File (Stdin_Path, "", Append => False) then
+         return False;
+      end if;
+
+      Args.Append (Hostkit.UString'(U.To_Unbounded_String (Hostkit.Shell.Command_Option)));
+      Args.Append (Hostkit.UString'(U.To_Unbounded_String (Command)));
+
+      Status :=
+        Hostkit.Process.Run_Captured
+          (Program     => Hostkit.Shell.Executable,
+           Arguments   => Args,
+           Stdin_Path  => Stdin_Path,
+           Stdout_Path => Stdout_Path,
+           Stderr_Path => Stderr_Path);
+
+      if Status.Started
+        and then not Status.Timed_Out
+        and then Read_File (Stdout_Path, Output) = Read_Success
+      then
+         Delete_If_Present (Stdin_Path);
+         Delete_If_Present (Stdout_Path);
+         Delete_If_Present (Stderr_Path);
+         Ignored := Status.Exit_Status;
+         return Ignored >= 0;
+      end if;
+
+      Delete_If_Present (Stdin_Path);
+      Delete_If_Present (Stdout_Path);
+      Delete_If_Present (Stderr_Path);
+      return False;
    exception
       when others =>
          Output := U.Null_Unbounded_String;
+         Delete_If_Present (Stdin_Path);
+         Delete_If_Present (Stdout_Path);
+         Delete_If_Present (Stderr_Path);
          return False;
    end Run_Command;
 
@@ -261,8 +319,11 @@ package body Awk_CLI.Platform is
      (Is_Terminal (2));
 
    function Locale return String is
+      Native : constant String := Hostkit.Host.Native_Locale;
    begin
-      if Ada.Environment_Variables.Exists ("LC_ALL") and then Ada.Environment_Variables.Value ("LC_ALL") /= "" then
+      if Native /= "" then
+         return Native;
+      elsif Ada.Environment_Variables.Exists ("LC_ALL") and then Ada.Environment_Variables.Value ("LC_ALL") /= "" then
          return Ada.Environment_Variables.Value ("LC_ALL");
       elsif Ada.Environment_Variables.Exists ("LANG") and then Ada.Environment_Variables.Value ("LANG") /= "" then
          return Ada.Environment_Variables.Value ("LANG");

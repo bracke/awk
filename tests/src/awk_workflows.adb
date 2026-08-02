@@ -266,6 +266,12 @@ procedure Awk_Workflows is
                             "confined to main containment or the platform adapter"),
          "workflow docs must describe process-boundary source policy");
       Require
+        (File_Has ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
+                                           "  `hostkit`")
+         and then File_Has ("../docs/ai/package-contracts.md",
+                            "Only `Awk_CLI.Platform` may call `hostkit`."),
+         "architecture docs must describe hostkit platform boundary");
+      Require
         (File_Has ("../docs/ai/traceability.md", "| 1 | Project identity |"),
          "traceability docs must map project identity");
       Require
@@ -296,15 +302,22 @@ procedure Awk_Workflows is
                "root crate must depend on terminal_styles");
       Require (File_Has ("../alire.toml", "messages = "),
                "root crate must depend on messages");
+      Require (File_Has ("../alire.toml", "hostkit = "),
+               "root crate must depend on hostkit");
       Require (not Contains (Root_Alire, "awklib = ""*"""),
                "root awklib dependency must not use wildcard constraint");
       Require (not Contains (Root_Alire, "terminal_styles = ""*"""),
                "root terminal_styles dependency must not use wildcard constraint");
       Require (not Contains (Root_Alire, "messages = ""*"""),
                "root messages dependency must not use wildcard constraint");
+      Require (not Contains (Root_Alire, "hostkit = ""*"""),
+               "root hostkit dependency must not use wildcard constraint");
       Require
         (File_Has ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev"""),
          "dependency policy must document the current terminal_styles dev constraint");
+      Require
+        (File_Has ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev"""),
+         "dependency policy must document the current hostkit dev constraint");
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
       Require (File_Has ("alire.toml", "awk = "),
@@ -319,6 +332,7 @@ procedure Awk_Workflows is
       Manifests.Require_Workspace_Pin
         ("../alire.toml", "terminal_styles", "../terminal_styles", Quiet => True);
       Manifests.Require_Workspace_Pin ("../alire.toml", "messages", "../messages", Quiet => True);
+      Manifests.Require_Workspace_Pin ("../alire.toml", "hostkit", "../hostkit", Quiet => True);
       Manifests.Require_Workspace_Pin ("alire.toml", "awk", "..", Quiet => True);
       Manifests.Require_Workspace_Pin
         ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
@@ -586,6 +600,25 @@ procedure Awk_Workflows is
               [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
          "only presentation layer may depend on terminal_styles");
       Require
+        (File_Has ("../src/library/awk_cli-platform.adb", "with Hostkit"),
+         "platform adapter must bridge to hostkit");
+      Ada_Source.Require_Only_Allowed_With_Clauses
+        ("../src/library/awk_cli-platform.adb",
+         "Hostkit",
+         [U.To_Unbounded_String ("Hostkit"),
+          U.To_Unbounded_String ("Hostkit.Fs"),
+          U.To_Unbounded_String ("Hostkit.Host"),
+          U.To_Unbounded_String ("Hostkit.Process"),
+          U.To_Unbounded_String ("Hostkit.Shell")],
+         Quiet => True);
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "with Hostkit",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "only platform adapter may depend on hostkit");
+      Require
         (Ada_Source.First_Source_File_Containing
            ("../src",
             "Ada.Text_IO.Put",
@@ -612,9 +645,12 @@ procedure Awk_Workflows is
         (Ada_Source.First_Source_File_Containing
            ("../src",
             """/bin/sh""",
-            Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
-         "shell command execution must stay in platform adapter");
+            Allowed_Files => []) = "",
+         "shell executable selection must stay in hostkit");
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src",
+         [U.To_Unbounded_String ("GNAT.Expect")],
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],

@@ -18,9 +18,10 @@ Production adapter boundaries:
   on `messages`.
 - `Awk_CLI.Output` is the only production package that directly depends on
   `terminal_styles`.
-- `Awk_CLI.Platform` isolates process arguments, streams, files, command
-  execution for `command | getline`, locale, catalog path lookup, and
-  environment interaction.
+- `Awk_CLI.Platform` is the only production package that directly depends on
+  `hostkit`. It isolates process arguments, streams, files, host shell command
+  execution for `command | getline`, native locale lookup, temporary-path
+  selection, catalog path lookup, and environment interaction.
 
 The `Awk_CLI` specs are documented because they are visible to the executable
 and test crate, but they are internal CLI infrastructure rather than a stable

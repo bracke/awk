@@ -23,6 +23,9 @@ terminal_styles = "=0.1.0-dev"
 [[depends-on]]
 messages = "~0.1.0"
 
+[[depends-on]]
+hostkit = "=0.1.0-dev"
+
 [[pins]]
 awklib = { path = "../awklib" }
 
@@ -31,6 +34,9 @@ terminal_styles = { path = "../terminal_styles" }
 
 [[pins]]
 messages = { path = "../messages" }
+
+[[pins]]
+hostkit = { path = "../hostkit" }
 
 [build-profiles]
 "*" = "development"
