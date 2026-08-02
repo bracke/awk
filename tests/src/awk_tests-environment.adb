@@ -69,6 +69,49 @@ package body Awk_Tests.Environment is
       end;
    end Test_Environment_Normalization;
 
+   procedure Test_Environment_Normalization_Edges
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Raw : Awk_CLI.Environment.Entry_Vectors.Vector;
+   begin
+      Raw.Append
+        (Awk_CLI.Environment.Env_Entry'
+           (Name => U.To_Unbounded_String ("EMPTY_VALUE"),
+            Value => U.Null_Unbounded_String));
+      Raw.Append
+        (Awk_CLI.Environment.Env_Entry'
+           (Name => U.To_Unbounded_String ("Case_Name"),
+            Value => U.To_Unbounded_String ("mixed")));
+      Raw.Append
+        (Awk_CLI.Environment.Env_Entry'
+           (Name => U.To_Unbounded_String ("CASE_NAME"),
+            Value => U.To_Unbounded_String ("upper")));
+      Raw.Append
+        (Awk_CLI.Environment.Env_Entry'
+           (Name => U.To_Unbounded_String ("EMPTY_VALUE"),
+            Value => U.To_Unbounded_String ("final")));
+
+      declare
+         Normal : constant Awk_CLI.Environment.Entry_Vectors.Vector :=
+           Awk_CLI.Environment.Normalize (Raw);
+      begin
+         Assert (Normal.Length = 3, "empty values are retained and names remain case-sensitive");
+         Assert (U.To_String (Normal.Element (1).Name) = "EMPTY_VALUE",
+                 "duplicate with empty first value keeps original position");
+         Assert (U.To_String (Normal.Element (1).Value) = "final",
+                 "duplicate with empty first value uses final value");
+         Assert (U.To_String (Normal.Element (2).Name) = "Case_Name",
+                 "mixed-case environment name is preserved");
+         Assert (U.To_String (Normal.Element (2).Value) = "mixed",
+                 "mixed-case environment value is preserved");
+         Assert (U.To_String (Normal.Element (3).Name) = "CASE_NAME",
+                 "case-distinct environment name is not collapsed");
+         Assert (U.To_String (Normal.Element (3).Value) = "upper",
+                 "case-distinct environment value is preserved");
+      end;
+   end Test_Environment_Normalization_Edges;
+
    procedure Test_Context_Environment_Normalization_And_Confidentiality
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -105,6 +148,9 @@ package body Awk_Tests.Environment is
       Registration.Register_Routine
         (T, Test_Environment_Normalization'Access,
          "environment normalization");
+      Registration.Register_Routine
+        (T, Test_Environment_Normalization_Edges'Access,
+         "environment normalization edges");
       Registration.Register_Routine
         (T, Test_Context_Environment_Normalization_And_Confidentiality'Access,
          "context environment normalization confidentiality");
