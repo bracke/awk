@@ -278,13 +278,14 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
          "architecture docs must document testable invocation context");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
-         "compatibility registry is missing command-pipe getline limitation");
+        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-UTF8-001"),
+         "compatibility registry is missing malformed UTF-8 limitation");
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
          "compatibility docs must include test references");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "Unsupported by awklib"),
+        (Contains (File_Text ("../docs/compatibility.md"),
+                   "Supported with documented difference"),
          "compatibility docs must include status names");
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "Source"),
@@ -466,9 +467,9 @@ procedure Awk_Workflows is
          "cases/append_redirection.awk", "expected/append_redirection.txt",
          "append redirection supported through awklib streaming callbacks");
       Require_Case
-        ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
+        ("AWK-CONF-GETLINE-001", "Supported",
          "cases/command_getline.awk", "expected/command_getline.txt",
-         "AWK-COMPAT-GETLINE-002");
+         "command getline supported through awklib callback");
       Put_Info ("conformance checks passed");
    end Conformance;
 

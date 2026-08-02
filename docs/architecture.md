@@ -18,8 +18,9 @@ Production adapter boundaries:
   on `messages`.
 - `Awk_CLI.Output` is the only production package that directly depends on
   `terminal_styles`.
-- `Awk_CLI.Platform` isolates process arguments, streams, files, locale,
-  catalog path lookup, and environment interaction.
+- `Awk_CLI.Platform` isolates process arguments, streams, files, command
+  execution for `command | getline`, locale, catalog path lookup, and
+  environment interaction.
 
 `Awk_CLI.Run` coordinates a complete invocation through explicit result paths:
 parse options, resolve program source, classify operands, collect environment,
@@ -27,17 +28,19 @@ execute `awklib` once, forward standard output, materialize live redirection
 writes, and render controlled diagnostics on failure.
 
 V1 remains partly memory-oriented for program source, in-memory test fixtures,
-and auxiliary `getline < file` content that `awklib` accepts through a
-registration map. The main input is callback-driven: process named files are opened
-when their operand is reached, read in chunks, and passed to `awklib`
+auxiliary `getline < file` fixtures, and in-memory command-output fixtures. The
+main input is callback-driven: process named files are opened when their operand
+is reached, read in chunks, and passed to `awklib`
 `Run_Text_Streaming`, while process standard input is consumed only when an
 implicit or explicit standard-input operand is reached. AWK record splitting,
-standard output production, and redirected write mode remain owned by `awklib`.
+`command | getline` semantics, standard output production, and redirected write
+mode remain owned by `awklib`.
 The execution adapter reports
 `Awk_CLI.Execution.Supports_Streaming_Execution = True`. The adapter reports
 `Awk_CLI.Execution.Supports_Redirection_Append_Mode = True`, because
 `awklib` now provides live redirected write callbacks with append/truncate mode.
 
 The in-memory `Invocation_Context` is the primary test seam. It supplies
-arguments, files, standard input, environment entries, output failures, and
-captured writes without duplicating production command-line or execution logic.
+arguments, files, standard input, environment entries, output failures,
+captured command output, and writes without duplicating production command-line
+or execution logic.

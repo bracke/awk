@@ -22,6 +22,7 @@ package body Awk_CLI.Execution is
       Redirs      : Redirection_Vector_Access;
       Live_Output : Live_Output_Writer := null;
       Live_Redirection : Live_Redirection_Writer := null;
+      Live_Command : Live_Command_Reader := null;
       Live_User_Data : System.Address := System.Null_Address;
       Failed     : Boolean := False;
       Failure    : Awk_CLI.Diagnostics.Diagnostic;
@@ -194,6 +195,26 @@ package body Awk_CLI.Execution is
       end if;
    end Write_Redirection;
 
+   procedure Read_Command
+     (User_Data : System.Address;
+      Command   : String;
+      Text      : out U.Unbounded_String;
+      Available : out Boolean)
+   is
+      State : constant Stream_State_Access.Object_Pointer :=
+        Stream_State_Access.To_Pointer (User_Data);
+   begin
+      if State.Failed then
+         Text := U.Null_Unbounded_String;
+         Available := False;
+      elsif State.Live_Command /= null then
+         Available := State.Live_Command.all (State.Live_User_Data, Command, Text);
+      else
+         Text := U.Null_Unbounded_String;
+         Available := False;
+      end if;
+   end Read_Command;
+
    function Execute_Core
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -203,6 +224,7 @@ package body Awk_CLI.Execution is
       Live_Input      : Live_Input_Reader;
       Live_Output     : Live_Output_Writer;
       Live_Redirection : Live_Redirection_Writer;
+      Live_Command    : Live_Command_Reader;
       Live_User_Data  : System.Address;
       Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector :=
         Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
@@ -225,6 +247,7 @@ package body Awk_CLI.Execution is
          Redirs      => Redirs'Unchecked_Access,
          Live_Output => Live_Output,
          Live_Redirection => Live_Redirection,
+         Live_Command => Live_Command,
          Live_User_Data => Live_User_Data,
          Failed      => False,
          Failure     =>
@@ -296,7 +319,8 @@ package body Awk_CLI.Execution is
             Status         => Status,
             Message        => Message,
             Files          => Aux_Files,
-            Arguments      => Arguments);
+            Arguments      => Arguments,
+            Read_Command   => Read_Command'Access);
       else
          declare
             Has_Input : Boolean := False;
@@ -329,7 +353,8 @@ package body Awk_CLI.Execution is
             Exit_Code      => Exit_Code,
             Status         => Status,
             Message        => Message,
-            Files          => Aux_Files);
+            Files          => Aux_Files,
+            Read_Command   => Read_Command'Access);
       end if;
 
       if Status = I.Run_Error then
@@ -375,6 +400,7 @@ package body Awk_CLI.Execution is
          Live_Input => null,
          Live_Output => null,
          Live_Redirection => null,
+         Live_Command => null,
          Live_User_Data => System.Null_Address);
    end Execute;
 
@@ -386,6 +412,7 @@ package body Awk_CLI.Execution is
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
       Write_Output    : not null Live_Output_Writer;
       Write_Redirection : not null Live_Redirection_Writer;
+      Read_Command    : Live_Command_Reader := null;
       User_Data       : System.Address := System.Null_Address)
       return Execution_Result
    is
@@ -395,6 +422,7 @@ package body Awk_CLI.Execution is
          Live_Input => null,
          Live_Output => Write_Output,
          Live_Redirection => Write_Redirection,
+         Live_Command => Read_Command,
          Live_User_Data => User_Data);
    end Execute_Live;
 
@@ -406,6 +434,7 @@ package body Awk_CLI.Execution is
       Read_Input      : not null Live_Input_Reader;
       Write_Output    : not null Live_Output_Writer;
       Write_Redirection : not null Live_Redirection_Writer;
+      Read_Command    : Live_Command_Reader := null;
       User_Data       : System.Address := System.Null_Address;
       Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector :=
         Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
@@ -418,6 +447,7 @@ package body Awk_CLI.Execution is
          Live_Input => Read_Input,
          Live_Output => Write_Output,
          Live_Redirection => Write_Redirection,
+         Live_Command => Read_Command,
          Live_User_Data => User_Data,
          Auxiliary_Files => Auxiliary_Files);
    end Execute_Live_Input;

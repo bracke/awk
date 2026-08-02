@@ -82,7 +82,6 @@ package body Awk_Tests.Suite is
 
    use type Ada.Containers.Count_Type;
    use type Awk_CLI.Exit_Code;
-   use type Awk_CLI.Compatibility.Compatibility_Area;
    use type Awk_CLI.Compatibility.Compatibility_Status;
    use type Awk_CLI.Diagnostics.Exit_Code;
    use type Awk_CLI.Operands.Operand_Kind;
@@ -466,7 +465,8 @@ package body Awk_Tests.Suite is
            Awk_CLI.Execution.Execute_Live
              (U.To_String (Source.Source.Text),
               Parsed.Options, Ops, Input.Files, Env,
-              Live_Output'Access, Live_Redirection'Access, State'Address);
+              Live_Output'Access, Live_Redirection'Access,
+              User_Data => State'Address);
       begin
          Assert (Exec.Ok, "live execution succeeds");
          Assert (U.To_String (Exec.Standard_Output) = "",
@@ -507,7 +507,8 @@ package body Awk_Tests.Suite is
            Awk_CLI.Execution.Execute_Live
              (U.To_String (Source.Source.Text),
               Parsed.Options, Ops, Input.Files, Env,
-              Live_Output'Access, Live_Redirection'Access, State'Address);
+              Live_Output'Access, Live_Redirection'Access,
+              User_Data => State'Address);
       begin
          Assert (not Exec.Ok, "live stdout failure is reported");
          Assert
@@ -1005,6 +1006,23 @@ package body Awk_Tests.Suite is
          "BEGIN getline shares the CLI main-input cursor");
    end Test_Context_Main_Getline_From_Begin;
 
+   procedure Test_Context_Command_Getline
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { ""printf x"" | getline value; print value }");
+      Awk_CLI.Add_Command_Output (Context, "printf x", "x");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "command getline succeeds");
+      Assert (Awk_CLI.Standard_Output (Context) = "x" & LF,
+              "command getline uses awklib command callback output");
+   end Test_Context_Command_Getline;
+
    procedure Test_Context_Argv_Argc (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -1115,13 +1133,12 @@ package body Awk_Tests.Suite is
       Docs        : constant String := File_Text ("../docs/compatibility.md");
       Conformance : constant String := File_Text ("conformance/manifest/cases.txt");
       Has_Difference : Boolean := False;
-      Has_Unsupported : Boolean := False;
-      Has_Getline : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 3, "registry has accepted limitation entries");
+      Assert (Awk_CLI.Compatibility.Count >= 2, "registry has accepted limitation entries");
       Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"),
               "main-input getline from BEGIN is no longer a compatibility limitation");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"), "pipe getline ID present");
+      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"),
+              "command getline is no longer a compatibility limitation");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
 
@@ -1153,29 +1170,18 @@ package body Awk_Tests.Suite is
          case Awk_CLI.Compatibility.Status (Index) is
             when Awk_CLI.Compatibility.Supported_With_Documented_Difference =>
                Has_Difference := True;
-            when Awk_CLI.Compatibility.Unsupported_By_Awklib =>
-               Has_Unsupported := True;
-            when others =>
-               null;
-         end case;
-         case Awk_CLI.Compatibility.Area (Index) is
-            when Awk_CLI.Compatibility.Getline =>
-               Has_Getline := True;
             when others =>
                null;
          end case;
       end loop;
       Assert (Has_Difference, "registry includes documented differences");
-      Assert (Has_Unsupported, "registry includes unsupported awklib cases");
-      Assert (Has_Getline, "registry includes getline area");
-      Assert (Contains (Conformance, "AWK-COMPAT-GETLINE-002"),
-              "conformance manifest references getline limitation");
       Assert
-        (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Getline,
-         "getline area is explicit");
+        (Contains (Conformance, "AWK-CONF-GETLINE-001|Supported"),
+         "conformance manifest marks command getline supported");
       Assert
-        (Awk_CLI.Compatibility.Status (1) = Awk_CLI.Compatibility.Unsupported_By_Awklib,
-         "getline status is explicit");
+        (Awk_CLI.Compatibility.Status (1) =
+           Awk_CLI.Compatibility.Supported_With_Documented_Difference,
+         "remaining status is explicit");
    end Test_Compatibility_Registry;
 
    procedure Test_Conformance_Manifest (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -1218,11 +1224,9 @@ package body Awk_Tests.Suite is
          "cases/append_redirection.awk", "expected/append_redirection.txt",
          "append redirection supported through awklib streaming callbacks");
       Require_Case
-        ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
+        ("AWK-CONF-GETLINE-001", "Supported",
          "cases/command_getline.awk", "expected/command_getline.txt",
-         "AWK-COMPAT-GETLINE-002");
-      Assert (Contains (Manifest, "Unsupported_By_Awklib"),
-              "manifest includes unsupported awklib cases");
+         "command getline supported through awklib callback");
    end Test_Conformance_Manifest;
 
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -1871,6 +1875,25 @@ package body Awk_Tests.Suite is
               "second file FILENAME/FNR visible");
    end Test_Process_Multiple_Files;
 
+   procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { ""printf x"" | getline value; print value }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process command getline",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process command getline exits successfully");
+      Assert (Contains (U.To_String (Output), "x"),
+              "process command getline reads command output");
+   end Test_Process_Command_Getline;
+
    overriding procedure Register_Tests (T : in out CLI_Case) is
       use AUnit.Test_Cases;
    begin
@@ -1941,6 +1964,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine
         (T, Test_Context_Main_Getline_From_Begin'Access,
          "context main getline from BEGIN");
+      Registration.Register_Routine
+        (T, Test_Context_Command_Getline'Access,
+         "context command getline");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");
       Registration.Register_Routine
         (T, Test_Context_Runtime_Assignment_Positions'Access,
@@ -2009,6 +2035,7 @@ package body Awk_Tests.Suite is
          "process runtime assignment ARGV");
       Registration.Register_Routine (T, Test_Process_Parse_Failure'Access, "process parse failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
+      Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
    end Register_Tests;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is

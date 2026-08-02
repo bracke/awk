@@ -34,6 +34,10 @@ When no explicit input file or `-` operand is present, standard input is used
 implicitly. Repeated `-` operands are allowed; after the first one consumes the
 available standard input, later uses observe end of file.
 
+`command | getline` is handled by `awklib` through the CLI platform adapter.
+The command string is evaluated by AWK at runtime and executed with the current
+process privileges; the program is not a sandbox.
+
 Exit statuses are `0` for success, `1` for interpreter parse/runtime failures,
 `2` for invalid command-line invocation, `3` for host input/output failures,
 and `70` for unexpected internal failures.

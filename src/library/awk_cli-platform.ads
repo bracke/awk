@@ -17,6 +17,7 @@ package Awk_CLI.Platform is
       Content : out U.Unbounded_String;
       End_Of_File : out Boolean) return Read_Status;
    procedure Close_Input (Stream : in out Input_Stream);
+   function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean;
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean;
    function Write_Standard_Output (Content : String) return Boolean;
    function Write_Standard_Error (Content : String) return Boolean;

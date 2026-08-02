@@ -19,6 +19,10 @@ package Awk_CLI is
       Readable : Boolean := True;
       Writable : Boolean := True;
       Openable : Boolean := True);
+   procedure Add_Command_Output
+     (Context : in out Invocation_Context;
+      Command : String;
+      Output  : String);
    procedure Add_Environment
      (Context : in out Invocation_Context;
       Name    : String;
@@ -61,6 +65,11 @@ private
       Append  : Boolean := False;
    end record;
 
+   type Command_Output is record
+      Command : U.Unbounded_String;
+      Output  : U.Unbounded_String;
+   end record;
+
    package File_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Virtual_File);
    package String_Vectors is new Ada.Containers.Vectors
@@ -69,6 +78,8 @@ private
      (Index_Type => Positive, Element_Type => Env_Item);
    package Write_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Write_Operation);
+   package Command_Vectors is new Ada.Containers.Vectors
+     (Index_Type => Positive, Element_Type => Command_Output);
 
    type Invocation_Context is tagged limited record
       Arguments    : String_Vectors.Vector;
@@ -76,6 +87,7 @@ private
       Locale       : U.Unbounded_String := U.To_Unbounded_String ("en");
       Catalog_Path : U.Unbounded_String := U.To_Unbounded_String ("resources/messages/catalog.txt");
       Files        : File_Vectors.Vector;
+      Commands     : Command_Vectors.Vector;
       Environment  : Env_Vectors.Vector;
       Standard_Out : U.Unbounded_String;
       Standard_Err : U.Unbounded_String;

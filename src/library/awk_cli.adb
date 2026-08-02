@@ -47,6 +47,7 @@ package body Awk_CLI is
       Context.Locale := U.To_Unbounded_String ("en");
       Context.Catalog_Path := U.To_Unbounded_String ("resources/messages/catalog.txt");
       Context.Files.Clear;
+      Context.Commands.Clear;
       Context.Environment.Clear;
       Context.Standard_Out := U.Null_Unbounded_String;
       Context.Standard_Err := U.Null_Unbounded_String;
@@ -108,6 +109,17 @@ package body Awk_CLI is
             Writable => Writable,
             Openable => Openable));
    end Add_File;
+
+   procedure Add_Command_Output
+     (Context : in out Invocation_Context;
+      Command : String;
+      Output  : String) is
+   begin
+      Context.Commands.Append
+        (Command_Output'
+           (Command => U.To_Unbounded_String (Command),
+            Output  => U.To_Unbounded_String (Output)));
+   end Add_Command_Output;
 
    procedure Add_Environment
      (Context : in out Invocation_Context;
@@ -475,6 +487,29 @@ package body Awk_CLI is
       return Write_Context_File (State.Context.all, Path, Content, Append);
    end Live_State_Redirection;
 
+   function Live_State_Command
+     (User_Data : System.Address;
+      Command   : String;
+      Output    : out U.Unbounded_String) return Boolean
+   is
+      State : constant Live_Input_Access.Object_Pointer :=
+        Live_Input_Access.To_Pointer (User_Data);
+   begin
+      for Item of State.Context.Commands loop
+         if U.To_String (Item.Command) = Command then
+            Output := Item.Output;
+            return True;
+         end if;
+      end loop;
+
+      if State.Context.Use_Process then
+         return Awk_CLI.Platform.Run_Command (Command, Output);
+      end if;
+
+      Output := U.Null_Unbounded_String;
+      return False;
+   end Live_State_Command;
+
    function Run (Context : in out Invocation_Context) return Exit_Code is
       Catalog : Awk_CLI.Localization.Catalog;
 
@@ -639,8 +674,9 @@ package body Awk_CLI is
                     Live_Context_Input'Access,
                     Live_State_Output'Access,
                     Live_State_Redirection'Access,
-                    Input_State'Address,
-                    Auxiliary_Files);
+                    Read_Command => Live_State_Command'Access,
+                    User_Data => Input_State'Address,
+                    Auxiliary_Files => Auxiliary_Files);
             begin
                Awk_CLI.Platform.Close_Input (Input_State.Process_Stream);
                if not Exec_Result.Ok then

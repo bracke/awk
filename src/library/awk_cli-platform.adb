@@ -2,6 +2,8 @@ with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.Text_IO;
+with GNAT.Expect;
+with GNAT.OS_Lib;
 
 package body Awk_CLI.Platform is
    use type SIO.Count;
@@ -175,6 +177,25 @@ package body Awk_CLI.Platform is
          Stream.Is_Stdin := False;
          Stream.Stdin_Done := False;
    end Close_Input;
+
+   function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean is
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("-c"), new String'(Command)];
+      Status : aliased Integer := -1;
+   begin
+      Output :=
+        U.To_Unbounded_String
+          (GNAT.Expect.Get_Command_Output
+             (Command   => "/bin/sh",
+              Arguments => Args,
+              Input     => "",
+              Status    => Status'Access));
+      return Status >= 0;
+   exception
+      when others =>
+         Output := U.Null_Unbounded_String;
+         return False;
+   end Run_Command;
 
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
       File : SIO.File_Type;

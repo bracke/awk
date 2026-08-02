@@ -39,6 +39,11 @@ package Awk_CLI.Execution is
       Text         : out U.Unbounded_String;
       End_Of_Input : out Boolean) return Awk_CLI.Platform.Read_Status;
 
+   type Live_Command_Reader is access function
+     (User_Data : System.Address;
+      Command   : String;
+      Output    : out U.Unbounded_String) return Boolean;
+
    function Execute
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -55,6 +60,7 @@ package Awk_CLI.Execution is
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
       Write_Output    : not null Live_Output_Writer;
       Write_Redirection : not null Live_Redirection_Writer;
+      Read_Command    : Live_Command_Reader := null;
       User_Data       : System.Address := System.Null_Address)
       return Execution_Result;
 
@@ -66,6 +72,7 @@ package Awk_CLI.Execution is
       Read_Input      : not null Live_Input_Reader;
       Write_Output    : not null Live_Output_Writer;
       Write_Redirection : not null Live_Redirection_Writer;
+      Read_Command    : Live_Command_Reader := null;
       User_Data       : System.Address := System.Null_Address;
       Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector :=
         Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
