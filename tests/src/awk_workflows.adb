@@ -19,7 +19,6 @@ with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
 with Project_Tools.Text;
 with Project_Tools.TOML;
-with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
@@ -503,8 +502,24 @@ procedure Awk_Workflows is
          return "";
       end First_Unexpected_Dependency;
 
+      procedure Require_No_Production_Code_Tokens
+        (Forbidden_Tokens : Ada_Source.String_List)
+      is
+         Ads_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.ads");
+         Adb_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.adb");
+      begin
+         for Path of Ads_Files loop
+            Ada_Source.Require_No_Code_Tokens
+              (U.To_String (Path), Forbidden_Tokens, Quiet => True);
+         end loop;
+
+         for Path of Adb_Files loop
+            Ada_Source.Require_No_Code_Tokens
+              (U.To_String (Path), Forbidden_Tokens, Quiet => True);
+         end loop;
+      end Require_No_Production_Code_Tokens;
+
       Unexpected : U.Unbounded_String;
-      Tree_Errors : Natural := 0;
    begin
       Require
         (File_Has ("../src/library/awk_cli-execution.adb", "with Awklib"),
@@ -551,19 +566,14 @@ procedure Awk_Workflows is
       Require
         (First_Unexpected_Dependency ("with Terminal_Styles", "../src/library/awk_cli-output.adb") = "",
          "only presentation layer may depend on terminal_styles");
-      Require
-        (not File_Has ("../src/library/awk_cli-output.adb", "Character'Val (27)"),
-         "presentation layer must not emit handwritten ANSI escapes");
-      Project_Tools.Tree_Checks.Check_No_Forbidden_Tokens
-        (Errors           => Tree_Errors,
-         Dir              => "../src",
-         Forbidden_Tokens =>
-           [U.To_Unbounded_String ("gawk"),
-            U.To_Unbounded_String ("mawk"),
-            U.To_Unbounded_String ("nawk")],
-         Purpose          => "production source",
-         Quiet            => True);
-      Require (Tree_Errors = 0, "production source must not reference external AWK fallbacks");
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-output.adb",
+         [U.To_Unbounded_String ("Character'Val (27)")],
+         Quiet => True);
+      Require_No_Production_Code_Tokens
+        ([U.To_Unbounded_String ("gawk"),
+          U.To_Unbounded_String ("mawk"),
+          U.To_Unbounded_String ("nawk")]);
       Project_Tools.AUnit_Checks.Require_Registered_Test_Packages
         (Test_Dir             => "src",
          Spec_Pattern         => "awk_tests-*.ads",
