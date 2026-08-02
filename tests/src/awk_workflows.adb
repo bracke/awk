@@ -575,6 +575,19 @@ procedure Awk_Workflows is
          [U.To_Unbounded_String ("Character'Val (27)")],
          Quiet => True);
       Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "Character'Val (27)",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-diagnostics.adb")]) = "",
+         "only diagnostic escaping may inspect the ESC character");
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src",
+         [U.To_Unbounded_String ("Character'Val(27)"),
+          U.To_Unbounded_String ("ASCII.ESC"),
+          U.To_Unbounded_String ("Ada.Characters.Latin_1.ESC")],
+         Quiet => True);
+      Require
         (not File_Has ("../src/library/awk_cli-output.adb", """awk: """),
          "diagnostic header text must be catalog-backed");
       Require
