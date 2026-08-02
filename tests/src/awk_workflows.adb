@@ -393,7 +393,8 @@ procedure Awk_Workflows is
          Line : constant String :=
            Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
       begin
-         Require (Contains (Manifest, Line), "conformance manifest missing case: " & Id);
+         Require (Files.Has_Line ("conformance/manifest/cases.txt", Line),
+                  "conformance manifest missing case: " & Id);
          Require (Files.File_Exists ("conformance/" & Case_File),
                   "conformance case file missing: " & Case_File);
          Require (Files.File_Exists ("conformance/" & Expected),
@@ -713,13 +714,12 @@ procedure Awk_Workflows is
       end Require_Package_File;
 
       procedure Require_Manifest_Entry (Path : String) is
-         Manifest_Text : constant String := File_Text (Dist & "/MANIFEST.txt");
          Expected_Line : constant String :=
            Path & " bytes=" & Natural'Image (Length_Of (Dist & "/" & Path))
            & " fnv1a64=" & Checksum (Dist & "/" & Path);
       begin
          Require
-           (Contains (Manifest_Text, Expected_Line),
+           (Files.Has_Line (Dist & "/MANIFEST.txt", Expected_Line),
             "package manifest missing entry: " & Path);
       end Require_Manifest_Entry;
 
