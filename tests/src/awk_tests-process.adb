@@ -465,6 +465,31 @@ package body Awk_Tests.Process is
       Assert (Contains (U.To_String (Output), "42" & LF), "process -v is visible before BEGIN");
    end Test_Process_V_Assignment;
 
+   procedure Test_Process_Repeated_V_Assignments
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
+        [new String'("-vX=first"),
+         new String'("-v"),
+         new String'("X=second"),
+         new String'("-vY=a=b"),
+         new String'("BEGIN { print X; print Y }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process repeated -v",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process repeated -v exits successfully");
+      Assert (Contains (U.To_String (Output), "second" & LF & "a=b"),
+              "process -v assignments are applied in order and preserve extra equals");
+   end Test_Process_Repeated_V_Assignments;
+
    procedure Test_Process_Environment_Propagation
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -680,6 +705,9 @@ package body Awk_Tests.Process is
         (T, Test_Process_Attached_Field_Separator_Final_Wins'Access,
          "process attached -F final wins");
       Registration.Register_Routine (T, Test_Process_V_Assignment'Access, "process -v");
+      Registration.Register_Routine
+        (T, Test_Process_Repeated_V_Assignments'Access,
+         "process repeated -v");
       Registration.Register_Routine
         (T, Test_Process_Environment_Propagation'Access,
          "process environment propagation");
