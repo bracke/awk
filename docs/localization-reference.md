@@ -59,3 +59,26 @@ Reference comparison checklist:
   `awklib` and documented project limitations.
 - Translations should not contain raw English fallback sentences unless the
   target locale intentionally uses the same technical token or syntax.
+
+Machine-checked reference cues:
+
+```text
+awk.help.summary: awk, awklib, POSIX
+awk.help.usage.direct_program: awk
+awk.help.usage.program_files: awk, -f
+awk.help.options.field_separator: -F, FS
+awk.help.options.variable: -v, BEGIN
+awk.help.options.program_file: -f, AWK
+awk.help.options.color: --color=auto|always|never
+awk.help.options.help: --help
+awk.help.options.version: --version
+awk.help.options.terminator: --
+awk.help.operands: -, [A-Za-z_][A-Za-z0-9_]*
+awk.help.stdin: -
+awk.help.exit_statuses: 0, 1, 2, 3, 70
+awk.help.compatibility.awklib_limitations: POSIX, AWK, awklib, getline
+```
+
+The release workflow uses these cues as a minimum evidence check for every
+supported locale. They are not a complete translation-quality metric, but they
+make reference comparison visible in the executable release gate.
