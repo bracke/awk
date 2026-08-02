@@ -37,5 +37,6 @@ package Awk_CLI.Execution is
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
       return Execution_Result;
 
+   function Supports_Positional_Runtime_Assignments return Boolean;
    function Interpreter_Version return String;
 end Awk_CLI.Execution;

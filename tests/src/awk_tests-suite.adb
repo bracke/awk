@@ -867,6 +867,8 @@ package body Awk_Tests.Suite is
       Awk_CLI.Add_Argument (Context, "X=42");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "runtime assignment limitation run succeeds");
+      Assert (not Awk_CLI.Execution.Supports_Positional_Runtime_Assignments,
+              "execution adapter exposes missing positional assignment capability");
       Assert (Contains (Awk_CLI.Standard_Output (Context), LF & "X=42" & LF),
               "AWK-COMPAT-ASSIGNMENT-001: assignment operand remains in ARGV");
       Assert (not Contains (Awk_CLI.Standard_Output (Context), "42" & LF & "X=42"),

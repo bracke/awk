@@ -251,6 +251,10 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/command-line-reference.md"), "Runtime assignment operands"),
          "command-line reference must document runtime assignment operands");
       Require
+        (Contains (File_Text ("../docs/command-line-reference.md"),
+                   "Supports_Positional_Runtime_Assignments = False"),
+         "command-line reference must document positional assignment capability");
+      Require
         (Contains (File_Text ("../docs/architecture.md"), "Awk_CLI.Execution"),
          "architecture docs must document execution adapter isolation");
       Require
