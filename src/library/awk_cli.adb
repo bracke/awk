@@ -60,6 +60,8 @@ package body Awk_CLI is
       Context.Stdin_Fails := False;
       Context.Stdout_Fails := False;
       Context.Stderr_Fails := False;
+      Context.Stdout_Terminal := False;
+      Context.Stderr_Terminal := False;
    end Clear;
 
    procedure Initialize_From_Process (Context : in out Invocation_Context) is
@@ -71,6 +73,8 @@ package body Awk_CLI is
       Context.Locale := U.To_Unbounded_String (Awk_CLI.Platform.Locale);
       Context.Catalog_Path := U.To_Unbounded_String (Awk_CLI.Platform.Catalog_Path);
       Context.Use_Process := True;
+      Context.Stdout_Terminal := Awk_CLI.Platform.Standard_Output_Is_Terminal;
+      Context.Stderr_Terminal := Awk_CLI.Platform.Standard_Error_Is_Terminal;
    end Initialize_From_Process;
 
    procedure Add_Argument (Context : in out Invocation_Context; Value : String) is
@@ -145,6 +149,16 @@ package body Awk_CLI is
    begin
       Context.Stdin_Fails := Enabled;
    end Fail_Standard_Input;
+
+   procedure Set_Standard_Output_Terminal (Context : in out Invocation_Context; Enabled : Boolean) is
+   begin
+      Context.Stdout_Terminal := Enabled;
+   end Set_Standard_Output_Terminal;
+
+   procedure Set_Standard_Error_Terminal (Context : in out Invocation_Context; Enabled : Boolean) is
+   begin
+      Context.Stderr_Terminal := Enabled;
+   end Set_Standard_Error_Terminal;
 
    function Standard_Output (Context : Invocation_Context) return String is
      (U.To_String (Context.Standard_Out));
@@ -600,7 +614,9 @@ package body Awk_CLI is
          Context.Diagnostic_Id := Item.Message_Id;
          Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
          Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
-         if not Write_Context_Stderr (Awk_CLI.Output.Diagnostic_Text (Catalog, Item)) then
+         if not Write_Context_Stderr
+           (Awk_CLI.Output.Diagnostic_Text (Catalog, Item, Context.Stderr_Terminal))
+         then
             return Exit_Code (D.IO_Exit);
          end if;
          return Exit_Code (D.Status_For (Item));
@@ -619,7 +635,9 @@ package body Awk_CLI is
       Awk_CLI.Output.Set_Color (Parsed.Options.Color);
 
       if Parsed.Options.Help_Requested then
-         if Write_Context_Stdout (Context, Awk_CLI.Output.Help (Catalog)) then
+         if Write_Context_Stdout
+           (Context, Awk_CLI.Output.Help (Catalog, Context.Stdout_Terminal))
+         then
             return Exit_Code (D.Success_Exit);
          else
             return Exit_Code (D.IO_Exit);

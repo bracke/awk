@@ -30,6 +30,8 @@ package Awk_CLI is
    procedure Fail_Standard_Output (Context : in out Invocation_Context; Enabled : Boolean);
    procedure Fail_Standard_Error (Context : in out Invocation_Context; Enabled : Boolean);
    procedure Fail_Standard_Input (Context : in out Invocation_Context; Enabled : Boolean);
+   procedure Set_Standard_Output_Terminal (Context : in out Invocation_Context; Enabled : Boolean);
+   procedure Set_Standard_Error_Terminal (Context : in out Invocation_Context; Enabled : Boolean);
 
    function Run (Context : in out Invocation_Context) return Exit_Code;
    function Standard_Output (Context : Invocation_Context) return String;
@@ -100,5 +102,7 @@ private
       Stdin_Fails  : Boolean := False;
       Stdout_Fails : Boolean := False;
       Stderr_Fails : Boolean := False;
+      Stdout_Terminal : Boolean := False;
+      Stderr_Terminal : Boolean := False;
    end record;
 end Awk_CLI;

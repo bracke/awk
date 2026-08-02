@@ -21,6 +21,8 @@ package Awk_CLI.Platform is
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean;
    function Write_Standard_Output (Content : String) return Boolean;
    function Write_Standard_Error (Content : String) return Boolean;
+   function Standard_Output_Is_Terminal return Boolean;
+   function Standard_Error_Is_Terminal return Boolean;
    function Locale return String;
    function Catalog_Path return String;
 

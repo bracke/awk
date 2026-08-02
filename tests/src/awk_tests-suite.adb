@@ -3,6 +3,7 @@ with AUnit.Test_Cases;
 
 with Ada.Containers;
 with Ada.Directories;
+with Ada.Environment_Variables;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 
@@ -605,7 +606,7 @@ package body Awk_Tests.Suite is
               "bad" & LF & "file" & Escape & "[2J.awk",
               12,
               3);
-         Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item);
+         Text : constant String := Awk_CLI.Output.Diagnostic_Text (Catalog, Item, False);
       begin
          Assert (Contains (Text, "bad\nfile\e[2J.awk:12:3"),
                  "source location is escaped and compact");
@@ -863,6 +864,81 @@ package body Awk_Tests.Suite is
         (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
          "stderr write failure does not replace the original diagnostic ID");
    end Test_Context_Stderr_Failure;
+
+   procedure Test_Context_Auto_Color_Destinations
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      No_Color_Found : constant Boolean := Ada.Environment_Variables.Exists ("NO_COLOR");
+      No_Color_Value : constant String :=
+        (if No_Color_Found then Ada.Environment_Variables.Value ("NO_COLOR") else "");
+      Esc : constant String := [1 => Character'Val (27)];
+   begin
+      Ada.Environment_Variables.Clear ("NO_COLOR");
+      begin
+         declare
+            Context : Awk_CLI.Invocation_Context;
+            Status  : Awk_CLI.Exit_Code;
+         begin
+            Awk_CLI.Add_Argument (Context, "--color=auto");
+            Awk_CLI.Add_Argument (Context, "--help");
+            Awk_CLI.Set_Standard_Output_Terminal (Context, True);
+            Awk_CLI.Set_Standard_Error_Terminal (Context, False);
+            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Status := Awk_CLI.Run (Context);
+            Assert (Status = 0, "auto-color help succeeds");
+            Assert
+              (Contains (Awk_CLI.Standard_Output (Context), Esc & "["),
+               "auto color styles terminal stdout help");
+            Assert (Awk_CLI.Standard_Error (Context) = "", "help writes no stderr");
+         end;
+
+         declare
+            Context : Awk_CLI.Invocation_Context;
+            Status  : Awk_CLI.Exit_Code;
+         begin
+            Awk_CLI.Add_Argument (Context, "--bad-option");
+            Awk_CLI.Set_Standard_Output_Terminal (Context, True);
+            Awk_CLI.Set_Standard_Error_Terminal (Context, False);
+            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Status := Awk_CLI.Run (Context);
+            Assert (Status = 2, "usage diagnostic exits with usage status");
+            Assert
+              (not Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+               "auto color leaves non-terminal stderr diagnostic plain");
+         end;
+
+         declare
+            Context : Awk_CLI.Invocation_Context;
+            Status  : Awk_CLI.Exit_Code;
+         begin
+            Awk_CLI.Add_Argument (Context, "--bad-option");
+            Awk_CLI.Set_Standard_Output_Terminal (Context, False);
+            Awk_CLI.Set_Standard_Error_Terminal (Context, True);
+            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Status := Awk_CLI.Run (Context);
+            Assert (Status = 2, "terminal stderr diagnostic exits with usage status");
+            Assert
+              (Contains (Awk_CLI.Standard_Error (Context), Esc & "["),
+               "auto color styles terminal stderr diagnostic");
+            Assert (Awk_CLI.Standard_Output (Context) = "", "diagnostic writes no stdout");
+         end;
+      exception
+         when others =>
+            if No_Color_Found then
+               Ada.Environment_Variables.Set ("NO_COLOR", No_Color_Value);
+            else
+               Ada.Environment_Variables.Clear ("NO_COLOR");
+            end if;
+            raise;
+      end;
+
+      if No_Color_Found then
+         Ada.Environment_Variables.Set ("NO_COLOR", No_Color_Value);
+      else
+         Ada.Environment_Variables.Clear ("NO_COLOR");
+      end if;
+   end Test_Context_Auto_Color_Destinations;
 
    procedure Test_Context_Environment (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1915,6 +1991,8 @@ package body Awk_Tests.Suite is
         (T, Test_Context_Redirection_Open_Failure'Access,
          "context redirection open failure");
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
+      Registration.Register_Routine
+        (T, Test_Context_Auto_Color_Destinations'Access, "context auto color destinations");
       Registration.Register_Routine (T, Test_Context_Environment'Access, "context environment");
       Registration.Register_Routine (T, Test_Environment_Normalization'Access, "environment normalization");
       Registration.Register_Routine

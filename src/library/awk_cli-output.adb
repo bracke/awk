@@ -29,14 +29,21 @@ package body Awk_CLI.Output is
       end case;
    end Set_Color;
 
-   function Styled (Text : String; Role : Terminal_Styles.Style_Role) return String is
-     (Terminal_Styles.Decorate (Text, Role));
+   function Styled
+     (Text : String;
+      Role : Terminal_Styles.Style_Role;
+      Destination_Is_Terminal : Boolean) return String is
+     (Terminal_Styles.Decorate (Text, Role, Destination_Is_Terminal));
 
-   function Help (Catalog : L.Catalog) return String is
+   function Help
+     (Catalog : L.Catalog;
+      Destination_Is_Terminal : Boolean) return String
+   is
       LF : constant String := [1 => ASCII.LF];
    begin
       return
-        Styled (L.Text (Catalog, "awk.help.title"), Terminal_Styles.Role_Header) & LF &
+        Styled (L.Text (Catalog, "awk.help.title"), Terminal_Styles.Role_Header,
+                Destination_Is_Terminal) & LF &
         L.Text (Catalog, "awk.help.summary") & LF & LF &
         L.Text (Catalog, "awk.help.usage.direct_program") & LF &
         L.Text (Catalog, "awk.help.usage.program_files") & LF & LF &
@@ -50,7 +57,8 @@ package body Awk_CLI.Output is
         L.Text (Catalog, "awk.help.operands") & LF &
         L.Text (Catalog, "awk.help.stdin") & LF &
         L.Text (Catalog, "awk.help.exit_statuses") & LF & LF &
-        Styled (L.Text (Catalog, "awk.help.compatibility.heading"), Terminal_Styles.Role_Header) & LF &
+        Styled (L.Text (Catalog, "awk.help.compatibility.heading"), Terminal_Styles.Role_Header,
+                Destination_Is_Terminal) & LF &
         L.Text (Catalog, "awk.help.compatibility.awklib_limitations") & LF;
    end Help;
 
@@ -67,10 +75,13 @@ package body Awk_CLI.Output is
 
    function Diagnostic_Text
      (Catalog : L.Catalog;
-      Item    : D.Diagnostic) return String
+      Item    : D.Diagnostic;
+      Destination_Is_Terminal : Boolean) return String
    is
       LF     : constant String := [1 => ASCII.LF];
-      Label  : constant String := Styled (L.Label (Catalog, Item.Severity), Terminal_Styles.Role_Error);
+      Label  : constant String :=
+        Styled (L.Label (Catalog, Item.Severity), Terminal_Styles.Role_Error,
+                Destination_Is_Terminal);
       Result : Ada.Strings.Unbounded.Unbounded_String :=
         Ada.Strings.Unbounded.To_Unbounded_String
           ("awk: " & Label & ": " & L.Primary (Catalog, Item));

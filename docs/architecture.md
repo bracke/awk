@@ -39,6 +39,9 @@ The execution adapter reports
 `Awk_CLI.Execution.Supports_Streaming_Execution = True`. The adapter reports
 `Awk_CLI.Execution.Supports_Redirection_Append_Mode = True`, because
 `awklib` now provides live redirected write callbacks with append/truncate mode.
+The presentation layer passes destination terminal state to `terminal_styles`,
+so help on standard output and diagnostics on standard error can make
+independent automatic color decisions.
 
 The in-memory `Invocation_Context` is the primary test seam. It supplies
 arguments, files, standard input, environment entries, output failures,

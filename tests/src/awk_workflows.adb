@@ -291,8 +291,8 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/compatibility.md"), "Source"),
          "compatibility docs must include limitation source");
       Require
-        (Contains (File_Text ("../docs/diagnostics.md"), "stdout-oriented"),
-         "diagnostics docs must document current terminal_styles auto-policy boundary");
+        (Contains (File_Text ("../docs/diagnostics.md"), "destination-aware terminal detection"),
+         "diagnostics docs must document destination-aware terminal styling");
       Require
         (Contains (File_Text ("../docs/diagnostics.md"), "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");

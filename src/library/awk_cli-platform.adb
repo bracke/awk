@@ -2,6 +2,7 @@ with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.Text_IO;
+with Interfaces.C_Streams;
 with GNAT.Expect;
 with GNAT.OS_Lib;
 
@@ -244,6 +245,20 @@ package body Awk_CLI.Platform is
       when others =>
          return False;
    end Write_Standard_Error;
+
+   function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean is
+   begin
+      return Interfaces.C_Streams.isatty (File_Descriptor) = 1;
+   exception
+      when others =>
+         return False;
+   end Is_Terminal;
+
+   function Standard_Output_Is_Terminal return Boolean is
+     (Is_Terminal (1));
+
+   function Standard_Error_Is_Terminal return Boolean is
+     (Is_Terminal (2));
 
    function Locale return String is
    begin

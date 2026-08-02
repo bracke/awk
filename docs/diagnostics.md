@@ -39,8 +39,5 @@ files report `open_failed`; files that open but cannot be read report
 `read_failed`. Both cases keep exit status `3`.
 
 Styling is produced only through `terminal_styles`. `--color=auto` follows the
-resolved `terminal_styles` policy, including `NO_COLOR` and stdout terminal
-detection. The current dependency API exposes a process-wide stdout-oriented
-auto policy, so independent stderr auto detection is documented as an
-integration limitation until `terminal_styles` provides a separate destination
-policy hook.
+resolved `terminal_styles` policy, including `NO_COLOR`, and applies independent
+destination-aware terminal detection for standard output and standard error.

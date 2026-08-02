@@ -4,9 +4,12 @@ with Awk_CLI.Options;
 
 package Awk_CLI.Output is
    procedure Set_Color (Mode : Awk_CLI.Options.Color_Mode);
-   function Help (Catalog : Awk_CLI.Localization.Catalog) return String;
+   function Help
+     (Catalog : Awk_CLI.Localization.Catalog;
+      Destination_Is_Terminal : Boolean) return String;
    function Version (Catalog : Awk_CLI.Localization.Catalog) return String;
    function Diagnostic_Text
      (Catalog : Awk_CLI.Localization.Catalog;
-      Item    : Awk_CLI.Diagnostics.Diagnostic) return String;
+      Item    : Awk_CLI.Diagnostics.Diagnostic;
+      Destination_Is_Terminal : Boolean) return String;
 end Awk_CLI.Output;
