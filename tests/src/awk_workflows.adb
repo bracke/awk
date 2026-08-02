@@ -112,12 +112,6 @@ procedure Awk_Workflows is
    function File_Text (Path : String) return String is
      (U.To_String (Text.Read_Text_File (Path)));
 
-   function Contains (Text, Pattern : String) return Boolean is
-     (Project_Tools.Text.Contains (Text, Pattern));
-
-   function File_Has (Path, Pattern : String) return Boolean is
-     (Files.File_Contains (Path, Pattern));
-
    procedure Docs is
       Required_Docs : constant Files.Path_List :=
         [U.To_Unbounded_String ("../README.md"),
@@ -146,218 +140,218 @@ procedure Awk_Workflows is
    begin
       Files.Require_Files (Required_Docs, "missing required documentation");
       Require
-        (File_Has ("../README.md", "does not claim complete POSIX conformance"),
+        (Files.File_Contains ("../README.md", "does not claim complete POSIX conformance"),
          "README must not claim full POSIX conformance");
       Require
-        (File_Has ("../README.md", "./bin/awk_tests_main"),
+        (Files.File_Contains ("../README.md", "./bin/awk_tests_main"),
          "README must document the current AUnit executable");
       Require
-        (File_Has ("../README.md", "--color=auto|always|never"),
+        (Files.File_Contains ("../README.md", "--color=auto|always|never"),
          "README must document color policy");
       Require
-        (File_Has ("../README.md", "Windows"),
+        (Files.File_Contains ("../README.md", "Windows"),
          "README must include Windows quoting guidance");
       Require
-        (File_Has ("../LICENSE", "MIT License"),
+        (Files.File_Contains ("../LICENSE", "MIT License"),
          "LICENSE must contain MIT license text");
       Require
-        (File_Has ("../docs/command-line-reference.md", "-f program-file"),
+        (Files.File_Contains ("../docs/command-line-reference.md", "-f program-file"),
          "command-line reference must document program-file invocation");
       Require
-        (File_Has ("../docs/command-line-reference.md", "Runtime assignment operands"),
+        (Files.File_Contains ("../docs/command-line-reference.md", "Runtime assignment operands"),
          "command-line reference must document runtime assignment operands");
       Require
-        (File_Has ("../docs/command-line-reference.md",
+        (Files.File_Contains ("../docs/command-line-reference.md",
                    "Supports_Positional_Runtime_Assignments = True"),
          "command-line reference must document positional assignment capability");
       Require
-        (File_Has ("../docs/architecture.md", "Awk_CLI.Execution"),
+        (Files.File_Contains ("../docs/architecture.md", "Awk_CLI.Execution"),
          "architecture docs must document execution adapter isolation");
       Require
-        (File_Has ("../docs/architecture.md", "Invocation_Context"),
+        (Files.File_Contains ("../docs/architecture.md", "Invocation_Context"),
          "architecture docs must document testable invocation context");
       Require
-        (File_Has ("../docs/compatibility.md",
+        (Files.File_Contains ("../docs/compatibility.md",
                    "No current entries are classified as unsupported"),
          "compatibility docs must state the active limitation position");
       Require
-        (File_Has ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002"),
+        (Files.File_Contains ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002"),
          "compatibility docs must include reviewed compatibility IDs");
       Require
-        (File_Has ("../docs/compatibility.md", "Test reference"),
+        (Files.File_Contains ("../docs/compatibility.md", "Test reference"),
          "compatibility docs must include test references");
       Require
-        (File_Has ("../docs/compatibility.md", "Status"),
+        (Files.File_Contains ("../docs/compatibility.md", "Status"),
          "compatibility docs must include status names");
       Require
-        (File_Has ("../docs/compatibility.md", "Source"),
+        (Files.File_Contains ("../docs/compatibility.md", "Source"),
          "compatibility docs must include limitation source");
       Require
-        (File_Has ("../docs/diagnostics.md", "destination-aware terminal detection"),
+        (Files.File_Contains ("../docs/diagnostics.md", "destination-aware terminal detection"),
          "diagnostics docs must document destination-aware terminal styling");
       Require
-        (File_Has ("../docs/diagnostics.md", "open failures from read failures"),
+        (Files.File_Contains ("../docs/diagnostics.md", "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
-        (File_Has ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
+        (Files.File_Contains ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
                                                "  `hostkit`")
-         and then File_Has ("../docs/dependency-policy.md", "Platform-access dependency")
-         and then File_Has ("../docs/ai/package-contracts.md",
+         and then Files.File_Contains ("../docs/dependency-policy.md", "Platform-access dependency")
+         and then Files.File_Contains ("../docs/ai/package-contracts.md",
                             "Only `Awk_CLI.Platform` may call `hostkit`"),
          "platform docs must document the hostkit adapter boundary");
       Require
-        (File_Has ("../docs/localization.md", "awk.internal.localization_failed")
-         and then File_Has ("../docs/localization.md", "last-resort containment"),
+        (Files.File_Contains ("../docs/localization.md", "awk.internal.localization_failed")
+         and then Files.File_Contains ("../docs/localization.md", "last-resort containment"),
          "localization docs must document catalog-backed render fallback");
       Require
-        (File_Has ("../docs/localization.md", "English fallback help and diagnostic")
-         and then File_Has ("../docs/localization.md", "localized CLI text"),
+        (Files.File_Contains ("../docs/localization.md", "English fallback help and diagnostic")
+         and then Files.File_Contains ("../docs/localization.md", "localized CLI text"),
          "localization docs must document help and diagnostic fallback checks");
       Require
-        (File_Has ("../docs/localization.md", "Localization Reference")
-         and then File_Has ("../docs/localization-reference.md", "POSIX `awk` utility text")
-         and then File_Has ("../docs/localization-reference.md", "GNU awk")
-         and then File_Has ("../docs/localization-reference.md", "BWK awk")
-         and then File_Has ("../docs/localization-reference.md", "BusyBox awk")
-         and then File_Has ("../docs/localization-reference.md", "Reference run record")
-         and then File_Has ("../docs/localization-reference.md", "/usr/bin/mawk -W help")
-         and then File_Has ("../docs/localization-reference.md", "/usr/bin/busybox awk --help")
-         and then File_Has ("../docs/localization-reference.md", "Reference comparison checklist")
-         and then File_Has ("../docs/localization-reference.md", "Machine-checked reference cues"),
+        (Files.File_Contains ("../docs/localization.md", "Localization Reference")
+         and then Files.File_Contains ("../docs/localization-reference.md", "POSIX `awk` utility text")
+         and then Files.File_Contains ("../docs/localization-reference.md", "GNU awk")
+         and then Files.File_Contains ("../docs/localization-reference.md", "BWK awk")
+         and then Files.File_Contains ("../docs/localization-reference.md", "BusyBox awk")
+         and then Files.File_Contains ("../docs/localization-reference.md", "Reference run record")
+         and then Files.File_Contains ("../docs/localization-reference.md", "/usr/bin/mawk -W help")
+         and then Files.File_Contains ("../docs/localization-reference.md", "/usr/bin/busybox awk --help")
+         and then Files.File_Contains ("../docs/localization-reference.md", "Reference comparison checklist")
+         and then Files.File_Contains ("../docs/localization-reference.md", "Machine-checked reference cues"),
          "localization docs must require comparison with other AWK reference text");
       Require
-        (File_Has ("../docs/localization.md", "supported European state-language locale set")
-         and then File_Has ("../docs/testing.md", "every supported European" & ASCII.LF &
+        (Files.File_Contains ("../docs/localization.md", "supported European state-language locale set")
+         and then Files.File_Contains ("../docs/testing.md", "every supported European" & ASCII.LF &
                                                "state-language locale"),
          "localization docs must document supported European locale catalog validation");
       Require
-        (File_Has ("../docs/architecture.md", "main input is callback-driven"),
+        (Files.File_Contains ("../docs/architecture.md", "main input is callback-driven"),
          "architecture docs must document memory-oriented host integration");
       Require
-        (File_Has ("../docs/architecture.md", "AWK record splitting"),
+        (Files.File_Contains ("../docs/architecture.md", "AWK record splitting"),
          "architecture docs must document awklib text streaming callbacks");
       Require
-        (File_Has ("../docs/architecture.md",
+        (Files.File_Contains ("../docs/architecture.md",
                    "Supports_Redirection_Append_Mode = True"),
          "architecture docs must document append redirection capability");
       Require
-        (File_Has ("../docs/architecture.md",
+        (Files.File_Contains ("../docs/architecture.md",
                    "Supports_Streaming_Execution = True"),
          "architecture docs must document streaming capability");
       Require
-        (File_Has ("../docs/testing.md", "structured diagnostic"),
+        (Files.File_Contains ("../docs/testing.md", "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
       Require
-        (File_Has ("../docs/testing.md", "awk_tests-cli_options"),
+        (Files.File_Contains ("../docs/testing.md", "awk_tests-cli_options"),
          "testing docs must document subsystem test packages");
       Require
-        (File_Has ("../docs/testing.md", "conformance manifest"),
+        (Files.File_Contains ("../docs/testing.md", "conformance manifest"),
          "testing docs must mention conformance manifest validation");
       Require
-        (File_Has ("../docs/testing.md", "Alire install-boundary"),
+        (Files.File_Contains ("../docs/testing.md", "Alire install-boundary"),
          "testing docs must mention install-boundary validation");
       Require
-        (File_Has ("../docs/testing.md", "checks local Alire workspace pins"),
+        (Files.File_Contains ("../docs/testing.md", "checks local Alire workspace pins"),
          "testing docs must mention workspace pin validation");
       Require
-        (File_Has ("../docs/testing.md", "parsed Ada `with` clauses"),
+        (Files.File_Contains ("../docs/testing.md", "parsed Ada `with` clauses"),
          "testing docs must mention parsed Ada source-policy validation");
       Require
-        (File_Has ("../docs/testing.md", "FNV-1a-64"),
+        (Files.File_Contains ("../docs/testing.md", "FNV-1a-64"),
          "testing docs must mention release checksum validation");
       Require
-        (File_Has ("../docs/building.md", "install boundary"),
+        (Files.File_Contains ("../docs/building.md", "install boundary"),
          "building docs must mention install boundary verification");
       Require
-        (File_Has ("../docs/building.md", "generated release packages"),
+        (Files.File_Contains ("../docs/building.md", "generated release packages"),
          "building docs must mention generated release package cleanup");
       Require
-        (File_Has ("../docs/building.md", "local Alire workspace pins"),
+        (Files.File_Contains ("../docs/building.md", "local Alire workspace pins"),
          "building docs must mention workspace pin verification");
       Require
-        (File_Has ("../docs/releasing.md", "--release --profiles=*=release"),
+        (Files.File_Contains ("../docs/releasing.md", "--release --profiles=*=release"),
          "release docs must document release-profile builds");
       Require
-        (File_Has ("../docs/releasing.md", "clean git working tree"),
+        (Files.File_Contains ("../docs/releasing.md", "clean git working tree"),
          "release docs must document clean-tree enforcement");
       Require
-        (File_Has ("../docs/releasing.md", "local Alire workspace pins"),
+        (Files.File_Contains ("../docs/releasing.md", "local Alire workspace pins"),
          "release docs must mention workspace pin verification");
       Require
-        (File_Has ("../docs/releasing.md", "FNV-1a-64"),
+        (Files.File_Contains ("../docs/releasing.md", "FNV-1a-64"),
          "release docs must document manifest checksum algorithm");
       Require
-        (File_Has ("../docs/releasing.md", "dependency policy")
-         and then File_Has ("../docs/releasing.md", "traceability matrix"),
+        (Files.File_Contains ("../docs/releasing.md", "dependency policy")
+         and then Files.File_Contains ("../docs/releasing.md", "traceability matrix"),
          "release docs must document packaged audit documentation");
       Require
-        (File_Has ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->")
-         and then File_Has ("../docs/final-acceptance.md", "Normative acceptance gates")
-         and then File_Has ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
+        (Files.File_Contains ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->")
+         and then Files.File_Contains ("../docs/final-acceptance.md", "Normative acceptance gates")
+         and then Files.File_Contains ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
          "final acceptance and traceability docs must describe release gates");
       Require
-        (File_Has ("../docs/releasing.md", "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`")
-         and then File_Has ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
+        (Files.File_Contains ("../docs/releasing.md", "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`")
+         and then Files.File_Contains ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
                                                         "`hostkit = ""=0.1.0-dev""`"),
          "release traceability docs must mention current dev dependency constraints");
       Require
-        (File_Has ("../docs/releasing.md", "temporary prefix"),
+        (Files.File_Contains ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
       Require
-        (File_Has ("../docs/dependency-policy.md", "workspace release model"),
+        (Files.File_Contains ("../docs/dependency-policy.md", "workspace release model"),
          "dependency policy must document workspace release model");
       Require
-        (File_Has ("../docs/dependency-policy.md", "No direct dependency may use an unrestricted wildcard"),
+        (Files.File_Contains ("../docs/dependency-policy.md", "No direct dependency may use an unrestricted wildcard"),
          "dependency policy must reject wildcard release constraints");
       Require
-        (File_Has ("../docs/dependency-policy.md", "Publish readiness is a separate gate"),
+        (Files.File_Contains ("../docs/dependency-policy.md", "Publish readiness is a separate gate"),
          "dependency policy must document publish readiness separation");
       Require
-        (File_Has ("../docs/ai/workflows.md", "parsed" & ASCII.LF &
+        (Files.File_Contains ("../docs/ai/workflows.md", "parsed" & ASCII.LF &
                                              "Ada `with` clauses"),
          "AI workflow docs must mention parsed Ada source-policy validation");
       Require
-        (File_Has ("../docs/ai/workflows.md", "expected local" & ASCII.LF &
+        (Files.File_Contains ("../docs/ai/workflows.md", "expected local" & ASCII.LF &
                                              "Alire workspace pins"),
          "AI workflow docs must mention workspace pin validation");
       Require
-        (File_Has ("../docs/testing.md", "production source while allowing the diagnostic" & ASCII.LF &
+        (Files.File_Contains ("../docs/testing.md", "production source while allowing the diagnostic" & ASCII.LF &
                                       "sanitizer to recognize ESC")
-         and then File_Has ("../docs/ai/workflows.md",
+         and then Files.File_Contains ("../docs/ai/workflows.md",
                             "no handwritten ANSI code tokens in production source")
-         and then File_Has ("../docs/ai/workflows.md",
+         and then Files.File_Contains ("../docs/ai/workflows.md",
                             "diagnostic ESC recognition for escaping"),
          "workflow docs must describe production-wide ANSI source policy");
       Require
-        (File_Has ("../docs/testing.md", "command-line access stays in the main" & ASCII.LF &
+        (Files.File_Contains ("../docs/testing.md", "command-line access stays in the main" & ASCII.LF &
                                       "containment boundary or platform adapter")
-         and then File_Has ("../docs/ai/workflows.md",
+         and then Files.File_Contains ("../docs/ai/workflows.md",
                             "command-line access confined to main containment" & ASCII.LF &
                             "or the platform adapter")
-         and then File_Has ("../docs/testing.md",
+         and then Files.File_Contains ("../docs/testing.md",
                             "rejects direct `GNAT.OS_Lib`," & ASCII.LF &
                             "`GNAT.Expect`, and `/bin/sh` production use in favor of `hostkit`")
-         and then File_Has ("../docs/ai/workflows.md",
+         and then Files.File_Contains ("../docs/ai/workflows.md",
                             "direct `GNAT.OS_Lib`, `GNAT.Expect`, and `/bin/sh`" & ASCII.LF &
                             "production use rejected in favor of `hostkit`"),
          "workflow docs must describe process-boundary source policy");
       Require
-        (File_Has ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
+        (Files.File_Contains ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
                                            "  `hostkit`")
-         and then File_Has ("../docs/ai/package-contracts.md",
+         and then Files.File_Contains ("../docs/ai/package-contracts.md",
                             "Only `Awk_CLI.Platform` may call `hostkit`."),
          "architecture docs must describe hostkit platform boundary");
       Require
-        (File_Has ("../docs/ai/traceability.md", "| 1 | Project identity |"),
+        (Files.File_Contains ("../docs/ai/traceability.md", "| 1 | Project identity |"),
          "traceability docs must map project identity");
       Require
-        (File_Has ("../docs/ai/traceability.md", "| 13 | Execution adapter |"),
+        (Files.File_Contains ("../docs/ai/traceability.md", "| 13 | Execution adapter |"),
          "traceability docs must map execution adapter");
       Require
-        (File_Has ("../docs/ai/traceability.md", "| 39 | Tooling requirements |"),
+        (Files.File_Contains ("../docs/ai/traceability.md", "| 39 | Tooling requirements |"),
          "traceability docs must map tooling requirements");
       Require
-        (File_Has ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
+        (Files.File_Contains ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
          "traceability docs must map definition of done");
       Put_Info ("documentation checks passed");
    end Docs;
@@ -368,43 +362,43 @@ procedure Awk_Workflows is
    begin
       Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
-      Require (File_Has ("../alire.toml", "executables = [""awk""]"),
+      Require (Files.File_Contains ("../alire.toml", "executables = [""awk""]"),
                "root crate must install executable awk");
-      Require (File_Has ("../alire.toml", "project-files = [""awk.gpr""]"),
+      Require (Files.File_Contains ("../alire.toml", "project-files = [""awk.gpr""]"),
                "root crate must use awk.gpr");
-      Require (File_Has ("../alire.toml", "awklib = "),
+      Require (Files.File_Contains ("../alire.toml", "awklib = "),
                "root crate must depend on awklib");
-      Require (File_Has ("../alire.toml", "terminal_styles = "),
+      Require (Files.File_Contains ("../alire.toml", "terminal_styles = "),
                "root crate must depend on terminal_styles");
-      Require (File_Has ("../alire.toml", "messages = "),
+      Require (Files.File_Contains ("../alire.toml", "messages = "),
                "root crate must depend on messages");
-      Require (File_Has ("../alire.toml", "hostkit = "),
+      Require (Files.File_Contains ("../alire.toml", "hostkit = "),
                "root crate must depend on hostkit");
-      Require (not Contains (Root_Alire, "awklib = ""*"""),
+      Require (not Text.Contains (Root_Alire, "awklib = ""*"""),
                "root awklib dependency must not use wildcard constraint");
-      Require (not Contains (Root_Alire, "terminal_styles = ""*"""),
+      Require (not Text.Contains (Root_Alire, "terminal_styles = ""*"""),
                "root terminal_styles dependency must not use wildcard constraint");
-      Require (not Contains (Root_Alire, "messages = ""*"""),
+      Require (not Text.Contains (Root_Alire, "messages = ""*"""),
                "root messages dependency must not use wildcard constraint");
-      Require (not Contains (Root_Alire, "hostkit = ""*"""),
+      Require (not Text.Contains (Root_Alire, "hostkit = ""*"""),
                "root hostkit dependency must not use wildcard constraint");
       Require
-        (File_Has ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev"""),
+        (Files.File_Contains ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev"""),
          "dependency policy must document the current terminal_styles dev constraint");
       Require
-        (File_Has ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev"""),
+        (Files.File_Contains ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev"""),
          "dependency policy must document the current hostkit dev constraint");
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
-      Require (File_Has ("alire.toml", "awk = "),
+      Require (Files.File_Contains ("alire.toml", "awk = "),
                "tests crate must depend on awk");
-      Require (File_Has ("alire.toml", "aunit = "),
+      Require (Files.File_Contains ("alire.toml", "aunit = "),
                "tests crate must depend on AUnit");
-      Require (File_Has ("alire.toml", "project_tools = "),
+      Require (Files.File_Contains ("alire.toml", "project_tools = "),
                "tests crate must depend on project_tools");
-      Require (File_Has ("alire.toml", "messages = "),
+      Require (Files.File_Contains ("alire.toml", "messages = "),
                "tests crate must depend on messages for catalog consistency checks");
-      Require (File_Has ("alire.toml", "awk = { path = "".."" }"),
+      Require (Files.File_Contains ("alire.toml", "awk = { path = "".."" }"),
                "tests crate must pin awk relatively");
       Manifests.Require_Workspace_Pin ("../alire.toml", "awklib", "../awklib", Quiet => True);
       Manifests.Require_Workspace_Pin
@@ -416,13 +410,13 @@ procedure Awk_Workflows is
         ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
       Manifests.Require_Workspace_Pin
         ("alire.toml", "messages", "../../messages", Quiet => True);
-      Require (File_Has ("../awk.gpr", "-gnat2022"),
+      Require (Files.File_Contains ("../awk.gpr", "-gnat2022"),
                "root project must compile with Ada 2022");
-      Require (File_Has ("awk_tests.gpr", "-gnat2022"),
+      Require (Files.File_Contains ("awk_tests.gpr", "-gnat2022"),
                "tests project must compile with Ada 2022");
-      Require (File_Has ("../awk.gpr", "for Main use (""awk.adb"")"),
+      Require (Files.File_Contains ("../awk.gpr", "for Main use (""awk.adb"")"),
                "root project main must be awk.adb");
-      Require (File_Has ("awk_tests.gpr", "awk_workflows.adb"),
+      Require (Files.File_Contains ("awk_tests.gpr", "awk_workflows.adb"),
                "tests project must build workflow executable");
       Require (TOML.String_Value_After (Root_Alire, "licenses =", Root_Alire'First) = "MIT",
                "root crate must declare MIT license");
@@ -438,14 +432,14 @@ procedure Awk_Workflows is
 
       procedure Require_Key (Key : String) is
       begin
-         Require (Contains (Catalog, Key & " ="), "message catalog missing key: " & Key);
+         Require (Text.Contains (Catalog, Key & " ="), "message catalog missing key: " & Key);
          Require (Text.Line_Value (Catalog, Key) /= "",
                   "message catalog has empty key: " & Key);
       end Require_Key;
 
       procedure Require_Shard_Key (Shard, Key, Name : String) is
       begin
-         Require (Contains (Shard, Key & " ="),
+         Require (Text.Contains (Shard, Key & " ="),
                   Name & " catalog shard missing key: " & Key);
          Require (Text.Line_Value (Shard, Key) /= "",
                   Name & " catalog shard has empty key: " & Key);
@@ -541,14 +535,14 @@ procedure Awk_Workflows is
                      declare
                         Suffix : constant String := Awk_Catalog_Policy.Required_Key (Key_Index);
                      begin
-                        if Contains (Suffix, "awk.help.") then
+                        if Text.Contains (Suffix, "awk.help.") then
                            declare
                               Value : constant String :=
                                 Text.Line_Value (Catalog, Locale & "." & Suffix);
                            begin
                               for Pattern of Banned loop
                                  Require
-                                   (not Contains (Value, U.To_String (Pattern)),
+                                   (not Text.Contains (Value, U.To_String (Pattern)),
                                     "non-English help catalog contains English fallback text: "
                                     & Locale & "." & Suffix);
                               end loop;
@@ -600,14 +594,14 @@ procedure Awk_Workflows is
                      declare
                         Suffix : constant String := Awk_Catalog_Policy.Required_Key (Key_Index);
                      begin
-                        if not Contains (Suffix, "awk.help.") then
+                        if not Text.Contains (Suffix, "awk.help.") then
                            declare
                               Value : constant String :=
                                 Text.Line_Value (Catalog, Locale & "." & Suffix);
                            begin
                               for Pattern of Banned loop
                                  Require
-                                   (not Contains (Value, U.To_String (Pattern)),
+                                   (not Text.Contains (Value, U.To_String (Pattern)),
                                     "non-English diagnostic catalog contains English fallback text: "
                                     & Locale & "." & Suffix);
                               end loop;
@@ -623,8 +617,8 @@ procedure Awk_Workflows is
       procedure Require_Reference_Cue (Suffix, Cue : String) is
       begin
          Require
-           (File_Has ("../docs/localization-reference.md", Suffix)
-            and then File_Has ("../docs/localization-reference.md", Cue),
+           (Files.File_Contains ("../docs/localization-reference.md", Suffix)
+            and then Files.File_Contains ("../docs/localization-reference.md", Cue),
             "localization reference missing cue " & Cue & " for " & Suffix);
 
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
@@ -633,7 +627,7 @@ procedure Awk_Workflows is
                Value  : constant String := Text.Line_Value (Catalog, Locale & "." & Suffix);
             begin
                Require
-                 (Contains (Value, Cue),
+                 (Text.Contains (Value, Cue),
                   "catalog entry missing reference cue " & Cue & ": "
                   & Locale & "." & Suffix);
             end;
@@ -801,10 +795,10 @@ procedure Awk_Workflows is
          Require (Value /= "", "exit status constant missing from source: " & Name);
          U.Append (Allowed, " " & Value & " ");
          Require
-           (Contains (Docs, "| `" & Value & "` |"),
+           (Text.Contains (Docs, "| `" & Value & "` |"),
             "exit status " & Value & " from " & Name & " is not documented");
          Require
-           (Contains (Reference, "`" & Value & "`"),
+           (Text.Contains (Reference, "`" & Value & "`"),
             "exit status " & Value & " from " & Name
             & " is missing from the command-line reference");
       end Require_Exit;
@@ -835,7 +829,7 @@ procedure Awk_Workflows is
                   Value : constant String := Docs (Mark + 3 .. Stop - 1);
                begin
                   Require
-                    (Contains (U.To_String (Allowed), " " & Value & " "),
+                    (Text.Contains (U.To_String (Allowed), " " & Value & " "),
                      "exit status " & Value & " is documented but not defined");
                end;
             end if;
@@ -853,10 +847,10 @@ procedure Awk_Workflows is
       procedure Require_Option (Spelling : String) is
       begin
          Require
-           (Contains (Reference, Spelling),
+           (Text.Contains (Reference, Spelling),
             "command-line reference missing accepted option: " & Spelling);
          Require
-           (Contains (Catalog, Spelling),
+           (Text.Contains (Catalog, Spelling),
             "help catalog missing accepted option: " & Spelling);
       end Require_Option;
    begin
@@ -868,13 +862,13 @@ procedure Awk_Workflows is
       Require_Option ("--version");
       Require_Option ("--");
       Require
-        (Contains (Reference, "--color=auto|always|never")
-         and then Contains (Catalog, "--color=auto|always|never"),
+        (Text.Contains (Reference, "--color=auto|always|never")
+         and then Text.Contains (Catalog, "--color=auto|always|never"),
          "color modes must stay documented in reference and help catalog");
       Require
-        (Contains (Quickstart, "awk '{ print $1 }'")
-         and then Contains (Quickstart, "awk -F:")
-         and then Contains (Quickstart, "awk -f script.awk"),
+        (Text.Contains (Quickstart, "awk '{ print $1 }'")
+         and then Text.Contains (Quickstart, "awk -F:")
+         and then Text.Contains (Quickstart, "awk -f script.awk"),
          "quickstart must document direct, -F, and -f invocation examples");
       Put_Info ("option drift checks passed");
    end Option_Drift;
@@ -893,7 +887,7 @@ procedure Awk_Workflows is
       procedure Require_Packaged (Path : String) is
       begin
          Require
-           (Contains (File_Text ("src/awk_workflows.adb"),
+           (Text.Contains (File_Text ("src/awk_workflows.adb"),
                       "U.To_Unbounded_String (""" & Path & """)"),
             "package file list missing: " & Path);
       end Require_Packaged;
@@ -911,9 +905,9 @@ procedure Awk_Workflows is
       Require_Packaged ("docs/final-acceptance.md");
       Require_Packaged ("LICENSE");
       Require
-        (File_Has ("../docs/releasing.md", "message catalogs")
-         and then File_Has ("../docs/releasing.md", "MANIFEST.txt")
-         and then File_Has ("../docs/testing.md", "package manifest"),
+        (Files.File_Contains ("../docs/releasing.md", "message catalogs")
+         and then Files.File_Contains ("../docs/releasing.md", "MANIFEST.txt")
+         and then Files.File_Contains ("../docs/testing.md", "package manifest"),
          "release/testing docs must describe packaged resources");
       Put_Info ("package manifest policy checks passed");
    end Package_Manifest_Policy;
@@ -1014,7 +1008,7 @@ procedure Awk_Workflows is
       Unexpected : U.Unbounded_String;
    begin
       Require
-        (File_Has ("../src/library/awk_cli-execution.adb", "with Awklib"),
+        (Files.File_Contains ("../src/library/awk_cli-execution.adb", "with Awklib"),
          "execution adapter must bridge to awklib");
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-execution.adb",
@@ -1030,7 +1024,7 @@ procedure Awk_Workflows is
               [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb")]) = "",
          "only execution adapter may depend on awklib");
       Require
-        (File_Has ("../src/library/awk_cli-localization.adb", "with Messages"),
+        (Files.File_Contains ("../src/library/awk_cli-localization.adb", "with Messages"),
          "localization adapter must bridge to messages");
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-localization.ads",
@@ -1054,7 +1048,7 @@ procedure Awk_Workflows is
       Require (U.To_String (Unexpected) = "",
                "only localization adapter may depend on messages: " & U.To_String (Unexpected));
       Require
-        (File_Has ("../src/library/awk_cli-output.adb", "with Terminal_Styles"),
+        (Files.File_Contains ("../src/library/awk_cli-output.adb", "with Terminal_Styles"),
          "presentation layer must bridge to terminal_styles");
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-output.adb",
@@ -1069,7 +1063,7 @@ procedure Awk_Workflows is
               [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
          "only presentation layer may depend on terminal_styles");
       Require
-        (File_Has ("../src/library/awk_cli-platform.adb", "with Hostkit"),
+        (Files.File_Contains ("../src/library/awk_cli-platform.adb", "with Hostkit"),
          "platform adapter must bridge to hostkit");
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-platform.adb",
@@ -1135,10 +1129,10 @@ procedure Awk_Workflows is
           U.To_Unbounded_String ("Ada.Characters.Latin_1.ESC")],
          Quiet => True);
       Require
-        (not File_Has ("../src/library/awk_cli-output.adb", """awk: """),
+        (not Files.File_Contains ("../src/library/awk_cli-output.adb", """awk: """),
          "diagnostic header text must be catalog-backed");
       Require
-        (not File_Has ("../src/library/awk_cli-programs.adb", """command line"""),
+        (not Files.File_Contains ("../src/library/awk_cli-programs.adb", """command line"""),
          "direct source display name must be catalog-backed");
       declare
          Unknown_Key : constant String := First_Unknown_Message_Key_Literal;
@@ -1167,13 +1161,13 @@ procedure Awk_Workflows is
           U.To_Unbounded_String ("src/awk_tests-support.adb")],
          "shared test helpers must live in a support package");
       Require
-        (File_Has ("src/awk_workflows.adb", "--release"),
+        (Files.File_Contains ("src/awk_workflows.adb", "--release"),
          "release workflow must use Alire release builds");
       Require
-        (File_Has ("src/awk_workflows.adb", "status"),
+        (Files.File_Contains ("src/awk_workflows.adb", "status"),
          "release workflow must check git status");
       Require
-        (not File_Has ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
+        (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
                                              "      Verify;"),
          "release workflow must not reuse development verify gate");
       Require
@@ -1206,7 +1200,7 @@ procedure Awk_Workflows is
       then
          Fail ("installed awk executable failed");
       end if;
-      Require (Contains (U.To_String (Output), "awk 0.1.0"),
+      Require (Text.Contains (U.To_String (Output), "awk 0.1.0"),
                "installed awk version output is unexpected");
 
       Files.Delete_Tree (Prefix);
@@ -1298,10 +1292,10 @@ procedure Awk_Workflows is
       Files.Write_Text_File (Manifest_Path, U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
       Require
-        (File_Has (Manifest_Path, "fnv1a64="),
+        (Files.File_Contains (Manifest_Path, "fnv1a64="),
          "package manifest must include FNV-1a-64 checksum fields");
       Require
-        (not File_Has (Manifest_Path, " checksum="),
+        (not Files.File_Contains (Manifest_Path, " checksum="),
          "package manifest must not use legacy checksum field");
       Require
         (Project_Tools.Release_Checks.Manifest_Line_Count (Manifest_Path) = Package_Files'Length,
