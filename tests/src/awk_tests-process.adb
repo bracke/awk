@@ -61,6 +61,26 @@ package body Awk_Tests.Process is
               "process direct file input output");
    end Test_Process_Direct_File_Input;
 
+   procedure Test_Process_Empty_Direct_Program
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk empty direct program",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "empty direct program is passed to the interpreter");
+      Assert (U.To_String (Output) = "", "empty direct program writes no stdout");
+   end Test_Process_Empty_Direct_Program;
+
    procedure Test_Process_Dash_Filename_After_Terminator
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -748,6 +768,9 @@ package body Awk_Tests.Process is
    begin
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
+      Registration.Register_Routine
+        (T, Test_Process_Empty_Direct_Program'Access,
+         "process empty direct program");
       Registration.Register_Routine
         (T, Test_Process_Dash_Filename_After_Terminator'Access,
          "process dash filename after terminator");
