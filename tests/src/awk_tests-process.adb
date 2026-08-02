@@ -442,19 +442,27 @@ package body Awk_Tests.Process is
 
    procedure Test_Process_Usage_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("--bad-option")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk usage failure",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
    begin
-      Assert (Status = 2, "unknown option exits with usage status");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 2, "unknown option exits with usage status");
+         Assert (Contains (Output, "awk: error: unknown option: --bad-option"),
+                 "unknown option reports the offending option");
+         Assert (Contains (Output, "hint: use --help for command-line syntax"),
+                 "unknown option emits the usage hint");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "default captured usage diagnostic is unstyled");
+      end;
    end Test_Process_Usage_Status;
 
    procedure Test_Process_Diagnostic_Color_Policy
