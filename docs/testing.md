@@ -14,9 +14,10 @@ tests. The `awk_tests-localization` package owns catalog validation,
 locale-fallback, localized CLI text, and AWK-output locale-separation tests.
 The `awk_tests-redirections` package owns in-memory output-redirection success,
 append, ordering, and failure tests. The `awk_tests-execution` package owns
-direct execution-adapter and live callback tests.
+direct execution-adapter and live callback tests. The `awk_tests-process`
+package owns real-executable process-boundary tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
-integration and process-boundary coverage.
+in-memory integration coverage.
 
 - option parsing, option failure diagnostics, original argument indexes, and
   `--` handling;
