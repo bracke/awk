@@ -736,8 +736,6 @@ procedure Awk_Workflows is
    end Catalogs;
 
    procedure Conformance is
-      Manifest : constant String := Fixtures.Read_Text_File ("conformance/manifest/cases.txt");
-
       procedure Require_Case (Id, Status, Case_File, Expected, Reference : String) is
          Line : constant String :=
            Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
@@ -750,13 +748,18 @@ procedure Awk_Workflows is
          Files.Require_File
            ("conformance/" & Expected,
             "conformance expected file missing: " & Expected);
-         Require (Fixtures.Read_Text_File ("conformance/" & Case_File) /= "",
+         Require (Project_Tools.Release_Checks.File_Length ("conformance/" & Case_File) > 0,
                   "conformance case file is empty: " & Case_File);
-         Require (Fixtures.Read_Text_File ("conformance/" & Expected) /= "",
+         Require (Project_Tools.Release_Checks.File_Length ("conformance/" & Expected) > 0,
                   "conformance expected file is empty: " & Expected);
       end Require_Case;
    begin
-      Require (Manifest /= "", "conformance manifest is missing or empty");
+      Files.Require_File
+        ("conformance/manifest/cases.txt",
+         "conformance manifest is missing or empty");
+      Require
+        (Project_Tools.Release_Checks.File_Length ("conformance/manifest/cases.txt") > 0,
+         "conformance manifest is missing or empty");
       Require_Case
         ("AWK-CONF-PRINT-001", "Supported", "cases/print_record.awk",
          "expected/print_record.txt", "basic print through awklib");
