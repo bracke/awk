@@ -203,6 +203,10 @@ procedure Awk_Workflows is
          and then File_Has ("../docs/localization.md", "last-resort containment"),
          "localization docs must document catalog-backed render fallback");
       Require
+        (File_Has ("../docs/localization.md", "English fallback help and diagnostic")
+         and then File_Has ("../docs/localization.md", "localized CLI text"),
+         "localization docs must document help and diagnostic fallback checks");
+      Require
         (File_Has ("../docs/localization.md", "Localization Reference")
          and then File_Has ("../docs/localization-reference.md", "POSIX `awk` utility text")
          and then File_Has ("../docs/localization-reference.md", "GNU awk")

@@ -20,9 +20,9 @@ keys are not exposed, and no raw terminal escape character is emitted.
 The same suite renders `--help` for every supported locale with color disabled
 and checks that required CLI/AWK tokens remain visible without raw message keys
 or terminal escapes.
-The release workflow also rejects known English fallback help sentences in
-non-English catalog entries so generated or temporary text cannot silently
-replace localized help.
+The release workflow also rejects known English fallback help and diagnostic
+sentences in non-English catalog entries so generated or temporary text cannot
+silently replace localized CLI text.
 Translation review also uses the checked-in
 [Localization Reference](localization-reference.md), which records comparable
 POSIX, GNU awk, BWK awk, and BusyBox awk text families to consult for AWK
