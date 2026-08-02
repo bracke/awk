@@ -102,4 +102,5 @@ package body Awk_CLI.Execution is
    function Interpreter_Version return String is (Awklib.Version);
 
    function Supports_Positional_Runtime_Assignments return Boolean is (False);
+   function Supports_Redirection_Append_Mode return Boolean is (False);
 end Awk_CLI.Execution;

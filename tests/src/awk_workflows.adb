@@ -291,6 +291,10 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/architecture.md"), "captured redirected output"),
          "architecture docs must document captured redirection behavior");
       Require
+        (Contains (File_Text ("../docs/architecture.md"),
+                   "Supports_Redirection_Append_Mode = False"),
+         "architecture docs must document append redirection capability");
+      Require
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
       Require

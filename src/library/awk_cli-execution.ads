@@ -38,5 +38,6 @@ package Awk_CLI.Execution is
       return Execution_Result;
 
    function Supports_Positional_Runtime_Assignments return Boolean;
+   function Supports_Redirection_Append_Mode return Boolean;
    function Interpreter_Version return String;
 end Awk_CLI.Execution;

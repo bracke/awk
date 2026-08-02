@@ -545,6 +545,8 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Written_File_Count (Context) = 1, "one captured write recorded");
       Assert (Awk_CLI.Written_File_Name (Context, 1) = "out.txt", "captured redirection target");
       Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF, "captured write content");
+      Assert (not Awk_CLI.Execution.Supports_Redirection_Append_Mode,
+              "execution adapter exposes missing append-mode capability");
       Assert (not Awk_CLI.Written_File_Append (Context, 1),
               "AWK-COMPAT-REDIRECTION-001: awklib does not expose append intent");
    end Test_Context_Append_Redirection_Limitation;

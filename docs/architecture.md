@@ -30,7 +30,10 @@ V1 is memory-oriented because the resolved `awklib` API is memory-oriented. The
 CLI may hold complete program source, standard input, named input files,
 captured standard output, and captured redirected output in memory. Redirections
 are materialized after interpretation from captured results rather than written
-as live streaming output.
+as live streaming output. The execution adapter reports
+`Awk_CLI.Execution.Supports_Redirection_Append_Mode = False` for the resolved
+`awklib` API, so append intent is tracked as `AWK-COMPAT-REDIRECTION-001`
+instead of inferred by parsing AWK source.
 
 The in-memory `Invocation_Context` is the primary test seam. It supplies
 arguments, files, standard input, environment entries, output failures, and
