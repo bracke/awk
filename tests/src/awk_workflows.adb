@@ -18,6 +18,7 @@ with Project_Tools.Release_Checks;
 with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
 with Project_Tools.TOML;
+with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
@@ -29,6 +30,7 @@ procedure Awk_Workflows is
    package Fixtures renames Project_Tools.Test_Fixtures;
    package Text renames Project_Tools.Text;
    package TOML renames Project_Tools.TOML;
+   package Tree_Checks renames Project_Tools.Tree_Checks;
    package U renames Ada.Strings.Unbounded;
 
    Root : constant String := "..";
@@ -1364,6 +1366,13 @@ procedure Awk_Workflows is
       Put_Info ("install boundary checks passed");
    end Install_Boundary;
 
+   procedure Build_Output_Policy is
+   begin
+      Tree_Checks.Require_No_Nonempty_Stderr ("../obj", Quiet => True);
+      Tree_Checks.Require_No_Nonempty_Stderr ("obj", Quiet => True);
+      Put_Info ("build output policy checks passed");
+   end Build_Output_Policy;
+
    procedure Verify is
    begin
       Build;
@@ -1376,6 +1385,7 @@ procedure Awk_Workflows is
       Option_Drift;
       Package_Manifest_Policy;
       Source_Policy;
+      Build_Output_Policy;
       Install_Boundary;
    end Verify;
 
@@ -1499,6 +1509,7 @@ begin
       Catalogs;
       Conformance;
       Source_Policy;
+      Build_Output_Policy;
       Exit_Status_Drift;
       Option_Drift;
       Package_Manifest_Policy;

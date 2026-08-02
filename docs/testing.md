@@ -63,7 +63,8 @@ the AWK translation-reference comparison guide, validates the conformance
 manifest, renders diagnostics and help for every supported locale, checks localized UTF-8 process rendering, checks exit-status and option/help documentation drift, checks the
 package manifest policy, checks public GNATdoc coverage, checks local Alire workspace pins, checks adapter
 isolation through parsed Ada `with` clauses, checks GPR main inventory against
-source files and documentation, rejects
+source files and documentation, rejects non-empty generated `.stderr` build logs,
+rejects
 handwritten ANSI code tokens in production source while allowing the diagnostic
 sanitizer to recognize ESC for escaping, rejects system-AWK fallback code
 tokens in production source, verifies command-line access stays in the main
