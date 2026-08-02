@@ -1243,12 +1243,14 @@ procedure Awk_Workflows is
           U.To_Unbounded_String ("ASCII.ESC"),
           U.To_Unbounded_String ("Ada.Characters.Latin_1.ESC")],
          Quiet => True);
-      Require
-        (not Files.File_Contains ("../src/library/awk_cli-output.adb", """awk: """),
-         "diagnostic header text must be catalog-backed");
-      Require
-        (not Files.File_Contains ("../src/library/awk_cli-programs.adb", """command line"""),
-         "direct source display name must be catalog-backed");
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-output.adb",
+         [U.To_Unbounded_String ("""awk: """)],
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-programs.adb",
+         [U.To_Unbounded_String ("""command line""")],
+         Quiet => True);
       declare
          Unknown_Key : constant String := First_Unknown_Message_Key_Literal;
       begin
