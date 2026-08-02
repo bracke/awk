@@ -12,6 +12,7 @@ with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
 with Project_Tools.Alire;
+with Project_Tools.Ada_Source;
 with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
 with Project_Tools.Processes;
@@ -23,6 +24,7 @@ with Project_Tools.Tree_Checks;
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
    package Dir renames Ada.Directories;
+   package Ada_Source renames Project_Tools.Ada_Source;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package Text renames Project_Tools.Text;
@@ -507,12 +509,29 @@ procedure Awk_Workflows is
       Require
         (File_Has ("../src/library/awk_cli-execution.adb", "with Awklib"),
          "execution adapter must bridge to awklib");
+      Ada_Source.Require_Only_Allowed_With_Clauses
+        ("../src/library/awk_cli-execution.adb",
+         "Awklib",
+         [U.To_Unbounded_String ("Awklib"),
+          U.To_Unbounded_String ("Awklib.Interpreter")],
+         Quiet => True);
       Require
         (First_Unexpected_Dependency ("with Awklib", "../src/library/awk_cli-execution.adb") = "",
          "only execution adapter may depend on awklib");
       Require
         (File_Has ("../src/library/awk_cli-localization.adb", "with Messages"),
          "localization adapter must bridge to messages");
+      Ada_Source.Require_Only_Allowed_With_Clauses
+        ("../src/library/awk_cli-localization.ads",
+         "Messages",
+         [U.To_Unbounded_String ("Messages.Runtime")],
+         Quiet => True);
+      Ada_Source.Require_Only_Allowed_With_Clauses
+        ("../src/library/awk_cli-localization.adb",
+         "Messages",
+         [U.To_Unbounded_String ("Messages.Arguments"),
+          U.To_Unbounded_String ("Messages.Result")],
+         Quiet => True);
       Unexpected :=
         U.To_Unbounded_String
           (First_Unexpected_Dependency
@@ -524,6 +543,11 @@ procedure Awk_Workflows is
       Require
         (File_Has ("../src/library/awk_cli-output.adb", "with Terminal_Styles"),
          "presentation layer must bridge to terminal_styles");
+      Ada_Source.Require_Only_Allowed_With_Clauses
+        ("../src/library/awk_cli-output.adb",
+         "Terminal_Styles",
+         [U.To_Unbounded_String ("Terminal_Styles")],
+         Quiet => True);
       Require
         (First_Unexpected_Dependency ("with Terminal_Styles", "../src/library/awk_cli-output.adb") = "",
          "only presentation layer may depend on terminal_styles");
