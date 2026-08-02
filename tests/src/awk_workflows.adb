@@ -12,6 +12,7 @@ with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
 with Project_Tools.Alire;
+with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
@@ -501,17 +502,6 @@ procedure Awk_Workflows is
          return "";
       end First_Unexpected_Dependency;
 
-      procedure Require_Source_Pair
-        (Spec_Path : String;
-         Body_Path : String;
-         Message   : String) is
-      begin
-         Files.Require_Files
-           ([U.To_Unbounded_String (Spec_Path),
-             U.To_Unbounded_String (Body_Path)],
-            Message);
-      end Require_Source_Pair;
-
       Unexpected : U.Unbounded_String;
    begin
       Require
@@ -549,87 +539,18 @@ procedure Awk_Workflows is
       Require
         (not Files.Any_File_Contains ("../src", "nawk"),
          "production source must not invoke or reference external nawk fallback");
-      Require_Source_Pair
-        ("src/awk_tests-cli_options.ads", "src/awk_tests-cli_options.adb",
-         "option parser tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-program_sources.ads", "src/awk_tests-program_sources.adb",
-         "program source tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-operands.ads", "src/awk_tests-operands.adb",
-         "operand tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-diagnostics.ads", "src/awk_tests-diagnostics.adb",
-         "diagnostic tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-localization.ads", "src/awk_tests-localization.adb",
-         "localization tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-redirections.ads", "src/awk_tests-redirections.adb",
-         "redirection tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-execution.ads", "src/awk_tests-execution.adb",
-         "execution tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-process.ads", "src/awk_tests-process.adb",
-         "process tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-inputs.ads", "src/awk_tests-inputs.adb",
-         "input tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-environment.ads", "src/awk_tests-environment.adb",
-         "environment tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-terminal_styles.ads", "src/awk_tests-terminal_styles.adb",
-         "terminal styling tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-compatibility.ads", "src/awk_tests-compatibility.adb",
-         "compatibility tests must live in a subsystem test package");
-      Require_Source_Pair
-        ("src/awk_tests-support.ads", "src/awk_tests-support.adb",
+      Project_Tools.AUnit_Checks.Require_Registered_Test_Packages
+        (Test_Dir             => "src",
+         Spec_Pattern         => "awk_tests-*.ads",
+         Suite_Path           => "src/awk_tests-suite.adb",
+         Suite_Add_Prefix     => "Result.Add_Test (new ",
+         Suite_Add_Suffix     => ".Case_Type)",
+         Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
+         Quiet                => True);
+      Files.Require_Files
+        ([U.To_Unbounded_String ("src/awk_tests-support.ads"),
+          U.To_Unbounded_String ("src/awk_tests-support.adb")],
          "shared test helpers must live in a support package");
-      Require_Source_Pair
-        ("src/awk_tests-context.ads", "src/awk_tests-context.adb",
-         "context integration tests must live in a subsystem test package");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.CLI_Options.Case_Type"),
-         "aggregate suite must include CLI option subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Diagnostics.Case_Type"),
-         "aggregate suite must include diagnostic subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Localization.Case_Type"),
-         "aggregate suite must include localization subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Operands.Case_Type"),
-         "aggregate suite must include operand subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Program_Sources.Case_Type"),
-         "aggregate suite must include program source subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Redirections.Case_Type"),
-         "aggregate suite must include redirection subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Execution.Case_Type"),
-         "aggregate suite must include execution subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Process.Case_Type"),
-         "aggregate suite must include process subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Inputs.Case_Type"),
-         "aggregate suite must include input subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Environment.Case_Type"),
-         "aggregate suite must include environment subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Terminal_Styles.Case_Type"),
-         "aggregate suite must include terminal styling subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Compatibility.Case_Type"),
-         "aggregate suite must include compatibility subsystem tests");
-      Require
-        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Context.Case_Type"),
-         "aggregate suite must include context subsystem tests");
       Require
         (File_Has ("src/awk_workflows.adb", "--release"),
          "release workflow must use Alire release builds");
