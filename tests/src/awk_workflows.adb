@@ -1359,15 +1359,6 @@ procedure Awk_Workflows is
       Put_Info ("cleaned build outputs");
    end Clean;
 
-   procedure Copy_File (Source, Target : String) is
-   begin
-      Files.Delete_File_If_Present (Target);
-      Dir.Copy_File (Source, Target);
-   exception
-      when others =>
-         Fail ("copy failed: " & Source & " -> " & Target);
-   end Copy_File;
-
    procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
       procedure Add_Manifest_Line
@@ -1394,7 +1385,11 @@ procedure Awk_Workflows is
            (if Path = "bin/awk" then Files.Join ("..", "bin/awk")
             else Files.Join ("..", Path));
       begin
-         Copy_File (Source, Files.Join (Dist, Path));
+         Files.Copy_File
+           (Source          => Source,
+            Target          => Files.Join (Dist, Path),
+            Failure_Message => "copy failed",
+            Quiet           => True);
       end Copy_Package_File;
 
       Manifest : U.Unbounded_String;
