@@ -55,13 +55,13 @@ last structured diagnostic identifier, category, and severity for tests that
 should not depend only on rendered text.
 
 The workflow command `./bin/awk_workflows verify` builds root and tests in
-development mode, runs AUnit, validates crate metadata, validates required
-docs, validates English and Danish catalogs, checks catalog placeholders and
-default locale policy, validates the conformance manifest, checks local Alire
-workspace pins, checks adapter isolation through parsed Ada `with` clauses,
-rejects handwritten ANSI code tokens in presentation code, rejects system-AWK
-fallback code tokens in production source, rejects shell/script workflow files,
-and runs an Alire install-boundary check into a temporary prefix.
+development mode, runs AUnit, validates crate metadata, validates required docs,
+validates English and Danish catalogs, checks catalog placeholders and default
+locale policy, validates the conformance manifest, checks local Alire workspace pins,
+checks adapter isolation through parsed Ada `with` clauses, rejects
+handwritten ANSI code tokens in presentation code, rejects system-AWK fallback
+code tokens in production source, rejects shell/script workflow files, and runs
+an Alire install-boundary check into a temporary prefix.
 
 The release workflow runs the mandatory test and policy gates with release
 builds, requires a clean git working tree, and packages the executable, message

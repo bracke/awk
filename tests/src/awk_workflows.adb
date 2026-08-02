@@ -274,7 +274,7 @@ procedure Awk_Workflows is
         (File_Has ("../docs/testing.md", "Alire install-boundary"),
          "testing docs must mention install-boundary validation");
       Require
-        (File_Has ("../docs/testing.md", "local Alire workspace pins"),
+        (File_Has ("../docs/testing.md", "checks local Alire workspace pins"),
          "testing docs must mention workspace pin validation");
       Require
         (File_Has ("../docs/testing.md", "parsed Ada `with` clauses"),
