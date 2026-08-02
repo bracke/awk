@@ -443,6 +443,45 @@ package body Awk_Tests.Process is
       Expect ("--color=never", False, "color=never diagnostic");
    end Test_Process_Diagnostic_Color_Policy;
 
+   procedure Test_Process_Repeated_Diagnostic_Color_Final_Wins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Escape : constant String := [1 => Character'Val (27)];
+
+      procedure Expect
+        (First_Color  : String;
+         Second_Color : String;
+         Styled       : Boolean;
+         Message      : String)
+      is
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+           [new String'(First_Color), new String'(Second_Color), new String'("--bad")];
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Contains (Output, "unknown option: --bad"),
+                    Message & " includes localized diagnostic text");
+            Assert ((Contains (Output, Escape & "[") = Styled),
+                    Message & " follows final color option");
+         end;
+      end Expect;
+   begin
+      Expect ("--color=always", "--color=never", False,
+              "final color=never diagnostic");
+      Expect ("--color=never", "--color=always", True,
+              "final color=always diagnostic");
+   end Test_Process_Repeated_Diagnostic_Color_Final_Wins;
+
    procedure Test_Process_No_Arguments_Missing_Program
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1441,6 +1480,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Diagnostic_Color_Policy'Access,
          "process diagnostic color policy");
+      Registration.Register_Routine
+        (T, Test_Process_Repeated_Diagnostic_Color_Final_Wins'Access,
+         "process repeated diagnostic color final wins");
       Registration.Register_Routine
         (T, Test_Process_No_Arguments_Missing_Program'Access,
          "process no arguments missing program");
