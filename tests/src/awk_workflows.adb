@@ -432,45 +432,66 @@ procedure Awk_Workflows is
       end Required_Message_Key;
 
       function First_Unknown_Message_Key_Literal return String is
-         Sources : constant Files.Path_List :=
-           Files.List_Tree ("../src", "*.adb");
-         Prefix  : constant String := """awk.";
-      begin
-         for Path of Sources loop
-            declare
-               Name         : constant String := U.To_String (Path);
-               Source_Text  : constant String := File_Text (Name);
-               Start        : Natural := Project_Tools.Text.Index (Source_Text, Prefix);
-            begin
-               while Start /= 0 loop
-                  declare
-                     Key_First : constant Positive := Start + 1;
-                     Key_Last  : Natural := 0;
-                  begin
-                     for Scan in Key_First .. Source_Text'Last loop
-                        if Source_Text (Scan) = '"' then
-                           Key_Last := Scan - 1;
-                           exit;
-                        end if;
-                     end loop;
+         Prefix : constant String := """awk.";
 
-                     if Key_Last >= Key_First then
-                        declare
-                           Key : constant String := Source_Text (Key_First .. Key_Last);
-                        begin
-                           if not Required_Message_Key (Key) then
-                              return Name & ": " & Key;
-                           end if;
-                        end;
+         function First_In_File (Name : String) return String is
+            Source_Text : constant String := File_Text (Name);
+            Start       : Natural := Project_Tools.Text.Index (Source_Text, Prefix);
+         begin
+            while Start /= 0 loop
+               declare
+                  Key_First : constant Positive := Start + 1;
+                  Key_Last  : Natural := 0;
+               begin
+                  for Scan in Key_First .. Source_Text'Last loop
+                     if Source_Text (Scan) = '"' then
+                        Key_Last := Scan - 1;
+                        exit;
                      end if;
+                  end loop;
 
-                     exit when Start = Source_Text'Last;
-                     Start := Project_Tools.Text.Index_From (Source_Text, Prefix, Start + 1);
-                  end;
-               end loop;
-            end;
-         end loop;
-         return "";
+                  if Key_Last >= Key_First then
+                     declare
+                        Key : constant String := Source_Text (Key_First .. Key_Last);
+                     begin
+                        if not Required_Message_Key (Key) then
+                           return Name & ": " & Key;
+                        end if;
+                     end;
+                  end if;
+
+                  exit when Start = Source_Text'Last;
+                  Start := Project_Tools.Text.Index_From (Source_Text, Prefix, Start + 1);
+               end;
+            end loop;
+
+            return "";
+         end First_In_File;
+
+         function First_In_Tree (Name_Pattern : String) return String is
+            Sources : constant Files.Path_List :=
+              Files.List_Tree ("../src", Name_Pattern);
+         begin
+            for Path of Sources loop
+               declare
+                  Found : constant String := First_In_File (U.To_String (Path));
+               begin
+                  if Found /= "" then
+                     return Found;
+                  end if;
+               end;
+            end loop;
+
+            return "";
+         end First_In_Tree;
+
+         Found : constant String := First_In_Tree ("*.ads");
+      begin
+         if Found /= "" then
+            return Found;
+         end if;
+
+         return First_In_Tree ("*.adb");
       end First_Unknown_Message_Key_Literal;
 
       function First_Workflow_Script return String is
