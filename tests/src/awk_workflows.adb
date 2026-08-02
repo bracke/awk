@@ -12,6 +12,7 @@ with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
 with Project_Tools.Alire;
+with Project_Tools.Alire_Manifests.Validation;
 with Project_Tools.Ada_Source;
 with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
@@ -24,6 +25,7 @@ procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
    package Dir renames Ada.Directories;
    package Ada_Source renames Project_Tools.Ada_Source;
+   package Manifests renames Project_Tools.Alire_Manifests.Validation;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package Text renames Project_Tools.Text;
@@ -318,6 +320,13 @@ procedure Awk_Workflows is
                "tests crate must depend on project_tools");
       Require (File_Has ("alire.toml", "awk = { path = "".."" }"),
                "tests crate must pin awk relatively");
+      Manifests.Require_Workspace_Pin ("../alire.toml", "awklib", "../awklib", Quiet => True);
+      Manifests.Require_Workspace_Pin
+        ("../alire.toml", "terminal_styles", "../terminal_styles", Quiet => True);
+      Manifests.Require_Workspace_Pin ("../alire.toml", "messages", "../messages", Quiet => True);
+      Manifests.Require_Workspace_Pin ("alire.toml", "awk", "..", Quiet => True);
+      Manifests.Require_Workspace_Pin
+        ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
       Require (File_Has ("../awk.gpr", "-gnat2022"),
                "root project must compile with Ada 2022");
       Require (File_Has ("awk_tests.gpr", "-gnat2022"),
