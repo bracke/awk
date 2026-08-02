@@ -26,17 +26,18 @@ parse options, resolve program source, classify operands, load inputs, collect
 environment, execute `awklib` once, materialize redirections, forward standard
 output, and render controlled diagnostics on failure.
 
-V1 is memory-oriented because the resolved `awklib` API is memory-oriented. The
-CLI may hold complete program source, standard input, named input files,
-captured standard output, and captured redirected output in memory. Redirections
-are materialized after interpretation from captured results rather than written
-as live streaming output. The execution adapter reports
+V1 remains partly memory-oriented at the CLI host boundary. The CLI may hold
+complete program source, standard input, and named input files in memory before
+entering the interpreter. The execution adapter uses `awklib`
+`Run_Text_Streaming` callbacks so AWK record splitting, standard output
+production, and redirected write mode remain owned by `awklib`. The execution
+adapter reports
 `Awk_CLI.Execution.Supports_Streaming_Execution = False` for the resolved
-`awklib` API, so true streaming is tracked as `AWK-COMPAT-STREAMING-001`
-instead of emulated by a CLI-side record loop. The adapter also reports
-`Awk_CLI.Execution.Supports_Redirection_Append_Mode = False` for the resolved
-`awklib` API, so append intent is tracked as `AWK-COMPAT-REDIRECTION-001`
-instead of inferred by parsing AWK source.
+end-to-end CLI host integration because process input is still loaded before
+execution; this is tracked as `AWK-COMPAT-STREAMING-001` instead of emulated by
+a CLI-side record loop. The adapter reports
+`Awk_CLI.Execution.Supports_Redirection_Append_Mode = True`, because
+`awklib` now provides live redirected write callbacks with append/truncate mode.
 
 The in-memory `Invocation_Context` is the primary test seam. It supplies
 arguments, files, standard input, environment entries, output failures, and

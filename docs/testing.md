@@ -13,7 +13,7 @@ The primary suite is `awk_tests_main`. It exercises:
   containing `=`;
 - `awklib` execution integration for fields, `BEGIN`, regular-expression
   patterns, arithmetic, built-ins, `ENVIRON`, `ARGV`, `ARGC`, `getline < file`,
-  standard output, and captured redirections;
+  standard output, and live redirected writes;
 - controlled host I/O failures for stdin, stdout, stderr, program files, input
   files, redirection open failures, and redirection write failures;
 - localized diagnostics, unsupported-locale fallback, catalog syntax policy,

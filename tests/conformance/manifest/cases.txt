@@ -1,5 +1,5 @@
 AWK-CONF-PRINT-001|Supported|cases/print_record.awk|expected/print_record.txt|basic print through awklib
 AWK-CONF-FIELDS-001|Supported|cases/print_first_field.awk|expected/print_first_field.txt|field processing through awklib
 AWK-CONF-ASSIGNMENT-001|Supported_With_Documented_Difference|cases/runtime_assignment.awk|expected/runtime_assignment.txt|AWK-COMPAT-ASSIGNMENT-001
-AWK-CONF-REDIRECTION-001|Supported_With_Documented_Difference|cases/append_redirection.awk|expected/append_redirection.txt|AWK-COMPAT-REDIRECTION-001
+AWK-CONF-REDIRECTION-001|Supported|cases/append_redirection.awk|expected/append_redirection.txt|append redirection supported through awklib streaming callbacks
 AWK-CONF-GETLINE-001|Unsupported_By_Awklib|cases/command_getline.awk|expected/command_getline.txt|AWK-COMPAT-GETLINE-002

@@ -1,5 +1,7 @@
 with Awklib.Interpreter;
 with Awklib;
+with System;
+with System.Address_To_Access_Conversions;
 
 package body Awk_CLI.Execution is
    package I renames Awklib.Interpreter;
@@ -8,6 +10,65 @@ package body Awk_CLI.Execution is
    function Pair (Name, Value : String) return I.Var_Assignment is
      (Name  => U.To_Unbounded_String (Name),
       Value => U.To_Unbounded_String (Value));
+
+   type Input_Vector_Access is access constant Awk_CLI.Inputs.Input_File_Vectors.Vector;
+   type Output_Access is access all U.Unbounded_String;
+   type Redirection_Vector_Access is access all Redirection_Vectors.Vector;
+
+   type Stream_State is record
+      Inputs      : Input_Vector_Access;
+      Output      : Output_Access;
+      Redirs      : Redirection_Vector_Access;
+      Input_Index : Natural := 0;
+   end record;
+
+   package Stream_State_Access is new System.Address_To_Access_Conversions (Stream_State);
+
+   procedure Read_Text
+     (User_Data    : System.Address;
+      Filename     : out U.Unbounded_String;
+      Text         : out U.Unbounded_String;
+      End_Of_Input : out Boolean)
+   is
+      State : constant Stream_State_Access.Object_Pointer :=
+        Stream_State_Access.To_Pointer (User_Data);
+   begin
+      if State.Input_Index >= Natural (State.Inputs.Length) then
+         Filename := U.Null_Unbounded_String;
+         Text := U.Null_Unbounded_String;
+         End_Of_Input := True;
+      else
+         State.Input_Index := State.Input_Index + 1;
+         Filename := State.Inputs.Element (State.Input_Index).Name;
+         Text := State.Inputs.Element (State.Input_Index).Content;
+         End_Of_Input := False;
+      end if;
+   end Read_Text;
+
+   procedure Write_Output (User_Data : System.Address; Text : String) is
+      State : constant Stream_State_Access.Object_Pointer :=
+        Stream_State_Access.To_Pointer (User_Data);
+   begin
+      U.Append (State.Output.all, Text);
+   end Write_Output;
+
+   procedure Write_Redirection
+     (User_Data : System.Address;
+      Name      : String;
+      Text      : String;
+      Append    : Boolean;
+      Truncate  : Boolean)
+   is
+      pragma Unreferenced (Truncate);
+      State : constant Stream_State_Access.Object_Pointer :=
+        Stream_State_Access.To_Pointer (User_Data);
+   begin
+      State.Redirs.Append
+        (Redirected_Output'
+           (Path    => U.To_Unbounded_String (Name),
+            Content => U.To_Unbounded_String (Text),
+            Append  => Append));
+   end Write_Redirection;
 
    function Execute
      (Program_Source  : String;
@@ -19,14 +80,18 @@ package body Awk_CLI.Execution is
    is
       Assignments  : I.Assignment_Vectors.Vector;
       Env          : I.Assignment_Vectors.Vector;
-      Main_Files   : I.Assignment_Vectors.Vector;
       Aux_Files    : I.Assignment_Vectors.Vector;
       Arguments    : I.String_Vectors.Vector;
-      Output       : U.Unbounded_String;
+      Output       : aliased U.Unbounded_String;
       Message      : U.Unbounded_String;
-      Written      : I.Assignment_Vectors.Vector;
+      Redirs       : aliased Redirection_Vectors.Vector;
       Exit_Code    : Integer := 0;
       Status       : I.Run_Status;
+      State       : aliased Stream_State :=
+        (Inputs      => Inputs'Unchecked_Access,
+         Output      => Output'Unchecked_Access,
+         Redirs      => Redirs'Unchecked_Access,
+         Input_Index => 0);
    begin
       if Options.Has_Field_Separator then
          Assignments.Append (Pair ("FS", U.To_String (Options.Field_Separator)));
@@ -41,7 +106,6 @@ package body Awk_CLI.Execution is
       end loop;
 
       for Item of Inputs loop
-         Main_Files.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Content)));
          if U.To_String (Item.Name) /= "-" and then U.To_String (Item.Name) /= "" then
             Aux_Files.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Content)));
          end if;
@@ -51,19 +115,19 @@ package body Awk_CLI.Execution is
          Arguments.Append (Item.Text);
       end loop;
 
-      I.Run
+      I.Run_Text_Streaming
         (Program_Source => Program_Source,
-         Input          => "",
          Assignments    => Assignments,
          Environment    => Env,
-         Filename       => "",
-         Output         => Output,
+         Initial_Filename => "",
+         Read_Text      => Read_Text'Access,
+         Write_Output   => Write_Output'Access,
+         Write_Redirection => Write_Redirection'Access,
+         User_Data      => State'Address,
          Exit_Code      => Exit_Code,
          Status         => Status,
          Message        => Message,
-         Output_Files   => Written,
          Files          => Aux_Files,
-         Input_Files    => Main_Files,
          Arguments      => Arguments);
 
       if Status = I.Run_Error then
@@ -77,17 +141,9 @@ package body Awk_CLI.Execution is
                  Detail => U.To_String (Message)));
       end if;
 
-      declare
-         Redirs : Redirection_Vectors.Vector;
-      begin
-         for Item of Written loop
-            Redirs.Append
-              (Redirected_Output'(Path => Item.Name, Content => Item.Value, Append => False));
-         end loop;
-         return
-           (Ok => True, Standard_Output => Output, Exit_Status => Exit_Code,
-            Redirections => Redirs);
-      end;
+      return
+        (Ok => True, Standard_Output => Output, Exit_Status => Exit_Code,
+         Redirections => Redirs);
    exception
       when others =>
          return
@@ -102,6 +158,6 @@ package body Awk_CLI.Execution is
    function Interpreter_Version return String is (Awklib.Version);
 
    function Supports_Positional_Runtime_Assignments return Boolean is (False);
-   function Supports_Redirection_Append_Mode return Boolean is (False);
+   function Supports_Redirection_Append_Mode return Boolean is (True);
    function Supports_Streaming_Execution return Boolean is (False);
 end Awk_CLI.Execution;

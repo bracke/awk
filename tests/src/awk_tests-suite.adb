@@ -524,19 +524,25 @@ package body Awk_Tests.Suite is
          "BEGIN { print ""a1"" > ""a.txt""; print ""b1"" > ""b.txt""; print ""a2"" > ""a.txt"" }");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "multiple redirections succeed");
-      Assert (Awk_CLI.Written_File_Count (Context) = 2,
-              "awklib exposes final captured output per target");
+      Assert (Awk_CLI.Written_File_Count (Context) = 3,
+              "awklib exposes live redirected writes");
       Assert (Awk_CLI.Written_File_Name (Context, 1) = "a.txt",
               "first redirection target is materialized first");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "a1" & LF & "a2" & LF,
-              "same-target redirected output preserves captured order");
+      Assert (Awk_CLI.Written_File_Content (Context, 1) = "a1" & LF,
+              "first same-target write is exact");
       Assert (Awk_CLI.Written_File_Name (Context, 2) = "b.txt",
               "second redirection target is materialized second");
       Assert (Awk_CLI.Written_File_Content (Context, 2) = "b1" & LF,
               "second target content is exact");
+      Assert (Awk_CLI.Written_File_Name (Context, 3) = "a.txt",
+              "third write returns to first target");
+      Assert (Awk_CLI.Written_File_Content (Context, 3) = "a2" & LF,
+              "third write content is exact");
+      Assert (Awk_CLI.Written_File_Append (Context, 3),
+              "later writes to an open target append");
    end Test_Context_Multiple_Redirections;
 
-   procedure Test_Context_Append_Redirection_Limitation (T : in out AUnit.Test_Cases.Test_Case'Class) is
+   procedure Test_Context_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
@@ -546,13 +552,15 @@ package body Awk_Tests.Suite is
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "append redirection run succeeds");
       Assert (Awk_CLI.Written_File_Count (Context) = 1, "one captured write recorded");
-      Assert (Awk_CLI.Written_File_Name (Context, 1) = "out.txt", "captured redirection target");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF, "captured write content");
-      Assert (not Awk_CLI.Execution.Supports_Redirection_Append_Mode,
-              "execution adapter exposes missing append-mode capability");
-      Assert (not Awk_CLI.Written_File_Append (Context, 1),
-              "AWK-COMPAT-REDIRECTION-001: awklib does not expose append intent");
-   end Test_Context_Append_Redirection_Limitation;
+      Assert (Awk_CLI.Written_File_Name (Context, 1) = "out.txt", "redirection target");
+      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF, "write content");
+      Assert (Awk_CLI.Execution.Supports_Redirection_Append_Mode,
+              "execution adapter exposes append-mode capability");
+      Assert (Awk_CLI.Written_File_Append (Context, 1),
+              "awklib streaming redirection exposes append intent");
+      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF,
+              "append write content is exact");
+   end Test_Context_Append_Redirection;
 
    procedure Test_Context_Output_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -942,16 +950,14 @@ package body Awk_Tests.Suite is
       Has_Unsupported : Boolean := False;
       Has_Command_Line : Boolean := False;
       Has_Getline : Boolean := False;
-      Has_Redirection : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 7, "registry has accepted limitation entries");
+      Assert (Awk_CLI.Compatibility.Count >= 6, "registry has accepted limitation entries");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REGEX-001"), "regex ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"), "getline BEGIN ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"), "pipe getline ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-ASSIGNMENT-001"), "assignment ID present");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REDIRECTION-001"), "redirection ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-STREAMING-001"), "streaming ID present");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
@@ -992,8 +998,6 @@ package body Awk_Tests.Suite is
                Has_Command_Line := True;
             when Awk_CLI.Compatibility.Getline =>
                Has_Getline := True;
-            when Awk_CLI.Compatibility.Redirection =>
-               Has_Redirection := True;
             when others =>
                null;
          end case;
@@ -1002,11 +1006,8 @@ package body Awk_Tests.Suite is
       Assert (Has_Unsupported, "registry includes unsupported awklib cases");
       Assert (Has_Command_Line, "registry includes command-line area");
       Assert (Has_Getline, "registry includes getline area");
-      Assert (Has_Redirection, "registry includes redirection area");
       Assert (Contains (Conformance, "AWK-COMPAT-ASSIGNMENT-001"),
               "conformance manifest references assignment limitation");
-      Assert (Contains (Conformance, "AWK-COMPAT-REDIRECTION-001"),
-              "conformance manifest references redirection limitation");
       Assert (Contains (Conformance, "AWK-COMPAT-GETLINE-002"),
               "conformance manifest references getline limitation");
       Assert
@@ -1053,9 +1054,9 @@ package body Awk_Tests.Suite is
          "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
          "AWK-COMPAT-ASSIGNMENT-001");
       Require_Case
-        ("AWK-CONF-REDIRECTION-001", "Supported_With_Documented_Difference",
+        ("AWK-CONF-REDIRECTION-001", "Supported",
          "cases/append_redirection.awk", "expected/append_redirection.txt",
-         "AWK-COMPAT-REDIRECTION-001");
+         "append redirection supported through awklib streaming callbacks");
       Require_Case
         ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
          "cases/command_getline.awk", "expected/command_getline.txt",
@@ -1528,8 +1529,9 @@ package body Awk_Tests.Suite is
       Assert (Status = 0, "process append redirection exits successfully");
       Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
-        (Contains (File_Text ("../" & Target), "first" & LF & "second"),
-         "captured redirected content is materialized");
+        (Contains (File_Text ("../" & Target), "existing") and then
+         Contains (File_Text ("../" & Target), "first" & LF & "second"),
+         "append redirection preserves existing file content");
 
       if Ada.Directories.Exists ("../" & Target) then
          Ada.Directories.Delete_File ("../" & Target);
@@ -1742,8 +1744,8 @@ package body Awk_Tests.Suite is
         (T, Test_Context_Multiple_Redirections'Access,
          "context multiple redirections");
       Registration.Register_Routine
-        (T, Test_Context_Append_Redirection_Limitation'Access,
-         "context append redirection limitation");
+        (T, Test_Context_Append_Redirection'Access,
+         "context append redirection");
       Registration.Register_Routine (T, Test_Context_Output_Failure'Access, "context output failure");
       Registration.Register_Routine
         (T, Test_Context_Standard_Input_Failure'Access,

@@ -305,14 +305,14 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/diagnostics.md"), "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "memory-oriented"),
-         "architecture docs must document memory-oriented execution");
+        (Contains (File_Text ("../docs/architecture.md"), "partly memory-oriented"),
+         "architecture docs must document memory-oriented host integration");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "captured redirected output"),
-         "architecture docs must document captured redirection behavior");
+        (Contains (File_Text ("../docs/architecture.md"), "AWK record splitting"),
+         "architecture docs must document awklib text streaming callbacks");
       Require
         (Contains (File_Text ("../docs/architecture.md"),
-                   "Supports_Redirection_Append_Mode = False"),
+                   "Supports_Redirection_Append_Mode = True"),
          "architecture docs must document append redirection capability");
       Require
         (Contains (File_Text ("../docs/architecture.md"),
@@ -471,9 +471,9 @@ procedure Awk_Workflows is
          "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
          "AWK-COMPAT-ASSIGNMENT-001");
       Require_Case
-        ("AWK-CONF-REDIRECTION-001", "Supported_With_Documented_Difference",
+        ("AWK-CONF-REDIRECTION-001", "Supported",
          "cases/append_redirection.awk", "expected/append_redirection.txt",
-         "AWK-COMPAT-REDIRECTION-001");
+         "append redirection supported through awklib streaming callbacks");
       Require_Case
         ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
          "cases/command_getline.awk", "expected/command_getline.txt",
