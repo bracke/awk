@@ -17,6 +17,21 @@ Reference text families:
 - BusyBox awk help text: compact command-line wording suitable for small
   terminals.
 
+Reference run record:
+
+On 2026-08-02, the translation cleanup compared the help catalog with local
+reference output from `/usr/bin/awk --help`, `/usr/bin/mawk -W help`,
+`/usr/bin/nawk --help`, and `/usr/bin/busybox awk --help`. On this system,
+`awk` and `nawk` resolve to mawk-compatible help text, and `gawk` was not
+installed. The shared reference wording informed these catalog choices:
+
+- `-f` is described as reading AWK program text from a file, with multiple
+  program files accepted in command-line order.
+- `-F` is described as setting the field separator variable `FS`.
+- `-v` is described as assigning an AWK variable before execution begins.
+- `--` is described as an unambiguous end of option processing.
+- File operands follow the AWK program operand or the `-f` program-file list.
+
 Reviewers compare translated catalog entries against those references for
 natural target-language terminology while preserving this project's exact
 behavior. The references inform wording only; `awklib` remains the sole source

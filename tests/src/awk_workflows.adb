@@ -208,6 +208,9 @@ procedure Awk_Workflows is
          and then File_Has ("../docs/localization-reference.md", "GNU awk")
          and then File_Has ("../docs/localization-reference.md", "BWK awk")
          and then File_Has ("../docs/localization-reference.md", "BusyBox awk")
+         and then File_Has ("../docs/localization-reference.md", "Reference run record")
+         and then File_Has ("../docs/localization-reference.md", "/usr/bin/mawk -W help")
+         and then File_Has ("../docs/localization-reference.md", "/usr/bin/busybox awk --help")
          and then File_Has ("../docs/localization-reference.md", "Reference comparison checklist")
          and then File_Has ("../docs/localization-reference.md", "Machine-checked reference cues"),
          "localization docs must require comparison with other AWK reference text");
