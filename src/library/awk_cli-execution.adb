@@ -12,7 +12,7 @@ package body Awk_CLI.Execution is
 
    type Input_Vector_Access is access constant Awk_CLI.Inputs.Input_File_Vectors.Vector;
    type Output_Access is access all U.Unbounded_String;
-   type Redirection_Vector_Access is access all Redirection_Vectors.Vector;
+   type Redirection_Vector_Access is access all Awk_CLI.Redirections.Redirection_Vectors.Vector;
 
    type Stream_State is record
       Inputs      : Input_Vector_Access;
@@ -53,6 +53,10 @@ package body Awk_CLI.Execution is
       State : constant Stream_State_Access.Object_Pointer :=
         Stream_State_Access.To_Pointer (User_Data);
    begin
+      if State.Failed then
+         return;
+      end if;
+
       if State.Live_Output = null then
          U.Append (State.Output.all, Text);
       elsif not State.Live_Output.all (State.Live_User_Data, Text) then
@@ -75,22 +79,42 @@ package body Awk_CLI.Execution is
       pragma Unreferenced (Truncate);
       State : constant Stream_State_Access.Object_Pointer :=
         Stream_State_Access.To_Pointer (User_Data);
+      Result : Awk_CLI.Redirections.Write_Status;
    begin
+      if State.Failed then
+         return;
+      end if;
+
       if State.Live_Redirection = null then
          State.Redirs.Append
-           (Redirected_Output'
+           (Awk_CLI.Redirections.Redirected_Output'
               (Path    => U.To_Unbounded_String (Name),
                Content => U.To_Unbounded_String (Text),
-               Append  => Append));
-      elsif not State.Live_Redirection.all (State.Live_User_Data, Name, Text, Append) then
-         State.Failed := True;
-         State.Failure :=
-           Awk_CLI.Diagnostics.Make
-             ("awk.output_file.write_failed",
-              Awk_CLI.Diagnostics.Error,
-              Awk_CLI.Diagnostics.Output,
-              Name => "path",
-              Value => Name);
+              Append  => Append));
+      else
+         Result := State.Live_Redirection.all (State.Live_User_Data, Name, Text, Append);
+         case Result is
+            when Awk_CLI.Redirections.Write_Success =>
+               null;
+            when Awk_CLI.Redirections.Open_Failed =>
+               State.Failed := True;
+               State.Failure :=
+                 Awk_CLI.Diagnostics.Make
+                   ("awk.output_file.open_failed",
+                    Awk_CLI.Diagnostics.Error,
+                    Awk_CLI.Diagnostics.Output,
+                    Name => "path",
+                    Value => Name);
+            when Awk_CLI.Redirections.Write_Failed =>
+               State.Failed := True;
+               State.Failure :=
+                 Awk_CLI.Diagnostics.Make
+                   ("awk.output_file.write_failed",
+                    Awk_CLI.Diagnostics.Error,
+                    Awk_CLI.Diagnostics.Output,
+                    Name => "path",
+                    Value => Name);
+         end case;
       end if;
    end Write_Redirection;
 
@@ -111,7 +135,7 @@ package body Awk_CLI.Execution is
       Arguments    : I.String_Vectors.Vector;
       Output       : aliased U.Unbounded_String;
       Message      : U.Unbounded_String;
-      Redirs       : aliased Redirection_Vectors.Vector;
+      Redirs       : aliased Awk_CLI.Redirections.Redirection_Vectors.Vector;
       Exit_Code    : Integer := 0;
       Status       : I.Run_Status;
       State       : aliased Stream_State :=

@@ -1,4 +1,3 @@
-with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with System;
 with Awk_CLI.Diagnostics;
@@ -6,25 +5,17 @@ with Awk_CLI.Environment;
 with Awk_CLI.Inputs;
 with Awk_CLI.Operands;
 with Awk_CLI.Options;
+with Awk_CLI.Redirections;
 
 package Awk_CLI.Execution is
    package U renames Ada.Strings.Unbounded;
-
-   type Redirected_Output is record
-      Path    : U.Unbounded_String;
-      Content : U.Unbounded_String;
-      Append  : Boolean := False;
-   end record;
-
-   package Redirection_Vectors is new Ada.Containers.Vectors
-     (Index_Type => Positive, Element_Type => Redirected_Output);
 
    type Execution_Result (Ok : Boolean := False) is record
       case Ok is
          when True =>
             Standard_Output : U.Unbounded_String;
             Exit_Status     : Integer := 0;
-            Redirections    : Redirection_Vectors.Vector;
+            Redirections    : Awk_CLI.Redirections.Redirection_Vectors.Vector;
          when False =>
             Diagnostic : Awk_CLI.Diagnostics.Diagnostic;
       end case;
@@ -38,7 +29,7 @@ package Awk_CLI.Execution is
      (User_Data : System.Address;
       Path      : String;
       Content   : String;
-      Append    : Boolean) return Boolean;
+      Append    : Boolean) return Awk_CLI.Redirections.Write_Status;
 
    function Execute
      (Program_Source  : String;

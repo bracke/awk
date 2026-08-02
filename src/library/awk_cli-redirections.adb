@@ -2,7 +2,7 @@ package body Awk_CLI.Redirections is
    package D renames Awk_CLI.Diagnostics;
 
    function Materialize
-     (Outputs    : Awk_CLI.Execution.Redirection_Vectors.Vector;
+     (Outputs    : Redirection_Vectors.Vector;
       Write_File : not null access function
         (Path : String; Content : String; Append : Boolean) return Write_Status)
       return Materialize_Result

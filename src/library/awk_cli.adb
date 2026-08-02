@@ -9,10 +9,14 @@ with Awk_CLI.Output;
 with Awk_CLI.Platform;
 with Awk_CLI.Programs;
 with Awk_CLI.Redirections;
+with System;
+with System.Address_To_Access_Conversions;
 
 package body Awk_CLI is
    package D renames Awk_CLI.Diagnostics;
    use type U.Unbounded_String;
+
+   package Context_Access is new System.Address_To_Access_Conversions (Invocation_Context);
 
    procedure Clear (Context : in out Invocation_Context) is
    begin
@@ -138,6 +142,118 @@ package body Awk_CLI is
    function Written_File_Append (Context : Invocation_Context; Index : Positive) return Boolean is
      (Context.Writes.Element (Index).Append);
 
+   function Write_Context_File
+     (Context : in out Invocation_Context;
+      Path    : String;
+      Content : String;
+      Append  : Boolean) return Awk_CLI.Redirections.Write_Status
+   is
+   begin
+      if not Context.Files.Is_Empty then
+         for Position in Context.Files.First_Index .. Context.Files.Last_Index loop
+            if U.To_String (Context.Files.Element (Position).Path) = Path then
+               if not Context.Files.Element (Position).Openable then
+                  return Awk_CLI.Redirections.Open_Failed;
+               end if;
+               if not Context.Files.Element (Position).Writable then
+                  return Awk_CLI.Redirections.Write_Failed;
+               end if;
+               if Append then
+                  Context.Files.Replace_Element
+                    (Position,
+                     Virtual_File'
+                       (Path     => Context.Files.Element (Position).Path,
+                        Content  => Context.Files.Element (Position).Content
+                          & U.To_Unbounded_String (Content),
+                        Readable => Context.Files.Element (Position).Readable,
+                        Writable => Context.Files.Element (Position).Writable,
+                        Openable => Context.Files.Element (Position).Openable));
+               else
+                  Context.Files.Replace_Element
+                    (Position,
+                     Virtual_File'
+                       (Path     => Context.Files.Element (Position).Path,
+                        Content  => U.To_Unbounded_String (Content),
+                        Readable => Context.Files.Element (Position).Readable,
+                        Writable => Context.Files.Element (Position).Writable,
+                        Openable => Context.Files.Element (Position).Openable));
+               end if;
+               Context.Writes.Append
+                 (Write_Operation'
+                    (Path => U.To_Unbounded_String (Path),
+                     Content => U.To_Unbounded_String (Content),
+                     Append => Append));
+               if Context.Use_Process then
+                  if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+                     return Awk_CLI.Redirections.Write_Success;
+                  else
+                     return Awk_CLI.Redirections.Write_Failed;
+                  end if;
+               end if;
+               return Awk_CLI.Redirections.Write_Success;
+            end if;
+         end loop;
+      end if;
+
+      Context.Files.Append
+        (Virtual_File'
+           (Path     => U.To_Unbounded_String (Path),
+            Content  => U.To_Unbounded_String (Content),
+            Readable => True,
+            Writable => True,
+            Openable => True));
+      Context.Writes.Append
+        (Write_Operation'
+           (Path => U.To_Unbounded_String (Path),
+            Content => U.To_Unbounded_String (Content),
+            Append => Append));
+      if Context.Use_Process then
+         if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+            return Awk_CLI.Redirections.Write_Success;
+         else
+            return Awk_CLI.Redirections.Write_Failed;
+         end if;
+      end if;
+      return Awk_CLI.Redirections.Write_Success;
+   end Write_Context_File;
+
+   function Write_Context_Stdout
+     (Context : in out Invocation_Context;
+      Content : String) return Boolean
+   is
+   begin
+      if Context.Stdout_Fails then
+         return False;
+      end if;
+      U.Append (Context.Standard_Out, Content);
+      if Context.Use_Process then
+         return Awk_CLI.Platform.Write_Standard_Output (Content);
+      end if;
+      return True;
+   end Write_Context_Stdout;
+
+   function Live_Context_Output
+     (User_Data : System.Address;
+      Content   : String) return Boolean
+   is
+      Context : constant Context_Access.Object_Pointer :=
+        Context_Access.To_Pointer (User_Data);
+   begin
+      return Write_Context_Stdout (Context.all, Content);
+   end Live_Context_Output;
+
+   function Live_Context_Redirection
+     (User_Data : System.Address;
+      Path      : String;
+      Content   : String;
+      Append    : Boolean) return Awk_CLI.Redirections.Write_Status
+   is
+      Context : constant Context_Access.Object_Pointer :=
+        Context_Access.To_Pointer (User_Data);
+   begin
+      return Write_Context_File (Context.all, Path, Content, Append);
+   end Live_Context_Redirection;
+
    function Run (Context : in out Invocation_Context) return Exit_Code is
       Catalog : Awk_CLI.Localization.Catalog;
 
@@ -177,92 +293,6 @@ package body Awk_CLI is
          Content := U.Null_Unbounded_String;
          return Awk_CLI.Platform.Open_Failed;
       end Read_Context_File;
-
-      function Write_Context_File
-        (Path : String;
-         Content : String;
-         Append : Boolean) return Awk_CLI.Redirections.Write_Status
-      is
-      begin
-         if not Context.Files.Is_Empty then
-            for Position in Context.Files.First_Index .. Context.Files.Last_Index loop
-               if U.To_String (Context.Files.Element (Position).Path) = Path then
-                  if not Context.Files.Element (Position).Openable then
-                     return Awk_CLI.Redirections.Open_Failed;
-                  end if;
-                  if not Context.Files.Element (Position).Writable then
-                     return Awk_CLI.Redirections.Write_Failed;
-                  end if;
-                  if Append then
-                     Context.Files.Replace_Element
-                       (Position,
-                        Virtual_File'
-                          (Path     => Context.Files.Element (Position).Path,
-                           Content  => Context.Files.Element (Position).Content
-                             & U.To_Unbounded_String (Content),
-                           Readable => Context.Files.Element (Position).Readable,
-                           Writable => Context.Files.Element (Position).Writable,
-                           Openable => Context.Files.Element (Position).Openable));
-                  else
-                     Context.Files.Replace_Element
-                       (Position,
-                        Virtual_File'
-                          (Path     => Context.Files.Element (Position).Path,
-                           Content  => U.To_Unbounded_String (Content),
-                           Readable => Context.Files.Element (Position).Readable,
-                           Writable => Context.Files.Element (Position).Writable,
-                           Openable => Context.Files.Element (Position).Openable));
-                  end if;
-                  Context.Writes.Append
-                    (Write_Operation'
-                       (Path => U.To_Unbounded_String (Path),
-                        Content => U.To_Unbounded_String (Content),
-                        Append => Append));
-                  if Context.Use_Process then
-                     if Awk_CLI.Platform.Write_File (Path, Content, Append) then
-                        return Awk_CLI.Redirections.Write_Success;
-                     else
-                        return Awk_CLI.Redirections.Write_Failed;
-                     end if;
-                  end if;
-                  return Awk_CLI.Redirections.Write_Success;
-               end if;
-            end loop;
-         end if;
-
-         Context.Files.Append
-           (Virtual_File'
-              (Path     => U.To_Unbounded_String (Path),
-               Content  => U.To_Unbounded_String (Content),
-               Readable => True,
-               Writable => True,
-               Openable => True));
-         Context.Writes.Append
-           (Write_Operation'
-              (Path => U.To_Unbounded_String (Path),
-               Content => U.To_Unbounded_String (Content),
-               Append => Append));
-         if Context.Use_Process then
-            if Awk_CLI.Platform.Write_File (Path, Content, Append) then
-               return Awk_CLI.Redirections.Write_Success;
-            else
-               return Awk_CLI.Redirections.Write_Failed;
-            end if;
-         end if;
-         return Awk_CLI.Redirections.Write_Success;
-      end Write_Context_File;
-
-      function Write_Context_Stdout (Content : String) return Boolean is
-      begin
-         if Context.Stdout_Fails then
-            return False;
-         end if;
-         U.Append (Context.Standard_Out, Content);
-         if Context.Use_Process then
-            return Awk_CLI.Platform.Write_Standard_Output (Content);
-         end if;
-         return True;
-      end Write_Context_Stdout;
 
       function Write_Context_Stderr (Content : String) return Boolean is
       begin
@@ -354,13 +384,13 @@ package body Awk_CLI is
       Awk_CLI.Output.Set_Color (Parsed.Options.Color);
 
       if Parsed.Options.Help_Requested then
-         if Write_Context_Stdout (Awk_CLI.Output.Help (Catalog)) then
+         if Write_Context_Stdout (Context, Awk_CLI.Output.Help (Catalog)) then
             return Exit_Code (D.Success_Exit);
          else
             return Exit_Code (D.IO_Exit);
          end if;
       elsif Parsed.Options.Version_Requested then
-         if Write_Context_Stdout (Awk_CLI.Output.Version (Catalog)) then
+         if Write_Context_Stdout (Context, Awk_CLI.Output.Version (Catalog)) then
             return Exit_Code (D.Success_Exit);
          else
             return Exit_Code (D.IO_Exit);
@@ -398,27 +428,15 @@ package body Awk_CLI is
 
             declare
                Exec_Result : constant Awk_CLI.Execution.Execution_Result :=
-                 Awk_CLI.Execution.Execute
+                 Awk_CLI.Execution.Execute_Live
                    (U.To_String (Source_Result.Source.Text),
-                    Parsed.Options, Classified, Input_Result.Files, Current_Environment);
+                    Parsed.Options, Classified, Input_Result.Files, Current_Environment,
+                    Live_Context_Output'Access,
+                    Live_Context_Redirection'Access,
+                    Context'Address);
             begin
                if not Exec_Result.Ok then
                   return Emit_Diagnostic (Exec_Result.Diagnostic);
-               end if;
-
-               declare
-                  Redir_Result : constant Awk_CLI.Redirections.Materialize_Result :=
-                    Awk_CLI.Redirections.Materialize
-                      (Exec_Result.Redirections, Write_Context_File'Access);
-               begin
-                  if not Redir_Result.Ok then
-                     return Emit_Diagnostic (Redir_Result.Diagnostic);
-                  end if;
-               end;
-
-               if not Write_Context_Stdout (U.To_String (Exec_Result.Standard_Output)) then
-                  return Emit_Diagnostic
-                    (D.Make ("awk.standard_output.write_failed", D.Error, D.Output));
                end if;
 
                if Exec_Result.Exit_Status < 0 or else Exec_Result.Exit_Status > 255 then

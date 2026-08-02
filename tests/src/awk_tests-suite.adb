@@ -24,6 +24,7 @@ with Awk_CLI.Options;
 with Awk_CLI.Output;
 with Awk_CLI.Platform;
 with Awk_CLI.Programs;
+with Awk_CLI.Redirections;
 with Project_Tools.Processes;
 
 package body Awk_Tests.Suite is
@@ -60,20 +61,20 @@ package body Awk_Tests.Suite is
      (User_Data : System.Address;
       Path      : String;
       Content   : String;
-      Append    : Boolean) return Boolean
+      Append    : Boolean) return Awk_CLI.Redirections.Write_Status
    is
       State : constant Live_State_Access.Object_Pointer :=
         Live_State_Access.To_Pointer (User_Data);
    begin
       if State.Fail_Redirect then
-         return False;
+         return Awk_CLI.Redirections.Write_Failed;
       end if;
       U.Append (State.Redirection_Log, Path);
       U.Append (State.Redirection_Log, ":");
       U.Append (State.Redirection_Log, (if Append then "append" else "write"));
       U.Append (State.Redirection_Log, ":");
       U.Append (State.Redirection_Log, Content);
-      return True;
+      return Awk_CLI.Redirections.Write_Success;
    end Live_Redirection;
 
    type CLI_Case is new AUnit.Test_Cases.Test_Case with null record;

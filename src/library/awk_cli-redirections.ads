@@ -1,11 +1,20 @@
+with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Awk_CLI.Diagnostics;
-with Awk_CLI.Execution;
 
 package Awk_CLI.Redirections is
    package U renames Ada.Strings.Unbounded;
 
    type Write_Status is (Write_Success, Open_Failed, Write_Failed);
+
+   type Redirected_Output is record
+      Path    : U.Unbounded_String;
+      Content : U.Unbounded_String;
+      Append  : Boolean := False;
+   end record;
+
+   package Redirection_Vectors is new Ada.Containers.Vectors
+     (Index_Type => Positive, Element_Type => Redirected_Output);
 
    type Materialize_Result (Ok : Boolean := True) is record
       case Ok is
@@ -17,7 +26,7 @@ package Awk_CLI.Redirections is
    end record;
 
    function Materialize
-     (Outputs    : Awk_CLI.Execution.Redirection_Vectors.Vector;
+     (Outputs    : Redirection_Vectors.Vector;
       Write_File : not null access function
         (Path : String; Content : String; Append : Boolean) return Write_Status)
       return Materialize_Result;
