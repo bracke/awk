@@ -1,8 +1,8 @@
 # Danish catalog shard. The authoritative combined catalog is ../catalog.txt.
 da.awk.help.title = awk
 da.awk.help.summary = Ada-kommandolinjeprogram til AWK bygget paa awklib. Kommandolinjeforlobet folger traditionel POSIX awk; sprog- og runtime-adfaerd er begraenset af den valgte awklib-version.
-da.awk.help.usage.direct_program = Brug: awk [tilvalg] 'program' [operand...]
-da.awk.help.usage.program_files = Brug: awk [tilvalg] -f programfil [-f programfil...] [operand...]
+da.awk.help.usage.direct_program = Brug: awk [tilvalg] 'program' [operander...]
+da.awk.help.usage.program_files = Brug: awk [tilvalg] -f programfil [-f programfil...] [operander...]
 da.awk.help.options.field_separator =   -F sep, -Fsep          saet FS foer koersel; sidste forekomst vinder
 da.awk.help.options.variable =   -v navn=vaerdi, -vnavn=vaerdi  tildel variabel foer BEGIN; bevares i kommandolinjeorden
 da.awk.help.options.program_file =   -f fil, -ffil          laes AWK-kilde fra fil; flere filer sammenfojes i orden
