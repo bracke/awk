@@ -407,6 +407,42 @@ package body Awk_Tests.Process is
       Assert (Status = 2, "unknown option exits with usage status");
    end Test_Process_Usage_Status;
 
+   procedure Test_Process_Diagnostic_Color_Policy
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Escape : constant String := [1 => Character'Val (27)];
+
+      procedure Expect
+        (Color_Option : String;
+         Styled       : Boolean;
+         Message      : String)
+      is
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+           [new String'(Color_Option), new String'("--bad")];
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Contains (Output, "unknown option: --bad"),
+                    Message & " includes localized diagnostic text");
+            Assert ((Contains (Output, Escape & "[") = Styled),
+                    Message & " follows diagnostic color policy");
+         end;
+      end Expect;
+   begin
+      Expect ("--color=always", True, "color=always diagnostic");
+      Expect ("--color=never", False, "color=never diagnostic");
+   end Test_Process_Diagnostic_Color_Policy;
+
    procedure Test_Process_No_Arguments_Missing_Program
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1402,6 +1438,9 @@ package body Awk_Tests.Process is
         (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
          "process AWK output color always");
       Registration.Register_Routine (T, Test_Process_Usage_Status'Access, "process usage status");
+      Registration.Register_Routine
+        (T, Test_Process_Diagnostic_Color_Policy'Access,
+         "process diagnostic color policy");
       Registration.Register_Routine
         (T, Test_Process_No_Arguments_Missing_Program'Access,
          "process no arguments missing program");
