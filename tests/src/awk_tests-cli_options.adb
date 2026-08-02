@@ -119,6 +119,37 @@ package body Awk_Tests.CLI_Options is
       end;
    end Test_Option_Order_And_Index_Preservation;
 
+   procedure Test_Option_Terminator_Treats_Long_Options_As_Operands
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      Args.Append (U.To_Unbounded_String ("--"));
+      Args.Append (U.To_Unbounded_String ("--help"));
+      Args.Append (U.To_Unbounded_String ("--version"));
+      Args.Append (U.To_Unbounded_String ("--color=always"));
+      declare
+         Result : constant Opt.Parse_Result := Opt.Parse (Args);
+      begin
+         Assert (Result.Ok, "terminator parse succeeds");
+         Assert (not Result.Options.Help_Requested,
+                 "--help after -- is an operand, not a help request");
+         Assert (not Result.Options.Version_Requested,
+                 "--version after -- is an operand, not a version request");
+         Assert (Result.Options.Color = Opt.Color_Auto,
+                 "--color after -- does not change parser color policy");
+         Assert (Result.Options.Operands.Length = 3,
+                 "all long-option-looking arguments after -- are operands");
+         Assert (U.To_String (Result.Options.Operands.Element (1).Text) = "--help",
+                 "first operand after -- is preserved");
+         Assert (Result.Options.Operands.Element (1).Original_Index = 2,
+                 "first operand after -- keeps original index");
+         Assert (U.To_String (Result.Options.Operands.Element (3).Text) = "--color=always",
+                 "color-looking operand after -- is preserved");
+      end;
+   end Test_Option_Terminator_Treats_Long_Options_As_Operands;
+
    procedure Test_Option_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
 
@@ -214,6 +245,9 @@ package body Awk_Tests.CLI_Options is
       Registration.Register_Routine
         (T, Test_Option_Order_And_Index_Preservation'Access,
          "option order and indexes");
+      Registration.Register_Routine
+        (T, Test_Option_Terminator_Treats_Long_Options_As_Operands'Access,
+         "option terminator long operands");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
       Registration.Register_Routine
         (T, Test_Option_Failure_Color_Preservation'Access,
