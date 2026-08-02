@@ -1222,6 +1222,30 @@ package body Awk_Tests.Process is
               "second record is rebuilt by awklib after field assignment");
    end Test_Process_Field_Assignment_Rebuilds_Record;
 
+   procedure Test_Process_Record_Assignment_Resplits_Fields
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("BEGIN { FS="" ""; OFS="":"" } { $0 = toupper($0); print $1, $2, NF }"),
+         new String'("tests/fixtures/input/basic.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process record assignment resplits fields",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process record assignment resplit exits successfully");
+      Assert (Contains (U.To_String (Output), "ONE:TWO:2" & LF),
+              "first record assignment is resplit by awklib");
+      Assert (Contains (U.To_String (Output), "THREE:FOUR:2" & LF),
+              "second record assignment is resplit by awklib");
+   end Test_Process_Record_Assignment_Resplits_Fields;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1392,6 +1416,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Field_Assignment_Rebuilds_Record'Access,
          "process field assignment rebuilds record");
+      Registration.Register_Routine
+        (T, Test_Process_Record_Assignment_Resplits_Fields'Access,
+         "process record assignment resplits fields");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
