@@ -126,59 +126,68 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/ai/traceability.md")];
    begin
       Files.Require_Files (Required_Docs, "missing required documentation");
-      Require
-        (Files.File_Contains ("../README.md", "does not claim complete POSIX conformance"),
-         "README must not claim full POSIX conformance");
-      Require
-        (Files.File_Contains ("../README.md", "./bin/awk_tests_main"),
-         "README must document the current AUnit executable");
-      Require
-        (Files.File_Contains ("../README.md", "--color=auto|always|never"),
-         "README must document color policy");
-      Require
-        (Files.File_Contains ("../README.md", "Windows"),
-         "README must include Windows quoting guidance");
-      Require
-        (Files.File_Contains ("../LICENSE", "MIT License"),
-         "LICENSE must contain MIT license text");
-      Require
-        (Files.File_Contains ("../docs/command-line-reference.md", "-f program-file"),
-         "command-line reference must document program-file invocation");
-      Require
-        (Files.File_Contains ("../docs/command-line-reference.md", "Runtime assignment operands"),
-         "command-line reference must document runtime assignment operands");
-      Require
-        (Files.File_Contains ("../docs/command-line-reference.md",
-                   "Supports_Positional_Runtime_Assignments = True"),
-         "command-line reference must document positional assignment capability");
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "Awk_CLI.Execution"),
-         "architecture docs must document execution adapter isolation");
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "Invocation_Context"),
-         "architecture docs must document testable invocation context");
-      Require
-        (Files.File_Contains ("../docs/compatibility.md",
-                   "No current entries are classified as unsupported"),
-         "compatibility docs must state the active limitation position");
-      Require
-        (Files.File_Contains ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002"),
-         "compatibility docs must include reviewed compatibility IDs");
-      Require
-        (Files.File_Contains ("../docs/compatibility.md", "Test reference"),
-         "compatibility docs must include test references");
-      Require
-        (Files.File_Contains ("../docs/compatibility.md", "Status"),
-         "compatibility docs must include status names");
-      Require
-        (Files.File_Contains ("../docs/compatibility.md", "Source"),
-         "compatibility docs must include limitation source");
-      Require
-        (Files.File_Contains ("../docs/diagnostics.md", "destination-aware terminal detection"),
-         "diagnostics docs must document destination-aware terminal styling");
-      Require
-        (Files.File_Contains ("../docs/diagnostics.md", "open failures from read failures"),
-         "diagnostics docs must document open/read failure distinction");
+      Files.Require_Contains
+        ("../README.md", "does not claim complete POSIX conformance",
+         "README must not claim full POSIX conformance", Quiet => True);
+      Files.Require_Contains
+        ("../README.md", "./bin/awk_tests_main",
+         "README must document the current AUnit executable", Quiet => True);
+      Files.Require_Contains
+        ("../README.md", "--color=auto|always|never",
+         "README must document color policy", Quiet => True);
+      Files.Require_Contains
+        ("../README.md", "Windows",
+         "README must include Windows quoting guidance", Quiet => True);
+      Files.Require_Contains
+        ("../LICENSE", "MIT License",
+         "LICENSE must contain MIT license text", Quiet => True);
+      Files.Require_Contains
+        ("../docs/command-line-reference.md", "-f program-file",
+         "command-line reference must document program-file invocation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/command-line-reference.md", "Runtime assignment operands",
+         "command-line reference must document runtime assignment operands",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/command-line-reference.md",
+         "Supports_Positional_Runtime_Assignments = True",
+         "command-line reference must document positional assignment capability",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md", "Awk_CLI.Execution",
+         "architecture docs must document execution adapter isolation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md", "Invocation_Context",
+         "architecture docs must document testable invocation context",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md",
+         "No current entries are classified as unsupported",
+         "compatibility docs must state the active limitation position",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002",
+         "compatibility docs must include reviewed compatibility IDs",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md", "Test reference",
+         "compatibility docs must include test references", Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md", "Status",
+         "compatibility docs must include status names", Quiet => True);
+      Files.Require_Contains
+        ("../docs/compatibility.md", "Source",
+         "compatibility docs must include limitation source", Quiet => True);
+      Files.Require_Contains
+        ("../docs/diagnostics.md", "destination-aware terminal detection",
+         "diagnostics docs must document destination-aware terminal styling",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/diagnostics.md", "open failures from read failures",
+         "diagnostics docs must document open/read failure distinction",
+         Quiet => True);
       Require
         (Files.File_Contains ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
                                                "  `hostkit`")
