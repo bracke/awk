@@ -18,11 +18,17 @@ aunit = "~26.0.0"
 [[depends-on]]
 project_tools = "~0.1.0"
 
+[[depends-on]]
+messages = "~0.1.0"
+
 [[pins]]
 awk = { path = ".." }
 
 [[pins]]
 project_tools = { path = "../../project_tools" }
+
+[[pins]]
+messages = { path = "../../messages" }
 
 [build-profiles]
 "*" = "development"

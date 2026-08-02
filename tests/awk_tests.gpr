@@ -1,6 +1,7 @@
 with "../awk.gpr";
 with "aunit.gpr";
 with "project_tools.gpr";
+with "messages.gpr";
 
 project Awk_Tests is
    for Source_Dirs use ("src");

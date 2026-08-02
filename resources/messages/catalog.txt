@@ -154,8 +154,8 @@ az.awk.hint.option_terminator = - ilə başlayan fayl adlarından əvvəl -- ist
 
 be.awk.help.title = awk
 be.awk.help.summary = Рэалізацыя AWK для каманднага радка Ada, пабудаваная на awklib. Працоўны працэс каманднага радка адпавядае традыцыйнаму POSIX awk; мова і выкананне абмежаваныя абранай версіяй awklib.
-be.awk.help.usage.direct_program = Выкарыстанне: awk [options] 'program' [operand...]
-be.awk.help.usage.program_files = Выкарыстанне: awk [options] -f program-file [-f program-file...] [operand...]
+be.awk.help.usage.direct_program = Выкарыстанне: awk [опцыі] 'праграма' [операнд...]
+be.awk.help.usage.program_files = Выкарыстанне: awk [опцыі] -f файл-праграмы [-f файл-праграмы...] [операнд...]
 be.awk.help.options.field_separator =   -F sep, -Fsep          задаць FS перад выкананнем; апошняе значэнне перамагае
 be.awk.help.options.variable =   -v name=value, -vname=value  задаць зменную перад BEGIN; парадак каманднага радка захоўваецца
 be.awk.help.options.program_file =   -f file, -ffile        чытаць зыходны код AWK з файла; некалькі файлаў абʼядноўваюцца па парадку
@@ -204,8 +204,8 @@ be.awk.hint.option_terminator = выкарыстоўвайце -- перад і�
 
 bg.awk.help.title = awk
 bg.awk.help.summary = Ada реализация на AWK за команден ред, изградена върху awklib. Работният поток следва традиционния POSIX awk; езикът и изпълнението са ограничени от избраната версия на awklib.
-bg.awk.help.usage.direct_program = Употреба: awk [options] 'program' [operand...]
-bg.awk.help.usage.program_files = Употреба: awk [options] -f program-file [-f program-file...] [operand...]
+bg.awk.help.usage.direct_program = Употреба: awk [опции] 'програма' [операнд...]
+bg.awk.help.usage.program_files = Употреба: awk [опции] -f програмен-файл [-f програмен-файл...] [операнд...]
 bg.awk.help.options.field_separator =   -F sep, -Fsep          задава FS преди изпълнение; последната стойност печели
 bg.awk.help.options.variable =   -v name=value, -vname=value  задава променлива преди BEGIN; редът от командния ред се запазва
 bg.awk.help.options.program_file =   -f file, -ffile        чете AWK източник от файл; няколко файла се слепват по ред
@@ -503,21 +503,21 @@ de.awk.hint.use_help = use --help for command-line syntax
 de.awk.hint.option_terminator = use -- before filenames that begin with -
 
 el.awk.help.title = awk
-el.awk.help.summary = Ελληνικά: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-el.awk.help.usage.direct_program = Χρήση: awk [options] 'program' [operand...]
-el.awk.help.usage.program_files = Χρήση: awk [options] -f program-file [-f program-file...] [operand...]
-el.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-el.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-el.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-el.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-el.awk.help.options.help =   --help                 χρήση help and exit
-el.awk.help.options.version =   --version              show version information and exit
-el.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-el.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-el.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-el.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-el.awk.help.compatibility.heading = Compatibility
-el.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+el.awk.help.summary = Υλοποίηση AWK γραμμής εντολών σε Ada, βασισμένη στο awklib. Η ροή γραμμής εντολών ακολουθεί το παραδοσιακό POSIX awk και η συμπεριφορά περιορίζεται από την επιλεγμένη έκδοση awklib.
+el.awk.help.usage.direct_program = Χρήση: awk [επιλογές] 'πρόγραμμα' [τελεστέος...]
+el.awk.help.usage.program_files = Χρήση: awk [επιλογές] -f αρχείο-προγράμματος [-f αρχείο-προγράμματος...] [τελεστέος...]
+el.awk.help.options.field_separator =   -F sep, -Fsep          ορίζει το FS πριν από την εκτέλεση· υπερισχύει η τελευταία εμφάνιση
+el.awk.help.options.variable =   -v name=value, -vname=value  ορίζει μεταβλητή πριν από το BEGIN· διατηρείται η σειρά γραμμής εντολών
+el.awk.help.options.program_file =   -f file, -ffile        διαβάζει πηγή AWK από αρχείο· πολλά αρχεία ενώνονται με τη σειρά
+el.awk.help.options.color =   --color=auto|always|never  μορφοποιεί μόνο βοήθεια και διαγνωστικά του CLI
+el.awk.help.options.help =   --help                 εμφανίζει αυτή τη βοήθεια και τερματίζει
+el.awk.help.options.version =   --version              εμφανίζει πληροφορίες έκδοσης και τερματίζει
+el.awk.help.options.terminator =   --                     τερματίζει την επεξεργασία επιλογών· μετά λειτουργούν ονόματα αρχείων που αρχίζουν με -
+el.awk.help.operands = Οι τελεστέοι μετά το πρόγραμμα είναι ονομασμένα αρχεία εισόδου, - για την τυπική είσοδο, ή αναθέσεις με όνομα που ταιριάζει με [A-Za-z_][A-Za-z0-9_]*.
+el.awk.help.stdin = Αν δεν υπάρχει τελεστέος εισόδου, χρησιμοποιείται έμμεσα η τυπική είσοδος. Επαναλαμβανόμενοι τελεστέοι - διαβάζουν μία φορά το μοναδικό ρεύμα τυπικής εισόδου· οι επόμενες χρήσεις βλέπουν τέλος αρχείου.
+el.awk.help.exit_statuses = Κωδικοί εξόδου: 0 επιτυχία, 1 αποτυχία διερμηνέα, 2 σφάλμα χρήσης, 3 σφάλμα I/O του συστήματος, 70 εσωτερική αποτυχία.
+el.awk.help.compatibility.heading = Συμβατότητα
+el.awk.help.compatibility.awklib_limitations = Αυτό το πρόγραμμα δεν δηλώνει πλήρη συμβατότητα με POSIX. Η γλώσσα AWK και η συμπεριφορά εκτέλεσης περιορίζονται από την επιλεγμένη έκδοση awklib και τους τεκμηριωμένους περιορισμούς του έργου.
 el.awk.version.program = awk {version}
 el.awk.version.interpreter = awklib {version}
 el.awk.version.license = άδεια MIT
@@ -535,7 +535,7 @@ el.awk.usage.unknown_option = άγνωστη επιλογή: {option}
 el.awk.usage.missing_option_argument = λείπει πρόγραμμα AWK / {option}
 el.awk.usage.invalid_assignment = σφάλμα: {assignment}
 el.awk.usage.invalid_color_mode = σφάλμα: {value}
-el.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+el.awk.usage.program_file_stdin_unsupported = το αρχείο προγράμματος - δεν υποστηρίζεται επειδή η τυπική είσοδος κρατείται για δεδομένα AWK
 el.awk.program_file.open_failed = δεν είναι δυνατό το άνοιγμα program file: {path}
 el.awk.program_file.read_failed = δεν είναι δυνατή η ανάγνωση program file: {path}
 el.awk.input_file.open_failed = δεν είναι δυνατό το άνοιγμα input file: {path}
@@ -547,10 +547,10 @@ el.awk.standard_output.write_failed = δεν είναι δυνατή η εγγρ
 el.awk.interpreter.parse_failed = AWK parse failed
 el.awk.interpreter.runtime_failed = AWK execution failed
 el.awk.interpreter.unsupported_operation = unsupported awklib operation
-el.awk.internal.localization_failed = localization failed for message key: {detail}
+el.awk.internal.localization_failed = η τοπικοποίηση απέτυχε για το κλειδί μηνύματος: {detail}
 el.awk.internal.unexpected_exception = εσωτερικό σφάλμα
-el.awk.hint.use_help = use --help for command-line syntax
-el.awk.hint.option_terminator = use -- before filenames that begin with -
+el.awk.hint.use_help = χρησιμοποιήστε --help για τη σύνταξη γραμμής εντολών
+el.awk.hint.option_terminator = χρησιμοποιήστε -- πριν από ονόματα αρχείων που αρχίζουν με -
 
 es.awk.help.title = awk
 es.awk.help.summary = Español: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -903,21 +903,21 @@ hu.awk.hint.use_help = use --help for command-line syntax
 hu.awk.hint.option_terminator = use -- before filenames that begin with -
 
 hy.awk.help.title = awk
-hy.awk.help.summary = Հայերեն: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-hy.awk.help.usage.direct_program = Օգտագործում: awk [options] 'program' [operand...]
-hy.awk.help.usage.program_files = Օգտագործում: awk [options] -f program-file [-f program-file...] [operand...]
-hy.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-hy.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-hy.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-hy.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-hy.awk.help.options.help =   --help                 օգտագործում help and exit
-hy.awk.help.options.version =   --version              show version information and exit
-hy.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-hy.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-hy.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-hy.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-hy.awk.help.compatibility.heading = Compatibility
-hy.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+hy.awk.help.summary = Ada-ով գրված AWK հրամանային տողի իրականացում, կառուցված awklib-ի վրա։ Հրամանային տողի հոսքը հետևում է ավանդական POSIX awk-ին, իսկ վարքը սահմանափակվում է ընտրված awklib տարբերակով։
+hy.awk.help.usage.direct_program = Օգտագործում: awk [ընտրանքներ] 'ծրագիր' [օպերանդ...]
+hy.awk.help.usage.program_files = Օգտագործում: awk [ընտրանքներ] -f ծրագրի-ֆայլ [-f ծրագրի-ֆայլ...] [օպերանդ...]
+hy.awk.help.options.field_separator =   -F sep, -Fsep          սահմանում է FS-ը կատարումից առաջ· վերջին նշումը հաղթում է
+hy.awk.help.options.variable =   -v name=value, -vname=value  սահմանում է փոփոխականը BEGIN-ից առաջ· հրամանային տողի հերթը պահվում է
+hy.awk.help.options.program_file =   -f file, -ffile        կարդում է AWK աղբյուրը ֆայլից· մի քանի ֆայլ միացվում են հերթով
+hy.awk.help.options.color =   --color=auto|always|never  ոճավորում է միայն CLI-ի օգնությունն ու ախտորոշումները
+hy.awk.help.options.help =   --help                 ցույց է տալիս այս օգնությունը և ավարտում է
+hy.awk.help.options.version =   --version              ցույց է տալիս տարբերակի տեղեկությունը և ավարտում է
+hy.awk.help.options.terminator =   --                     ավարտում է ընտրանքների մշակումը· դրանից հետո աշխատում են - նշանով սկսվող ֆայլանունները
+hy.awk.help.operands = Ծրագրից հետո օպերանդները անունով մուտքային ֆայլեր են, -՝ ստանդարտ մուտքի համար, կամ վերագրումներ, որոնց անունը համապատասխանում է [A-Za-z_][A-Za-z0-9_]*։
+hy.awk.help.stdin = Եթե մուտքային օպերանդ չկա, ստանդարտ մուտքը օգտագործվում է անուղղակիորեն։ Կրկնվող - օպերանդները մեկ անգամ են կարդում նույն ստանդարտ մուտքի հոսքը· հաջորդները տեսնում են ֆայլի վերջը։
+hy.awk.help.exit_statuses = Ելքի կոդեր՝ 0 հաջողություն, 1 մեկնիչի սխալ, 2 օգտագործման սխալ, 3 հյուրընկալ I/O սխալ, 70 ներքին սխալ։
+hy.awk.help.compatibility.heading = Համատեղելիություն
+hy.awk.help.compatibility.awklib_limitations = Այս ծրագիրը չի հայտարարում POSIX-ի ամբողջական համատեղելիություն։ AWK լեզուն և կատարման վարքը սահմանափակված են ընտրված awklib տարբերակով և նախագծի փաստագրված սահմանափակումներով։
 hy.awk.version.program = awk {version}
 hy.awk.version.interpreter = awklib {version}
 hy.awk.version.license = MIT արտոնագիր
@@ -935,7 +935,7 @@ hy.awk.usage.unknown_option = անհայտ տարբերակ: {option}
 hy.awk.usage.missing_option_argument = AWK ծրագիրը բացակայում է / {option}
 hy.awk.usage.invalid_assignment = սխալ: {assignment}
 hy.awk.usage.invalid_color_mode = սխալ: {value}
-hy.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+hy.awk.usage.program_file_stdin_unsupported = ծրագրի ֆայլ - չի աջակցվում, քանի որ ստանդարտ մուտքը պահված է AWK տվյալների համար
 hy.awk.program_file.open_failed = հնարավոր չէ բացել program file: {path}
 hy.awk.program_file.read_failed = հնարավոր չէ կարդալ program file: {path}
 hy.awk.input_file.open_failed = հնարավոր չէ բացել input file: {path}
@@ -947,10 +947,10 @@ hy.awk.standard_output.write_failed = հնարավոր չէ գրել standard ou
 hy.awk.interpreter.parse_failed = AWK parse failed
 hy.awk.interpreter.runtime_failed = AWK execution failed
 hy.awk.interpreter.unsupported_operation = unsupported awklib operation
-hy.awk.internal.localization_failed = localization failed for message key: {detail}
+hy.awk.internal.localization_failed = տեղայնացումը ձախողվեց հաղորդագրության բանալու համար՝ {detail}
 hy.awk.internal.unexpected_exception = ներքին սխալ
-hy.awk.hint.use_help = use --help for command-line syntax
-hy.awk.hint.option_terminator = use -- before filenames that begin with -
+hy.awk.hint.use_help = հրամանային տողի շարահյուսության համար օգտագործեք --help
+hy.awk.hint.option_terminator = - նշանով սկսվող ֆայլանուններից առաջ օգտագործեք --
 
 is.awk.help.title = awk
 is.awk.help.summary = Íslenska: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -1053,21 +1053,21 @@ it.awk.hint.use_help = use --help for command-line syntax
 it.awk.hint.option_terminator = use -- before filenames that begin with -
 
 ka.awk.help.title = awk
-ka.awk.help.summary = ქართული: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-ka.awk.help.usage.direct_program = გამოყენება: awk [options] 'program' [operand...]
-ka.awk.help.usage.program_files = გამოყენება: awk [options] -f program-file [-f program-file...] [operand...]
-ka.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-ka.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-ka.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-ka.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-ka.awk.help.options.help =   --help                 გამოყენება help and exit
-ka.awk.help.options.version =   --version              show version information and exit
-ka.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-ka.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-ka.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-ka.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-ka.awk.help.compatibility.heading = Compatibility
-ka.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+ka.awk.help.summary = Ada-ზე დაწერილი AWK ბრძანების ხაზის განხორციელება, აგებული awklib-ზე. ბრძანების ხაზის ნაკადი მიჰყვება ტრადიციულ POSIX awk-ს და ქცევა შეზღუდულია არჩეული awklib ვერსიით.
+ka.awk.help.usage.direct_program = გამოყენება: awk [პარამეტრები] 'პროგრამა' [ოპერანდი...]
+ka.awk.help.usage.program_files = გამოყენება: awk [პარამეტრები] -f პროგრამის-ფაილი [-f პროგრამის-ფაილი...] [ოპერანდი...]
+ka.awk.help.options.field_separator =   -F sep, -Fsep          აყენებს FS-ს შესრულებამდე· ბოლო მითითება მოქმედებს
+ka.awk.help.options.variable =   -v name=value, -vname=value  აყენებს ცვლადს BEGIN-მდე· ბრძანების ხაზის რიგი ინახება
+ka.awk.help.options.program_file =   -f file, -ffile        კითხულობს AWK წყაროს ფაილიდან· რამდენიმე ფაილი ერთიანდება რიგით
+ka.awk.help.options.color =   --color=auto|always|never  აფორმებს მხოლოდ CLI-ის დახმარებას და დიაგნოსტიკას
+ka.awk.help.options.help =   --help                 აჩვენებს ამ დახმარებას და ასრულებს მუშაობას
+ka.awk.help.options.version =   --version              აჩვენებს ვერსიის ინფორმაციას და ასრულებს მუშაობას
+ka.awk.help.options.terminator =   --                     ასრულებს პარამეტრების დამუშავებას· ამის შემდეგ მუშაობს - ნიშნით დაწყებული ფაილის სახელები
+ka.awk.help.operands = პროგრამის შემდეგ ოპერანდები არის სახელდებული შემავალი ფაილები, - სტანდარტული შეყვანისთვის, ან მინიჭებები, რომელთა სახელი ემთხვევა [A-Za-z_][A-Za-z0-9_]*.
+ka.awk.help.stdin = თუ შემავალი ოპერანდი არ არის, სტანდარტული შეყვანა გამოიყენება ფარულად. განმეორებული - ოპერანდები ერთხელ კითხულობენ ერთ სტანდარტულ შეყვანის ნაკადს· შემდეგი გამოყენებები ხედავს ფაილის ბოლოს.
+ka.awk.help.exit_statuses = გასვლის კოდები: 0 წარმატება, 1 ინტერპრეტატორის შეცდომა, 2 გამოყენების შეცდომა, 3 მასპინძლის I/O შეცდომა, 70 შიდა შეცდომა.
+ka.awk.help.compatibility.heading = თავსებადობა
+ka.awk.help.compatibility.awklib_limitations = ეს პროგრამა არ აცხადებს POSIX-თან სრულ თავსებადობას. AWK ენა და შესრულების ქცევა შეზღუდულია არჩეული awklib ვერსიით და პროექტის დოკუმენტირებული შეზღუდვებით.
 ka.awk.version.program = awk {version}
 ka.awk.version.interpreter = awklib {version}
 ka.awk.version.license = MIT ლიცენზია
@@ -1085,7 +1085,7 @@ ka.awk.usage.unknown_option = უცნობი პარამეტრი: {o
 ka.awk.usage.missing_option_argument = AWK პროგრამა აკლია / {option}
 ka.awk.usage.invalid_assignment = შეცდომა: {assignment}
 ka.awk.usage.invalid_color_mode = შეცდომა: {value}
-ka.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+ka.awk.usage.program_file_stdin_unsupported = პროგრამის ფაილი - არ არის მხარდაჭერილი, რადგან სტანდარტული შეყვანა დაცულია AWK მონაცემებისთვის
 ka.awk.program_file.open_failed = ვერ იხსნება program file: {path}
 ka.awk.program_file.read_failed = ვერ იკითხება program file: {path}
 ka.awk.input_file.open_failed = ვერ იხსნება input file: {path}
@@ -1097,27 +1097,27 @@ ka.awk.standard_output.write_failed = ვერ იწერება standard o
 ka.awk.interpreter.parse_failed = AWK parse failed
 ka.awk.interpreter.runtime_failed = AWK execution failed
 ka.awk.interpreter.unsupported_operation = unsupported awklib operation
-ka.awk.internal.localization_failed = localization failed for message key: {detail}
+ka.awk.internal.localization_failed = ლოკალიზაცია ვერ მოხერხდა შეტყობინების გასაღებისთვის: {detail}
 ka.awk.internal.unexpected_exception = შიდა შეცდომა
-ka.awk.hint.use_help = use --help for command-line syntax
-ka.awk.hint.option_terminator = use -- before filenames that begin with -
+ka.awk.hint.use_help = ბრძანების ხაზის სინტაქსისთვის გამოიყენეთ --help
+ka.awk.hint.option_terminator = - ნიშნით დაწყებული ფაილის სახელებამდე გამოიყენეთ --
 
 kk.awk.help.title = awk
-kk.awk.help.summary = Қазақша: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-kk.awk.help.usage.direct_program = Пайдалану: awk [options] 'program' [operand...]
-kk.awk.help.usage.program_files = Пайдалану: awk [options] -f program-file [-f program-file...] [operand...]
-kk.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-kk.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-kk.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-kk.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-kk.awk.help.options.help =   --help                 пайдалану help and exit
-kk.awk.help.options.version =   --version              show version information and exit
-kk.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-kk.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-kk.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-kk.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-kk.awk.help.compatibility.heading = Compatibility
-kk.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+kk.awk.help.summary = Ada тіліндегі AWK командалық жол іске асырылымы, awklib негізінде құрылған. Командалық жол жұмысы дәстүрлі POSIX awk үлгісін ұстанады, ал әрекет таңдалған awklib нұсқасымен шектеледі.
+kk.awk.help.usage.direct_program = Пайдалану: awk [опциялар] 'бағдарлама' [операнд...]
+kk.awk.help.usage.program_files = Пайдалану: awk [опциялар] -f бағдарлама-файлы [-f бағдарлама-файлы...] [операнд...]
+kk.awk.help.options.field_separator =   -F sep, -Fsep          орындау алдында FS орнатады· соңғы көрсетілім жеңеді
+kk.awk.help.options.variable =   -v name=value, -vname=value  BEGIN алдында айнымалы орнатады· командалық жол реті сақталады
+kk.awk.help.options.program_file =   -f file, -ffile        AWK бастапқы мәтінін файлдан оқиды· бірнеше файл ретімен біріктіріледі
+kk.awk.help.options.color =   --color=auto|always|never  тек CLI көмегі мен диагностикасын безендіреді
+kk.awk.help.options.help =   --help                 осы көмекті көрсетіп, шығады
+kk.awk.help.options.version =   --version              нұсқа ақпаратын көрсетіп, шығады
+kk.awk.help.options.terminator =   --                     опцияларды өңдеуді аяқтайды· бұдан кейін - таңбасымен басталатын файл атаулары жұмыс істейді
+kk.awk.help.operands = Бағдарламадан кейінгі операндтар атаулы кіріс файлдары, стандартты кіріс үшін -, немесе аты [A-Za-z_][A-Za-z0-9_]* үлгісіне сәйкес келетін меншіктеулер.
+kk.awk.help.stdin = Егер кіріс операнды жоқ болса, стандартты кіріс жасырын қолданылады. Қайталанған - операндтары бір стандартты кіріс ағынын бір рет оқиды· кейінгілері файл соңын көреді.
+kk.awk.help.exit_statuses = Шығу кодтары: 0 сәтті, 1 интерпретатор қатесі, 2 қолдану қатесі, 3 хост I/O қатесі, 70 ішкі қате.
+kk.awk.help.compatibility.heading = Үйлесімділік
+kk.awk.help.compatibility.awklib_limitations = Бұл бағдарлама POSIX-пен толық үйлесімділікті мәлімдемейді. AWK тілі мен орындалу әрекеті таңдалған awklib нұсқасымен және жобаның құжатталған шектеулерімен шектеледі.
 kk.awk.version.program = awk {version}
 kk.awk.version.interpreter = awklib {version}
 kk.awk.version.license = MIT лицензиясы
@@ -1135,7 +1135,7 @@ kk.awk.usage.unknown_option = белгісіз опция: {option}
 kk.awk.usage.missing_option_argument = AWK бағдарламасы жоқ / {option}
 kk.awk.usage.invalid_assignment = қате: {assignment}
 kk.awk.usage.invalid_color_mode = қате: {value}
-kk.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+kk.awk.usage.program_file_stdin_unsupported = бағдарлама файлы - қолдау таппайды, себебі стандартты кіріс AWK деректері үшін сақталған
 kk.awk.program_file.open_failed = ашу мүмкін емес program file: {path}
 kk.awk.program_file.read_failed = оқу мүмкін емес program file: {path}
 kk.awk.input_file.open_failed = ашу мүмкін емес input file: {path}
@@ -1147,10 +1147,10 @@ kk.awk.standard_output.write_failed = жазу мүмкін емес standard ou
 kk.awk.interpreter.parse_failed = AWK parse failed
 kk.awk.interpreter.runtime_failed = AWK execution failed
 kk.awk.interpreter.unsupported_operation = unsupported awklib operation
-kk.awk.internal.localization_failed = localization failed for message key: {detail}
+kk.awk.internal.localization_failed = хабарлама кілті үшін локализация сәтсіз болды: {detail}
 kk.awk.internal.unexpected_exception = ішкі қате
-kk.awk.hint.use_help = use --help for command-line syntax
-kk.awk.hint.option_terminator = use -- before filenames that begin with -
+kk.awk.hint.use_help = командалық жол синтаксисі үшін --help пайдаланыңыз
+kk.awk.hint.option_terminator = - таңбасымен басталатын файл атауларының алдында -- пайдаланыңыз
 
 la.awk.help.title = awk
 la.awk.help.summary = Latine: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -1353,21 +1353,21 @@ lv.awk.hint.use_help = use --help for command-line syntax
 lv.awk.hint.option_terminator = use -- before filenames that begin with -
 
 mk.awk.help.title = awk
-mk.awk.help.summary = Македонски: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-mk.awk.help.usage.direct_program = Употреба: awk [options] 'program' [operand...]
-mk.awk.help.usage.program_files = Употреба: awk [options] -f program-file [-f program-file...] [operand...]
-mk.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-mk.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-mk.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-mk.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-mk.awk.help.options.help =   --help                 употреба help and exit
-mk.awk.help.options.version =   --version              show version information and exit
-mk.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-mk.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-mk.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-mk.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-mk.awk.help.compatibility.heading = Compatibility
-mk.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+mk.awk.help.summary = AWK имплементација за командна линија во Ada, изградена врз awklib. Работниот тек на командната линија го следи традиционалниот POSIX awk, а однесувањето е ограничено со избраната верзија на awklib.
+mk.awk.help.usage.direct_program = Употреба: awk [опции] 'програма' [операнд...]
+mk.awk.help.usage.program_files = Употреба: awk [опции] -f програмска-датотека [-f програмска-датотека...] [операнд...]
+mk.awk.help.options.field_separator =   -F sep, -Fsep          поставува FS пред извршување· последното појавување победува
+mk.awk.help.options.variable =   -v name=value, -vname=value  поставува променлива пред BEGIN· се зачувува редоследот од командната линија
+mk.awk.help.options.program_file =   -f file, -ffile        чита AWK извор од датотека· повеќе датотеки се спојуваат по ред
+mk.awk.help.options.color =   --color=auto|always|never  стилизира само CLI помош и дијагностика
+mk.awk.help.options.help =   --help                 ја прикажува оваа помош и излегува
+mk.awk.help.options.version =   --version              прикажува информации за верзија и излегува
+mk.awk.help.options.terminator =   --                     го завршува обработувањето опции· потоа работат имиња на датотеки што почнуваат со -
+mk.awk.help.operands = Операндите по програмата се именувани влезни датотеки, - за стандарден влез, или доделувања чие име одговара на [A-Za-z_][A-Za-z0-9_]*.
+mk.awk.help.stdin = Ако нема влезен операнд, стандардниот влез се користи имплицитно. Повторени - операнди еднаш го читаат единствениот тек на стандарден влез· подоцнежните употреби гледаат крај на датотека.
+mk.awk.help.exit_statuses = Излезни кодови: 0 успех, 1 грешка на интерпретаторот, 2 грешка при употреба, 3 хост I/O грешка, 70 внатрешна грешка.
+mk.awk.help.compatibility.heading = Компатибилност
+mk.awk.help.compatibility.awklib_limitations = Оваа програма не тврди целосна POSIX компатибилност. Јазикот AWK и однесувањето при извршување се ограничени со избраната верзија на awklib и документираните ограничувања на проектот.
 mk.awk.version.program = awk {version}
 mk.awk.version.interpreter = awklib {version}
 mk.awk.version.license = лиценца MIT
@@ -1385,7 +1385,7 @@ mk.awk.usage.unknown_option = непозната опција: {option}
 mk.awk.usage.missing_option_argument = недостасува AWK програма / {option}
 mk.awk.usage.invalid_assignment = грешка: {assignment}
 mk.awk.usage.invalid_color_mode = грешка: {value}
-mk.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+mk.awk.usage.program_file_stdin_unsupported = програмската датотека - не е поддржана затоа што стандардниот влез е резервиран за AWK податоци
 mk.awk.program_file.open_failed = не може да се отвори program file: {path}
 mk.awk.program_file.read_failed = не може да се прочита program file: {path}
 mk.awk.input_file.open_failed = не може да се отвори input file: {path}
@@ -1397,10 +1397,10 @@ mk.awk.standard_output.write_failed = не може да се запише stand
 mk.awk.interpreter.parse_failed = AWK parse failed
 mk.awk.interpreter.runtime_failed = AWK execution failed
 mk.awk.interpreter.unsupported_operation = unsupported awklib operation
-mk.awk.internal.localization_failed = localization failed for message key: {detail}
+mk.awk.internal.localization_failed = локализацијата не успеа за клучот на пораката: {detail}
 mk.awk.internal.unexpected_exception = внатрешна грешка
-mk.awk.hint.use_help = use --help for command-line syntax
-mk.awk.hint.option_terminator = use -- before filenames that begin with -
+mk.awk.hint.use_help = користете --help за синтакса на командната линија
+mk.awk.hint.option_terminator = користете -- пред имиња на датотеки што почнуваат со -
 
 mt.awk.help.title = awk
 mt.awk.help.summary = Malti: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -1753,21 +1753,21 @@ ro.awk.hint.use_help = use --help for command-line syntax
 ro.awk.hint.option_terminator = use -- before filenames that begin with -
 
 ru.awk.help.title = awk
-ru.awk.help.summary = Русский: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-ru.awk.help.usage.direct_program = Использование: awk [options] 'program' [operand...]
-ru.awk.help.usage.program_files = Использование: awk [options] -f program-file [-f program-file...] [operand...]
-ru.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-ru.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-ru.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-ru.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-ru.awk.help.options.help =   --help                 использование help and exit
-ru.awk.help.options.version =   --version              show version information and exit
-ru.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-ru.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-ru.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-ru.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-ru.awk.help.compatibility.heading = Compatibility
-ru.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+ru.awk.help.summary = Реализация AWK для командной строки на Ada, построенная на awklib. Рабочий процесс командной строки следует традиционному POSIX awk, а поведение ограничено выбранной версией awklib.
+ru.awk.help.usage.direct_program = Использование: awk [параметры] 'программа' [операнд...]
+ru.awk.help.usage.program_files = Использование: awk [параметры] -f файл-программы [-f файл-программы...] [операнд...]
+ru.awk.help.options.field_separator =   -F sep, -Fsep          задает FS перед выполнением· последнее указание имеет силу
+ru.awk.help.options.variable =   -v name=value, -vname=value  задает переменную перед BEGIN· порядок командной строки сохраняется
+ru.awk.help.options.program_file =   -f file, -ffile        читает исходный текст AWK из файла· несколько файлов объединяются по порядку
+ru.awk.help.options.color =   --color=auto|always|never  оформляет только помощь и диагностику CLI
+ru.awk.help.options.help =   --help                 показывает эту помощь и завершает работу
+ru.awk.help.options.version =   --version              показывает сведения о версии и завершает работу
+ru.awk.help.options.terminator =   --                     завершает обработку параметров· после этого работают имена файлов, начинающиеся с -
+ru.awk.help.operands = Операнды после программы являются именованными входными файлами, - для стандартного ввода, или присваиваниями, чье имя соответствует [A-Za-z_][A-Za-z0-9_]*.
+ru.awk.help.stdin = Если входной операнд отсутствует, стандартный ввод используется неявно. Повторные операнды - читают единственный поток стандартного ввода один раз· последующие использования видят конец файла.
+ru.awk.help.exit_statuses = Коды выхода: 0 успех, 1 ошибка интерпретатора, 2 ошибка использования, 3 ошибка I/O хоста, 70 внутренняя ошибка.
+ru.awk.help.compatibility.heading = Совместимость
+ru.awk.help.compatibility.awklib_limitations = Эта программа не заявляет полной совместимости с POSIX. Язык AWK и поведение выполнения ограничены выбранной версией awklib и документированными ограничениями проекта.
 ru.awk.version.program = awk {version}
 ru.awk.version.interpreter = awklib {version}
 ru.awk.version.license = лицензия MIT
@@ -1785,7 +1785,7 @@ ru.awk.usage.unknown_option = неизвестный параметр: {option}
 ru.awk.usage.missing_option_argument = отсутствует программа AWK / {option}
 ru.awk.usage.invalid_assignment = ошибка: {assignment}
 ru.awk.usage.invalid_color_mode = ошибка: {value}
-ru.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+ru.awk.usage.program_file_stdin_unsupported = файл программы - не поддерживается, потому что стандартный ввод зарезервирован для данных AWK
 ru.awk.program_file.open_failed = не удается открыть program file: {path}
 ru.awk.program_file.read_failed = не удается прочитать program file: {path}
 ru.awk.input_file.open_failed = не удается открыть input file: {path}
@@ -1797,10 +1797,10 @@ ru.awk.standard_output.write_failed = не удается записать stand
 ru.awk.interpreter.parse_failed = AWK parse failed
 ru.awk.interpreter.runtime_failed = AWK execution failed
 ru.awk.interpreter.unsupported_operation = unsupported awklib operation
-ru.awk.internal.localization_failed = localization failed for message key: {detail}
+ru.awk.internal.localization_failed = локализация не удалась для ключа сообщения: {detail}
 ru.awk.internal.unexpected_exception = внутренняя ошибка
-ru.awk.hint.use_help = use --help for command-line syntax
-ru.awk.hint.option_terminator = use -- before filenames that begin with -
+ru.awk.hint.use_help = используйте --help для синтаксиса командной строки
+ru.awk.hint.option_terminator = используйте -- перед именами файлов, начинающимися с -
 
 sk.awk.help.title = awk
 sk.awk.help.summary = Slovenčina: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -1953,21 +1953,21 @@ sq.awk.hint.use_help = use --help for command-line syntax
 sq.awk.hint.option_terminator = use -- before filenames that begin with -
 
 sr.awk.help.title = awk
-sr.awk.help.summary = Српски: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-sr.awk.help.usage.direct_program = Употреба: awk [options] 'program' [operand...]
-sr.awk.help.usage.program_files = Употреба: awk [options] -f program-file [-f program-file...] [operand...]
-sr.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-sr.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-sr.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-sr.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-sr.awk.help.options.help =   --help                 употреба help and exit
-sr.awk.help.options.version =   --version              show version information and exit
-sr.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-sr.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-sr.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-sr.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-sr.awk.help.compatibility.heading = Compatibility
-sr.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+sr.awk.help.summary = AWK имплементација командне линије у Ada, изграђена на awklib. Ток рада командне линије прати традиционални POSIX awk, а понашање је ограничено изабраном верзијом awklib.
+sr.awk.help.usage.direct_program = Употреба: awk [опције] 'програм' [операнд...]
+sr.awk.help.usage.program_files = Употреба: awk [опције] -f програмска-датотека [-f програмска-датотека...] [операнд...]
+sr.awk.help.options.field_separator =   -F sep, -Fsep          поставља FS пре извршавања· последње појављивање важи
+sr.awk.help.options.variable =   -v name=value, -vname=value  поставља променљиву пре BEGIN· редослед командне линије се чува
+sr.awk.help.options.program_file =   -f file, -ffile        чита AWK извор из датотеке· више датотека се спаја редом
+sr.awk.help.options.color =   --color=auto|always|never  стилизује само CLI помоћ и дијагностику
+sr.awk.help.options.help =   --help                 приказује ову помоћ и излази
+sr.awk.help.options.version =   --version              приказује податке о верзији и излази
+sr.awk.help.options.terminator =   --                     завршава обраду опција· после тога раде имена датотека која почињу са -
+sr.awk.help.operands = Операнди после програма су именоване улазне датотеке, - за стандардни улаз, или доделе чије име одговара [A-Za-z_][A-Za-z0-9_]*.
+sr.awk.help.stdin = Ако нема улазног операнда, стандардни улаз се користи подразумевано. Поновљени - операнди једном читају једини ток стандардног улаза· касније употребе виде крај датотеке.
+sr.awk.help.exit_statuses = Излазни кодови: 0 успех, 1 грешка интерпретатора, 2 грешка употребе, 3 грешка I/O хоста, 70 унутрашња грешка.
+sr.awk.help.compatibility.heading = Компатибилност
+sr.awk.help.compatibility.awklib_limitations = Овај програм не тврди потпуну POSIX компатибилност. AWK језик и понашање при извршавању ограничени су изабраном верзијом awklib и документованим ограничењима пројекта.
 sr.awk.version.program = awk {version}
 sr.awk.version.interpreter = awklib {version}
 sr.awk.version.license = лиценца MIT
@@ -1985,7 +1985,7 @@ sr.awk.usage.unknown_option = непозната опција: {option}
 sr.awk.usage.missing_option_argument = недостаје AWK програм / {option}
 sr.awk.usage.invalid_assignment = грешка: {assignment}
 sr.awk.usage.invalid_color_mode = грешка: {value}
-sr.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+sr.awk.usage.program_file_stdin_unsupported = програмска датотека - није подржана јер је стандардни улаз резервисан за AWK податке
 sr.awk.program_file.open_failed = не може се отворити program file: {path}
 sr.awk.program_file.read_failed = не може се прочитати program file: {path}
 sr.awk.input_file.open_failed = не може се отворити input file: {path}
@@ -1997,10 +1997,10 @@ sr.awk.standard_output.write_failed = не може се писати standard o
 sr.awk.interpreter.parse_failed = AWK parse failed
 sr.awk.interpreter.runtime_failed = AWK execution failed
 sr.awk.interpreter.unsupported_operation = unsupported awklib operation
-sr.awk.internal.localization_failed = localization failed for message key: {detail}
+sr.awk.internal.localization_failed = локализација није успела за кључ поруке: {detail}
 sr.awk.internal.unexpected_exception = унутрашња грешка
-sr.awk.hint.use_help = use --help for command-line syntax
-sr.awk.hint.option_terminator = use -- before filenames that begin with -
+sr.awk.hint.use_help = користите --help за синтаксу командне линије
+sr.awk.hint.option_terminator = користите -- пре имена датотека која почињу са -
 
 sv.awk.help.title = awk
 sv.awk.help.summary = Svenska: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
@@ -2103,21 +2103,21 @@ tr.awk.hint.use_help = use --help for command-line syntax
 tr.awk.hint.option_terminator = use -- before filenames that begin with -
 
 uk.awk.help.title = awk
-uk.awk.help.summary = Українська: Ada command-line AWK implementation built on awklib; the workflow follows traditional POSIX awk and behavior is limited to the resolved awklib version.
-uk.awk.help.usage.direct_program = Використання: awk [options] 'program' [operand...]
-uk.awk.help.usage.program_files = Використання: awk [options] -f program-file [-f program-file...] [operand...]
-uk.awk.help.options.field_separator =   -F sep, -Fsep          FS before execution; final occurrence wins
-uk.awk.help.options.variable =   -v name=value, -vname=value  assign variable before BEGIN; command-line order is kept
-uk.awk.help.options.program_file =   -f file, -ffile        read AWK source from a file; multiple files are concatenated in order
-uk.awk.help.options.color =   --color=auto|always|never  style only CLI-owned help and diagnostics
-uk.awk.help.options.help =   --help                 використання help and exit
-uk.awk.help.options.version =   --version              show version information and exit
-uk.awk.help.options.terminator =   --                     end option processing; filenames beginning with - work after this
-uk.awk.help.operands = Operands after the program are named input files, - for standard input, or assignments whose name matches [A-Za-z_][A-Za-z0-9_]*.
-uk.awk.help.stdin = If no input operand is present, standard input is used implicitly. Repeated - operands read the single standard-input stream once; later uses observe end of file.
-uk.awk.help.exit_statuses = Exit statuses: 0 success, 1 interpreter failure, 2 usage error, 3 host I/O failure, 70 internal failure.
-uk.awk.help.compatibility.heading = Compatibility
-uk.awk.help.compatibility.awklib_limitations = This program does not claim complete POSIX conformance. AWK language and runtime behavior are limited to the resolved awklib version and documented project limitations.
+uk.awk.help.summary = Реалізація AWK для командного рядка на Ada, побудована на awklib. Робочий процес командного рядка наслідує традиційний POSIX awk, а поведінка обмежена вибраною версією awklib.
+uk.awk.help.usage.direct_program = Використання: awk [параметри] 'програма' [операнд...]
+uk.awk.help.usage.program_files = Використання: awk [параметри] -f файл-програми [-f файл-програми...] [операнд...]
+uk.awk.help.options.field_separator =   -F sep, -Fsep          задає FS перед виконанням· остання поява має силу
+uk.awk.help.options.variable =   -v name=value, -vname=value  задає змінну перед BEGIN· порядок командного рядка зберігається
+uk.awk.help.options.program_file =   -f file, -ffile        читає вихідний текст AWK з файлу· кілька файлів обєднуються за порядком
+uk.awk.help.options.color =   --color=auto|always|never  стилізує лише довідку та діагностику CLI
+uk.awk.help.options.help =   --help                 показує цю довідку й завершує роботу
+uk.awk.help.options.version =   --version              показує відомості про версію й завершує роботу
+uk.awk.help.options.terminator =   --                     завершує обробку параметрів· після цього працюють імена файлів, що починаються з -
+uk.awk.help.operands = Операнди після програми є іменованими вхідними файлами, - для стандартного вводу, або присвоєннями, чиє імя відповідає [A-Za-z_][A-Za-z0-9_]*.
+uk.awk.help.stdin = Якщо вхідного операнда немає, стандартний ввід використовується неявно. Повторні операнди - один раз читають єдиний потік стандартного вводу· наступні використання бачать кінець файлу.
+uk.awk.help.exit_statuses = Коди виходу: 0 успіх, 1 помилка інтерпретатора, 2 помилка використання, 3 помилка I/O хоста, 70 внутрішня помилка.
+uk.awk.help.compatibility.heading = Сумісність
+uk.awk.help.compatibility.awklib_limitations = Ця програма не заявляє повної сумісності з POSIX. Мова AWK і поведінка виконання обмежені вибраною версією awklib та документованими обмеженнями проєкту.
 uk.awk.version.program = awk {version}
 uk.awk.version.interpreter = awklib {version}
 uk.awk.version.license = ліцензія MIT
@@ -2135,7 +2135,7 @@ uk.awk.usage.unknown_option = невідомий параметр: {option}
 uk.awk.usage.missing_option_argument = бракує програми AWK / {option}
 uk.awk.usage.invalid_assignment = помилка: {assignment}
 uk.awk.usage.invalid_color_mode = помилка: {value}
-uk.awk.usage.program_file_stdin_unsupported = program file - is unsupported because standard input is reserved for AWK data
+uk.awk.usage.program_file_stdin_unsupported = файл програми - не підтримується, бо стандартний ввід зарезервовано для даних AWK
 uk.awk.program_file.open_failed = неможливо відкрити program file: {path}
 uk.awk.program_file.read_failed = неможливо прочитати program file: {path}
 uk.awk.input_file.open_failed = неможливо відкрити input file: {path}
@@ -2147,7 +2147,7 @@ uk.awk.standard_output.write_failed = неможливо записати standa
 uk.awk.interpreter.parse_failed = AWK parse failed
 uk.awk.interpreter.runtime_failed = AWK execution failed
 uk.awk.interpreter.unsupported_operation = unsupported awklib operation
-uk.awk.internal.localization_failed = localization failed for message key: {detail}
+uk.awk.internal.localization_failed = локалізація не вдалася для ключа повідомлення: {detail}
 uk.awk.internal.unexpected_exception = внутрішня помилка
-uk.awk.hint.use_help = use --help for command-line syntax
-uk.awk.hint.option_terminator = use -- before filenames that begin with -
+uk.awk.hint.use_help = використовуйте --help для синтаксису командного рядка
+uk.awk.hint.option_terminator = використовуйте -- перед іменами файлів, що починаються з -

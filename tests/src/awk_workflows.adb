@@ -7,6 +7,7 @@ with Ada.Text_IO;
 with GNAT.OS_Lib;
 
 with Awk_Catalog_Policy;
+with Messages.Consistency;
 with Project_Tools.Alire;
 with Project_Tools.Alire_Manifests.Validation;
 with Project_Tools.Ada_Source;
@@ -376,6 +377,8 @@ procedure Awk_Workflows is
                "tests crate must depend on AUnit");
       Require (File_Has ("alire.toml", "project_tools = "),
                "tests crate must depend on project_tools");
+      Require (File_Has ("alire.toml", "messages = "),
+               "tests crate must depend on messages for catalog consistency checks");
       Require (File_Has ("alire.toml", "awk = { path = "".."" }"),
                "tests crate must pin awk relatively");
       Manifests.Require_Workspace_Pin ("../alire.toml", "awklib", "../awklib", Quiet => True);
@@ -386,6 +389,8 @@ procedure Awk_Workflows is
       Manifests.Require_Workspace_Pin ("alire.toml", "awk", "..", Quiet => True);
       Manifests.Require_Workspace_Pin
         ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
+      Manifests.Require_Workspace_Pin
+        ("alire.toml", "messages", "../../messages", Quiet => True);
       Require (File_Has ("../awk.gpr", "-gnat2022"),
                "root project must compile with Ada 2022");
       Require (File_Has ("awk_tests.gpr", "-gnat2022"),
@@ -420,6 +425,50 @@ procedure Awk_Workflows is
          Require (Text.Line_Value (Shard, Key) /= "",
                   Name & " catalog shard has empty key: " & Key);
       end Require_Shard_Key;
+
+      procedure Require_Consistent_Translations is
+         Tokens : constant Messages.Consistency.Token_Array :=
+           [U.To_Unbounded_String ("awk"),
+            U.To_Unbounded_String ("awklib"),
+            U.To_Unbounded_String ("-F"),
+            U.To_Unbounded_String ("-v"),
+            U.To_Unbounded_String ("-f"),
+            U.To_Unbounded_String ("--help"),
+            U.To_Unbounded_String ("--version"),
+            U.To_Unbounded_String ("--color"),
+            U.To_Unbounded_String ("--"),
+            U.To_Unbounded_String ("ARGV"),
+            U.To_Unbounded_String ("ARGC"),
+            U.To_Unbounded_String ("ENVIRON"),
+            U.To_Unbounded_String ("BEGIN"),
+            U.To_Unbounded_String ("END"),
+            U.To_Unbounded_String ("getline"),
+            U.To_Unbounded_String ("print"),
+            U.To_Unbounded_String ("printf"),
+            U.To_Unbounded_String ("POSIX"),
+            U.To_Unbounded_String ("MIT")];
+         Findings : Messages.Consistency.Report;
+      begin
+         Messages.Consistency.Check_File
+           (Path     => "../resources/messages/catalog.txt",
+            Verbatim => Tokens,
+            Into     => Findings);
+
+         for Index in 1 .. Findings.Count loop
+            Ada.Text_IO.Put_Line
+              (Ada.Text_IO.Standard_Error,
+               ("translation consistency finding: "
+                & Messages.Consistency.Image (Findings.Items (Index))));
+         end loop;
+
+         Require
+           (Findings.Count = 0,
+            "translation consistency check reported findings");
+
+         Require
+           (not Findings.Overflow,
+            "translation consistency produced more findings than the report holds");
+      end Require_Consistent_Translations;
    begin
       Require (Catalog /= "", "message catalog is missing or empty");
       Require (English /= "", "English catalog shard is missing or empty");
@@ -458,6 +507,7 @@ procedure Awk_Workflows is
             Require_Shard_Key (Danish, "da." & Suffix, "Danish");
          end;
       end loop;
+      Require_Consistent_Translations;
       Put_Info ("catalog checks passed");
    end Catalogs;
 

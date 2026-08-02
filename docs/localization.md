@@ -5,7 +5,11 @@ CLI-authored user-facing text is rendered through `messages` using keys under `a
 The Ada workflow validates every supported locale in the combined catalog and
 validates the English and Danish shard catalogs. Required messages must be
 non-empty, and placeholder sets must match English for each key in every
-supported locale.
+supported locale. It also runs `Messages.Consistency` against the combined
+catalog so translations keep required arguments, preserve AWK-specific verbatim
+tokens such as `awk`, `awklib`, `-F`, `-v`, `-f`, `--color`, `ARGV`, `ARGC`,
+`ENVIRON`, `BEGIN`, `END`, `getline`, `print`, and `printf`, and avoid ICU
+apostrophe escape hazards.
 
 Locales outside the supported European state-language locale set fall back
 through the `messages` runtime to the catalog default locale. If a requested
