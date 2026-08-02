@@ -49,6 +49,12 @@ package Awk_CLI.Execution is
       Command   : String;
       Output    : out U.Unbounded_String) return Boolean;
 
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Inputs Memory-backed input files.
+   --  @param Environment Normalized environment entries.
+   --  @return Execution result from awklib.
    function Execute
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -57,7 +63,23 @@ package Awk_CLI.Execution is
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
       return Execution_Result;
    --  Execute with memory-backed inputs and captured output.
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Inputs Memory-backed input files.
+   --  @param Environment Normalized environment entries.
+   --  @return Execution result from awklib.
 
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Inputs Memory-backed input files.
+   --  @param Environment Normalized environment entries.
+   --  @param Write_Output Live standard-output writer callback.
+   --  @param Write_Redirection Live redirected-output writer callback.
+   --  @param Read_Command Optional command getline callback.
+   --  @param User_Data Opaque callback state.
+   --  @return Execution result from awklib.
    function Execute_Live
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -71,7 +93,28 @@ package Awk_CLI.Execution is
       return Execution_Result;
    --  Execute with live output and redirection callbacks, but memory-backed
    --  main input.
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Inputs Memory-backed input files.
+   --  @param Environment Normalized environment entries.
+   --  @param Write_Output Live standard-output writer callback.
+   --  @param Write_Redirection Live redirected-output writer callback.
+   --  @param Read_Command Optional command getline callback.
+   --  @param User_Data Opaque callback state.
+   --  @return Execution result from awklib.
 
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Environment Normalized environment entries.
+   --  @param Read_Input Live main-input reader callback.
+   --  @param Write_Output Live standard-output writer callback.
+   --  @param Write_Redirection Live redirected-output writer callback.
+   --  @param Read_Command Optional command getline callback.
+   --  @param User_Data Opaque callback state.
+   --  @param Auxiliary_Files Memory-backed auxiliary files.
+   --  @return Execution result from awklib.
    function Execute_Live_Input
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -87,16 +130,35 @@ package Awk_CLI.Execution is
       return Execution_Result;
    --  Execute with live main-input, output, redirection, and optional command
    --  or auxiliary file callbacks.
+   --  @param Program_Source Complete AWK program source.
+   --  @param Options Parsed command-line options.
+   --  @param Operands Classified runtime operands.
+   --  @param Environment Normalized environment entries.
+   --  @param Read_Input Live main-input reader callback.
+   --  @param Write_Output Live standard-output writer callback.
+   --  @param Write_Redirection Live redirected-output writer callback.
+   --  @param Read_Command Optional command getline callback.
+   --  @param User_Data Opaque callback state.
+   --  @param Auxiliary_Files Memory-backed auxiliary files.
+   --  @return Execution result from awklib.
 
+   --  @return True when positional runtime assignments are supported.
    function Supports_Positional_Runtime_Assignments return Boolean;
    --  Return whether the resolved awklib path supports positional assignments.
+   --  @return True when positional runtime assignments are supported.
 
+   --  @return True when append redirection intent is exposed.
    function Supports_Redirection_Append_Mode return Boolean;
    --  Return whether append redirection intent is exposed by the adapter.
+   --  @return True when append redirection intent is exposed.
 
+   --  @return True when streaming execution callbacks are used.
    function Supports_Streaming_Execution return Boolean;
    --  Return whether the adapter uses streaming callbacks for execution.
+   --  @return True when streaming execution callbacks are used.
 
+   --  @return Resolved or built-against awklib version string.
    function Interpreter_Version return String;
    --  Return the resolved or built-against awklib version string.
+   --  @return Resolved or built-against awklib version string.
 end Awk_CLI.Execution;

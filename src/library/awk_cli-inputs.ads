@@ -29,6 +29,12 @@ package Awk_CLI.Inputs is
       end case;
    end record;
 
+   --  @param Operands Classified input and assignment operands.
+   --  @param Stdin Complete standard-input text.
+   --  @param Read_File Host file reader callback.
+   --  @param Path Input file path passed to Read_File.
+   --  @param Content Input file content returned by Read_File.
+   --  @return Loaded input files or a structured diagnostic.
    function Load
      (Operands  : Awk_CLI.Operands.Operand_Vectors.Vector;
       Stdin     : String;
@@ -37,4 +43,8 @@ package Awk_CLI.Inputs is
       return Load_Result;
    --  Load explicit input operands and implicit standard input into
    --  interpreter-ready file records.
+   --  @param Operands Classified input and assignment operands.
+   --  @param Stdin Complete standard-input text.
+   --  @param Read_File Host file reader callback.
+   --  @return Loaded input files or a structured diagnostic.
 end Awk_CLI.Inputs;

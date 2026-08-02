@@ -30,10 +30,19 @@ package Awk_CLI.Redirections is
       end case;
    end record;
 
+   --  @param Outputs Captured redirected outputs from awklib.
+   --  @param Write_File Host file writer callback.
+   --  @param Path Redirection path passed to Write_File.
+   --  @param Content Redirection content passed to Write_File.
+   --  @param Append Append mode passed to Write_File.
+   --  @return Success or the first structured output diagnostic.
    function Materialize
      (Outputs    : Redirection_Vectors.Vector;
       Write_File : not null access function
         (Path : String; Content : String; Append : Boolean) return Write_Status)
       return Materialize_Result;
    --  Write captured redirections in order and stop on the first host failure.
+   --  @param Outputs Captured redirected outputs from awklib.
+   --  @param Write_File Host file writer callback.
+   --  @return Success or the first structured output diagnostic.
 end Awk_CLI.Redirections;

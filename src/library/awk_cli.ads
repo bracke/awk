@@ -13,25 +13,51 @@ package Awk_CLI is
    type Invocation_Context is tagged limited private;
    --  Complete host invocation model used by the runner.
 
+   --  @param Context Invocation context to populate from the process.
    procedure Initialize_From_Process (Context : in out Invocation_Context);
    --  Populate Context from the real process arguments, environment, locale,
    --  standard streams, and terminal state.
+   --  @param Context Invocation context to populate from the process.
 
+   --  @param Context Invocation context to reset.
    procedure Clear (Context : in out Invocation_Context);
    --  Reset Context to an empty deterministic in-memory invocation.
+   --  @param Context Invocation context to reset.
 
+   --  @param Context Invocation context to update.
+   --  @param Value Raw argument text to append.
    procedure Add_Argument (Context : in out Invocation_Context; Value : String);
    --  Append one raw command-line argument for in-memory tests.
+   --  @param Context Invocation context to update.
+   --  @param Value Raw argument text to append.
 
+   --  @param Context Invocation context to update.
+   --  @param Value Complete standard-input text.
    procedure Set_Standard_Input (Context : in out Invocation_Context; Value : String);
    --  Set the complete standard-input text for in-memory execution.
+   --  @param Context Invocation context to update.
+   --  @param Value Complete standard-input text.
 
+   --  @param Context Invocation context to update.
+   --  @param Value Locale name for CLI-owned text.
    procedure Set_Locale (Context : in out Invocation_Context; Value : String);
    --  Set the locale name used for CLI-owned localized text.
+   --  @param Context Invocation context to update.
+   --  @param Value Locale name for CLI-owned text.
 
+   --  @param Context Invocation context to update.
+   --  @param Value Message catalog path.
    procedure Set_Catalog_Path (Context : in out Invocation_Context; Value : String);
    --  Set the message catalog path used by this invocation.
+   --  @param Context Invocation context to update.
+   --  @param Value Message catalog path.
 
+   --  @param Context Invocation context to update.
+   --  @param Path Virtual file path.
+   --  @param Content Virtual file content.
+   --  @param Readable Whether reads from the file succeed.
+   --  @param Writable Whether writes to the file succeed.
+   --  @param Openable Whether opening the file succeeds.
    procedure Add_File
      (Context : in out Invocation_Context;
       Path    : String;
@@ -40,66 +66,154 @@ package Awk_CLI is
       Writable : Boolean := True;
       Openable : Boolean := True);
    --  Add or replace an in-memory virtual file and its simulated I/O policy.
+   --  @param Context Invocation context to update.
+   --  @param Path Virtual file path.
+   --  @param Content Virtual file content.
+   --  @param Readable Whether reads from the file succeed.
+   --  @param Writable Whether writes to the file succeed.
+   --  @param Openable Whether opening the file succeeds.
 
+   --  @param Context Invocation context to update.
+   --  @param Command Command text to match.
+   --  @param Output Deterministic command output.
    procedure Add_Command_Output
      (Context : in out Invocation_Context;
       Command : String;
       Output  : String);
    --  Register deterministic output for command getline integration tests.
+   --  @param Context Invocation context to update.
+   --  @param Command Command text to match.
+   --  @param Output Deterministic command output.
 
+   --  @param Context Invocation context to update.
+   --  @param Name Environment variable name.
+   --  @param Value Environment variable value.
    procedure Add_Environment
      (Context : in out Invocation_Context;
       Name    : String;
       Value   : String);
    --  Add one environment entry for ENVIRON construction.
+   --  @param Context Invocation context to update.
+   --  @param Name Environment variable name.
+   --  @param Value Environment variable value.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-output writes should fail.
    procedure Fail_Standard_Output (Context : in out Invocation_Context; Enabled : Boolean);
    --  Enable or disable simulated standard-output write failure.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-output writes should fail.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-error writes should fail.
    procedure Fail_Standard_Error (Context : in out Invocation_Context; Enabled : Boolean);
    --  Enable or disable simulated standard-error write failure.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-error writes should fail.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-input reads should fail.
    procedure Fail_Standard_Input (Context : in out Invocation_Context; Enabled : Boolean);
    --  Enable or disable simulated standard-input read failure.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard-input reads should fail.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard output should be treated as a terminal.
    procedure Set_Standard_Output_Terminal (Context : in out Invocation_Context; Enabled : Boolean);
    --  Set terminal detection for standard output in this invocation.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard output should be treated as a terminal.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard error should be treated as a terminal.
    procedure Set_Standard_Error_Terminal (Context : in out Invocation_Context; Enabled : Boolean);
    --  Set terminal detection for standard error in this invocation.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether standard error should be treated as a terminal.
 
+   --  @param Context Invocation context to execute.
+   --  @return Stable process exit code.
    function Run (Context : in out Invocation_Context) return Exit_Code;
    --  Execute one complete CLI invocation and return the process exit code.
+   --  @param Context Invocation context to execute.
+   --  @return Stable process exit code.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Captured standard output.
    function Standard_Output (Context : Invocation_Context) return String;
    --  Return captured standard output from the last in-memory run.
+   --  @param Context Invocation context to inspect.
+   --  @return Captured standard output.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Captured standard error.
    function Standard_Error (Context : Invocation_Context) return String;
    --  Return captured standard error from the last in-memory run.
+   --  @param Context Invocation context to inspect.
+   --  @return Captured standard error.
 
+   --  @param Context Invocation context to inspect.
+   --  @return True when the last run recorded a structured diagnostic.
    function Has_Diagnostic (Context : Invocation_Context) return Boolean;
    --  Return whether the last run recorded a structured diagnostic.
+   --  @param Context Invocation context to inspect.
+   --  @return True when the last run recorded a structured diagnostic.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Stable message ID of the last diagnostic, or an empty string.
    function Last_Diagnostic_Message_Id (Context : Invocation_Context) return String;
    --  Return the stable message ID of the last diagnostic, if any.
+   --  @param Context Invocation context to inspect.
+   --  @return Stable message ID of the last diagnostic, or an empty string.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Category name of the last diagnostic, or an empty string.
    function Last_Diagnostic_Category (Context : Invocation_Context) return String;
    --  Return the category name of the last diagnostic, if any.
+   --  @param Context Invocation context to inspect.
+   --  @return Category name of the last diagnostic, or an empty string.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Severity name of the last diagnostic, or an empty string.
    function Last_Diagnostic_Severity (Context : Invocation_Context) return String;
    --  Return the severity name of the last diagnostic, if any.
+   --  @param Context Invocation context to inspect.
+   --  @return Severity name of the last diagnostic, or an empty string.
 
+   --  @param Context Invocation context to inspect.
+   --  @return Number of captured virtual file write operations.
    function Written_File_Count (Context : Invocation_Context) return Natural;
    --  Return the number of captured virtual file write operations.
+   --  @param Context Invocation context to inspect.
+   --  @return Number of captured virtual file write operations.
 
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return Path for captured write operation Index.
    function Written_File_Name (Context : Invocation_Context; Index : Positive) return String;
    --  Return the path for captured write operation Index.
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return Path for captured write operation Index.
 
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return Exact content for captured write operation Index.
    function Written_File_Content (Context : Invocation_Context; Index : Positive) return String;
    --  Return the exact content for captured write operation Index.
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return Exact content for captured write operation Index.
 
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return True when captured write operation Index used append semantics.
    function Written_File_Append (Context : Invocation_Context; Index : Positive) return Boolean;
    --  Return whether captured write operation Index used append semantics.
+   --  @param Context Invocation context to inspect.
+   --  @param Index Captured write operation index.
+   --  @return True when captured write operation Index used append semantics.
 
 private
    package U renames Ada.Strings.Unbounded;

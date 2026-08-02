@@ -14,10 +14,16 @@ package Awk_CLI.Environment is
    package Entry_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Env_Entry);
 
+   --  @return Environment entries visible through the Ada runtime.
    function Collect return Entry_Vectors.Vector;
    --  Return environment entries visible through the Ada runtime.
+   --  @return Environment entries visible through the Ada runtime.
 
+   --  @param Entries Raw environment entries.
+   --  @return Normalized environment entries.
    function Normalize (Entries : Entry_Vectors.Vector) return Entry_Vectors.Vector;
    --  Drop empty names and collapse duplicates while preserving first position
    --  and final value.
+   --  @param Entries Raw environment entries.
+   --  @return Normalized environment entries.
 end Awk_CLI.Environment;

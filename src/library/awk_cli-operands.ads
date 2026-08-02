@@ -23,7 +23,11 @@ package Awk_CLI.Operands is
    package Operand_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Classified_Operand);
 
+   --  @param Operands Raw post-program operands.
+   --  @return Classified operands preserving spelling, order, and indexes.
    function Classify
      (Operands : Awk_CLI.Options.Operand_Vectors.Vector) return Operand_Vectors.Vector;
    --  Classify operands while preserving spelling, order, and original indexes.
+   --  @param Operands Raw post-program operands.
+   --  @return Classified operands preserving spelling, order, and indexes.
 end Awk_CLI.Operands;

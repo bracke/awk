@@ -8,20 +8,40 @@ package Awk_CLI.Output is
    --  AWK program output must bypass this package except for raw stream
    --  forwarding performed by the top-level runner.
 
+   --  @param Mode Color mode to apply to CLI-owned presentation text.
    procedure Set_Color (Mode : Awk_CLI.Options.Color_Mode);
    --  Set the process-wide color policy used for subsequent CLI presentation.
+   --  @param Mode Color mode to apply to CLI-owned presentation text.
 
+   --  @param Catalog Initialized catalog runtime.
+   --  @param Destination_Is_Terminal Whether the help destination is a terminal.
+   --  @return Localized help text.
    function Help
      (Catalog : Awk_CLI.Localization.Catalog;
       Destination_Is_Terminal : Boolean) return String;
    --  Return localized help text for the destination styling policy.
+   --  @param Catalog Initialized catalog runtime.
+   --  @param Destination_Is_Terminal Whether the help destination is a terminal.
+   --  @return Localized help text.
 
+   --  @param Catalog Initialized catalog runtime.
+   --  @return Localized version metadata text.
    function Version (Catalog : Awk_CLI.Localization.Catalog) return String;
    --  Return localized version metadata text.
+   --  @param Catalog Initialized catalog runtime.
+   --  @return Localized version metadata text.
 
+   --  @param Catalog Initialized catalog runtime.
+   --  @param Item Structured diagnostic to render.
+   --  @param Destination_Is_Terminal Whether the diagnostic destination is a terminal.
+   --  @return Localized diagnostic text.
    function Diagnostic_Text
      (Catalog : Awk_CLI.Localization.Catalog;
       Item    : Awk_CLI.Diagnostics.Diagnostic;
       Destination_Is_Terminal : Boolean) return String;
    --  Render one structured diagnostic with localized text and safe escaping.
+   --  @param Catalog Initialized catalog runtime.
+   --  @param Item Structured diagnostic to render.
+   --  @param Destination_Is_Terminal Whether the diagnostic destination is a terminal.
+   --  @return Localized diagnostic text.
 end Awk_CLI.Output;

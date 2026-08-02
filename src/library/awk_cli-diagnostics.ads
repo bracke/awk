@@ -31,6 +31,14 @@ package Awk_CLI.Diagnostics is
       Column           : Natural := 0;
    end record;
 
+   --  @param Message_Id Stable catalog message identifier.
+   --  @param Severity Diagnostic severity.
+   --  @param Category Diagnostic category.
+   --  @param Name Optional structured name argument.
+   --  @param Value Optional structured value argument.
+   --  @param Detail Optional technical detail argument.
+   --  @param Hint_Id Optional stable hint message identifier.
+   --  @return Structured diagnostic record.
    function Make
      (Message_Id : String;
       Severity   : Diagnostic_Severity;
@@ -40,17 +48,43 @@ package Awk_CLI.Diagnostics is
       Detail     : String := "";
       Hint_Id    : String := "") return Diagnostic;
    --  Build a diagnostic with stable message identity and typed arguments.
+   --  @param Message_Id Stable catalog message identifier.
+   --  @param Severity Diagnostic severity.
+   --  @param Category Diagnostic category.
+   --  @param Name Optional structured name argument.
+   --  @param Value Optional structured value argument.
+   --  @param Detail Optional technical detail argument.
+   --  @param Hint_Id Optional stable hint message identifier.
+   --  @return Structured diagnostic record.
 
+   --  @param Item Diagnostic to enrich.
+   --  @param Source_Name Display source name.
+   --  @param Line One-based source line.
+   --  @param Column Source column, or zero when unknown.
+   --  @return Diagnostic with source-location metadata attached.
    function With_Source
      (Item        : Diagnostic;
       Source_Name : String;
       Line        : Positive;
       Column      : Natural := 0) return Diagnostic;
    --  Return Item with source-location metadata attached.
+   --  @param Item Diagnostic to enrich.
+   --  @param Source_Name Display source name.
+   --  @param Line One-based source line.
+   --  @param Column Source column, or zero when unknown.
+   --  @return Diagnostic with source-location metadata attached.
 
+   --  @param Text Untrusted text for diagnostic presentation.
+   --  @return Escaped diagnostic-safe text.
    function Escape (Text : String) return String;
    --  Escape untrusted text for diagnostic presentation only.
+   --  @param Text Untrusted text for diagnostic presentation.
+   --  @return Escaped diagnostic-safe text.
 
+   --  @param Item Diagnostic to classify.
+   --  @return Stable process exit status for Item.
    function Status_For (Item : Diagnostic) return Exit_Code;
    --  Map Item to the stable process exit status registry.
+   --  @param Item Diagnostic to classify.
+   --  @return Stable process exit status for Item.
 end Awk_CLI.Diagnostics;

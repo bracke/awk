@@ -23,6 +23,10 @@ maintenance docs, the dependency policy, the traceability matrix, message
 catalogs, and `MANIFEST.txt` containing byte counts and deterministic
 FNV-1a-64 checksums for packaged files.
 
+The package-resource gate verifies that message catalogs, compatibility
+documentation, final acceptance documentation, and the license remain in the
+packaged file list.
+
 This is a workspace release, not a publish-ready Alire index release. See
 `docs/dependency-policy.md` for the current local pins, the
 `terminal_styles = "=0.1.0-dev"` and `hostkit = "=0.1.0-dev"` constraints,

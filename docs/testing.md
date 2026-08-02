@@ -58,8 +58,10 @@ The workflow command `./bin/awk_workflows verify` builds root and tests in
 development mode, runs AUnit, validates crate metadata, validates required docs,
 validates English and Danish shard catalogs, checks every supported European
 state-language locale in the combined catalog, checks catalog placeholders and default
-locale policy, validates the conformance manifest, checks local Alire workspace pins,
-checks adapter isolation through parsed Ada `with` clauses, rejects
+locale policy, validates the conformance manifest, checks exit-status and
+option/help documentation drift, checks the package manifest policy, checks
+public GNATdoc coverage, checks local Alire workspace pins, checks adapter
+isolation through parsed Ada `with` clauses, rejects
 handwritten ANSI code tokens in production source while allowing the diagnostic
 sanitizer to recognize ESC for escaping, rejects system-AWK fallback code
 tokens in production source, verifies command-line access stays in the main

@@ -31,6 +31,34 @@ procedure Awk_Workflows is
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
 
+   Package_Files : constant Files.Path_List :=
+     [U.To_Unbounded_String ("bin/awk"),
+      U.To_Unbounded_String ("LICENSE"),
+      U.To_Unbounded_String ("README.md"),
+      U.To_Unbounded_String ("CHANGELOG.md"),
+      U.To_Unbounded_String ("CONTRIBUTING.md"),
+      U.To_Unbounded_String ("SECURITY.md"),
+      U.To_Unbounded_String ("docs/quickstart.md"),
+      U.To_Unbounded_String ("docs/command-line-reference.md"),
+      U.To_Unbounded_String ("docs/compatibility.md"),
+      U.To_Unbounded_String ("docs/architecture.md"),
+      U.To_Unbounded_String ("docs/diagnostics.md"),
+      U.To_Unbounded_String ("docs/localization.md"),
+      U.To_Unbounded_String ("docs/testing.md"),
+      U.To_Unbounded_String ("docs/building.md"),
+      U.To_Unbounded_String ("docs/releasing.md"),
+      U.To_Unbounded_String ("docs/dependency-policy.md"),
+      U.To_Unbounded_String ("docs/final-acceptance.md"),
+      U.To_Unbounded_String ("docs/ai/project-map.md"),
+      U.To_Unbounded_String ("docs/ai/package-contracts.md"),
+      U.To_Unbounded_String ("docs/ai/invariants.md"),
+      U.To_Unbounded_String ("docs/ai/workflows.md"),
+      U.To_Unbounded_String ("docs/ai/prohibited-designs.md"),
+      U.To_Unbounded_String ("docs/ai/traceability.md"),
+      U.To_Unbounded_String ("resources/messages/catalog.txt"),
+      U.To_Unbounded_String ("resources/messages/en/catalog.txt"),
+      U.To_Unbounded_String ("resources/messages/da/catalog.txt")];
+
    procedure Put_Info (Message : String) is
    begin
       Ada.Text_IO.Put_Line (Message);
@@ -105,6 +133,7 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/building.md"),
          U.To_Unbounded_String ("../docs/releasing.md"),
          U.To_Unbounded_String ("../docs/dependency-policy.md"),
+         U.To_Unbounded_String ("../docs/final-acceptance.md"),
          U.To_Unbounded_String ("../docs/ai/project-map.md"),
          U.To_Unbounded_String ("../docs/ai/package-contracts.md"),
          U.To_Unbounded_String ("../docs/ai/invariants.md"),
@@ -235,6 +264,11 @@ procedure Awk_Workflows is
         (File_Has ("../docs/releasing.md", "dependency policy")
          and then File_Has ("../docs/releasing.md", "traceability matrix"),
          "release docs must document packaged audit documentation");
+      Require
+        (File_Has ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->")
+         and then File_Has ("../docs/final-acceptance.md", "Normative acceptance gates")
+         and then File_Has ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
+         "final acceptance and traceability docs must describe release gates");
       Require
         (File_Has ("../docs/releasing.md", "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`")
          and then File_Has ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
@@ -469,6 +503,153 @@ procedure Awk_Workflows is
          "command getline supported through awklib callback");
       Put_Info ("conformance checks passed");
    end Conformance;
+
+   function Exit_Constant_Value (Source, Name : String) return String is
+      Mark : Natural := Text.Index (Source, Name);
+      Scan : Natural;
+      Last : Natural;
+   begin
+      if Mark = 0 then
+         return "";
+      end if;
+
+      Mark := Text.Index_From (Source, ":=", Mark);
+      if Mark = 0 then
+         return "";
+      end if;
+
+      Scan := Mark + 2;
+      while Scan <= Source'Last and then Source (Scan) = ' ' loop
+         Scan := Scan + 1;
+      end loop;
+
+      Last := Scan - 1;
+      while Last < Source'Last and then Source (Last + 1) in '0' .. '9' loop
+         Last := Last + 1;
+      end loop;
+
+      if Last < Scan then
+         return "";
+      end if;
+      return Source (Scan .. Last);
+   end Exit_Constant_Value;
+
+   procedure Exit_Status_Drift is
+      Source  : constant String := File_Text ("../src/library/awk_cli-diagnostics.ads");
+      Docs    : constant String := File_Text ("../docs/diagnostics.md");
+      Allowed : U.Unbounded_String;
+
+      procedure Require_Exit (Name : String) is
+         Value : constant String := Exit_Constant_Value (Source, Name);
+      begin
+         Require (Value /= "", "exit status constant missing from source: " & Name);
+         U.Append (Allowed, " " & Value & " ");
+         Require
+           (Contains (Docs, "| `" & Value & "` |"),
+            "exit status " & Value & " from " & Name & " is not documented");
+      end Require_Exit;
+
+      From : Positive := Docs'First;
+   begin
+      Require_Exit ("Success_Exit");
+      Require_Exit ("Interpreter_Exit");
+      Require_Exit ("Usage_Exit");
+      Require_Exit ("IO_Exit");
+      Require_Exit ("Internal_Exit");
+
+      while From <= Docs'Last loop
+         declare
+            Mark : constant Natural := Text.Index_From (Docs, "| `", From);
+            Stop : Natural;
+         begin
+            exit when Mark = 0;
+            Stop := Mark + 3;
+            while Stop <= Docs'Last and then Docs (Stop) in '0' .. '9' loop
+               Stop := Stop + 1;
+            end loop;
+            if Stop > Mark + 3
+              and then Stop <= Docs'Last
+              and then Docs (Stop) = '`'
+            then
+               declare
+                  Value : constant String := Docs (Mark + 3 .. Stop - 1);
+               begin
+                  Require
+                    (Contains (U.To_String (Allowed), " " & Value & " "),
+                     "exit status " & Value & " is documented but not defined");
+               end;
+            end if;
+            From := Mark + 3;
+         end;
+      end loop;
+      Put_Info ("exit status drift checks passed");
+   end Exit_Status_Drift;
+
+   procedure Option_Drift is
+      Reference : constant String := File_Text ("../docs/command-line-reference.md");
+      Catalog   : constant String := File_Text ("../resources/messages/catalog.txt");
+
+      procedure Require_Option (Spelling : String) is
+      begin
+         Require
+           (Contains (Reference, Spelling),
+            "command-line reference missing accepted option: " & Spelling);
+         Require
+           (Contains (Catalog, Spelling),
+            "help catalog missing accepted option: " & Spelling);
+      end Require_Option;
+   begin
+      Require_Option ("-F");
+      Require_Option ("-v");
+      Require_Option ("-f");
+      Require_Option ("--color");
+      Require_Option ("--help");
+      Require_Option ("--version");
+      Require_Option ("--");
+      Require
+        (Contains (Reference, "--color=auto|always|never")
+         and then Contains (Catalog, "--color=auto|always|never"),
+         "color modes must stay documented in reference and help catalog");
+      Put_Info ("option drift checks passed");
+   end Option_Drift;
+
+   procedure Public_Spec_Docs is
+      Specs : constant Files.Path_List := Files.List_Tree ("../src/library", "*.ads");
+   begin
+      for Path of Specs loop
+         Ada_Source.Require_Public_GNATdoc_Tags
+           (Spec_Path => U.To_String (Path));
+      end loop;
+      Put_Info ("public spec documentation checks passed");
+   end Public_Spec_Docs;
+
+   procedure Package_Manifest_Policy is
+      procedure Require_Packaged (Path : String) is
+      begin
+         Require
+           (Contains (File_Text ("src/awk_workflows.adb"),
+                      "U.To_Unbounded_String (""" & Path & """)"),
+            "package file list missing: " & Path);
+      end Require_Packaged;
+   begin
+      for Path of Package_Files loop
+         if U.To_String (Path) /= "bin/awk" then
+            Files.Require_File ("../" & U.To_String (Path),
+                                "packaged source file missing: " & U.To_String (Path));
+         end if;
+      end loop;
+      Require_Packaged ("resources/messages/catalog.txt");
+      Require_Packaged ("resources/messages/en/catalog.txt");
+      Require_Packaged ("resources/messages/da/catalog.txt");
+      Require_Packaged ("docs/compatibility.md");
+      Require_Packaged ("docs/final-acceptance.md");
+      Require_Packaged ("LICENSE");
+      Require
+        (File_Has ("../docs/releasing.md", "message catalogs")
+         and then File_Has ("../docs/testing.md", "package manifest"),
+         "release/testing docs must describe packaged resources");
+      Put_Info ("package manifest policy checks passed");
+   end Package_Manifest_Policy;
 
    procedure Source_Policy is
       function Required_Message_Key (Key : String) return Boolean is
@@ -713,6 +894,7 @@ procedure Awk_Workflows is
          Suite_Add_Suffix     => ".Case_Type)",
          Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
          Quiet                => True);
+      Public_Spec_Docs;
       Files.Require_Files
         ([U.To_Unbounded_String ("src/awk_tests-support.ads"),
           U.To_Unbounded_String ("src/awk_tests-support.adb")],
@@ -772,6 +954,9 @@ procedure Awk_Workflows is
       Docs;
       Catalogs;
       Conformance;
+      Exit_Status_Drift;
+      Option_Drift;
+      Package_Manifest_Policy;
       Source_Policy;
       Install_Boundary;
    end Verify;
@@ -797,33 +982,6 @@ procedure Awk_Workflows is
 
    procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
-      Package_Files : constant array (Positive range <>) of U.Unbounded_String :=
-        [U.To_Unbounded_String ("bin/awk"),
-         U.To_Unbounded_String ("LICENSE"),
-         U.To_Unbounded_String ("README.md"),
-         U.To_Unbounded_String ("CHANGELOG.md"),
-         U.To_Unbounded_String ("CONTRIBUTING.md"),
-         U.To_Unbounded_String ("SECURITY.md"),
-         U.To_Unbounded_String ("docs/quickstart.md"),
-         U.To_Unbounded_String ("docs/command-line-reference.md"),
-         U.To_Unbounded_String ("docs/compatibility.md"),
-         U.To_Unbounded_String ("docs/architecture.md"),
-         U.To_Unbounded_String ("docs/diagnostics.md"),
-         U.To_Unbounded_String ("docs/localization.md"),
-         U.To_Unbounded_String ("docs/testing.md"),
-         U.To_Unbounded_String ("docs/building.md"),
-         U.To_Unbounded_String ("docs/releasing.md"),
-         U.To_Unbounded_String ("docs/dependency-policy.md"),
-         U.To_Unbounded_String ("docs/ai/project-map.md"),
-         U.To_Unbounded_String ("docs/ai/package-contracts.md"),
-         U.To_Unbounded_String ("docs/ai/invariants.md"),
-         U.To_Unbounded_String ("docs/ai/workflows.md"),
-         U.To_Unbounded_String ("docs/ai/prohibited-designs.md"),
-         U.To_Unbounded_String ("docs/ai/traceability.md"),
-         U.To_Unbounded_String ("resources/messages/catalog.txt"),
-         U.To_Unbounded_String ("resources/messages/en/catalog.txt"),
-         U.To_Unbounded_String ("resources/messages/da/catalog.txt")];
-
       procedure Add_Manifest_Line
         (Buffer : in out U.Unbounded_String;
          Path   : String)
@@ -918,6 +1076,9 @@ begin
       Catalogs;
       Conformance;
       Source_Policy;
+      Exit_Status_Drift;
+      Option_Drift;
+      Package_Manifest_Policy;
       Install_Boundary;
       Package_Artifact (Release_Mode => True);
    elsif Command = "--help" or else Command = "-h" then
