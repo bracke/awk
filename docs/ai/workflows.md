@@ -32,3 +32,7 @@ Alire workspace pins.
 `release` requires a clean git working tree, builds root and tests with
 `--release --profiles=*=release`, runs the same mandatory checks, and packages
 only after those gates pass.
+
+GitHub Actions CI checks out the workspace pin closure, installs Alire, builds
+`awk_workflows`, and invokes `./bin/awk_workflows release`. CI configuration
+must stay limited to environment setup and invocation of the Ada workflow.

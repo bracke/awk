@@ -1384,6 +1384,13 @@ procedure Awk_Workflows is
       Files.Require_Contains
         ("src/awk_workflows.adb", "Require_Clean_Repository;",
          "release workflow must check git status", Quiet => True);
+      Files.Require_File
+        ("../.github/workflows/ci.yml",
+         "CI workflow must be present", Quiet => True);
+      Files.Require_Contains
+        ("../.github/workflows/ci.yml", "./bin/awk_workflows release",
+         "CI workflow must delegate release gates to Ada tooling",
+         Quiet => True);
       Require
         (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
                                              "      Verify;"),
