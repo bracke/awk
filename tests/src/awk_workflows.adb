@@ -507,7 +507,8 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("[operand...]"),
             U.To_Unbounded_String ("-f file, -ffile"),
             U.To_Unbounded_String ("-F sep, -Fsep"),
-            U.To_Unbounded_String ("-v name=value, -vname=value")];
+            U.To_Unbounded_String ("-v name=value, -vname=value"),
+            U.To_Unbounded_String ("name=value")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
