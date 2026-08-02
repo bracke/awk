@@ -1324,7 +1324,7 @@ procedure Awk_Workflows is
         ("src/awk_workflows.adb", "--release",
          "release workflow must use Alire release builds", Quiet => True);
       Files.Require_Contains
-        ("src/awk_workflows.adb", "status",
+        ("src/awk_workflows.adb", "Require_Clean_Repository;",
          "release workflow must check git status", Quiet => True);
       Require
         (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
