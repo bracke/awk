@@ -727,6 +727,35 @@ package body Awk_Tests.Process is
       end;
    end Test_Process_Danish_Diagnostic_From_Locale;
 
+   procedure Test_Process_Unsupported_Locale_Fallback
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("LC_ALL=fr_FR.UTF-8"),
+         new String'("../bin/awk"),
+         new String'("--bad")];
+   begin
+      Assert (Env /= "", "env executable is available for unsupported-locale process test");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => Env,
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 2, "unsupported locale diagnostic exits with usage status");
+         Assert (Contains (Output, "unknown option"),
+                 "unsupported locale falls back to English at process boundary");
+         Assert (Contains (Output, "hint:"),
+                 "fallback process hint is emitted");
+      end;
+   end Test_Process_Unsupported_Locale_Fallback;
+
    procedure Test_Process_Explicit_Stdin_Eof
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -985,6 +1014,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Danish_Diagnostic_From_Locale'Access,
          "process Danish diagnostic from locale");
+      Registration.Register_Routine
+        (T, Test_Process_Unsupported_Locale_Fallback'Access,
+         "process unsupported locale fallback");
       Registration.Register_Routine
         (T, Test_Process_Explicit_Stdin_Eof'Access,
          "process explicit stdin eof");
