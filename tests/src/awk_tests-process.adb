@@ -37,8 +37,14 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process version exits successfully");
-      Assert (Contains (U.To_String (Output), "awk 0.1.0"), "process version includes awk version");
-      Assert (Contains (U.To_String (Output), "awklib 0.1.0"), "process version includes awklib version");
+      Assert (Contains (U.To_String (Output), "awk 0.1.0" & LF),
+              "process version includes awk version");
+      Assert (Contains (U.To_String (Output), "awklib 0.1.0" & LF),
+              "process version includes awklib version");
+      Assert (Contains (U.To_String (Output), "license MIT" & LF),
+              "process version includes license");
+      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+              "version output is not terminal-styled");
    end Test_Process_Version;
 
    procedure Test_Process_Localized_Version_From_Locale
