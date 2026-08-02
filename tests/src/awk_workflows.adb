@@ -1385,8 +1385,8 @@ procedure Awk_Workflows is
       Option_Drift;
       Package_Manifest_Policy;
       Source_Policy;
-      Build_Output_Policy;
       Install_Boundary;
+      Build_Output_Policy;
    end Verify;
 
    procedure Clean is
@@ -1509,12 +1509,12 @@ begin
       Catalogs;
       Conformance;
       Source_Policy;
-      Build_Output_Policy;
       Exit_Status_Drift;
       Option_Drift;
       Package_Manifest_Policy;
       Install_Boundary;
       Package_Artifact (Release_Mode => True);
+      Build_Output_Policy;
    elsif Command = "--help" or else Command = "-h" then
       Usage;
    else
