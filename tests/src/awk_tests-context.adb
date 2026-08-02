@@ -82,6 +82,49 @@ package body Awk_Tests.Context is
          "stderr write failure does not replace the original diagnostic ID");
    end Test_Context_Stderr_Failure;
 
+   procedure Test_Context_Help_Short_Circuits_Runtime_State
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--help");
+      Awk_CLI.Add_Argument (Context, "-f");
+      Awk_CLI.Add_Argument (Context, "missing.awk");
+      Awk_CLI.Add_Argument (Context, "missing-input.txt");
+      Awk_CLI.Fail_Standard_Input (Context, True);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "help ignores runtime state and exits successfully");
+      Assert (Awk_CLI.Standard_Error (Context) = "", "help emits no diagnostic");
+      Assert (not Awk_CLI.Has_Diagnostic (Context), "help records no diagnostic");
+      Assert (Awk_CLI.Standard_Output (Context)'Length > 0, "help text is emitted");
+   end Test_Context_Help_Short_Circuits_Runtime_State;
+
+   procedure Test_Context_Version_Short_Circuits_Runtime_State
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--version");
+      Awk_CLI.Add_Argument (Context, "-f");
+      Awk_CLI.Add_Argument (Context, "missing.awk");
+      Awk_CLI.Add_Argument (Context, "missing-input.txt");
+      Awk_CLI.Fail_Standard_Input (Context, True);
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "version ignores runtime state and exits successfully");
+      Assert (Awk_CLI.Standard_Error (Context) = "", "version emits no diagnostic");
+      Assert (not Awk_CLI.Has_Diagnostic (Context), "version records no diagnostic");
+      Assert (Awk_CLI.Standard_Output (Context) = "awk 0.1.0" & LF &
+                                           "awklib 0.1.0" & LF &
+                                           "license MIT" & LF,
+              "version text is emitted exactly");
+   end Test_Context_Version_Short_Circuits_Runtime_State;
+
    procedure Test_Context_Expressions_Regex_And_Builtins
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -224,6 +267,12 @@ package body Awk_Tests.Context is
       Registration.Register_Routine (T, Test_Context_File_Run'Access, "context file run");
       Registration.Register_Routine (T, Test_Context_Output_Failure'Access, "context output failure");
       Registration.Register_Routine (T, Test_Context_Stderr_Failure'Access, "context stderr failure");
+      Registration.Register_Routine
+        (T, Test_Context_Help_Short_Circuits_Runtime_State'Access,
+         "context help short circuit");
+      Registration.Register_Routine
+        (T, Test_Context_Version_Short_Circuits_Runtime_State'Access,
+         "context version short circuit");
       Registration.Register_Routine
         (T, Test_Context_Expressions_Regex_And_Builtins'Access,
          "context expressions regex builtins");
