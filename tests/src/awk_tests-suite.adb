@@ -984,6 +984,27 @@ package body Awk_Tests.Suite is
               "getline < file uses files registered through the execution adapter");
    end Test_Context_Auxiliary_Getline_File;
 
+   procedure Test_Context_Main_Getline_From_Begin
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { getline line; print FILENAME, FNR, NR, line }"
+         & " { print ""main"", FNR, NR, $0 }");
+      Awk_CLI.Add_Argument (Context, "-");
+      Awk_CLI.Set_Standard_Input (Context, "first" & LF & "second" & LF);
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 0, "main-input getline from BEGIN succeeds");
+      Assert
+        (Awk_CLI.Standard_Output (Context) =
+         "- 1 1 first" & LF & "main 2 2 second" & LF,
+         "BEGIN getline shares the CLI main-input cursor");
+   end Test_Context_Main_Getline_From_Begin;
+
    procedure Test_Context_Argv_Argc (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -1097,8 +1118,9 @@ package body Awk_Tests.Suite is
       Has_Unsupported : Boolean := False;
       Has_Getline : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 4, "registry has accepted limitation entries");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"), "getline BEGIN ID present");
+      Assert (Awk_CLI.Compatibility.Count >= 3, "registry has accepted limitation entries");
+      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"),
+              "main-input getline from BEGIN is no longer a compatibility limitation");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"), "pipe getline ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
@@ -1152,7 +1174,7 @@ package body Awk_Tests.Suite is
         (Awk_CLI.Compatibility.Area (1) = Awk_CLI.Compatibility.Getline,
          "getline area is explicit");
       Assert
-        (Awk_CLI.Compatibility.Status (2) = Awk_CLI.Compatibility.Unsupported_By_Awklib,
+        (Awk_CLI.Compatibility.Status (1) = Awk_CLI.Compatibility.Unsupported_By_Awklib,
          "getline status is explicit");
    end Test_Compatibility_Registry;
 
@@ -1916,6 +1938,9 @@ package body Awk_Tests.Suite is
       Registration.Register_Routine
         (T, Test_Context_Auxiliary_Getline_File'Access,
          "context auxiliary getline file");
+      Registration.Register_Routine
+        (T, Test_Context_Main_Getline_From_Begin'Access,
+         "context main getline from BEGIN");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");
       Registration.Register_Routine
         (T, Test_Context_Runtime_Assignment_Positions'Access,

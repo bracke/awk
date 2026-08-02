@@ -12,14 +12,7 @@ package body Awk_CLI.Compatibility is
    end record;
 
    Entries : constant array (Positive range <>) of Registry_Entry :=
-     [(Id            => new String'("AWK-COMPAT-GETLINE-001"),
-       Area          => Getline,
-       Status        => Unsupported_By_Awklib,
-       Description   => new String'("main-input getline from BEGIN is inherited from awklib"),
-       Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("compatibility registry")),
-      (Id            => new String'("AWK-COMPAT-GETLINE-002"),
+     [(Id            => new String'("AWK-COMPAT-GETLINE-002"),
        Area          => Getline,
        Status        => Unsupported_By_Awklib,
        Description   => new String'("command-pipe getline is not implemented by the CLI"),
