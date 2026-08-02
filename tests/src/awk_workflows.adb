@@ -220,62 +220,68 @@ procedure Awk_Workflows is
          and then Files.File_Contains ("../docs/testing.md", "every supported European" & ASCII.LF &
                                                "state-language locale"),
          "localization docs must document supported European locale catalog validation");
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "main input is callback-driven"),
-         "architecture docs must document memory-oriented host integration");
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "AWK record splitting"),
-         "architecture docs must document awklib text streaming callbacks");
-      Require
-        (Files.File_Contains ("../docs/architecture.md",
-                   "Supports_Redirection_Append_Mode = True"),
-         "architecture docs must document append redirection capability");
-      Require
-        (Files.File_Contains ("../docs/architecture.md",
-                   "Supports_Streaming_Execution = True"),
-         "architecture docs must document streaming capability");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "structured diagnostic"),
-         "testing docs must mention structured diagnostic assertions");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "awk_tests-cli_options"),
-         "testing docs must document subsystem test packages");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "conformance manifest"),
-         "testing docs must mention conformance manifest validation");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "Alire install-boundary"),
-         "testing docs must mention install-boundary validation");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "checks local Alire workspace pins"),
-         "testing docs must mention workspace pin validation");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "parsed Ada `with` clauses"),
-         "testing docs must mention parsed Ada source-policy validation");
-      Require
-        (Files.File_Contains ("../docs/testing.md", "FNV-1a-64"),
-         "testing docs must mention release checksum validation");
-      Require
-        (Files.File_Contains ("../docs/building.md", "install boundary"),
-         "building docs must mention install boundary verification");
-      Require
-        (Files.File_Contains ("../docs/building.md", "generated release packages"),
-         "building docs must mention generated release package cleanup");
-      Require
-        (Files.File_Contains ("../docs/building.md", "local Alire workspace pins"),
-         "building docs must mention workspace pin verification");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "--release --profiles=*=release"),
-         "release docs must document release-profile builds");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "clean git working tree"),
-         "release docs must document clean-tree enforcement");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "local Alire workspace pins"),
-         "release docs must mention workspace pin verification");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "FNV-1a-64"),
-         "release docs must document manifest checksum algorithm");
+      Files.Require_Contains
+        ("../docs/architecture.md", "main input is callback-driven",
+         "architecture docs must document memory-oriented host integration",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md", "AWK record splitting",
+         "architecture docs must document awklib text streaming callbacks",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md", "Supports_Redirection_Append_Mode = True",
+         "architecture docs must document append redirection capability",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md", "Supports_Streaming_Execution = True",
+         "architecture docs must document streaming capability", Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "structured diagnostic",
+         "testing docs must mention structured diagnostic assertions",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "awk_tests-cli_options",
+         "testing docs must document subsystem test packages", Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "conformance manifest",
+         "testing docs must mention conformance manifest validation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "Alire install-boundary",
+         "testing docs must mention install-boundary validation", Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "checks local Alire workspace pins",
+         "testing docs must mention workspace pin validation", Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "parsed Ada `with` clauses",
+         "testing docs must mention parsed Ada source-policy validation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md", "FNV-1a-64",
+         "testing docs must mention release checksum validation", Quiet => True);
+      Files.Require_Contains
+        ("../docs/building.md", "install boundary",
+         "building docs must mention install boundary verification",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/building.md", "generated release packages",
+         "building docs must mention generated release package cleanup",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/building.md", "local Alire workspace pins",
+         "building docs must mention workspace pin verification", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "--release --profiles=*=release",
+         "release docs must document release-profile builds", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "clean git working tree",
+         "release docs must document clean-tree enforcement", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "local Alire workspace pins",
+         "release docs must mention workspace pin verification", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "FNV-1a-64",
+         "release docs must document manifest checksum algorithm", Quiet => True);
       Require
         (Files.File_Contains ("../docs/releasing.md", "dependency policy")
          and then Files.File_Contains ("../docs/releasing.md", "traceability matrix"),
