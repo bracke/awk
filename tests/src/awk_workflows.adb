@@ -39,9 +39,7 @@ procedure Awk_Workflows is
 
    procedure Fail (Message : String) is
    begin
-      Ada.Text_IO.Put_Line (Ada.Text_IO.Standard_Error, Message);
-      CLI.Set_Exit_Status (CLI.Failure);
-      raise Program_Error;
+      Project_Tools.Release_Checks.Fail (Message);
    end Fail;
 
    procedure Require (Condition : Boolean; Message : String) is
