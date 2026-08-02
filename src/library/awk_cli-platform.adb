@@ -4,6 +4,7 @@ with Ada.Environment_Variables;
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with Interfaces.C_Streams;
+with System;
 with Hostkit;
 with Hostkit.Fs;
 with Hostkit.Host;
@@ -286,10 +287,43 @@ package body Awk_CLI.Platform is
          return False;
    end Write_File;
 
+   function Write_Standard_Stream
+     (Stream : Interfaces.C_Streams.FILEs;
+      Content : String) return Boolean
+   is
+      use type Interfaces.C_Streams.size_t;
+      use type System.Address;
+
+      Written : Interfaces.C_Streams.size_t := 0;
+      Length  : constant Interfaces.C_Streams.size_t :=
+        Interfaces.C_Streams.size_t (Content'Length);
+      Handle  : constant Interfaces.C_Streams.int :=
+        Interfaces.C_Streams.fileno (Stream);
+   begin
+      if Stream = Interfaces.C_Streams.NULL_Stream or else Handle < 0 then
+         return False;
+      end if;
+
+      Interfaces.C_Streams.set_binary_mode (Handle);
+
+      if Content'Length > 0 then
+         Written :=
+           Interfaces.C_Streams.fwrite
+             (Content (Content'First)'Address,
+              1,
+              Length,
+              Stream);
+      end if;
+
+      return Written = Length and then Interfaces.C_Streams.fflush (Stream) = 0;
+   exception
+      when others =>
+         return False;
+   end Write_Standard_Stream;
+
    function Write_Standard_Output (Content : String) return Boolean is
    begin
-      Ada.Text_IO.Put (Content);
-      return True;
+      return Write_Standard_Stream (Interfaces.C_Streams.stdout, Content);
    exception
       when others =>
          return False;
@@ -297,8 +331,7 @@ package body Awk_CLI.Platform is
 
    function Write_Standard_Error (Content : String) return Boolean is
    begin
-      Ada.Text_IO.Put (Ada.Text_IO.Standard_Error, Content);
-      return True;
+      return Write_Standard_Stream (Interfaces.C_Streams.stderr, Content);
    exception
       when others =>
          return False;

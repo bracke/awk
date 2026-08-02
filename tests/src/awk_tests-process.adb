@@ -117,7 +117,7 @@ package body Awk_Tests.Process is
            Quiet   => True);
    begin
       Assert (Status = 0, "process direct file input exits successfully");
-      Assert (U.To_String (Output) = "two" & LF & "four" & LF & LF,
+      Assert (U.To_String (Output) = "two" & LF & "four" & LF,
               "process direct file input output");
    end Test_Process_Direct_File_Input;
 
