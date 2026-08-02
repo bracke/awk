@@ -1381,22 +1381,24 @@ procedure Awk_Workflows is
       end Add_Manifest_Line;
 
       procedure Require_Package_File (Path : String) is
+         Full_Path : constant String := Files.Join (Dist, Path);
       begin
-         Files.Require_File (Dist & "/" & Path, "missing package file: " & Path);
+         Files.Require_File (Full_Path, "missing package file: " & Path);
          Require
-           (Project_Tools.Release_Checks.File_Length (Dist & "/" & Path) > 0,
+           (Project_Tools.Release_Checks.File_Length (Full_Path) > 0,
             "empty package file: " & Path);
       end Require_Package_File;
 
       procedure Copy_Package_File (Path : String) is
          Source : constant String :=
-           (if Path = "bin/awk" then "../bin/awk" else "../" & Path);
+           (if Path = "bin/awk" then Files.Join ("..", "bin/awk")
+            else Files.Join ("..", Path));
       begin
-         Copy_File (Source, Dist & "/" & Path);
+         Copy_File (Source, Files.Join (Dist, Path));
       end Copy_Package_File;
 
       Manifest : U.Unbounded_String;
-      Manifest_Path : constant String := Dist & "/MANIFEST.txt";
+      Manifest_Path : constant String := Files.Join (Dist, "MANIFEST.txt");
    begin
       if Release_Mode then
          Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);
@@ -1405,12 +1407,12 @@ procedure Awk_Workflows is
          Build;
       end if;
       Files.Delete_Tree ("../dist");
-      Dir.Create_Path (Dist & "/bin");
-      Dir.Create_Path (Dist & "/resources/messages");
-      Dir.Create_Path (Dist & "/resources/messages/en");
-      Dir.Create_Path (Dist & "/resources/messages/da");
-      Dir.Create_Path (Dist & "/docs");
-      Dir.Create_Path (Dist & "/docs/ai");
+      Dir.Create_Path (Files.Join (Dist, "bin"));
+      Dir.Create_Path (Files.Join (Dist, "resources/messages"));
+      Dir.Create_Path (Files.Join (Dist, "resources/messages/en"));
+      Dir.Create_Path (Files.Join (Dist, "resources/messages/da"));
+      Dir.Create_Path (Files.Join (Dist, "docs"));
+      Dir.Create_Path (Files.Join (Dist, "docs/ai"));
       for Path of Package_Files loop
          Copy_Package_File (U.To_String (Path));
          Require_Package_File (U.To_String (Path));
