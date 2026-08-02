@@ -1143,6 +1143,33 @@ package body Awk_Tests.Process is
               "OFS, ORS, and numeric builtins are applied by awklib");
    end Test_Process_Output_Separators_And_Numeric_Builtins;
 
+   procedure Test_Process_Arrays_Delete_And_While
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { a[""x""] = 1; a[""y""] = 2; delete a[""x""]; for (k in a) print k, a[k]; i = 0; while (i < 2) { print ""w"", i; i++ } }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process arrays delete and while",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process arrays delete and while exits successfully");
+      Assert (Contains (U.To_String (Output), "y 2" & LF),
+              "process array iteration observes deleted element");
+      Assert (Contains (U.To_String (Output), "w 0" & LF),
+              "process while loop emits first iteration");
+      Assert (Contains (U.To_String (Output), "w 1" & LF),
+              "process while loop emits second iteration");
+      Assert (not Contains (U.To_String (Output), "x 1" & LF),
+              "deleted array element is not emitted");
+   end Test_Process_Arrays_Delete_And_While;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1304,6 +1331,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Output_Separators_And_Numeric_Builtins'Access,
          "process output separators and numeric builtins");
+      Registration.Register_Routine
+        (T, Test_Process_Arrays_Delete_And_While'Access,
+         "process arrays delete and while");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
