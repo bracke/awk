@@ -25,5 +25,5 @@ FNV-1a-64 checksums for packaged files.
 
 This is a workspace release, not a publish-ready Alire index release. See
 `docs/dependency-policy.md` for the current local pins, the
-`terminal_styles = "=0.1.0-dev"` constraint, and the separate publish readiness
-checklist.
+`terminal_styles = "=0.1.0-dev"` and `hostkit = "=0.1.0-dev"` constraints,
+and the separate publish readiness checklist.

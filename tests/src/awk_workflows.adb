@@ -231,6 +231,11 @@ procedure Awk_Workflows is
          and then File_Has ("../docs/releasing.md", "traceability matrix"),
          "release docs must document packaged audit documentation");
       Require
+        (File_Has ("../docs/releasing.md", "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`")
+         and then File_Has ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
+                                                        "`hostkit = ""=0.1.0-dev""`"),
+         "release traceability docs must mention current dev dependency constraints");
+      Require
         (File_Has ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
       Require

@@ -59,4 +59,5 @@ resolved `awklib` behavior, and the release workflow.
 
 Release dependency policy is documented in `docs/dependency-policy.md`.
 Workspace release and publish readiness are separate gates because the current
-workspace still depends on the local `terminal_styles = "=0.1.0-dev"` crate.
+workspace still depends on local `terminal_styles = "=0.1.0-dev"` and
+`hostkit = "=0.1.0-dev"` crates.
