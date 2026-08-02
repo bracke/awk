@@ -490,6 +490,27 @@ package body Awk_Tests.Process is
               "process -v assignments are applied in order and preserve extra equals");
    end Test_Process_Repeated_V_Assignments;
 
+   procedure Test_Process_Invalid_V_Assignment
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("-v"),
+         new String'("1bad=value")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process invalid -v",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 2, "process invalid -v exits with usage status");
+      Assert (U.To_String (Output) = "", "process invalid -v writes no stdout");
+   end Test_Process_Invalid_V_Assignment;
+
    procedure Test_Process_Environment_Propagation
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -708,6 +729,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Repeated_V_Assignments'Access,
          "process repeated -v");
+      Registration.Register_Routine
+        (T, Test_Process_Invalid_V_Assignment'Access,
+         "process invalid -v");
       Registration.Register_Routine
         (T, Test_Process_Environment_Propagation'Access,
          "process environment propagation");
