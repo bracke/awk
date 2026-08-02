@@ -496,7 +496,9 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("awklib defines behavior"),
             U.To_Unbounded_String ("[options]"),
             U.To_Unbounded_String ("program-file"),
-            U.To_Unbounded_String ("host I/O")];
+            U.To_Unbounded_String ("host I/O"),
+            U.To_Unbounded_String ("AWK CLI"),
+            U.To_Unbounded_String ("AWK-CLI")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare

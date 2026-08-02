@@ -253,7 +253,7 @@ bg.awk.hint.use_help = използвайте --help за синтаксиса �
 bg.awk.hint.option_terminator = използвайте -- преди имена на файлове, които започват с -
 
 bs.awk.help.title = awk
-bs.awk.help.summary = Bosanski: AWK CLI u Adi na awklib; slijedi POSIX awk radni tok; awklib određuje ponašanje.
+bs.awk.help.summary = Implementacija AWK komandne linije u Adi, izgrađena na awklib. Radni tok komandne linije slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 bs.awk.help.usage.direct_program = Upotreba: awk [opcije] 'program' [operand...]
 bs.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operand...]
 bs.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost važi
@@ -353,7 +353,7 @@ ca.awk.hint.use_help = useu --help per a la sintaxi de la línia d ordres
 ca.awk.hint.option_terminator = useu -- abans dels noms de fitxer que comencen amb -
 
 cnr.awk.help.title = awk
-cnr.awk.help.summary = Crnogorski: AWK CLI u Adi na awklib; slijedi POSIX awk tok rada; awklib određuje ponašanje.
+cnr.awk.help.summary = Implementacija AWK komandne linije u Adi, izgrađena na awklib. Tok rada komandne linije slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 cnr.awk.help.usage.direct_program = Upotreba: awk [opcije] 'program' [operand...]
 cnr.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operand...]
 cnr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; posljednja vrijednost važi
@@ -453,7 +453,7 @@ cs.awk.hint.use_help = použijte --help pro syntaxi příkazového řádku
 cs.awk.hint.option_terminator = použijte -- před názvy souborů začínajícími -
 
 de.awk.help.title = awk
-de.awk.help.summary = Deutsch: AWK-CLI in Ada auf awklib; folgt dem POSIX awk Arbeitsablauf; awklib bestimmt das Verhalten.
+de.awk.help.summary = AWK-Implementierung für die Kommandozeile in Ada, gebaut auf awklib. Der Kommandozeilenablauf folgt dem traditionellen POSIX awk Modell; das unterstützte Verhalten bestimmt awklib.
 de.awk.help.usage.direct_program = Verwendung: awk [Optionen] 'program' [operand...]
 de.awk.help.usage.program_files = Verwendung: awk [Optionen] -f Programmdatei [-f Programmdatei...] [operand...]
 de.awk.help.options.field_separator =   -F sep, -Fsep          setzt FS vor der Ausführung; der letzte Wert gilt
@@ -603,7 +603,7 @@ es.awk.hint.use_help = use --help para la sintaxis de la línea de órdenes
 es.awk.hint.option_terminator = use -- antes de nombres de archivo que empiezan por -
 
 et.awk.help.title = awk
-et.awk.help.summary = Eesti: AWK CLI Adas awklib peal; järgib POSIX awk töövoogu; käitumise määrab awklib.
+et.awk.help.summary = Ada käsurea AWK teostus, mis põhineb awklib-il. Käsurea töövoog järgib traditsioonilist POSIX awk mudelit; toetatud käitumise määrab awklib.
 et.awk.help.usage.direct_program = Kasutus: awk [suvandid] 'program' [operand...]
 et.awk.help.usage.program_files = Kasutus: awk [suvandid] -f programmifail [-f programmifail...] [operand...]
 et.awk.help.options.field_separator =   -F sep, -Fsep          seab FS enne käivitust; viimane väärtus jääb kehtima
@@ -653,7 +653,7 @@ et.awk.hint.use_help = käsurea süntaksi jaoks kasutage --help
 et.awk.hint.option_terminator = kasutage -- enne failinimesid, mis algavad märgiga -
 
 fi.awk.help.title = awk
-fi.awk.help.summary = Suomi: Ada-pohjainen AWK CLI awklibin päällä; seuraa POSIX awk työnkulkua; awklib määrää toiminnan.
+fi.awk.help.summary = Ada-pohjainen komentorivin AWK-toteutus, joka käyttää awklibia. Komentorivin työnkulku seuraa perinteistä POSIX awk mallia; tuetun toiminnan määrää awklib.
 fi.awk.help.usage.direct_program = Käyttö: awk [valitsimet] 'program' [operand...]
 fi.awk.help.usage.program_files = Käyttö: awk [valitsimet] -f ohjelmatiedosto [-f ohjelmatiedosto...] [operand...]
 fi.awk.help.options.field_separator =   -F sep, -Fsep          asettaa FS ennen suoritusta; viimeinen arvo voittaa
@@ -753,7 +753,7 @@ fr.awk.hint.use_help = utilisez --help pour la syntaxe de la ligne de commande
 fr.awk.hint.option_terminator = utilisez -- avant les noms de fichiers commençant par -
 
 ga.awk.help.title = awk
-ga.awk.help.summary = Gaeilge: AWK CLI in Ada ar awklib; leanann sé sreabhadh POSIX awk; socraíonn awklib an t-iompar.
+ga.awk.help.summary = Cur i bhfeidhm AWK don líne ordaithe in Ada, bunaithe ar awklib. Leanann sreabhadh na líne ordaithe an tsamhail thraidisiúnta POSIX awk; socraíonn awklib an t-iompar tacaithe.
 ga.awk.help.usage.direct_program = Úsáid: awk [roghanna] 'program' [operand...]
 ga.awk.help.usage.program_files = Úsáid: awk [roghanna] -f comhad-cláir [-f comhad-cláir...] [operand...]
 ga.awk.help.options.field_separator =   -F sep, -Fsep          socraíonn FS roimh rith; buaileann an luach deireanach
@@ -803,7 +803,7 @@ ga.awk.hint.use_help = úsáid --help le haghaidh comhréir na líne ordaithe
 ga.awk.hint.option_terminator = úsáid -- roimh ainmneacha comhaid a thosaíonn le -
 
 hr.awk.help.title = awk
-hr.awk.help.summary = Hrvatski: AWK CLI u Adi na awklib; slijedi POSIX awk tijek rada; awklib određuje ponašanje.
+hr.awk.help.summary = Implementacija AWK naredbenog retka u Adi, izgrađena na awklib. Tijek rada naredbenog retka slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 hr.awk.help.usage.direct_program = Uporaba: awk [opcije] 'program' [operand...]
 hr.awk.help.usage.program_files = Uporaba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operand...]
 hr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost vrijedi
@@ -853,7 +853,7 @@ hr.awk.hint.use_help = koristite --help za sintaksu naredbenog retka
 hr.awk.hint.option_terminator = koristite -- prije imena datoteka koja počinju s -
 
 hu.awk.help.title = awk
-hu.awk.help.summary = Magyar: Ada AWK CLI awklib alapon; POSIX awk munkamenetet követ; a viselkedést az awklib határozza meg.
+hu.awk.help.summary = Ada nyelvű parancssori AWK-megvalósítás awklib alapon. A parancssori munkamenet a hagyományos POSIX awk modellt követi; a támogatott viselkedést az awklib határozza meg.
 hu.awk.help.usage.direct_program = Használat: awk [opciók] 'program' [operand...]
 hu.awk.help.usage.program_files = Használat: awk [opciók] -f programfájl [-f programfájl...] [operand...]
 hu.awk.help.options.field_separator =   -F sep, -Fsep          beállítja az FS értéket futás előtt; az utolsó érték nyer
@@ -1003,7 +1003,7 @@ is.awk.hint.use_help = notaðu --help fyrir skipanalínusetninguna
 is.awk.hint.option_terminator = notaðu -- á undan skráarnöfnum sem byrja á -
 
 it.awk.help.title = awk
-it.awk.help.summary = Italiano: AWK CLI in Ada su awklib; segue il flusso POSIX awk; awklib definisce il comportamento.
+it.awk.help.summary = Implementazione AWK per la riga di comando in Ada, costruita su awklib. Il flusso della riga di comando segue il modello tradizionale POSIX awk; awklib definisce il comportamento supportato.
 it.awk.help.usage.direct_program = Uso: awk [opzioni] 'program' [operand...]
 it.awk.help.usage.program_files = Uso: awk [opzioni] -f file-programma [-f file-programma...] [operand...]
 it.awk.help.options.field_separator =   -F sep, -Fsep          imposta FS prima dell esecuzione; vince l ultimo valore
@@ -1153,7 +1153,7 @@ kk.awk.hint.use_help = командалық жол синтаксисі үшін
 kk.awk.hint.option_terminator = - таңбасымен басталатын файл атауларының алдында -- пайдаланыңыз
 
 la.awk.help.title = awk
-la.awk.help.summary = Latine: AWK CLI Ada in awklib; ordinem POSIX awk sequitur; mores awklib definit.
+la.awk.help.summary = Implementatio AWK pro linea imperii in Ada, super awklib aedificata. Ordo lineae imperii exemplar POSIX awk traditum sequitur; mores sustentatos awklib definit.
 la.awk.help.usage.direct_program = Usus: awk [optationes] 'program' [operand...]
 la.awk.help.usage.program_files = Usus: awk [optationes] -f fasciculus-programmatis [-f fasciculus-programmatis...] [operand...]
 la.awk.help.options.field_separator =   -F sep, -Fsep          FS ante executionem ponit; ultimum valet
@@ -1403,7 +1403,7 @@ mk.awk.hint.use_help = користете --help за синтакса на ко
 mk.awk.hint.option_terminator = користете -- пред имиња на датотеки што почнуваат со -
 
 mt.awk.help.title = awk
-mt.awk.help.summary = Malti: AWK CLI f Ada fuq awklib; isegwi fluss POSIX awk; awklib jiddefinixxi l-imġiba.
+mt.awk.help.summary = Implimentazzjoni AWK tal-linja tal-kmand f Ada, mibnija fuq awklib. Il-fluss tal-linja tal-kmand isegwi l-mudell tradizzjonali POSIX awk; awklib jiddefinixxi l-imġiba appoġġjata.
 mt.awk.help.usage.direct_program = Użu: awk [għażliet] 'program' [operand...]
 mt.awk.help.usage.program_files = Użu: awk [għażliet] -f fajl-programm [-f fajl-programm...] [operand...]
 mt.awk.help.options.field_separator =   -F sep, -Fsep          jistabbilixxi FS qabel l eżekuzzjoni; l-aħħar valur jirbaħ
@@ -1503,7 +1503,7 @@ nl.awk.hint.use_help = gebruik --help voor opdrachtregelsyntaxis
 nl.awk.hint.option_terminator = gebruik -- vóór bestandsnamen die met - beginnen
 
 no.awk.help.title = awk
-no.awk.help.summary = Norsk: AWK CLI i Ada på awklib; følger POSIX awk arbeidsflyt; awklib bestemmer oppførselen.
+no.awk.help.summary = AWK-implementasjon for kommandolinjen i Ada, bygget på awklib. Kommandolinjeflyten følger tradisjonell POSIX awk; støttet oppførsel bestemmes av awklib.
 no.awk.help.usage.direct_program = Bruk: awk [valg] 'program' [operand...]
 no.awk.help.usage.program_files = Bruk: awk [valg] -f programfil [-f programfil...] [operand...]
 no.awk.help.options.field_separator =   -F sep, -Fsep          setter FS før kjøring; siste verdi gjelder
@@ -1553,7 +1553,7 @@ no.awk.hint.use_help = bruk --help for kommandolinjesyntaks
 no.awk.hint.option_terminator = bruk -- før filnavn som begynner med -
 
 pl.awk.help.title = awk
-pl.awk.help.summary = Polski: AWK CLI w Adzie na awklib; stosuje przepływ POSIX awk; zachowanie określa awklib.
+pl.awk.help.summary = Implementacja AWK dla wiersza poleceń w Adzie, zbudowana na awklib. Przepływ wiersza poleceń stosuje tradycyjny model POSIX awk; obsługiwane zachowanie określa awklib.
 pl.awk.help.usage.direct_program = Użycie: awk [opcje] 'program' [operand...]
 pl.awk.help.usage.program_files = Użycie: awk [opcje] -f plik-programu [-f plik-programu...] [operand...]
 pl.awk.help.options.field_separator =   -F sep, -Fsep          ustawia FS przed wykonaniem; obowiązuje ostatnia wartość
@@ -1653,7 +1653,7 @@ pt.awk.hint.use_help = use --help para a sintaxe da linha de comando
 pt.awk.hint.option_terminator = use -- antes de nomes de ficheiro que começam por -
 
 rm.awk.help.title = awk
-rm.awk.help.summary = Rumantsch: AWK CLI en Ada sin awklib; suonda il fluss POSIX awk; awklib definescha il cumportament.
+rm.awk.help.summary = Implementaziun AWK per la lingia da cumond en Ada, construida sin awklib. Il fluss da la lingia da cumond suonda il model tradiziunal POSIX awk; awklib definescha il cumportament sustegnì.
 rm.awk.help.usage.direct_program = Utilisaziun: awk [opziuns] 'program' [operand...]
 rm.awk.help.usage.program_files = Utilisaziun: awk [opziuns] -f datoteca-program [-f datoteca-program...] [operand...]
 rm.awk.help.options.field_separator =   -F sep, -Fsep          metta FS avant l execuziun; l ultima valur vala
@@ -1903,7 +1903,7 @@ sl.awk.hint.use_help = uporabite --help za skladnjo ukazne vrstice
 sl.awk.hint.option_terminator = uporabite -- pred imeni datotek, ki se začnejo z -
 
 sq.awk.help.title = awk
-sq.awk.help.summary = Shqip: AWK CLI në Ada mbi awklib; ndjek rrjedhën POSIX awk; awklib përcakton sjelljen.
+sq.awk.help.summary = Implementim AWK për linjën e komandës në Ada, i ndërtuar mbi awklib. Rrjedha e linjës së komandës ndjek modelin tradicional POSIX awk; sjelljen e mbështetur e përcakton awklib.
 sq.awk.help.usage.direct_program = Përdorimi: awk [opsione] 'program' [operand...]
 sq.awk.help.usage.program_files = Përdorimi: awk [opsione] -f skedar-programi [-f skedar-programi...] [operand...]
 sq.awk.help.options.field_separator =   -F sep, -Fsep          vendos FS para ekzekutimit; fiton vlera e fundit
@@ -2003,7 +2003,7 @@ sr.awk.hint.use_help = користите --help за синтаксу кома�
 sr.awk.hint.option_terminator = користите -- пре имена датотека која почињу са -
 
 sv.awk.help.title = awk
-sv.awk.help.summary = Svenska: AWK CLI i Ada på awklib; följer POSIX awk arbetsflöde; awklib styr beteendet.
+sv.awk.help.summary = AWK-implementering för kommandoraden i Ada, byggd på awklib. Kommandoradsflödet följer traditionell POSIX awk; beteendet som stöds styrs av awklib.
 sv.awk.help.usage.direct_program = Användning: awk [flaggor] 'program' [operand...]
 sv.awk.help.usage.program_files = Användning: awk [flaggor] -f programfil [-f programfil...] [operand...]
 sv.awk.help.options.field_separator =   -F sep, -Fsep          sätter FS före körning; sista värdet gäller
