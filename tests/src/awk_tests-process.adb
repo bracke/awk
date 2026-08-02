@@ -668,6 +668,35 @@ package body Awk_Tests.Process is
               "process environment reaches awklib ENVIRON");
    end Test_Process_Environment_Propagation;
 
+   procedure Test_Process_Danish_Diagnostic_From_Locale
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("LC_ALL=da"),
+         new String'("../bin/awk"),
+         new String'("--bad")];
+   begin
+      Assert (Env /= "", "env executable is available for locale-bound process test");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => Env,
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 2, "Danish process diagnostic exits with usage status");
+         Assert (Contains (Output, "ukendt tilvalg"),
+                 "process diagnostic follows LC_ALL locale");
+         Assert (Contains (Output, "tip:"),
+                 "localized process hint is emitted");
+      end;
+   end Test_Process_Danish_Diagnostic_From_Locale;
+
    procedure Test_Process_Explicit_Stdin_Eof
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -920,6 +949,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Environment_Propagation'Access,
          "process environment propagation");
+      Registration.Register_Routine
+        (T, Test_Process_Danish_Diagnostic_From_Locale'Access,
+         "process Danish diagnostic from locale");
       Registration.Register_Routine
         (T, Test_Process_Explicit_Stdin_Eof'Access,
          "process explicit stdin eof");
