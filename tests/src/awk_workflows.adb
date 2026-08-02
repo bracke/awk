@@ -529,7 +529,14 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("unsupported awklib operation"),
             U.To_Unbounded_String ("localization failed for message key"),
             U.To_Unbounded_String ("use --help for command-line syntax"),
-            U.To_Unbounded_String ("use -- before filenames that begin with")];
+            U.To_Unbounded_String ("use -- before filenames that begin with"),
+            U.To_Unbounded_String ("program file"),
+            U.To_Unbounded_String ("input file"),
+            U.To_Unbounded_String ("output file"),
+            U.To_Unbounded_String ("standard input"),
+            U.To_Unbounded_String ("standard output"),
+            U.To_Unbounded_String ("is unsupported because"),
+            U.To_Unbounded_String ("is reserved for AWK data")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
