@@ -783,9 +783,10 @@ procedure Awk_Workflows is
    end Exit_Constant_Value;
 
    procedure Exit_Status_Drift is
-      Source  : constant String := File_Text ("../src/library/awk_cli-diagnostics.ads");
-      Docs    : constant String := File_Text ("../docs/diagnostics.md");
-      Allowed : U.Unbounded_String;
+      Source    : constant String := File_Text ("../src/library/awk_cli-diagnostics.ads");
+      Docs      : constant String := File_Text ("../docs/diagnostics.md");
+      Reference : constant String := File_Text ("../docs/command-line-reference.md");
+      Allowed   : U.Unbounded_String;
 
       procedure Require_Exit (Name : String) is
          Value : constant String := Exit_Constant_Value (Source, Name);
@@ -795,6 +796,10 @@ procedure Awk_Workflows is
          Require
            (Contains (Docs, "| `" & Value & "` |"),
             "exit status " & Value & " from " & Name & " is not documented");
+         Require
+           (Contains (Reference, "`" & Value & "`"),
+            "exit status " & Value & " from " & Name
+            & " is missing from the command-line reference");
       end Require_Exit;
 
       From : Positive := Docs'First;
