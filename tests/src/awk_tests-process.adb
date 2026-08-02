@@ -1198,6 +1198,30 @@ package body Awk_Tests.Process is
               "record skipped by next is not emitted");
    end Test_Process_Next_Ternary_Break_And_Continue;
 
+   procedure Test_Process_Field_Assignment_Rebuilds_Record
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("BEGIN { FS="" ""; OFS=""|"" } { $2 = toupper($2); print $0, NF }"),
+         new String'("tests/fixtures/input/basic.txt")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process field assignment rebuilds record",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process field assignment rebuild exits successfully");
+      Assert (Contains (U.To_String (Output), "one|TWO|2" & LF),
+              "first record is rebuilt by awklib after field assignment");
+      Assert (Contains (U.To_String (Output), "three|FOUR|2" & LF),
+              "second record is rebuilt by awklib after field assignment");
+   end Test_Process_Field_Assignment_Rebuilds_Record;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1365,6 +1389,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Next_Ternary_Break_And_Continue'Access,
          "process next ternary break continue");
+      Registration.Register_Routine
+        (T, Test_Process_Field_Assignment_Rebuilds_Record'Access,
+         "process field assignment rebuilds record");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
