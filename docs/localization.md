@@ -1,14 +1,16 @@
 # Localization
 
-CLI-authored user-facing text is rendered through `messages` using keys under `awk.`. English and Danish catalogs are included.
+CLI-authored user-facing text is rendered through `messages` using keys under `awk.`. English and Danish shard catalogs are included. The combined catalog also includes translations for the supported European state-language locale set.
 
-The Ada workflow validates the required English and Danish key set in the
-combined catalog and locale shards. Required messages must be non-empty, and
-English/Danish placeholder sets must match for each key.
+The Ada workflow validates every supported locale in the combined catalog and
+validates the English and Danish shard catalogs. Required messages must be
+non-empty, and placeholder sets must match English for each key in every
+supported locale.
 
-Unsupported locales fall back through the `messages` runtime to the catalog
-default locale. If a requested message key cannot render but the catalog is
-otherwise usable, the CLI renders the catalog-backed
+Locales outside the supported European state-language locale set fall back
+through the `messages` runtime to the catalog default locale. If a requested
+message key cannot render but the catalog is otherwise usable, the CLI renders
+the catalog-backed
 `awk.internal.localization_failed` message instead of exposing the raw key as
 ordinary prose. A raw escaped key is reserved only as a last-resort containment
 path when even the fallback message cannot render.

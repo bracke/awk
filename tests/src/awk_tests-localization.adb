@@ -45,8 +45,9 @@ package body Awk_Tests.Localization is
          declare
             Suffix : constant String := Awk_Catalog_Policy.Required_Key (Index);
          begin
-            Require_Key ("en." & Suffix);
-            Require_Key ("da." & Suffix);
+            for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+               Require_Key (Awk_Catalog_Policy.Supported_Locale (Locale_Index) & "." & Suffix);
+            end loop;
          end;
       end loop;
    end Test_Catalog_Key_Coverage;
@@ -95,7 +96,7 @@ package body Awk_Tests.Localization is
               "Danish diagnostic is selected");
    end Test_Localized_Diagnostics;
 
-   procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
+   procedure Test_European_Locale_Diagnostics (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
@@ -103,6 +104,20 @@ package body Awk_Tests.Localization is
       Awk_CLI.Add_Argument (Context, "--bad");
       Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Awk_CLI.Set_Locale (Context, "fr_FR.UTF-8");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 2, "French usage error status");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "option inconnue"),
+              "French diagnostic is selected through locale fallback");
+   end Test_European_Locale_Diagnostics;
+
+   procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Context : Awk_CLI.Invocation_Context;
+      Status  : Awk_CLI.Exit_Code;
+   begin
+      Awk_CLI.Add_Argument (Context, "--bad");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Awk_CLI.Set_Locale (Context, "zz_ZZ.UTF-8");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "unsupported locale usage status");
       Assert (Contains (Awk_CLI.Standard_Error (Context), "unknown option"),
@@ -201,6 +216,9 @@ package body Awk_Tests.Localization is
       Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
       Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
       Registration.Register_Routine (T, Test_Localized_Diagnostics'Access, "localized diagnostics");
+      Registration.Register_Routine
+        (T, Test_European_Locale_Diagnostics'Access,
+         "European locale diagnostics");
       Registration.Register_Routine
         (T, Test_Unsupported_Locale_Fallback'Access,
          "unsupported locale fallback");

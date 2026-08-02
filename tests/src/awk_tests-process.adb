@@ -1029,7 +1029,7 @@ package body Awk_Tests.Process is
       pragma Unreferenced (T);
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("LC_ALL=fr_FR.UTF-8"),
+        [new String'("LC_ALL=zz_ZZ.UTF-8"),
          new String'("../bin/awk"),
          new String'("--bad")];
    begin

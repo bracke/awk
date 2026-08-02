@@ -171,6 +171,11 @@ procedure Awk_Workflows is
          and then File_Has ("../docs/localization.md", "last-resort containment"),
          "localization docs must document catalog-backed render fallback");
       Require
+        (File_Has ("../docs/localization.md", "supported European state-language locale set")
+         and then File_Has ("../docs/testing.md", "every supported European" & ASCII.LF &
+                                               "state-language locale"),
+         "localization docs must document supported European locale catalog validation");
+      Require
         (File_Has ("../docs/architecture.md", "main input is callback-driven"),
          "architecture docs must document memory-oriented host integration");
       Require
@@ -404,14 +409,19 @@ procedure Awk_Workflows is
          declare
             Suffix : constant String := Awk_Catalog_Policy.Required_Key (Index);
          begin
-            Require_Key ("en." & Suffix);
-            Require_Key ("da." & Suffix);
+            for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
+               declare
+                  Locale : constant String := Awk_Catalog_Policy.Supported_Locale (Locale_Index);
+               begin
+                  Require_Key (Locale & "." & Suffix);
+                  Require
+                    (Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, "en." & Suffix)) =
+                     Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, Locale & "." & Suffix)),
+                     "placeholder mismatch between en and " & Locale & " for " & Suffix);
+               end;
+            end loop;
             Require_Shard_Key (English, "en." & Suffix, "English");
             Require_Shard_Key (Danish, "da." & Suffix, "Danish");
-            Require
-              (Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, "en." & Suffix)) =
-               Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, "da." & Suffix)),
-               "placeholder mismatch between locales for " & Suffix);
          end;
       end loop;
       Put_Info ("catalog checks passed");

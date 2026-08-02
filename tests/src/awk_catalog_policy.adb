@@ -54,6 +54,51 @@ package body Awk_Catalog_Policy is
       U.To_Unbounded_String ("awk.hint.use_help"),
       U.To_Unbounded_String ("awk.hint.option_terminator")];
 
+   Supported_Locales : constant array (Positive range <>) of U.Unbounded_String :=
+     [U.To_Unbounded_String ("az"),
+      U.To_Unbounded_String ("be"),
+      U.To_Unbounded_String ("bg"),
+      U.To_Unbounded_String ("bs"),
+      U.To_Unbounded_String ("ca"),
+      U.To_Unbounded_String ("cnr"),
+      U.To_Unbounded_String ("cs"),
+      U.To_Unbounded_String ("da"),
+      U.To_Unbounded_String ("de"),
+      U.To_Unbounded_String ("el"),
+      U.To_Unbounded_String ("en"),
+      U.To_Unbounded_String ("es"),
+      U.To_Unbounded_String ("et"),
+      U.To_Unbounded_String ("fi"),
+      U.To_Unbounded_String ("fr"),
+      U.To_Unbounded_String ("ga"),
+      U.To_Unbounded_String ("hr"),
+      U.To_Unbounded_String ("hu"),
+      U.To_Unbounded_String ("hy"),
+      U.To_Unbounded_String ("is"),
+      U.To_Unbounded_String ("it"),
+      U.To_Unbounded_String ("ka"),
+      U.To_Unbounded_String ("kk"),
+      U.To_Unbounded_String ("la"),
+      U.To_Unbounded_String ("lb"),
+      U.To_Unbounded_String ("lt"),
+      U.To_Unbounded_String ("lv"),
+      U.To_Unbounded_String ("mk"),
+      U.To_Unbounded_String ("mt"),
+      U.To_Unbounded_String ("nl"),
+      U.To_Unbounded_String ("no"),
+      U.To_Unbounded_String ("pl"),
+      U.To_Unbounded_String ("pt"),
+      U.To_Unbounded_String ("rm"),
+      U.To_Unbounded_String ("ro"),
+      U.To_Unbounded_String ("ru"),
+      U.To_Unbounded_String ("sk"),
+      U.To_Unbounded_String ("sl"),
+      U.To_Unbounded_String ("sq"),
+      U.To_Unbounded_String ("sr"),
+      U.To_Unbounded_String ("sv"),
+      U.To_Unbounded_String ("tr"),
+      U.To_Unbounded_String ("uk")];
+
    function Contains (Text, Pattern : String) return Boolean is
    begin
       if Pattern'Length = 0 then
@@ -89,6 +134,44 @@ package body Awk_Catalog_Policy is
       end loop;
       return False;
    end Is_Required_Key;
+
+   function Supported_Locale_Count return Positive is
+   begin
+      return Supported_Locales'Length;
+   end Supported_Locale_Count;
+
+   function Supported_Locale (Index : Positive) return String is
+   begin
+      return U.To_String (Supported_Locales (Index));
+   end Supported_Locale;
+
+   function Locale_Primary (Locale : String) return String is
+      Last : Natural := Locale'Last;
+   begin
+      for Index in Locale'Range loop
+         if Locale (Index) = '-' or else Locale (Index) = '_' or else Locale (Index) = '.' then
+            Last := Index - 1;
+            exit;
+         end if;
+      end loop;
+
+      if Last < Locale'First then
+         return "";
+      end if;
+
+      return Locale (Locale'First .. Last);
+   end Locale_Primary;
+
+   function Is_Supported_Locale (Locale : String) return Boolean is
+      Primary : constant String := Locale_Primary (Locale);
+   begin
+      for Item of Supported_Locales loop
+         if Primary = U.To_String (Item) then
+            return True;
+         end if;
+      end loop;
+      return False;
+   end Is_Supported_Locale;
 
    function Is_Letter (Value : Character) return Boolean is
    begin
@@ -218,8 +301,12 @@ package body Awk_Catalog_Policy is
       if Combined_Catalog and then Key = "default_locale" then
          return True;
       elsif Combined_Catalog then
-         return Localized_Key_Allowed (Key, "en.")
-           or else Localized_Key_Allowed (Key, "da.");
+         for Index in 1 .. Supported_Locale_Count loop
+            if Localized_Key_Allowed (Key, Supported_Locale (Index) & ".") then
+               return True;
+            end if;
+         end loop;
+         return False;
       elsif Locale /= "" then
          return Localized_Key_Allowed (Key, Locale & ".");
       else
