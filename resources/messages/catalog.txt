@@ -54,7 +54,7 @@ da.awk.help.title = awk
 da.awk.help.summary = Ada-kommandolinjeprogram til AWK bygget paa awklib. Kommandolinjeforlobet folger traditionel POSIX awk; sprog- og runtime-adfaerd er begraenset af den valgte awklib-version.
 da.awk.help.usage.direct_program = Brug: awk [tilvalg] 'program' [operander...]
 da.awk.help.usage.program_files = Brug: awk [tilvalg] -f programfil [-f programfil...] [operander...]
-da.awk.help.options.field_separator =   -F sep, -Fsep          saet FS foer koersel; sidste forekomst vinder
+da.awk.help.options.field_separator =   -F skil, -Fskil          saet FS foer koersel; sidste forekomst vinder
 da.awk.help.options.variable =   -v navn=vaerdi, -vnavn=vaerdi  tildel variabel foer BEGIN; bevares i kommandolinjeorden
 da.awk.help.options.program_file =   -f fil, -ffil          laes AWK-kilde fra fil; flere filer sammenfojes i orden
 da.awk.help.options.color =   --color=auto|always|never  style kun kommandolinjens hjaelp og diagnostik
@@ -106,7 +106,7 @@ az.awk.help.title = awk
 az.awk.help.summary = awklib üzərində qurulmuş Ada komanda sətri AWK tətbiqi. Komanda sətri axını ənənəvi POSIX awk-a uyğundur; dil və icra davranışı seçilmiş awklib versiyası ilə məhdudlaşır.
 az.awk.help.usage.direct_program = İstifadə: awk [seçimlər] 'program' [operandlar...]
 az.awk.help.usage.program_files = İstifadə: awk [seçimlər] -f proqram-faylı [-f proqram-faylı...] [operandlar...]
-az.awk.help.options.field_separator =   -F sep, -Fsep          icradan əvvəl FS təyin et; sonuncu dəyər qalib gəlir
+az.awk.help.options.field_separator =   -F ayırıcı, -Fayırıcı          icradan əvvəl FS təyin et; sonuncu dəyər qalib gəlir
 az.awk.help.options.variable =   -v name=value, -vname=value  BEGIN-dən əvvəl dəyişən təyin et; komanda sətri ardıcıllığı saxlanılır
 az.awk.help.options.program_file =   -f fayl, -ffayl        AWK mənbəyini fayldan oxu; bir neçə fayl ardıcıllıqla birləşdirilir
 az.awk.help.options.color =   --color=auto|always|never  yalnız komanda sətrinə məxsus kömək və diaqnostikanı üslublandır
@@ -156,7 +156,7 @@ be.awk.help.title = awk
 be.awk.help.summary = Рэалізацыя AWK для каманднага радка Ada, пабудаваная на awklib. Працоўны працэс каманднага радка адпавядае традыцыйнаму POSIX awk; мова і выкананне абмежаваныя абранай версіяй awklib.
 be.awk.help.usage.direct_program = Выкарыстанне: awk [опцыі] 'праграма' [операнд...]
 be.awk.help.usage.program_files = Выкарыстанне: awk [опцыі] -f файл-праграмы [-f файл-праграмы...] [операнд...]
-be.awk.help.options.field_separator =   -F sep, -Fsep          задаць FS перад выкананнем; апошняе значэнне перамагае
+be.awk.help.options.field_separator =   -F падзельнік, -Fпадзельнік          задаць FS перад выкананнем; апошняе значэнне перамагае
 be.awk.help.options.variable =   -v name=value, -vname=value  задаць зменную перад BEGIN; парадак каманднага радка захоўваецца
 be.awk.help.options.program_file =   -f файл, -fфайл        чытаць зыходны код AWK з файла; некалькі файлаў абʼядноўваюцца па парадку
 be.awk.help.options.color =   --color=auto|always|never  стылізаваць толькі дапамогу і дыягностыку каманднага радка
@@ -206,7 +206,7 @@ bg.awk.help.title = awk
 bg.awk.help.summary = Ada реализация на AWK за команден ред, изградена върху awklib. Работният поток следва традиционния POSIX awk; езикът и изпълнението са ограничени от избраната версия на awklib.
 bg.awk.help.usage.direct_program = Употреба: awk [опции] 'програма' [операнд...]
 bg.awk.help.usage.program_files = Употреба: awk [опции] -f програмен-файл [-f програмен-файл...] [операнд...]
-bg.awk.help.options.field_separator =   -F sep, -Fsep          задава FS преди изпълнение; последната стойност печели
+bg.awk.help.options.field_separator =   -F разделител, -Fразделител          задава FS преди изпълнение; последната стойност печели
 bg.awk.help.options.variable =   -v name=value, -vname=value  задава променлива преди BEGIN; редът от командния ред се запазва
 bg.awk.help.options.program_file =   -f файл, -fфайл        чете AWK източник от файл; няколко файла се слепват по ред
 bg.awk.help.options.color =   --color=auto|always|never  оцветява само помощта и диагностиката на командния ред
@@ -256,7 +256,7 @@ bs.awk.help.title = awk
 bs.awk.help.summary = Implementacija AWK komandne linije u Adi, izgrađena na awklib. Radni tok komandne linije slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 bs.awk.help.usage.direct_program = Upotreba: awk [opcije] 'program' [operandi...]
 bs.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operandi...]
-bs.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost važi
+bs.awk.help.options.field_separator =   -F separator, -Fseparator          postavlja FS prije izvršavanja; zadnja vrijednost važi
 bs.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje varijablu prije BEGIN; redoslijed komandne linije se čuva
 bs.awk.help.options.program_file =   -f datoteka, -fdatoteka        čita AWK program iz datoteke; više -f datoteka se spaja redom
 bs.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku komandne linije
@@ -306,7 +306,7 @@ ca.awk.help.title = awk
 ca.awk.help.summary = Implementació AWK de línia d ordres en Ada, construïda sobre awklib. El flux de treball de la línia d ordres segueix el model tradicional POSIX awk; awklib defineix el comportament disponible.
 ca.awk.help.usage.direct_program = Ús: awk [opcions] 'program' [operands...]
 ca.awk.help.usage.program_files = Ús: awk [opcions] -f fitxer-programa [-f fitxer-programa...] [operands...]
-ca.awk.help.options.field_separator =   -F sep, -Fsep          estableix FS abans de l execució; guanya l última aparició
+ca.awk.help.options.field_separator =   -F separador, -Fseparador          estableix FS abans de l execució; guanya l última aparició
 ca.awk.help.options.variable =   -v name=value, -vname=value  assigna una variable abans de BEGIN; es conserva l ordre de la línia d ordres
 ca.awk.help.options.program_file =   -f fitxer, -ffitxer        llegeix el programa AWK d un fitxer; diversos -f es concatenen en ordre
 ca.awk.help.options.color =   --color=auto|always|never  aplica estil només a l ajuda i els diagnòstics de la línia d ordres
@@ -356,7 +356,7 @@ cnr.awk.help.title = awk
 cnr.awk.help.summary = Implementacija AWK komandne linije u Adi, izgrađena na awklib. Tok rada komandne linije slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 cnr.awk.help.usage.direct_program = Upotreba: awk [opcije] 'program' [operandi...]
 cnr.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operandi...]
-cnr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; posljednja vrijednost važi
+cnr.awk.help.options.field_separator =   -F separator, -Fseparator          postavlja FS prije izvršavanja; posljednja vrijednost važi
 cnr.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje promjenljivu prije BEGIN; redosljed komandne linije se čuva
 cnr.awk.help.options.program_file =   -f datoteka, -fdatoteka        čita AWK program iz datoteke; više -f datoteka se spaja redom
 cnr.awk.help.options.color =   --color=auto|always|never  stilizuje samo pomoć i dijagnostiku komandne linije
@@ -406,7 +406,7 @@ cs.awk.help.title = awk
 cs.awk.help.summary = Implementace AWK pro příkazový řádek v Ada, postavená na awklib. Práce s příkazovým řádkem sleduje tradiční model POSIX awk; dostupné chování určuje awklib.
 cs.awk.help.usage.direct_program = Použití: awk [volby] 'program' [operandy...]
 cs.awk.help.usage.program_files = Použití: awk [volby] -f soubor-programu [-f soubor-programu...] [operandy...]
-cs.awk.help.options.field_separator =   -F sep, -Fsep          nastaví FS před spuštěním; platí poslední výskyt
+cs.awk.help.options.field_separator =   -F oddělovač, -Foddělovač          nastaví FS před spuštěním; platí poslední výskyt
 cs.awk.help.options.variable =   -v name=value, -vname=value  přiřadí proměnnou před BEGIN; pořadí příkazového řádku se zachová
 cs.awk.help.options.program_file =   -f soubor, -fsoubor        načte AWK program ze souboru; více -f se spojí v pořadí
 cs.awk.help.options.color =   --color=auto|always|never  styluje jen nápovědu a diagnostiku příkazového řádku
@@ -456,7 +456,7 @@ de.awk.help.title = awk
 de.awk.help.summary = AWK-Implementierung für die Kommandozeile in Ada, gebaut auf awklib. Der Kommandozeilenablauf folgt dem traditionellen POSIX awk Modell; das unterstützte Verhalten bestimmt awklib.
 de.awk.help.usage.direct_program = Verwendung: awk [Optionen] 'program' [Operanden...]
 de.awk.help.usage.program_files = Verwendung: awk [Optionen] -f Programmdatei [-f Programmdatei...] [Operanden...]
-de.awk.help.options.field_separator =   -F sep, -Fsep          setzt FS vor der Ausführung; der letzte Wert gilt
+de.awk.help.options.field_separator =   -F Trenner, -FTrenner          setzt FS vor der Ausführung; der letzte Wert gilt
 de.awk.help.options.variable =   -v name=value, -vname=value  weist vor BEGIN eine Variable zu; Reihenfolge der Kommandozeile bleibt erhalten
 de.awk.help.options.program_file =   -f Datei, -fDatei        liest das AWK-Programm aus einer Datei; mehrere -f werden der Reihe nach verbunden
 de.awk.help.options.color =   --color=auto|always|never  gestaltet nur Kommandozeilenhilfe und Diagnostik
@@ -506,7 +506,7 @@ el.awk.help.title = awk
 el.awk.help.summary = Υλοποίηση AWK γραμμής εντολών σε Ada, βασισμένη στο awklib. Η ροή γραμμής εντολών ακολουθεί το παραδοσιακό POSIX awk και η συμπεριφορά περιορίζεται από την επιλεγμένη έκδοση awklib.
 el.awk.help.usage.direct_program = Χρήση: awk [επιλογές] 'πρόγραμμα' [τελεστέος...]
 el.awk.help.usage.program_files = Χρήση: awk [επιλογές] -f αρχείο-προγράμματος [-f αρχείο-προγράμματος...] [τελεστέος...]
-el.awk.help.options.field_separator =   -F sep, -Fsep          ορίζει το FS πριν από την εκτέλεση· υπερισχύει η τελευταία εμφάνιση
+el.awk.help.options.field_separator =   -F διαχωριστικό, -Fδιαχωριστικό          ορίζει το FS πριν από την εκτέλεση· υπερισχύει η τελευταία εμφάνιση
 el.awk.help.options.variable =   -v name=value, -vname=value  ορίζει μεταβλητή πριν από το BEGIN· διατηρείται η σειρά γραμμής εντολών
 el.awk.help.options.program_file =   -f αρχείο, -fαρχείο        διαβάζει πηγή AWK από αρχείο· πολλά αρχεία ενώνονται με τη σειρά
 el.awk.help.options.color =   --color=auto|always|never  μορφοποιεί μόνο βοήθεια και διαγνωστικά της γραμμής εντολών
@@ -556,7 +556,7 @@ es.awk.help.title = awk
 es.awk.help.summary = Implementación de AWK para la línea de comandos en Ada, construida sobre awklib. El flujo de trabajo de la línea de comandos sigue el modelo tradicional POSIX awk; awklib define el comportamiento disponible.
 es.awk.help.usage.direct_program = Uso: awk [opciones] 'program' [operandos...]
 es.awk.help.usage.program_files = Uso: awk [opciones] -f archivo-programa [-f archivo-programa...] [operandos...]
-es.awk.help.options.field_separator =   -F sep, -Fsep          define FS antes de ejecutar; gana la última aparición
+es.awk.help.options.field_separator =   -F separador, -Fseparador          define FS antes de ejecutar; gana la última aparición
 es.awk.help.options.variable =   -v name=value, -vname=value  asigna una variable antes de BEGIN; se conserva el orden de la línea de órdenes
 es.awk.help.options.program_file =   -f archivo, -farchivo        lee el programa AWK desde un archivo; varios -f se concatenan en orden
 es.awk.help.options.color =   --color=auto|always|never  aplica estilo solo a la ayuda y diagnósticos de la línea de órdenes
@@ -606,7 +606,7 @@ et.awk.help.title = awk
 et.awk.help.summary = Ada käsurea AWK teostus, mis põhineb awklib-il. Käsurea töövoog järgib traditsioonilist POSIX awk mudelit; toetatud käitumise määrab awklib.
 et.awk.help.usage.direct_program = Kasutus: awk [suvandid] 'program' [operandid...]
 et.awk.help.usage.program_files = Kasutus: awk [suvandid] -f programmifail [-f programmifail...] [operandid...]
-et.awk.help.options.field_separator =   -F sep, -Fsep          seab FS enne käivitust; viimane väärtus jääb kehtima
+et.awk.help.options.field_separator =   -F eraldaja, -Feraldaja          seab FS enne käivitust; viimane väärtus jääb kehtima
 et.awk.help.options.variable =   -v name=value, -vname=value  määrab muutuja enne BEGIN; käsurea järjekord säilib
 et.awk.help.options.program_file =   -f fail, -ffail        loeb AWK programmi failist; mitu -f faili liidetakse järjekorras
 et.awk.help.options.color =   --color=auto|always|never  vormindab ainult käsurea abi ja diagnostika
@@ -656,7 +656,7 @@ fi.awk.help.title = awk
 fi.awk.help.summary = Ada-pohjainen komentorivin AWK-toteutus, joka käyttää awklibia. Komentorivin työnkulku seuraa perinteistä POSIX awk mallia; tuetun toiminnan määrää awklib.
 fi.awk.help.usage.direct_program = Käyttö: awk [valitsimet] 'program' [operandit...]
 fi.awk.help.usage.program_files = Käyttö: awk [valitsimet] -f ohjelmatiedosto [-f ohjelmatiedosto...] [operandit...]
-fi.awk.help.options.field_separator =   -F sep, -Fsep          asettaa FS ennen suoritusta; viimeinen arvo voittaa
+fi.awk.help.options.field_separator =   -F erotin, -Ferotin          asettaa FS ennen suoritusta; viimeinen arvo voittaa
 fi.awk.help.options.variable =   -v name=value, -vname=value  asettaa muuttujan ennen BEGIN; komentorivin järjestys säilyy
 fi.awk.help.options.program_file =   -f tiedosto, -ftiedosto        lukee AWK-ohjelman tiedostosta; useat -f tiedostot yhdistetään järjestyksessä
 fi.awk.help.options.color =   --color=auto|always|never  tyylittää vain komentorivin ohjeen ja diagnostiikan
@@ -706,7 +706,7 @@ fr.awk.help.title = awk
 fr.awk.help.summary = Implémentation AWK en ligne de commande en Ada, construite sur awklib. Le flux de travail de la ligne de commande suit le modèle traditionnel POSIX awk; awklib définit le comportement disponible.
 fr.awk.help.usage.direct_program = Utilisation: awk [paramètres] 'program' [opérandes...]
 fr.awk.help.usage.program_files = Utilisation: awk [paramètres] -f fichier-programme [-f fichier-programme...] [opérandes...]
-fr.awk.help.options.field_separator =   -F sep, -Fsep          définit FS avant l exécution; la dernière occurrence gagne
+fr.awk.help.options.field_separator =   -F séparateur, -Fséparateur          définit FS avant l exécution; la dernière occurrence gagne
 fr.awk.help.options.variable =   -v name=value, -vname=value  affecte une variable avant BEGIN; l ordre de la ligne de commande est conservé
 fr.awk.help.options.program_file =   -f fichier, -ffichier        lit le programme AWK depuis un fichier; plusieurs -f sont concaténés dans l ordre
 fr.awk.help.options.color =   --color=auto|always|never  colore seulement l aide et les diagnostics de la ligne de commande
@@ -756,7 +756,7 @@ ga.awk.help.title = awk
 ga.awk.help.summary = Cur i bhfeidhm AWK don líne ordaithe in Ada, bunaithe ar awklib. Leanann sreabhadh na líne ordaithe an tsamhail thraidisiúnta POSIX awk; socraíonn awklib an t-iompar tacaithe.
 ga.awk.help.usage.direct_program = Úsáid: awk [roghanna] 'program' [oibreanna...]
 ga.awk.help.usage.program_files = Úsáid: awk [roghanna] -f comhad-cláir [-f comhad-cláir...] [oibreanna...]
-ga.awk.help.options.field_separator =   -F sep, -Fsep          socraíonn FS roimh rith; buaileann an luach deireanach
+ga.awk.help.options.field_separator =   -F deighilteoir, -Fdeighilteoir          socraíonn FS roimh rith; buaileann an luach deireanach
 ga.awk.help.options.variable =   -v name=value, -vname=value  sannann athróg roimh BEGIN; coinnítear ord na líne ordaithe
 ga.awk.help.options.program_file =   -f comhad, -fcomhad        léann clár AWK ó chomhad; ceanglaítear il -f in ord
 ga.awk.help.options.color =   --color=auto|always|never  stílíonn ach cabhair agus diagnóisic na líne ordaithe
@@ -806,7 +806,7 @@ hr.awk.help.title = awk
 hr.awk.help.summary = Implementacija AWK naredbenog retka u Adi, izgrađena na awklib. Tijek rada naredbenog retka slijedi tradicionalni POSIX awk model; podržano ponašanje određuje awklib.
 hr.awk.help.usage.direct_program = Uporaba: awk [opcije] 'program' [operandi...]
 hr.awk.help.usage.program_files = Uporaba: awk [opcije] -f programska-datoteka [-f programska-datoteka...] [operandi...]
-hr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost vrijedi
+hr.awk.help.options.field_separator =   -F razdjelnik, -Frazdjelnik          postavlja FS prije izvršavanja; zadnja vrijednost vrijedi
 hr.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje varijablu prije BEGIN; redoslijed naredbenog retka se čuva
 hr.awk.help.options.program_file =   -f datoteka, -fdatoteka        čita AWK program iz datoteke; više -f datoteka se spaja redom
 hr.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku naredbenog retka
@@ -856,7 +856,7 @@ hu.awk.help.title = awk
 hu.awk.help.summary = Ada nyelvű parancssori AWK-megvalósítás awklib alapon. A parancssori munkamenet a hagyományos POSIX awk modellt követi; a támogatott viselkedést az awklib határozza meg.
 hu.awk.help.usage.direct_program = Használat: awk [opciók] 'program' [operandusok...]
 hu.awk.help.usage.program_files = Használat: awk [opciók] -f programfájl [-f programfájl...] [operandusok...]
-hu.awk.help.options.field_separator =   -F sep, -Fsep          beállítja az FS értéket futás előtt; az utolsó érték nyer
+hu.awk.help.options.field_separator =   -F elválasztó, -Felválasztó          beállítja az FS értéket futás előtt; az utolsó érték nyer
 hu.awk.help.options.variable =   -v name=value, -vname=value  változót állít be BEGIN előtt; a parancssori sorrend megmarad
 hu.awk.help.options.program_file =   -f fájl, -ffájl        AWK programot olvas fájlból; több -f sorrendben összefűződik
 hu.awk.help.options.color =   --color=auto|always|never  csak a parancssori súgót és diagnosztikát formázza
@@ -906,7 +906,7 @@ hy.awk.help.title = awk
 hy.awk.help.summary = Ada-ով գրված AWK հրամանային տողի իրականացում, կառուցված awklib-ի վրա։ Հրամանային տողի հոսքը հետևում է ավանդական POSIX awk-ին, իսկ վարքը սահմանափակվում է ընտրված awklib տարբերակով։
 hy.awk.help.usage.direct_program = Օգտագործում: awk [ընտրանքներ] 'ծրագիր' [օպերանդ...]
 hy.awk.help.usage.program_files = Օգտագործում: awk [ընտրանքներ] -f ծրագրի-ֆայլ [-f ծրագրի-ֆայլ...] [օպերանդ...]
-hy.awk.help.options.field_separator =   -F sep, -Fsep          սահմանում է FS-ը կատարումից առաջ· վերջին նշումը հաղթում է
+hy.awk.help.options.field_separator =   -F բաժանիչ, -Fբաժանիչ          սահմանում է FS-ը կատարումից առաջ· վերջին նշումը հաղթում է
 hy.awk.help.options.variable =   -v name=value, -vname=value  սահմանում է փոփոխականը BEGIN-ից առաջ· հրամանային տողի հերթը պահվում է
 hy.awk.help.options.program_file =   -f ֆայլ, -fֆայլ        կարդում է AWK աղբյուրը ֆայլից· մի քանի ֆայլ միացվում են հերթով
 hy.awk.help.options.color =   --color=auto|always|never  ոճավորում է միայն հրամանային տողի օգնությունն ու ախտորոշումները
@@ -956,7 +956,7 @@ is.awk.help.title = awk
 is.awk.help.summary = AWK skipanalinuutfaersla i Ada, byggd a awklib. Skipanalinuferlid fylgir hefbundnu POSIX awk mynstri; awklib akvardar tiltæka hegðun.
 is.awk.help.usage.direct_program = Notkun: awk [valkostir] 'program' [inntaksliðir...]
 is.awk.help.usage.program_files = Notkun: awk [valkostir] -f forritsskra [-f forritsskra...] [inntaksliðir...]
-is.awk.help.options.field_separator =   -F sep, -Fsep          stillir FS fyrir keyrslu; síðasta gildið gildir
+is.awk.help.options.field_separator =   -F skil, -Fskil          stillir FS fyrir keyrslu; síðasta gildið gildir
 is.awk.help.options.variable =   -v name=value, -vname=value  úthlutar breytu fyrir BEGIN; röð skipanalínu helst
 is.awk.help.options.program_file =   -f skrá, -fskrá        les AWK-forrit úr skrá; mörg -f eru sameinuð í röð
 is.awk.help.options.color =   --color=auto|always|never  stílar aðeins skipanalínuhjálp og greiningar
@@ -1006,7 +1006,7 @@ it.awk.help.title = awk
 it.awk.help.summary = Implementazione AWK per la riga di comando in Ada, costruita su awklib. Il flusso della riga di comando segue il modello tradizionale POSIX awk; awklib definisce il comportamento supportato.
 it.awk.help.usage.direct_program = Uso: awk [opzioni] 'program' [operandi...]
 it.awk.help.usage.program_files = Uso: awk [opzioni] -f file-programma [-f file-programma...] [operandi...]
-it.awk.help.options.field_separator =   -F sep, -Fsep          imposta FS prima dell esecuzione; vince l ultimo valore
+it.awk.help.options.field_separator =   -F separatore, -Fseparatore          imposta FS prima dell esecuzione; vince l ultimo valore
 it.awk.help.options.variable =   -v name=value, -vname=value  assegna una variabile prima di BEGIN; l ordine della riga di comando è conservato
 it.awk.help.options.program_file =   -f archivio, -farchivio        legge il programma AWK da un file; più -f sono concatenati in ordine
 it.awk.help.options.color =   --color=auto|always|never  applica stile solo ad aiuto e diagnostica della riga di comando
@@ -1056,7 +1056,7 @@ ka.awk.help.title = awk
 ka.awk.help.summary = Ada-ზე დაწერილი AWK ბრძანების ხაზის განხორციელება, აგებული awklib-ზე. ბრძანების ხაზის ნაკადი მიჰყვება ტრადიციულ POSIX awk-ს და ქცევა შეზღუდულია არჩეული awklib ვერსიით.
 ka.awk.help.usage.direct_program = გამოყენება: awk [პარამეტრები] 'პროგრამა' [ოპერანდი...]
 ka.awk.help.usage.program_files = გამოყენება: awk [პარამეტრები] -f პროგრამის-ფაილი [-f პროგრამის-ფაილი...] [ოპერანდი...]
-ka.awk.help.options.field_separator =   -F sep, -Fsep          აყენებს FS-ს შესრულებამდე· ბოლო მითითება მოქმედებს
+ka.awk.help.options.field_separator =   -F გამყოფი, -Fგამყოფი          აყენებს FS-ს შესრულებამდე· ბოლო მითითება მოქმედებს
 ka.awk.help.options.variable =   -v name=value, -vname=value  აყენებს ცვლადს BEGIN-მდე· ბრძანების ხაზის რიგი ინახება
 ka.awk.help.options.program_file =   -f ფაილი, -fფაილი        კითხულობს AWK წყაროს ფაილიდან· რამდენიმე ფაილი ერთიანდება რიგით
 ka.awk.help.options.color =   --color=auto|always|never  აფორმებს მხოლოდ ბრძანების ხაზის დახმარებას და დიაგნოსტიკას
@@ -1106,7 +1106,7 @@ kk.awk.help.title = awk
 kk.awk.help.summary = Ada тіліндегі AWK командалық жол іске асырылымы, awklib негізінде құрылған. Командалық жол жұмысы дәстүрлі POSIX awk үлгісін ұстанады, ал әрекет таңдалған awklib нұсқасымен шектеледі.
 kk.awk.help.usage.direct_program = Пайдалану: awk [опциялар] 'бағдарлама' [операнд...]
 kk.awk.help.usage.program_files = Пайдалану: awk [опциялар] -f бағдарлама-файлы [-f бағдарлама-файлы...] [операнд...]
-kk.awk.help.options.field_separator =   -F sep, -Fsep          орындау алдында FS орнатады· соңғы көрсетілім жеңеді
+kk.awk.help.options.field_separator =   -F бөлгіш, -Fбөлгіш          орындау алдында FS орнатады· соңғы көрсетілім жеңеді
 kk.awk.help.options.variable =   -v name=value, -vname=value  BEGIN алдында айнымалы орнатады· командалық жол реті сақталады
 kk.awk.help.options.program_file =   -f файл, -fфайл        AWK бастапқы мәтінін файлдан оқиды· бірнеше файл ретімен біріктіріледі
 kk.awk.help.options.color =   --color=auto|always|never  тек командалық жол көмегі мен диагностикасын безендіреді
@@ -1156,7 +1156,7 @@ la.awk.help.title = awk
 la.awk.help.summary = Implementatio AWK pro linea imperii in Ada, super awklib aedificata. Ordo lineae imperii exemplar POSIX awk traditum sequitur; mores sustentatos awklib definit.
 la.awk.help.usage.direct_program = Usus: awk [optationes] 'program' [operanda...]
 la.awk.help.usage.program_files = Usus: awk [optationes] -f fasciculus-programmatis [-f fasciculus-programmatis...] [operanda...]
-la.awk.help.options.field_separator =   -F sep, -Fsep          FS ante executionem ponit; ultimum valet
+la.awk.help.options.field_separator =   -F separator, -Fseparator          FS ante executionem ponit; ultimum valet
 la.awk.help.options.variable =   -v name=value, -vname=value  variabilem ante BEGIN assignat; ordo lineae imperii servatur
 la.awk.help.options.program_file =   -f fasciculus, -ffasciculus        programma AWK ex fasciculo legit; plura -f ordine iunguntur
 la.awk.help.options.color =   --color=auto|always|never  solam opem et diagnostica lineae imperii ornat
@@ -1206,7 +1206,7 @@ lb.awk.help.title = awk
 lb.awk.help.summary = AWK-Kommandozeil-Implementatioun an Ada, gebaut op awklib. De Kommandozeil-Oflaf follegt dem traditionelle POSIX awk Modell; awklib bestëmmt dat ënnerstëtzt Verhalen.
 lb.awk.help.usage.direct_program = Benotzung: awk [Optiounen] 'program' [Operanden...]
 lb.awk.help.usage.program_files = Benotzung: awk [Optiounen] -f Programmdatei [-f Programmdatei...] [Operanden...]
-lb.awk.help.options.field_separator =   -F sep, -Fsep          setzt FS virum Laf; de leschte Wäert zielt
+lb.awk.help.options.field_separator =   -F Trenner, -FTrenner          setzt FS virum Laf; de leschte Wäert zielt
 lb.awk.help.options.variable =   -v name=value, -vname=value  setzt eng Variabel viru BEGIN; Kommandozeilereiefolleg bleift erhalen
 lb.awk.help.options.program_file =   -f Fichier, -fFichier        liest den AWK-Programm aus engem Fichier; méi -f ginn an der Rei verbonnen
 lb.awk.help.options.color =   --color=auto|always|never  styléiert nëmmen Kommandozeil-Hëllef an Diagnostik
@@ -1256,7 +1256,7 @@ lt.awk.help.title = awk
 lt.awk.help.summary = Ada komandų eilutės AWK įgyvendinimas, sukurtas naudojant awklib. Komandų eilutės darbo eiga atitinka tradicinį POSIX awk modelį; palaikomą elgseną apibrėžia awklib.
 lt.awk.help.usage.direct_program = Naudojimas: awk [parinktys] 'program' [operandai...]
 lt.awk.help.usage.program_files = Naudojimas: awk [parinktys] -f programos-failas [-f programos-failas...] [operandai...]
-lt.awk.help.options.field_separator =   -F sep, -Fsep          nustato FS prieš vykdymą; galioja paskutinė reikšmė
+lt.awk.help.options.field_separator =   -F skirtukas, -Fskirtukas          nustato FS prieš vykdymą; galioja paskutinė reikšmė
 lt.awk.help.options.variable =   -v name=value, -vname=value  priskiria kintamąjį prieš BEGIN; komandų eilutės tvarka išlaikoma
 lt.awk.help.options.program_file =   -f failas, -ffailas        skaito AWK programą iš failo; keli -f sujungiami eilės tvarka
 lt.awk.help.options.color =   --color=auto|always|never  stilizuoja tik komandų eilutės pagalbą ir diagnostiką
@@ -1306,7 +1306,7 @@ lv.awk.help.title = awk
 lv.awk.help.summary = Ada komandrindas AWK īstenojums, būvēts uz awklib. Komandrindas darbplūsma seko tradicionālajam POSIX awk modelim; atbalstīto uzvedību nosaka awklib.
 lv.awk.help.usage.direct_program = Lietojums: awk [opcijas] 'program' [operandi...]
 lv.awk.help.usage.program_files = Lietojums: awk [opcijas] -f programmas-fails [-f programmas-fails...] [operandi...]
-lv.awk.help.options.field_separator =   -F sep, -Fsep          iestata FS pirms izpildes; pēdējā vērtība uzvar
+lv.awk.help.options.field_separator =   -F atdalītājs, -Fatdalītājs          iestata FS pirms izpildes; pēdējā vērtība uzvar
 lv.awk.help.options.variable =   -v name=value, -vname=value  piešķir mainīgo pirms BEGIN; komandrindas secība saglabājas
 lv.awk.help.options.program_file =   -f fails, -ffails        lasa AWK programmu no faila; vairāki -f tiek savienoti secībā
 lv.awk.help.options.color =   --color=auto|always|never  stilizē tikai komandrindas palīdzību un diagnostiku
@@ -1356,7 +1356,7 @@ mk.awk.help.title = awk
 mk.awk.help.summary = AWK имплементација за командна линија во Ada, изградена врз awklib. Работниот тек на командната линија го следи традиционалниот POSIX awk, а однесувањето е ограничено со избраната верзија на awklib.
 mk.awk.help.usage.direct_program = Употреба: awk [опции] 'програма' [операнд...]
 mk.awk.help.usage.program_files = Употреба: awk [опции] -f програмска-датотека [-f програмска-датотека...] [операнд...]
-mk.awk.help.options.field_separator =   -F sep, -Fsep          поставува FS пред извршување· последното појавување победува
+mk.awk.help.options.field_separator =   -F разделувач, -Fразделувач          поставува FS пред извршување· последното појавување победува
 mk.awk.help.options.variable =   -v name=value, -vname=value  поставува променлива пред BEGIN· се зачувува редоследот од командната линија
 mk.awk.help.options.program_file =   -f датотека, -fдатотека        чита AWK извор од датотека· повеќе датотеки се спојуваат по ред
 mk.awk.help.options.color =   --color=auto|always|never  стилизира само помош и дијагностика на командната линија
@@ -1406,7 +1406,7 @@ mt.awk.help.title = awk
 mt.awk.help.summary = Implimentazzjoni AWK tal-linja tal-kmand f Ada, mibnija fuq awklib. Il-fluss tal-linja tal-kmand isegwi l-mudell tradizzjonali POSIX awk; awklib jiddefinixxi l-imġiba appoġġjata.
 mt.awk.help.usage.direct_program = Użu: awk [għażliet] 'program' [operandi...]
 mt.awk.help.usage.program_files = Użu: awk [għażliet] -f fajl-programm [-f fajl-programm...] [operandi...]
-mt.awk.help.options.field_separator =   -F sep, -Fsep          jistabbilixxi FS qabel l eżekuzzjoni; l-aħħar valur jirbaħ
+mt.awk.help.options.field_separator =   -F separatur, -Fseparatur          jistabbilixxi FS qabel l eżekuzzjoni; l-aħħar valur jirbaħ
 mt.awk.help.options.variable =   -v name=value, -vname=value  jassenja varjabbli qabel BEGIN; tinżamm l-ordni tal-linja tal-kmand
 mt.awk.help.options.program_file =   -f fajl, -ffajl        jaqra programm AWK minn fajl; diversi -f jingħaqdu fl-ordni
 mt.awk.help.options.color =   --color=auto|always|never  jistilizza biss għajnuna u dijanjostika tal-linja tal-kmand
@@ -1456,7 +1456,7 @@ nl.awk.help.title = awk
 nl.awk.help.summary = AWK-implementatie voor de opdrachtregel in Ada, gebouwd op awklib. De opdrachtregelwerkwijze volgt het traditionele POSIX awk model; awklib bepaalt het ondersteunde gedrag.
 nl.awk.help.usage.direct_program = Gebruik: awk [opties] 'program' [operanden...]
 nl.awk.help.usage.program_files = Gebruik: awk [opties] -f programmabestand [-f programmabestand...] [operanden...]
-nl.awk.help.options.field_separator =   -F sep, -Fsep          stelt FS in vóór uitvoering; de laatste waarde wint
+nl.awk.help.options.field_separator =   -F scheiding, -Fscheiding          stelt FS in vóór uitvoering; de laatste waarde wint
 nl.awk.help.options.variable =   -v name=value, -vname=value  wijst een variabele toe vóór BEGIN; opdrachtregelvolgorde blijft behouden
 nl.awk.help.options.program_file =   -f bestand, -fbestand        leest AWK-programma uit een bestand; meerdere -f worden op volgorde samengevoegd
 nl.awk.help.options.color =   --color=auto|always|never  style alleen opdrachtregelhulp en diagnostiek
@@ -1506,7 +1506,7 @@ no.awk.help.title = awk
 no.awk.help.summary = AWK-implementasjon for kommandolinjen i Ada, bygget på awklib. Kommandolinjeflyten følger tradisjonell POSIX awk; støttet oppførsel bestemmes av awklib.
 no.awk.help.usage.direct_program = Bruk: awk [valg] 'program' [operander...]
 no.awk.help.usage.program_files = Bruk: awk [valg] -f programfil [-f programfil...] [operander...]
-no.awk.help.options.field_separator =   -F sep, -Fsep          setter FS før kjøring; siste verdi gjelder
+no.awk.help.options.field_separator =   -F skille, -Fskille          setter FS før kjøring; siste verdi gjelder
 no.awk.help.options.variable =   -v name=value, -vname=value  tilordner en variabel før BEGIN; kommandolinjerekkefølge beholdes
 no.awk.help.options.program_file =   -f fil, -ffil        leser AWK-program fra fil; flere -f slås sammen i rekkefølge
 no.awk.help.options.color =   --color=auto|always|never  stiler bare kommandolinjehjelp og diagnostikk
@@ -1556,7 +1556,7 @@ pl.awk.help.title = awk
 pl.awk.help.summary = Implementacja AWK dla wiersza poleceń w Adzie, zbudowana na awklib. Przepływ wiersza poleceń stosuje tradycyjny model POSIX awk; obsługiwane zachowanie określa awklib.
 pl.awk.help.usage.direct_program = Użycie: awk [opcje] 'program' [operandy...]
 pl.awk.help.usage.program_files = Użycie: awk [opcje] -f plik-programu [-f plik-programu...] [operandy...]
-pl.awk.help.options.field_separator =   -F sep, -Fsep          ustawia FS przed wykonaniem; obowiązuje ostatnia wartość
+pl.awk.help.options.field_separator =   -F separator, -Fseparator          ustawia FS przed wykonaniem; obowiązuje ostatnia wartość
 pl.awk.help.options.variable =   -v name=value, -vname=value  przypisuje zmienną przed BEGIN; kolejność wiersza poleceń jest zachowana
 pl.awk.help.options.program_file =   -f plik, -fplik        czyta program AWK z pliku; wiele -f łączy się w kolejności
 pl.awk.help.options.color =   --color=auto|always|never  stylizuje tylko pomoc i diagnostykę wiersza poleceń
@@ -1606,7 +1606,7 @@ pt.awk.help.title = awk
 pt.awk.help.summary = Implementação AWK de linha de comando em Ada, construída sobre awklib. O fluxo de trabalho da linha de comando segue o modelo tradicional POSIX awk; awklib define o comportamento disponível.
 pt.awk.help.usage.direct_program = Uso: awk [opções] 'program' [operandos...]
 pt.awk.help.usage.program_files = Uso: awk [opções] -f ficheiro-programa [-f ficheiro-programa...] [operandos...]
-pt.awk.help.options.field_separator =   -F sep, -Fsep          define FS antes da execução; vence o último valor
+pt.awk.help.options.field_separator =   -F separador, -Fseparador          define FS antes da execução; vence o último valor
 pt.awk.help.options.variable =   -v name=value, -vname=value  atribui uma variável antes de BEGIN; a ordem da linha de comando é preservada
 pt.awk.help.options.program_file =   -f ficheiro, -fficheiro        lê o programa AWK de um ficheiro; vários -f são concatenados por ordem
 pt.awk.help.options.color =   --color=auto|always|never  aplica estilo apenas à ajuda e diagnósticos da linha de comando
@@ -1656,7 +1656,7 @@ rm.awk.help.title = awk
 rm.awk.help.summary = Implementaziun AWK per la lingia da cumond en Ada, construida sin awklib. Il fluss da la lingia da cumond suonda il model tradiziunal POSIX awk; awklib definescha il cumportament sustegnì.
 rm.awk.help.usage.direct_program = Utilisaziun: awk [opziuns] 'program' [operands...]
 rm.awk.help.usage.program_files = Utilisaziun: awk [opziuns] -f datoteca-program [-f datoteca-program...] [operands...]
-rm.awk.help.options.field_separator =   -F sep, -Fsep          metta FS avant l execuziun; l ultima valur vala
+rm.awk.help.options.field_separator =   -F separatur, -Fseparatur          metta FS avant l execuziun; l ultima valur vala
 rm.awk.help.options.variable =   -v name=value, -vname=value  attribuescha ina variabla avant BEGIN; l urden da la lingia da cumond resta
 rm.awk.help.options.program_file =   -f datoteca, -fdatoteca        legia il program AWK d in datoteca; plirs -f vegnan cumbinads en urden
 rm.awk.help.options.color =   --color=auto|always|never  stilescha mo agid e diagnostica da la lingia da cumond
@@ -1706,7 +1706,7 @@ ro.awk.help.title = awk
 ro.awk.help.summary = Implementare AWK pentru linia de comandă în Ada, construită pe awklib. Fluxul de lucru al liniei de comandă urmează modelul tradițional POSIX awk; awklib definește comportamentul disponibil.
 ro.awk.help.usage.direct_program = Utilizare: awk [opțiuni] 'program' [operanzi...]
 ro.awk.help.usage.program_files = Utilizare: awk [opțiuni] -f fișier-program [-f fișier-program...] [operanzi...]
-ro.awk.help.options.field_separator =   -F sep, -Fsep          setează FS înainte de execuție; ultima valoare câștigă
+ro.awk.help.options.field_separator =   -F separator, -Fseparator          setează FS înainte de execuție; ultima valoare câștigă
 ro.awk.help.options.variable =   -v name=value, -vname=value  atribuie o variabilă înainte de BEGIN; ordinea liniei de comandă se păstrează
 ro.awk.help.options.program_file =   -f fișier, -ffișier        citește programul AWK din fișier; mai multe -f se concatenează în ordine
 ro.awk.help.options.color =   --color=auto|always|never  stilizează doar ajutorul și diagnosticele liniei de comandă
@@ -1756,7 +1756,7 @@ ru.awk.help.title = awk
 ru.awk.help.summary = Реализация AWK для командной строки на Ada, построенная на awklib. Рабочий процесс командной строки следует традиционному POSIX awk, а поведение ограничено выбранной версией awklib.
 ru.awk.help.usage.direct_program = Использование: awk [параметры] 'программа' [операнд...]
 ru.awk.help.usage.program_files = Использование: awk [параметры] -f файл-программы [-f файл-программы...] [операнд...]
-ru.awk.help.options.field_separator =   -F sep, -Fsep          задает FS перед выполнением· последнее указание имеет силу
+ru.awk.help.options.field_separator =   -F разделитель, -Fразделитель          задает FS перед выполнением· последнее указание имеет силу
 ru.awk.help.options.variable =   -v name=value, -vname=value  задает переменную перед BEGIN· порядок командной строки сохраняется
 ru.awk.help.options.program_file =   -f файл, -fфайл        читает исходный текст AWK из файла· несколько файлов объединяются по порядку
 ru.awk.help.options.color =   --color=auto|always|never  оформляет только помощь и диагностику командной строки
@@ -1806,7 +1806,7 @@ sk.awk.help.title = awk
 sk.awk.help.summary = Implementácia AWK pre príkazový riadok v Ada, postavená na awklib. Práca s príkazovým riadkom sleduje tradičný model POSIX awk; podporované správanie určuje awklib.
 sk.awk.help.usage.direct_program = Použitie: awk [voľby] 'program' [operandy...]
 sk.awk.help.usage.program_files = Použitie: awk [voľby] -f súbor-programu [-f súbor-programu...] [operandy...]
-sk.awk.help.options.field_separator =   -F sep, -Fsep          nastaví FS pred spustením; platí posledná hodnota
+sk.awk.help.options.field_separator =   -F oddeľovač, -Foddeľovač          nastaví FS pred spustením; platí posledná hodnota
 sk.awk.help.options.variable =   -v name=value, -vname=value  priradí premennú pred BEGIN; poradie príkazového riadka sa zachová
 sk.awk.help.options.program_file =   -f súbor, -fsúbor        načíta AWK program zo súboru; viac -f sa spojí v poradí
 sk.awk.help.options.color =   --color=auto|always|never  štýluje iba pomoc a diagnostiku príkazového riadka
@@ -1856,7 +1856,7 @@ sl.awk.help.title = awk
 sl.awk.help.summary = Implementacija AWK za ukazno vrstico v Ada, zgrajena na awklib. Potek dela v ukazni vrstici sledi tradicionalnemu modelu POSIX awk; podprto vedenje določa awklib.
 sl.awk.help.usage.direct_program = Uporaba: awk [možnosti] 'program' [operandi...]
 sl.awk.help.usage.program_files = Uporaba: awk [možnosti] -f programska-datoteka [-f programska-datoteka...] [operandi...]
-sl.awk.help.options.field_separator =   -F sep, -Fsep          nastavi FS pred izvajanjem; velja zadnja vrednost
+sl.awk.help.options.field_separator =   -F ločilo, -Fločilo          nastavi FS pred izvajanjem; velja zadnja vrednost
 sl.awk.help.options.variable =   -v name=value, -vname=value  dodeli spremenljivko pred BEGIN; vrstni red ukazne vrstice se ohrani
 sl.awk.help.options.program_file =   -f datoteka, -fdatoteka        prebere AWK program iz datoteke; več -f se združi po vrsti
 sl.awk.help.options.color =   --color=auto|always|never  oblikuje samo pomoč in diagnostiko ukazne vrstice
@@ -1906,7 +1906,7 @@ sq.awk.help.title = awk
 sq.awk.help.summary = Implementim AWK për linjën e komandës në Ada, i ndërtuar mbi awklib. Rrjedha e linjës së komandës ndjek modelin tradicional POSIX awk; sjelljen e mbështetur e përcakton awklib.
 sq.awk.help.usage.direct_program = Përdorimi: awk [opsione] 'program' [operandë...]
 sq.awk.help.usage.program_files = Përdorimi: awk [opsione] -f skedar-programi [-f skedar-programi...] [operandë...]
-sq.awk.help.options.field_separator =   -F sep, -Fsep          vendos FS para ekzekutimit; fiton vlera e fundit
+sq.awk.help.options.field_separator =   -F ndarës, -Fndarës          vendos FS para ekzekutimit; fiton vlera e fundit
 sq.awk.help.options.variable =   -v name=value, -vname=value  cakton një ndryshore para BEGIN; ruhet rendi i linjës së komandës
 sq.awk.help.options.program_file =   -f skedar, -fskedar        lexon programin AWK nga skedari; disa -f bashkohen me radhë
 sq.awk.help.options.color =   --color=auto|always|never  stilizon vetëm ndihmën dhe diagnostikën e linjës së komandës
@@ -1956,7 +1956,7 @@ sr.awk.help.title = awk
 sr.awk.help.summary = AWK имплементација командне линије у Ada, изграђена на awklib. Ток рада командне линије прати традиционални POSIX awk, а понашање је ограничено изабраном верзијом awklib.
 sr.awk.help.usage.direct_program = Употреба: awk [опције] 'програм' [операнд...]
 sr.awk.help.usage.program_files = Употреба: awk [опције] -f програмска-датотека [-f програмска-датотека...] [операнд...]
-sr.awk.help.options.field_separator =   -F sep, -Fsep          поставља FS пре извршавања· последње појављивање важи
+sr.awk.help.options.field_separator =   -F раздвајач, -Fраздвајач          поставља FS пре извршавања· последње појављивање важи
 sr.awk.help.options.variable =   -v name=value, -vname=value  поставља променљиву пре BEGIN· редослед командне линије се чува
 sr.awk.help.options.program_file =   -f датотека, -fдатотека        чита AWK извор из датотеке· више датотека се спаја редом
 sr.awk.help.options.color =   --color=auto|always|never  стилизује само помоћ и дијагностику командне линије
@@ -2006,7 +2006,7 @@ sv.awk.help.title = awk
 sv.awk.help.summary = AWK-implementering för kommandoraden i Ada, byggd på awklib. Kommandoradsflödet följer traditionell POSIX awk; beteendet som stöds styrs av awklib.
 sv.awk.help.usage.direct_program = Användning: awk [flaggor] 'program' [operander...]
 sv.awk.help.usage.program_files = Användning: awk [flaggor] -f programfil [-f programfil...] [operander...]
-sv.awk.help.options.field_separator =   -F sep, -Fsep          sätter FS före körning; sista värdet gäller
+sv.awk.help.options.field_separator =   -F avskiljare, -Favskiljare          sätter FS före körning; sista värdet gäller
 sv.awk.help.options.variable =   -v name=value, -vname=value  tilldelar en variabel före BEGIN; kommandoradsordningen bevaras
 sv.awk.help.options.program_file =   -f fil, -ffil        läser AWK-program från fil; flera -f sammanfogas i ordning
 sv.awk.help.options.color =   --color=auto|always|never  formaterar bara kommandoradshjälp och diagnostik
@@ -2056,7 +2056,7 @@ tr.awk.help.title = awk
 tr.awk.help.summary = Türkçe: awklib üzerine kurulu Ada komut satırı AWK uygulaması; komut satırı akışı geleneksel POSIX awk modelini izler ve davranış seçili awklib sürümüyle sınırlıdır.
 tr.awk.help.usage.direct_program = Kullanım: awk [seçenekler] 'program' [işlenenler...]
 tr.awk.help.usage.program_files = Kullanım: awk [seçenekler] -f program-dosyası [-f program-dosyası...] [işlenenler...]
-tr.awk.help.options.field_separator =   -F sep, -Fsep          yürütmeden önce FS ayarlar; son değer geçerlidir
+tr.awk.help.options.field_separator =   -F ayırıcı, -Fayırıcı          yürütmeden önce FS ayarlar; son değer geçerlidir
 tr.awk.help.options.variable =   -v name=value, -vname=value  BEGIN öncesi değişken atar; komut satırı sırası korunur
 tr.awk.help.options.program_file =   -f dosya, -fdosya        AWK programını dosyadan okur; birden çok -f sırayla birleştirilir
 tr.awk.help.options.color =   --color=auto|always|never  yalnızca komut satırı yardımını ve tanılarını biçimlendirir
@@ -2106,7 +2106,7 @@ uk.awk.help.title = awk
 uk.awk.help.summary = Реалізація AWK для командного рядка на Ada, побудована на awklib. Робочий процес командного рядка наслідує традиційний POSIX awk, а поведінка обмежена вибраною версією awklib.
 uk.awk.help.usage.direct_program = Використання: awk [параметри] 'програма' [операнд...]
 uk.awk.help.usage.program_files = Використання: awk [параметри] -f файл-програми [-f файл-програми...] [операнд...]
-uk.awk.help.options.field_separator =   -F sep, -Fsep          задає FS перед виконанням· остання поява має силу
+uk.awk.help.options.field_separator =   -F роздільник, -Fроздільник          задає FS перед виконанням· остання поява має силу
 uk.awk.help.options.variable =   -v name=value, -vname=value  задає змінну перед BEGIN· порядок командного рядка зберігається
 uk.awk.help.options.program_file =   -f файл, -fфайл        читає вихідний текст AWK з файлу· кілька файлів обєднуються за порядком
 uk.awk.help.options.color =   --color=auto|always|never  стилізує лише довідку та діагностику командного рядка
