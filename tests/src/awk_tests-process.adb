@@ -1,11 +1,11 @@
 with AUnit.Assertions;
 
-with Ada.Directories;
 with Ada.Strings.Unbounded;
 
 with GNAT.Expect;
 with GNAT.OS_Lib;
 
+with Project_Tools.Files;
 with Project_Tools.Processes;
 with Awk_Tests.Support;
 
@@ -86,9 +86,7 @@ package body Awk_Tests.Process is
       Assert
         (Contains (U.To_String (Output), Target & ":dash"),
          "dash-leading filename is treated as an operand");
-      if Ada.Directories.Exists ("../" & Target) then
-         Ada.Directories.Delete_File ("../" & Target);
-      end if;
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Dash_Filename_After_Terminator;
 
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -315,9 +313,7 @@ package body Awk_Tests.Process is
         [new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
       Status : Integer;
    begin
-      if Ada.Directories.Exists ("../" & Target) then
-         Ada.Directories.Delete_File ("../" & Target);
-      end if;
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
 
       Status :=
         Project_Tools.Processes.Run_Status
@@ -332,9 +328,7 @@ package body Awk_Tests.Process is
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
       Assert (File_Text ("../" & Target) = "saved", "process redirection file content");
 
-      if Ada.Directories.Exists ("../" & Target) then
-         Ada.Directories.Delete_File ("../" & Target);
-      end if;
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Redirection;
 
    procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -345,9 +339,7 @@ package body Awk_Tests.Process is
         [new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
       Status : Integer;
    begin
-      if Ada.Directories.Exists ("../" & Target) then
-         Ada.Directories.Delete_File ("../" & Target);
-      end if;
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Write_Text_File ("../" & Target, "existing" & LF);
 
       Status :=
@@ -366,9 +358,7 @@ package body Awk_Tests.Process is
          Contains (File_Text ("../" & Target), "first" & LF & "second"),
          "append redirection preserves existing file content");
 
-      if Ada.Directories.Exists ("../" & Target) then
-         Ada.Directories.Delete_File ("../" & Target);
-      end if;
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Append_Redirection;
 
    procedure Test_Process_Field_Separator (T : in out AUnit.Test_Cases.Test_Case'Class) is

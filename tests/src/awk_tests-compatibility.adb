@@ -1,9 +1,8 @@
 with AUnit.Assertions;
 
-with Ada.Directories;
-
 with Awk_CLI.Compatibility;
 with Awk_Tests.Support;
+with Project_Tools.Files;
 
 package body Awk_Tests.Compatibility is
    use AUnit.Assertions;
@@ -52,9 +51,9 @@ package body Awk_Tests.Compatibility is
            Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
       begin
          Assert (Contains (Manifest, Line), "manifest contains " & Id);
-         Assert (Ada.Directories.Exists ("conformance/" & Case_File),
+         Assert (Project_Tools.Files.File_Exists ("conformance/" & Case_File),
                  "case file exists for " & Id);
-         Assert (Ada.Directories.Exists ("conformance/" & Expected),
+         Assert (Project_Tools.Files.File_Exists ("conformance/" & Expected),
                  "expected file exists for " & Id);
          Assert (File_Text ("conformance/" & Case_File) /= "",
                  "case file is non-empty for " & Id);
