@@ -705,6 +705,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Write_Text_File ("../" & Target, "old" & LF & "content" & LF);
 
       Status :=
         Project_Tools.Processes.Run_Status
@@ -718,6 +719,8 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process redirection exits successfully");
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
       Assert (File_Text ("../" & Target) = "saved", "process redirection file content");
+      Assert (not Contains (File_Text ("../" & Target), "old"),
+              "overwrite redirection replaces existing file content");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Redirection;
