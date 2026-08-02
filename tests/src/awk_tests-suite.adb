@@ -393,6 +393,8 @@ package body Awk_Tests.Suite is
       begin
          Assert (Exec.Ok, "execution succeeds");
          Assert (U.To_String (Exec.Standard_Output) = "8" & LF, "-v visible before BEGIN");
+         Assert (not Awk_CLI.Execution.Supports_Streaming_Execution,
+                 "execution adapter exposes memory-oriented awklib boundary");
       end;
    end Test_Execution;
 
@@ -949,6 +951,7 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-ASSIGNMENT-001"), "assignment ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REDIRECTION-001"), "redirection ID present");
+      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-STREAMING-001"), "streaming ID present");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
          declare

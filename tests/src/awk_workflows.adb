@@ -270,6 +270,9 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
          "compatibility registry is missing command-pipe getline limitation");
       Require
+        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-STREAMING-001"),
+         "compatibility registry is missing streaming limitation");
+      Require
         (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
          "compatibility docs must include test references");
       Require
@@ -294,6 +297,10 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/architecture.md"),
                    "Supports_Redirection_Append_Mode = False"),
          "architecture docs must document append redirection capability");
+      Require
+        (Contains (File_Text ("../docs/architecture.md"),
+                   "Supports_Streaming_Execution = False"),
+         "architecture docs must document streaming capability");
       Require
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");

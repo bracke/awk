@@ -60,7 +60,14 @@ package body Awk_CLI.Compatibility is
        Description   => new String'("redirection output is captured without exposing append intent"),
        Source        => new String'("awklib 0.1.0 Output_Files API"),
        Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("context append redirection limitation"))];
+       Test_Reference => new String'("context append redirection limitation")),
+      (Id            => new String'("AWK-COMPAT-STREAMING-001"),
+       Area          => Input,
+       Status        => Supported_With_Documented_Difference,
+       Description   => new String'("execution is memory-oriented rather than streaming"),
+       Source        => new String'("awklib 0.1.0 Run API"),
+       Documentation => new String'("docs/compatibility.md"),
+       Test_Reference => new String'("awklib execution adapter"))];
 
    function Count return Natural is (Entries'Length);
 

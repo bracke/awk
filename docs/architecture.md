@@ -31,6 +31,9 @@ CLI may hold complete program source, standard input, named input files,
 captured standard output, and captured redirected output in memory. Redirections
 are materialized after interpretation from captured results rather than written
 as live streaming output. The execution adapter reports
+`Awk_CLI.Execution.Supports_Streaming_Execution = False` for the resolved
+`awklib` API, so true streaming is tracked as `AWK-COMPAT-STREAMING-001`
+instead of emulated by a CLI-side record loop. The adapter also reports
 `Awk_CLI.Execution.Supports_Redirection_Append_Mode = False` for the resolved
 `awklib` API, so append intent is tracked as `AWK-COMPAT-REDIRECTION-001`
 instead of inferred by parsing AWK source.
