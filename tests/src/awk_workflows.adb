@@ -1376,6 +1376,17 @@ procedure Awk_Workflows is
 
    procedure Package_Artifact (Release_Mode : Boolean := False) is
       Dist : constant String := "../dist/awk-0.1.0";
+
+      procedure Create_Package_Directories is
+      begin
+         Dir.Create_Path (Dist);
+         for Path of Package_Files loop
+            Dir.Create_Path
+              (Ada.Directories.Containing_Directory
+                 (Files.Join (Dist, U.To_String (Path))));
+         end loop;
+      end Create_Package_Directories;
+
       procedure Add_Manifest_Line
         (Buffer : in out U.Unbounded_String;
          Path   : String)
@@ -1417,12 +1428,7 @@ procedure Awk_Workflows is
          Build;
       end if;
       Files.Delete_Tree ("../dist");
-      Dir.Create_Path (Files.Join (Dist, "bin"));
-      Dir.Create_Path (Files.Join (Dist, "resources/messages"));
-      Dir.Create_Path (Files.Join (Dist, "resources/messages/en"));
-      Dir.Create_Path (Files.Join (Dist, "resources/messages/da"));
-      Dir.Create_Path (Files.Join (Dist, "docs"));
-      Dir.Create_Path (Files.Join (Dist, "docs/ai"));
+      Create_Package_Directories;
       for Path of Package_Files loop
          Copy_Package_File (U.To_String (Path));
          Require_Package_File (U.To_String (Path));
