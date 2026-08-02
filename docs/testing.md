@@ -8,7 +8,9 @@ The primary suite is `awk_tests_main`. It exercises:
 Subsystem-focused AUnit packages live alongside the aggregate suite. The
 `awk_tests-cli_options` package owns option-parser tests, and
 `awk_tests-program_sources` owns program-source resolution tests. The
-`awk_tests-operands` package owns operand classification tests.
+`awk_tests-operands` package owns operand classification tests, and
+`awk_tests-diagnostics` owns structured diagnostic rendering and sanitizing
+tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 integration and process-boundary coverage.
 
