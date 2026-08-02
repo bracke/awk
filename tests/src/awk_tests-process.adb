@@ -139,6 +139,40 @@ package body Awk_Tests.Process is
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Dash_Filename_After_Terminator;
 
+   procedure Test_Process_Option_Terminator_Long_Operands
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
+        [new String'("--"),
+         new String'("BEGIN { print ARGV[1]; print ARGV[2]; print ARGV[3] }"),
+         new String'("--help"),
+         new String'("--version"),
+         new String'("--color=always")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process terminator long operands",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "option terminator long operands exit successfully");
+      Assert
+        (Contains
+           (U.To_String (Output),
+            "--help" & LF & "--version" & LF & "--color=always" & LF),
+         "long-option-looking values after -- remain AWK operands");
+      Assert (not Contains (U.To_String (Output), "Usage: awk"),
+              "--help after -- does not request help");
+      Assert (not Contains (U.To_String (Output), "awk 0.1.0"),
+              "--version after -- does not request version output");
+      Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
+              "--color after -- does not style AWK output");
+   end Test_Process_Option_Terminator_Long_Operands;
+
    procedure Test_Process_Option_Looking_File_After_Program
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1452,6 +1486,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Dash_Filename_After_Terminator'Access,
          "process dash filename after terminator");
+      Registration.Register_Routine
+        (T, Test_Process_Option_Terminator_Long_Operands'Access,
+         "process option terminator long operands");
       Registration.Register_Routine
         (T, Test_Process_Option_Looking_File_After_Program'Access,
          "process option-looking file after program");
