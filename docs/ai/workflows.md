@@ -21,9 +21,10 @@ Nested Alire builds are launched through a scrubbed environment so `alr exec`
 dependency-prefix variables from the outer process cannot conflict with the
 root and tests crate resolutions.
 
-`verify` also runs source-policy checks for adapter isolation, no direct ANSI
-emission in presentation code, and no external AWK fallback references in
-production source.
+`verify` also runs source-policy checks for adapter isolation through parsed
+Ada `with` clauses, no handwritten ANSI code tokens in presentation code, no
+external AWK fallback code tokens in production source, and expected local
+Alire workspace pins.
 
 `release` requires a clean git working tree, builds root and tests with
 `--release --profiles=*=release`, runs the same mandatory checks, and packages

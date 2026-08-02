@@ -274,11 +274,20 @@ procedure Awk_Workflows is
         (File_Has ("../docs/testing.md", "Alire install-boundary"),
          "testing docs must mention install-boundary validation");
       Require
+        (File_Has ("../docs/testing.md", "local Alire workspace pins"),
+         "testing docs must mention workspace pin validation");
+      Require
+        (File_Has ("../docs/testing.md", "parsed Ada `with` clauses"),
+         "testing docs must mention parsed Ada source-policy validation");
+      Require
         (File_Has ("../docs/testing.md", "FNV-1a-64"),
          "testing docs must mention release checksum validation");
       Require
         (File_Has ("../docs/building.md", "install boundary"),
          "building docs must mention install boundary verification");
+      Require
+        (File_Has ("../docs/building.md", "local Alire workspace pins"),
+         "building docs must mention workspace pin verification");
       Require
         (File_Has ("../docs/releasing.md", "--release --profiles=*=release"),
          "release docs must document release-profile builds");
@@ -286,11 +295,22 @@ procedure Awk_Workflows is
         (File_Has ("../docs/releasing.md", "clean git working tree"),
          "release docs must document clean-tree enforcement");
       Require
+        (File_Has ("../docs/releasing.md", "local Alire workspace pins"),
+         "release docs must mention workspace pin verification");
+      Require
         (File_Has ("../docs/releasing.md", "FNV-1a-64"),
          "release docs must document manifest checksum algorithm");
       Require
         (File_Has ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
+      Require
+        (File_Has ("../docs/ai/workflows.md", "parsed" & ASCII.LF &
+                                             "Ada `with` clauses"),
+         "AI workflow docs must mention parsed Ada source-policy validation");
+      Require
+        (File_Has ("../docs/ai/workflows.md", "expected local" & ASCII.LF &
+                                             "Alire workspace pins"),
+         "AI workflow docs must mention workspace pin validation");
       Put_Info ("documentation checks passed");
    end Docs;
 
