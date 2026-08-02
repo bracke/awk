@@ -44,7 +44,7 @@ in-memory invocation-context integration tests.
   direct programs, `-f`, `-F`, `-v`, parse failures, multiple input files,
   dash-leading filenames after `--`, runtime assignment `ARGV`, environment
   propagation to `ENVIRON`, explicit standard-input EOF, non-empty
-  standard-input data, and redirection.
+  standard-input data, redirection, and redirected-output failures.
 - conformance manifest validation for supported behavior, documented
   differences, and unsupported `awklib` cases.
 

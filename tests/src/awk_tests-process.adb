@@ -795,6 +795,41 @@ package body Awk_Tests.Process is
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Append_Redirection;
 
+   procedure Test_Process_Redirection_Target_Directory_Failure
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Target : constant String := "tests/fixtures/filesystem";
+
+      procedure Expect_Failure (Operator, Message : String) is
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+           [new String'
+              ("BEGIN { print ""x"" " & Operator & " """ & Target & """; print ""after"" }")];
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 3, Message & " exits with host I/O status");
+            Assert (Contains (Output, "awk: error: cannot write output file: " & Target),
+                    Message & " reports the redirected output target");
+            Assert (not Contains (Output, "after"),
+                    Message & " does not continue after required output failure");
+            Assert (not Contains (Output, Character'Val (27) & "["),
+                    Message & " diagnostic is unstyled by default capture");
+         end;
+      end Expect_Failure;
+   begin
+      Expect_Failure (">", "overwrite redirection to directory");
+      Expect_Failure (">>", "append redirection to directory");
+   end Test_Process_Redirection_Target_Directory_Failure;
+
    procedure Test_Process_Field_Separator (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1681,6 +1716,9 @@ package body Awk_Tests.Process is
          "process missing input file");
       Registration.Register_Routine (T, Test_Process_Redirection'Access, "process redirection");
       Registration.Register_Routine (T, Test_Process_Append_Redirection'Access, "process append redirection");
+      Registration.Register_Routine
+        (T, Test_Process_Redirection_Target_Directory_Failure'Access,
+         "process redirection target directory failure");
       Registration.Register_Routine (T, Test_Process_Field_Separator'Access, "process -F");
       Registration.Register_Routine
         (T, Test_Process_Attached_Field_Separator_Final_Wins'Access,
