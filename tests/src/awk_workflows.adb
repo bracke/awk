@@ -586,6 +586,21 @@ procedure Awk_Workflows is
               [U.To_Unbounded_String ("../src/main/awk.adb"),
                U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
          "direct Text_IO writes must stay in main containment or platform adapter");
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "Ada.Command_Line",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/main/awk.adb"),
+               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "process command-line access must stay in main containment or platform adapter");
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "GNAT.OS_Lib",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "low-level OS process helpers must stay in platform adapter");
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],
