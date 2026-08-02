@@ -305,6 +305,16 @@ package body Awk_Tests.Process is
    begin
       Assert (Status = 0, "process help exits successfully");
       Assert (Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
+      Assert (Contains (U.To_String (Output), "--                     end option processing"),
+              "help documents the option terminator");
+      Assert (Contains (U.To_String (Output), "Operands after the program"),
+              "help documents operand classification");
+      Assert (Contains (U.To_String (Output), "standard input is used implicitly"),
+              "help documents implicit standard input");
+      Assert (Contains (U.To_String (Output), "Exit statuses: 0 success"),
+              "help documents exit statuses");
+      Assert (Contains (U.To_String (Output), "does not claim complete POSIX conformance"),
+              "help documents the compatibility position");
       Assert (not Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=never suppresses ANSI escapes");
    end Test_Process_Help_Color_Never;
