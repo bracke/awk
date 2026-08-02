@@ -1143,6 +1143,27 @@ package body Awk_Tests.Process is
               "OFS, ORS, and numeric builtins are applied by awklib");
    end Test_Process_Output_Separators_And_Numeric_Builtins;
 
+   procedure Test_Process_Math_Builtins
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { print sin(0), cos(0), exp(0), log(1), atan2(0, -1) }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process math builtins",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process math builtins exit successfully");
+      Assert (Contains (U.To_String (Output), "0 1 1 0 3.14159" & LF),
+              "process math builtins follow awklib output formatting");
+   end Test_Process_Math_Builtins;
+
    procedure Test_Process_Arrays_Delete_And_While
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1407,6 +1428,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Output_Separators_And_Numeric_Builtins'Access,
          "process output separators and numeric builtins");
+      Registration.Register_Routine
+        (T, Test_Process_Math_Builtins'Access,
+         "process math builtins");
       Registration.Register_Routine
         (T, Test_Process_Arrays_Delete_And_While'Access,
          "process arrays delete and while");
