@@ -61,8 +61,10 @@ locale policy, validates the conformance manifest, checks local Alire workspace 
 checks adapter isolation through parsed Ada `with` clauses, rejects
 handwritten ANSI code tokens in production source while allowing the diagnostic
 sanitizer to recognize ESC for escaping, rejects system-AWK fallback code
-tokens in production source, rejects shell/script workflow files, and runs an
-Alire install-boundary check into a temporary prefix.
+tokens in production source, verifies command-line and low-level OS process
+access stay in the main containment boundary or platform adapter, rejects
+shell/script workflow files, and runs an Alire install-boundary check into a
+temporary prefix.
 
 The release workflow runs the mandatory test and policy gates with release
 builds, requires a clean git working tree, and packages the executable, message

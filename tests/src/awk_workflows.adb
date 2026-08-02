@@ -259,6 +259,13 @@ procedure Awk_Workflows is
                             "diagnostic ESC recognition for escaping"),
          "workflow docs must describe production-wide ANSI source policy");
       Require
+        (File_Has ("../docs/testing.md", "command-line and low-level OS process" & ASCII.LF &
+                                      "access stay in the main containment boundary or platform adapter")
+         and then File_Has ("../docs/ai/workflows.md",
+                            "command-line and low-level OS process access" & ASCII.LF &
+                            "confined to main containment or the platform adapter"),
+         "workflow docs must describe process-boundary source policy");
+      Require
         (File_Has ("../docs/ai/traceability.md", "| 1 | Project identity |"),
          "traceability docs must map project identity");
       Require
