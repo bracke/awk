@@ -9,7 +9,9 @@ supported locale. It also runs `Messages.Consistency` against the combined
 catalog so translations keep required arguments, preserve AWK-specific verbatim
 tokens such as `awk`, `awklib`, `-F`, `-v`, `-f`, `--color`, `ARGV`, `ARGC`,
 `ENVIRON`, `BEGIN`, `END`, `getline`, `print`, and `printf`, and avoid ICU
-apostrophe escape hazards.
+apostrophe escape hazards. Process-level tests also render a non-ASCII locale
+diagnostic and reject the doubled UTF-8 lead-byte sequence that indicates
+mojibake at the executable boundary.
 
 Locales outside the supported European state-language locale set fall back
 through the `messages` runtime to the catalog default locale. If a requested
