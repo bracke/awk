@@ -2,6 +2,8 @@ with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.Exceptions;
+with Ada.Streams;
+with Ada.Streams.Stream_IO;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with Interfaces;
@@ -672,17 +674,28 @@ procedure Awk_Workflows is
       end Hex_64;
 
       function Checksum (Path : String) return String is
-         Content    : constant String := Files.Read_Raw_File (Path);
+         package SIO renames Ada.Streams.Stream_IO;
+         File       : SIO.File_Type;
+         Buffer     : Ada.Streams.Stream_Element_Array (1 .. 8192);
+         Last       : Ada.Streams.Stream_Element_Offset;
          FNV_Offset : constant Interfaces.Unsigned_64 := 16#cbf29ce484222325#;
          FNV_Prime  : constant Interfaces.Unsigned_64 := 16#00000100000001b3#;
          Result     : Interfaces.Unsigned_64 := FNV_Offset;
       begin
-         for Item of Content loop
-            Result := (Result xor Interfaces.Unsigned_64 (Character'Pos (Item))) * FNV_Prime;
+         SIO.Open (File, SIO.In_File, Path);
+         while not SIO.End_Of_File (File) loop
+            SIO.Read (File, Buffer, Last);
+            for Index in Buffer'First .. Last loop
+               Result := (Result xor Interfaces.Unsigned_64 (Buffer (Index))) * FNV_Prime;
+            end loop;
          end loop;
+         SIO.Close (File);
          return Hex_64 (Result);
       exception
          when others =>
+            if SIO.Is_Open (File) then
+               SIO.Close (File);
+            end if;
             return "0000000000000000";
       end Checksum;
 
