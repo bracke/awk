@@ -240,9 +240,6 @@ procedure Awk_Workflows is
          "testing docs must mention structured diagnostic assertions",
          Quiet => True);
       Files.Require_Contains
-        ("../docs/testing.md", "awk_tests-cli_options",
-         "testing docs must document subsystem test packages", Quiet => True);
-      Files.Require_Contains
         ("../docs/testing.md", "conformance manifest",
          "testing docs must mention conformance manifest validation",
          Quiet => True);
@@ -1172,6 +1169,8 @@ procedure Awk_Workflows is
         (Test_Dir             => "src",
          Spec_Pattern         => "awk_tests-*.ads",
          Suite_Path           => "src/awk_tests-suite.adb",
+         Documentation_Path     => "../docs/testing.md",
+         Documented_Stem_Prefix => "`",
          Suite_Add_Prefix     => "Result.Add_Test (new ",
          Suite_Add_Suffix     => ".Case_Type)",
          Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
