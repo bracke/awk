@@ -513,6 +513,25 @@ package body Awk_Tests.Process is
       Assert (U.To_String (Output) = "", "parse failure does not write stdout");
    end Test_Process_Parse_Failure;
 
+   procedure Test_Process_Runtime_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { print 1 / 0 }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process runtime failure",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 1, "process runtime failure exits with interpreter status");
+      Assert (not Contains (U.To_String (Output), "successful"),
+              "runtime failure does not report false success");
+   end Test_Process_Runtime_Failure;
+
    procedure Test_Process_Multiple_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -602,6 +621,7 @@ package body Awk_Tests.Process is
         (T, Test_Process_Runtime_Assignment_Argv'Access,
          "process runtime assignment ARGV");
       Registration.Register_Routine (T, Test_Process_Parse_Failure'Access, "process parse failure");
+      Registration.Register_Routine (T, Test_Process_Runtime_Failure'Access, "process runtime failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
    end Register_Tests;
