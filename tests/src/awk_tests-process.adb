@@ -648,40 +648,52 @@ package body Awk_Tests.Process is
 
    procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/no-such-program.awk")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk missing program file",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
    begin
-      Assert (Status = 3, "missing process program file exits with host I/O status");
-      Assert (U.To_String (Output) = "", "missing process program file writes no stdout");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 3, "missing process program file exits with host I/O status");
+         Assert
+           (Contains
+              (Output,
+               "cannot open program file: tests/fixtures/programs/no-such-program.awk"),
+            "missing process program file reports the original path");
+      end;
    end Test_Process_Missing_Program_File;
 
    procedure Test_Process_Missing_Input_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
       Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print }"),
          new String'("tests/fixtures/input/no-such-input.txt")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk missing input file",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
    begin
-      Assert (Status = 3, "missing process input file exits with host I/O status");
-      Assert (U.To_String (Output) = "", "missing process input file writes no stdout");
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 3, "missing process input file exits with host I/O status");
+         Assert
+           (Contains
+              (Output,
+               "cannot open input file: tests/fixtures/input/no-such-input.txt"),
+            "missing process input file reports the original path");
+      end;
    end Test_Process_Missing_Input_File;
 
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
