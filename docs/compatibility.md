@@ -12,7 +12,6 @@ closest current test reference.
 | ID | Area | Status | Source | Test reference | Description |
 | --- | --- | --- | --- | --- | --- |
 | `AWK-COMPAT-UTF8-001` | Encoding | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | Malformed UTF-8 handling is inherited from `awklib`. |
-| `AWK-COMPAT-PRINTF-001` | Output formatting | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | `%c` field-width behavior is inherited from `awklib`. |
 
 An `awklib` dependency update requires rebuilding, running all tests, reviewing
 upstream behavior, updating this registry and document, and changing test

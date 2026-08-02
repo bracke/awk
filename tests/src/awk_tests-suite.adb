@@ -1134,13 +1134,14 @@ package body Awk_Tests.Suite is
       Conformance : constant String := File_Text ("conformance/manifest/cases.txt");
       Has_Difference : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 2, "registry has accepted limitation entries");
+      Assert (Awk_CLI.Compatibility.Count >= 1, "registry has accepted limitation entries");
       Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"),
               "main-input getline from BEGIN is no longer a compatibility limitation");
       Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"),
               "command getline is no longer a compatibility limitation");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
+      Assert (not Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"),
+              "printf %c field width is no longer a compatibility limitation");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
          declare

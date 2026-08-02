@@ -12,20 +12,14 @@ package body Awk_CLI.Compatibility is
    end record;
 
    Entries : constant array (Positive range <>) of Registry_Entry :=
-     [(Id            => new String'("AWK-COMPAT-UTF8-001"),
-       Area          => Encoding,
-       Status        => Supported_With_Documented_Difference,
-       Description   => new String'("malformed UTF-8 handling is inherited from awklib"),
-       Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("compatibility registry")),
-      (Id            => new String'("AWK-COMPAT-PRINTF-001"),
-       Area          => Output_Formatting,
-       Status        => Supported_With_Documented_Difference,
-       Description   => new String'("printf %c field-width behavior is inherited from awklib"),
-       Source        => new String'("awklib 0.1.0"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("compatibility registry"))];
+     [1 =>
+        (Id            => new String'("AWK-COMPAT-UTF8-001"),
+         Area          => Encoding,
+         Status        => Supported_With_Documented_Difference,
+         Description   => new String'("malformed UTF-8 handling is inherited from awklib"),
+         Source        => new String'("awklib 0.1.0"),
+         Documentation => new String'("docs/compatibility.md"),
+         Test_Reference => new String'("compatibility registry"))];
 
    function Count return Natural is (Entries'Length);
 
