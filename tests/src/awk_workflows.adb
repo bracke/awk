@@ -167,6 +167,10 @@ procedure Awk_Workflows is
         (File_Has ("../docs/diagnostics.md", "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
+        (File_Has ("../docs/localization.md", "awk.internal.localization_failed")
+         and then File_Has ("../docs/localization.md", "last-resort containment"),
+         "localization docs must document catalog-backed render fallback");
+      Require
         (File_Has ("../docs/architecture.md", "main input is callback-driven"),
          "architecture docs must document memory-oriented host integration");
       Require
