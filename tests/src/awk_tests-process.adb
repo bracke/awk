@@ -137,6 +137,34 @@ package body Awk_Tests.Process is
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Option_Looking_File_After_Program;
 
+   procedure Test_Process_Short_Option_Looking_File_After_Program
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Target : constant String := "-F";
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("{ print FILENAME "":"" $1 }"),
+         new String'(Target)];
+      Status : Integer;
+   begin
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Write_Text_File ("../" & Target, "short-option-file" & LF);
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk short option-looking file after program",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "short option-looking filename after program exits successfully");
+      Assert
+        (Contains (U.To_String (Output), Target & ":short-option-file" & LF),
+         "post-program -F is read as an input file");
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+   end Test_Process_Short_Option_Looking_File_After_Program;
+
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -839,6 +867,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Option_Looking_File_After_Program'Access,
          "process option-looking file after program");
+      Registration.Register_Routine
+        (T, Test_Process_Short_Option_Looking_File_After_Program'Access,
+         "process short option-looking file after program");
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
       Registration.Register_Routine
         (T, Test_Process_Option_Looking_Operand_After_File_Mode_Input'Access,

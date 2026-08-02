@@ -161,6 +161,7 @@ package body Awk_Tests.CLI_Options is
       Args.Append (U.To_Unbounded_String ("BEGIN { print ARGV[1] }"));
       Args.Append (U.To_Unbounded_String ("--version"));
       Args.Append (U.To_Unbounded_String ("--color=always"));
+      Args.Append (U.To_Unbounded_String ("-F"));
       declare
          Result : constant Opt.Parse_Result := Opt.Parse (Args);
       begin
@@ -169,12 +170,14 @@ package body Awk_Tests.CLI_Options is
                  "--version after direct program is an operand");
          Assert (Result.Options.Color = Opt.Color_Auto,
                  "--color after direct program does not alter color policy");
-         Assert (Result.Options.Operands.Length = 3,
+         Assert (Result.Options.Operands.Length = 4,
                  "direct program and later option-looking operands are retained");
          Assert (U.To_String (Result.Options.Operands.Element (2).Text) = "--version",
                  "post-program --version spelling is preserved");
          Assert (Result.Options.Operands.Element (2).Original_Index = 2,
                  "post-program operand index is preserved");
+         Assert (U.To_String (Result.Options.Operands.Element (4).Text) = "-F",
+                 "post-program -F spelling is preserved as an operand");
       end;
    end Test_Options_After_Direct_Program_Are_Operands;
 
