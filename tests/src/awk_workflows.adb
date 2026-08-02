@@ -1007,15 +1007,21 @@ procedure Awk_Workflows is
    end Public_Spec_Docs;
 
    procedure Package_Manifest_Policy is
-      Workflow_Source : constant String :=
-        Fixtures.Read_Text_File ("src/awk_workflows.adb");
+      function Package_Includes (Path : String) return Boolean is
+      begin
+         for Item of Package_Files loop
+            if U.To_String (Item) = Path then
+               return True;
+            end if;
+         end loop;
+
+         return False;
+      end Package_Includes;
 
       procedure Require_Packaged (Path : String) is
       begin
          Require
-           (Text.Contains
-              (Workflow_Source,
-               "U.To_Unbounded_String (""" & Path & """)"),
+           (Package_Includes (Path),
             "package file list missing: " & Path);
       end Require_Packaged;
    begin
