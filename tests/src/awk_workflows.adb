@@ -199,6 +199,13 @@ procedure Awk_Workflows is
         (File_Has ("../docs/diagnostics.md", "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
+        (File_Has ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
+                                               "  `hostkit`")
+         and then File_Has ("../docs/dependency-policy.md", "Platform-access dependency")
+         and then File_Has ("../docs/ai/package-contracts.md",
+                            "Only `Awk_CLI.Platform` may call `hostkit`"),
+         "platform docs must document the hostkit adapter boundary");
+      Require
         (File_Has ("../docs/localization.md", "awk.internal.localization_failed")
          and then File_Has ("../docs/localization.md", "last-resort containment"),
          "localization docs must document catalog-backed render fallback");
