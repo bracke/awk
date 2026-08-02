@@ -17,6 +17,7 @@ with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
 with Project_Tools.Text;
+with Project_Tools.TOML;
 with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
@@ -25,6 +26,7 @@ procedure Awk_Workflows is
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package Text renames Project_Tools.Text;
+   package TOML renames Project_Tools.TOML;
    package U renames Ada.Strings.Unbounded;
    use type Interfaces.Unsigned_64;
 
@@ -205,12 +207,6 @@ procedure Awk_Workflows is
         (File_Has ("../README.md", "Windows"),
          "README must include Windows quoting guidance");
       Require
-        (File_Has ("../alire.toml", "licenses = ""MIT"""),
-         "root crate must declare MIT license");
-      Require
-        (File_Has ("alire.toml", "licenses = ""MIT"""),
-         "tests crate must declare MIT license");
-      Require
         (File_Has ("../LICENSE", "MIT License"),
          "LICENSE must contain MIT license text");
       Require
@@ -296,8 +292,10 @@ procedure Awk_Workflows is
    end Docs;
 
    procedure Metadata is
+      Root_Alire  : constant String := File_Text ("../alire.toml");
+      Tests_Alire : constant String := File_Text ("alire.toml");
    begin
-      Require (File_Has ("../alire.toml", "name = ""awk"""),
+      Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
       Require (File_Has ("../alire.toml", "executables = [""awk""]"),
                "root crate must install executable awk");
@@ -309,7 +307,7 @@ procedure Awk_Workflows is
                "root crate must depend on terminal_styles");
       Require (File_Has ("../alire.toml", "messages = "),
                "root crate must depend on messages");
-      Require (File_Has ("alire.toml", "name = ""awk_tests"""),
+      Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
       Require (File_Has ("alire.toml", "awk = "),
                "tests crate must depend on awk");
@@ -327,6 +325,10 @@ procedure Awk_Workflows is
                "root project main must be awk.adb");
       Require (File_Has ("awk_tests.gpr", "awk_workflows.adb"),
                "tests project must build workflow executable");
+      Require (TOML.String_Value_After (Root_Alire, "licenses =", Root_Alire'First) = "MIT",
+               "root crate must declare MIT license");
+      Require (TOML.String_Value_After (Tests_Alire, "licenses =", Tests_Alire'First) = "MIT",
+               "tests crate must declare MIT license");
       Put_Info ("metadata checks passed");
    end Metadata;
 
