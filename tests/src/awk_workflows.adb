@@ -278,14 +278,14 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
          "architecture docs must document testable invocation context");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-UTF8-001"),
-         "compatibility registry is missing malformed UTF-8 limitation");
+        (Contains (File_Text ("../docs/compatibility.md"),
+                   "No current compatibility-registry entries are active"),
+         "compatibility docs must state the empty active registry");
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
          "compatibility docs must include test references");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"),
-                   "Supported with documented difference"),
+        (Contains (File_Text ("../docs/compatibility.md"), "Status"),
          "compatibility docs must include status names");
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "Source"),

@@ -1,43 +1,51 @@
 package body Awk_CLI.Compatibility is
-   type Text_Access is access constant String;
+   function Count return Natural is (0);
 
-   type Registry_Entry is record
-      Id            : Text_Access;
-      Area          : Compatibility_Area;
-      Status        : Compatibility_Status;
-      Description   : Text_Access;
-      Source        : Text_Access;
-      Documentation : Text_Access;
-      Test_Reference : Text_Access;
-   end record;
+   function Id (Index : Positive) return String is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Id;
 
-   Entries : constant array (Positive range <>) of Registry_Entry :=
-     [1 =>
-        (Id            => new String'("AWK-COMPAT-UTF8-001"),
-         Area          => Encoding,
-         Status        => Supported_With_Documented_Difference,
-         Description   => new String'("malformed UTF-8 handling is inherited from awklib"),
-         Source        => new String'("awklib 0.1.0"),
-         Documentation => new String'("docs/compatibility.md"),
-         Test_Reference => new String'("compatibility registry"))];
+   function Area (Index : Positive) return Compatibility_Area is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Area;
 
-   function Count return Natural is (Entries'Length);
+   function Status (Index : Positive) return Compatibility_Status is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Status;
 
-   function Id (Index : Positive) return String is (Entries (Index).Id.all);
-   function Area (Index : Positive) return Compatibility_Area is (Entries (Index).Area);
-   function Status (Index : Positive) return Compatibility_Status is (Entries (Index).Status);
-   function Description (Index : Positive) return String is (Entries (Index).Description.all);
-   function Source (Index : Positive) return String is (Entries (Index).Source.all);
-   function Documentation (Index : Positive) return String is (Entries (Index).Documentation.all);
-   function Test_Reference (Index : Positive) return String is (Entries (Index).Test_Reference.all);
+   function Description (Index : Positive) return String is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Description;
+
+   function Source (Index : Positive) return String is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Source;
+
+   function Documentation (Index : Positive) return String is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Documentation;
+
+   function Test_Reference (Index : Positive) return String is
+      pragma Unreferenced (Index);
+   begin
+      return (raise Constraint_Error with "no compatibility entry");
+   end Test_Reference;
 
    function Has_Id (Value : String) return Boolean is
+      pragma Unreferenced (Value);
    begin
-      for Item of Entries loop
-         if Item.Id.all = Value then
-            return True;
-         end if;
-      end loop;
       return False;
    end Has_Id;
 end Awk_CLI.Compatibility;
