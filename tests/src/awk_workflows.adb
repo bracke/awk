@@ -223,6 +223,10 @@ procedure Awk_Workflows is
         (File_Has ("../docs/releasing.md", "FNV-1a-64"),
          "release docs must document manifest checksum algorithm");
       Require
+        (File_Has ("../docs/releasing.md", "dependency policy")
+         and then File_Has ("../docs/releasing.md", "traceability matrix"),
+         "release docs must document packaged audit documentation");
+      Require
         (File_Has ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
       Require
@@ -607,11 +611,13 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("docs/testing.md"),
          U.To_Unbounded_String ("docs/building.md"),
          U.To_Unbounded_String ("docs/releasing.md"),
+         U.To_Unbounded_String ("docs/dependency-policy.md"),
          U.To_Unbounded_String ("docs/ai/project-map.md"),
          U.To_Unbounded_String ("docs/ai/package-contracts.md"),
          U.To_Unbounded_String ("docs/ai/invariants.md"),
          U.To_Unbounded_String ("docs/ai/workflows.md"),
          U.To_Unbounded_String ("docs/ai/prohibited-designs.md"),
+         U.To_Unbounded_String ("docs/ai/traceability.md"),
          U.To_Unbounded_String ("resources/messages/catalog.txt"),
          U.To_Unbounded_String ("resources/messages/en/catalog.txt"),
          U.To_Unbounded_String ("resources/messages/da/catalog.txt")];

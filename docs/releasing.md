@@ -19,8 +19,9 @@ dependency policy, the conformance manifest, source-policy
 invariants, and an Alire install into a temporary prefix before packaging. It
 creates `dist/awk-0.1.0` with the executable, license, README, changelog,
 contribution and security notes, core user/developer documentation, AI-oriented
-maintenance docs, message catalogs, and `MANIFEST.txt` containing byte counts
-and deterministic FNV-1a-64 checksums for packaged files.
+maintenance docs, the dependency policy, the traceability matrix, message
+catalogs, and `MANIFEST.txt` containing byte counts and deterministic
+FNV-1a-64 checksums for packaged files.
 
 This is a workspace release, not a publish-ready Alire index release. See
 `docs/dependency-policy.md` for the current local pins, the
