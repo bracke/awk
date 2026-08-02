@@ -732,8 +732,9 @@ package body Awk_Tests.Process is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
       Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("--color=always"),
+         new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -753,6 +754,8 @@ package body Awk_Tests.Process is
       Assert (File_Text ("../" & Target) = "saved", "process redirection file content");
       Assert (not Contains (File_Text ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
+      Assert (not Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+              "color=always does not style redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Redirection;
@@ -761,8 +764,9 @@ package body Awk_Tests.Process is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_append.txt";
       Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("--color=always"),
+         new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -785,6 +789,8 @@ package body Awk_Tests.Process is
          "append redirection preserves existing content and write order");
       Assert (File_Text ("../" & Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
+      Assert (not Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+              "color=always does not style appended redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Append_Redirection;
