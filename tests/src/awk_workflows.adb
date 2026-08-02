@@ -1028,9 +1028,9 @@ procedure Awk_Workflows is
               U.To_Unbounded_String ("dist"),
               U.To_Unbounded_String ("config")]);
    begin
-      Require
-        (Files.File_Contains ("../src/library/awk_cli-execution.adb", "with Awklib"),
-         "execution adapter must bridge to awklib");
+      Files.Require_Contains
+        ("../src/library/awk_cli-execution.adb", "with Awklib",
+         "execution adapter must bridge to awklib", Quiet => True);
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-execution.adb",
          "Awklib",
@@ -1044,9 +1044,9 @@ procedure Awk_Workflows is
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb")]) = "",
          "only execution adapter may depend on awklib");
-      Require
-        (Files.File_Contains ("../src/library/awk_cli-localization.adb", "with Messages"),
-         "localization adapter must bridge to messages");
+      Files.Require_Contains
+        ("../src/library/awk_cli-localization.adb", "with Messages",
+         "localization adapter must bridge to messages", Quiet => True);
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-localization.ads",
          "Messages",
@@ -1068,9 +1068,9 @@ procedure Awk_Workflows is
                  U.To_Unbounded_String ("../src/library/awk_cli-localization.ads")]));
       Require (U.To_String (Unexpected) = "",
                "only localization adapter may depend on messages: " & U.To_String (Unexpected));
-      Require
-        (Files.File_Contains ("../src/library/awk_cli-output.adb", "with Terminal_Styles"),
-         "presentation layer must bridge to terminal_styles");
+      Files.Require_Contains
+        ("../src/library/awk_cli-output.adb", "with Terminal_Styles",
+         "presentation layer must bridge to terminal_styles", Quiet => True);
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-output.adb",
          "Terminal_Styles",
@@ -1083,9 +1083,9 @@ procedure Awk_Workflows is
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
          "only presentation layer may depend on terminal_styles");
-      Require
-        (Files.File_Contains ("../src/library/awk_cli-platform.adb", "with Hostkit"),
-         "platform adapter must bridge to hostkit");
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb", "with Hostkit",
+         "platform adapter must bridge to hostkit", Quiet => True);
       Ada_Source.Require_Only_Allowed_With_Clauses
         ("../src/library/awk_cli-platform.adb",
          "Hostkit",
@@ -1185,12 +1185,12 @@ procedure Awk_Workflows is
          and then Files.File_Contains ("src/awk_tests-compatibility.adb",
                                        "with Project_Tools.Test_Fixtures"),
          "fixture file reads must use project_tools directly");
-      Require
-        (Files.File_Contains ("src/awk_workflows.adb", "--release"),
-         "release workflow must use Alire release builds");
-      Require
-        (Files.File_Contains ("src/awk_workflows.adb", "status"),
-         "release workflow must check git status");
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "--release",
+         "release workflow must use Alire release builds", Quiet => True);
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "status",
+         "release workflow must check git status", Quiet => True);
       Require
         (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
                                              "      Verify;"),
