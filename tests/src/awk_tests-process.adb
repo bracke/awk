@@ -41,6 +41,36 @@ package body Awk_Tests.Process is
       Assert (Contains (U.To_String (Output), "awklib 0.1.0"), "process version includes awklib version");
    end Test_Process_Version;
 
+   procedure Test_Process_Localized_Version_From_Locale
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("LC_ALL=da"),
+         new String'("./bin/awk"),
+         new String'("--version")];
+      Status : Integer;
+   begin
+      Assert (Env /= "", "env executable is available for localized version process test");
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk localized version",
+           Dir     => "..",
+           Program => Env,
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "localized process version exits successfully");
+      Assert (Contains (U.To_String (Output), "awk 0.1.0"),
+              "localized version includes awk version");
+      Assert (Contains (U.To_String (Output), "awklib 0.1.0"),
+              "localized version includes awklib version");
+      Assert (Contains (U.To_String (Output), "licens MIT"),
+              "process version follows LC_ALL locale");
+   end Test_Process_Localized_Version_From_Locale;
+
    procedure Test_Process_Direct_File_Input (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -886,6 +916,9 @@ package body Awk_Tests.Process is
       use AUnit.Test_Cases;
    begin
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
+      Registration.Register_Routine
+        (T, Test_Process_Localized_Version_From_Locale'Access,
+         "process localized version from locale");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
       Registration.Register_Routine
         (T, Test_Process_Empty_Direct_Program'Access,
