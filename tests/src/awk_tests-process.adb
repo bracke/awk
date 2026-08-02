@@ -1009,6 +1009,31 @@ package body Awk_Tests.Process is
               "process printf formatted text is forwarded");
    end Test_Process_Printf_Formatting;
 
+   procedure Test_Process_Comparisons
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { if (""beta"" > ""alpha"") print ""string""; if (5 >= 3) print ""number""; if (""7"" == 7) print ""coerce"" }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process comparisons",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process comparisons exit successfully");
+      Assert (Contains (U.To_String (Output), "string" & LF),
+              "process string comparison is evaluated by awklib");
+      Assert (Contains (U.To_String (Output), "number" & LF),
+              "process numeric comparison is evaluated by awklib");
+      Assert (Contains (U.To_String (Output), "coerce" & LF),
+              "process mixed comparison follows awklib conversion behavior");
+   end Test_Process_Comparisons;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1152,6 +1177,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Printf_Formatting'Access,
          "process printf formatting");
+      Registration.Register_Routine
+        (T, Test_Process_Comparisons'Access,
+         "process comparisons");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
