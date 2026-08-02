@@ -495,6 +495,10 @@ procedure Awk_Workflows is
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
       Files.Require_Contains
+        ("alire.toml", "executables = [""awk_tests_main"", ""awk_workflows""]",
+         "tests crate must expose the test and workflow executables",
+         Quiet => True);
+      Files.Require_Contains
         ("alire.toml", "awk = ",
          "tests crate must depend on awk", Quiet => True);
       Files.Require_Contains
@@ -532,6 +536,9 @@ procedure Awk_Workflows is
       Files.Require_Contains
         ("awk_tests.gpr", "awk_workflows.adb",
          "tests project must build workflow executable", Quiet => True);
+      Files.Require_Contains
+        ("awk_tests.gpr", "awk_tests_main.adb",
+         "tests project must build AUnit executable", Quiet => True);
       Require (TOML.String_Value_After (Root_Alire, "licenses =", Root_Alire'First) = "MIT",
                "root crate must declare MIT license");
       Require (TOML.String_Value_After (Tests_Alire, "licenses =", Tests_Alire'First) = "MIT",
