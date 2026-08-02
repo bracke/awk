@@ -1488,8 +1488,10 @@ procedure Awk_Workflows is
 begin
    if Command = "build" then
       Build;
+      Build_Output_Policy;
    elsif Command = "test" then
       Test;
+      Build_Output_Policy;
    elsif Command = "verify" then
       Verify;
    elsif Command = "docs" then
@@ -1498,6 +1500,7 @@ begin
       Clean;
    elsif Command = "package" then
       Package_Artifact;
+      Build_Output_Policy;
    elsif Command = "release" then
       Require_Clean_Repository;
       Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);

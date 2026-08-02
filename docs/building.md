@@ -9,8 +9,9 @@ alr build --development
 The child test crate also provides `awk_workflows` for build, test, verify,
 package, and release workflow gates.
 
-`build`, `test`, and `verify` use development builds. `verify` also checks the
-crate metadata, local Alire workspace pins, conformance manifest, source-policy
+`build`, `test`, `package`, and `verify` use development builds and reject
+non-empty generated `.stderr` build logs. `verify` also checks the crate
+metadata, local Alire workspace pins, conformance manifest, source-policy
 invariants, and Alire install boundary. `clean` removes build outputs,
 including the workflow executable itself, and generated release packages under
 `dist`; run `alr build` in `tests` before invoking another workflow command
