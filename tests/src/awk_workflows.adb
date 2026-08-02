@@ -31,7 +31,7 @@ procedure Awk_Workflows is
 
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
-   No_Arguments : GNAT.OS_Lib.Argument_List (1 .. 0);
+   No_Arguments : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
 
    Package_Files : constant Files.Path_List :=
      [U.To_Unbounded_String ("bin/awk"),
@@ -975,26 +975,23 @@ procedure Awk_Workflows is
          return First_In_Tree ("*.adb");
       end First_Unknown_Message_Key_Literal;
 
-      function First_Workflow_Script return String is
-      begin
-         return Files.First_File_Name_Containing
-           ("..",
-            Name_Tokens =>
-              [U.To_Unbounded_String (".sh"),
-               U.To_Unbounded_String (".py"),
-               U.To_Unbounded_String (".ps1"),
-               U.To_Unbounded_String ("Makefile"),
-               U.To_Unbounded_String (".js")],
-            Skip_Entries =>
-              [U.To_Unbounded_String (".git"),
-               U.To_Unbounded_String ("alire"),
-               U.To_Unbounded_String ("obj"),
-               U.To_Unbounded_String ("bin"),
-               U.To_Unbounded_String ("dist"),
-               U.To_Unbounded_String ("config")]);
-      end First_Workflow_Script;
-
       Unexpected : U.Unbounded_String;
+      Workflow_Script : constant String :=
+        Files.First_File_Name_Containing
+          ("..",
+           Name_Tokens =>
+             [U.To_Unbounded_String (".sh"),
+              U.To_Unbounded_String (".py"),
+              U.To_Unbounded_String (".ps1"),
+              U.To_Unbounded_String ("Makefile"),
+              U.To_Unbounded_String (".js")],
+           Skip_Entries =>
+             [U.To_Unbounded_String (".git"),
+              U.To_Unbounded_String ("alire"),
+              U.To_Unbounded_String ("obj"),
+              U.To_Unbounded_String ("bin"),
+              U.To_Unbounded_String ("dist"),
+              U.To_Unbounded_String ("config")]);
    begin
       Require
         (Files.File_Contains ("../src/library/awk_cli-execution.adb", "with Awklib"),
@@ -1160,8 +1157,8 @@ procedure Awk_Workflows is
                                              "      Verify;"),
          "release workflow must not reuse development verify gate");
       Require
-        (First_Workflow_Script = "",
-         "workflow logic must not use shell or scripting files: " & First_Workflow_Script);
+        (Workflow_Script = "",
+         "workflow logic must not use shell or scripting files: " & Workflow_Script);
       Put_Info ("source policy checks passed");
    end Source_Policy;
 
