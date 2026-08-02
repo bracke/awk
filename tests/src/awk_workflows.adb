@@ -912,6 +912,7 @@ procedure Awk_Workflows is
       Require_Packaged ("LICENSE");
       Require
         (File_Has ("../docs/releasing.md", "message catalogs")
+         and then File_Has ("../docs/releasing.md", "MANIFEST.txt")
          and then File_Has ("../docs/testing.md", "package manifest"),
          "release/testing docs must describe packaged resources");
       Put_Info ("package manifest policy checks passed");
