@@ -142,6 +142,69 @@ package body Awk_Tests.CLI_Options is
       Expect_Failure ("--color=", "empty --color mode rejected");
    end Test_Option_Failures;
 
+   procedure Test_Option_Failure_Color_Preservation
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+
+      procedure Expect_Color
+        (Arguments : Opt.String_Vectors.Vector;
+         Expected  : Opt.Color_Mode;
+         Message   : String)
+      is
+         Result : constant Opt.Parse_Result := Opt.Parse (Arguments);
+      begin
+         Assert (not Result.Ok, Message & " is a parse failure");
+         Assert (Result.Color = Expected, Message & " preserves color mode");
+      end Expect_Color;
+   begin
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--bad-option"));
+         Expect_Color (Args, Opt.Color_Auto, "default-color unknown option");
+      end;
+
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--color=always"));
+         Args.Append (U.To_Unbounded_String ("--bad-option"));
+         Expect_Color (Args, Opt.Color_Always, "color=always unknown option");
+      end;
+
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--color=always"));
+         Args.Append (U.To_Unbounded_String ("-F"));
+         Expect_Color (Args, Opt.Color_Always, "color=always missing -F argument");
+      end;
+
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--color=never"));
+         Args.Append (U.To_Unbounded_String ("-v1bad=x"));
+         Expect_Color (Args, Opt.Color_Never, "color=never invalid assignment");
+      end;
+
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--color=always"));
+         Args.Append (U.To_Unbounded_String ("-f-"));
+         Expect_Color (Args, Opt.Color_Always, "color=always rejected stdin program file");
+      end;
+
+      declare
+         Args : Opt.String_Vectors.Vector;
+      begin
+         Args.Append (U.To_Unbounded_String ("--color=never"));
+         Expect_Color (Args, Opt.Color_Never, "color=never missing program");
+      end;
+   end Test_Option_Failure_Color_Preservation;
+
    overriding procedure Register_Tests (T : in out Case_Type) is
       use AUnit.Test_Cases;
    begin
@@ -152,5 +215,8 @@ package body Awk_Tests.CLI_Options is
         (T, Test_Option_Order_And_Index_Preservation'Access,
          "option order and indexes");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
+      Registration.Register_Routine
+        (T, Test_Option_Failure_Color_Preservation'Access,
+         "option failure color preservation");
    end Register_Tests;
 end Awk_Tests.CLI_Options;
