@@ -840,6 +840,7 @@ procedure Awk_Workflows is
 
    procedure Option_Drift is
       Reference : constant String := File_Text ("../docs/command-line-reference.md");
+      Quickstart : constant String := File_Text ("../docs/quickstart.md");
       Catalog   : constant String := File_Text ("../resources/messages/catalog.txt");
 
       procedure Require_Option (Spelling : String) is
@@ -863,6 +864,11 @@ procedure Awk_Workflows is
         (Contains (Reference, "--color=auto|always|never")
          and then Contains (Catalog, "--color=auto|always|never"),
          "color modes must stay documented in reference and help catalog");
+      Require
+        (Contains (Quickstart, "awk '{ print $1 }'")
+         and then Contains (Quickstart, "awk -F:")
+         and then Contains (Quickstart, "awk -f script.awk"),
+         "quickstart must document direct, -F, and -f invocation examples");
       Put_Info ("option drift checks passed");
    end Option_Drift;
 
