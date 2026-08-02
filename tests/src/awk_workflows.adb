@@ -455,9 +455,28 @@ procedure Awk_Workflows is
    procedure Metadata is
       Root_Alire  : constant String := Fixtures.Read_Text_File ("../alire.toml");
       Tests_Alire : constant String := Fixtures.Read_Text_File ("alire.toml");
+      Root_Version : constant String :=
+        TOML.String_Value_After (Root_Alire, "version =", Root_Alire'First);
+      Tests_Version : constant String :=
+        TOML.String_Value_After (Tests_Alire, "version =", Tests_Alire'First);
    begin
       Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
+      Require (Root_Version /= "", "root crate version must be declared");
+      Require (Tests_Version = Root_Version,
+               "tests crate version must match root crate version");
+      Files.Require_Contains
+        ("../config/awk_config.ads",
+         "Crate_Version : constant String := """ & Root_Version & """",
+         "generated Ada config must match root crate version", Quiet => True);
+      Files.Require_Contains
+        ("../config/awk_config.gpr",
+         "Crate_Version := """ & Root_Version & """",
+         "generated GPR config must match root crate version", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "dist/awk-" & Root_Version,
+         "release docs must document the current package directory",
+         Quiet => True);
       Files.Require_Contains
         ("../alire.toml", "executables = [""awk""]",
          "root crate must install executable awk", Quiet => True);
