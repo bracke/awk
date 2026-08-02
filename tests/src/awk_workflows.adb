@@ -259,11 +259,15 @@ procedure Awk_Workflows is
         ("../docs/localization-reference.md", "Machine-checked reference cues",
          "localization docs must require comparison with other AWK reference text",
          Quiet => True);
-      Require
-        (Files.File_Contains ("../docs/localization.md", "supported European state-language locale set")
-         and then Files.File_Contains ("../docs/testing.md", "every supported European" & ASCII.LF &
-                                               "state-language locale"),
-         "localization docs must document supported European locale catalog validation");
+      Files.Require_Contains
+        ("../docs/localization.md", "supported European state-language locale set",
+         "localization docs must document supported European locale catalog validation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/testing.md",
+         "every supported European" & ASCII.LF & "state-language locale",
+         "localization docs must document supported European locale catalog validation",
+         Quiet => True);
       Files.Require_Contains
         ("../docs/architecture.md", "main input is callback-driven",
          "architecture docs must document memory-oriented host integration",
@@ -323,20 +327,35 @@ procedure Awk_Workflows is
       Files.Require_Contains
         ("../docs/releasing.md", "FNV-1a-64",
          "release docs must document manifest checksum algorithm", Quiet => True);
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "dependency policy")
-         and then Files.File_Contains ("../docs/releasing.md", "traceability matrix"),
-         "release docs must document packaged audit documentation");
-      Require
-        (Files.File_Contains ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->")
-         and then Files.File_Contains ("../docs/final-acceptance.md", "Normative acceptance gates")
-         and then Files.File_Contains ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
-         "final acceptance and traceability docs must describe release gates");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`")
-         and then Files.File_Contains ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
-                                                        "`hostkit = ""=0.1.0-dev""`"),
-         "release traceability docs must mention current dev dependency constraints");
+      Files.Require_Contains
+        ("../docs/releasing.md", "dependency policy",
+         "release docs must document packaged audit documentation", Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md", "traceability matrix",
+         "release docs must document packaged audit documentation", Quiet => True);
+      Files.Require_Contains
+        ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->",
+         "final acceptance and traceability docs must describe release gates",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/final-acceptance.md", "Normative acceptance gates",
+         "final acceptance and traceability docs must describe release gates",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/traceability.md", "| 49 | Definition of done |",
+         "final acceptance and traceability docs must describe release gates",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/releasing.md",
+         "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`",
+         "release traceability docs must mention current dev dependency constraints",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/traceability.md",
+         "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
+         "`hostkit = ""=0.1.0-dev""`",
+         "release traceability docs must mention current dev dependency constraints",
+         Quiet => True);
       Files.Require_Contains
         ("../docs/releasing.md", "temporary prefix",
          "release docs must document temporary install-prefix validation",
