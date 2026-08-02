@@ -31,6 +31,7 @@ procedure Awk_Workflows is
 
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
+   No_Arguments : GNAT.OS_Lib.Argument_List (1 .. 0);
 
    Package_Files : constant Files.Path_List :=
      [U.To_Unbounded_String ("bin/awk"),
@@ -78,29 +79,17 @@ procedure Awk_Workflows is
       end if;
    end Require;
 
-   procedure Run_Alr_Build (Directory : String; Release_Mode : Boolean := False) is
-   begin
-      Project_Tools.Alire.Run_Build
-        (Directory    => Directory,
-         Release_Mode => Release_Mode);
-   end Run_Alr_Build;
-
-   procedure Run_Binary (Directory, Program : String) is
-      Args : GNAT.OS_Lib.Argument_List (1 .. 0);
-   begin
-      Project_Tools.Release_Checks.Run (Program, Directory, Program, Args);
-   end Run_Binary;
-
    procedure Build is
    begin
-      Run_Alr_Build (Root);
-      Run_Alr_Build (".");
+      Project_Tools.Alire.Run_Build (Directory => Root);
+      Project_Tools.Alire.Run_Build (Directory => ".");
    end Build;
 
    procedure Test is
    begin
-      Run_Alr_Build (".");
-      Run_Binary (".", "./bin/awk_tests_main");
+      Project_Tools.Alire.Run_Build (Directory => ".");
+      Project_Tools.Release_Checks.Run
+        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
    end Test;
 
    procedure Require_Clean_Repository is
@@ -1272,8 +1261,8 @@ procedure Awk_Workflows is
       Manifest_Path : constant String := Dist & "/MANIFEST.txt";
    begin
       if Release_Mode then
-         Run_Alr_Build (Root, Release_Mode => True);
-         Run_Alr_Build (".", Release_Mode => True);
+         Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);
+         Project_Tools.Alire.Run_Build (Directory => ".", Release_Mode => True);
       else
          Build;
       end if;
@@ -1329,9 +1318,10 @@ begin
       Package_Artifact;
    elsif Command = "release" then
       Require_Clean_Repository;
-      Run_Alr_Build (Root, Release_Mode => True);
-      Run_Alr_Build (".", Release_Mode => True);
-      Run_Binary (".", "./bin/awk_tests_main");
+      Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);
+      Project_Tools.Alire.Run_Build (Directory => ".", Release_Mode => True);
+      Project_Tools.Release_Checks.Run
+        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
       Metadata;
       Docs;
       Catalogs;
