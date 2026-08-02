@@ -1078,6 +1078,27 @@ package body Awk_Tests.Process is
               "process index and toupper follow awklib behavior");
    end Test_Process_String_Builtins;
 
+   procedure Test_Process_Split_Builtin
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { n = split(""a:b:c"", parts, "":""); print n, parts[2] }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process split builtin",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process split builtin exits successfully");
+      Assert (Contains (U.To_String (Output), "3 b" & LF),
+              "process split populates array values through awklib");
+   end Test_Process_Split_Builtin;
+
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1230,6 +1251,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_String_Builtins'Access,
          "process string builtins");
+      Registration.Register_Routine
+        (T, Test_Process_Split_Builtin'Access,
+         "process split builtin");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
       Registration.Register_Routine
         (T, Test_Process_Auxiliary_File_Getline'Access,
