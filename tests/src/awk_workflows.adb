@@ -578,6 +578,14 @@ procedure Awk_Workflows is
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
          "only presentation layer may depend on terminal_styles");
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "Ada.Text_IO.Put",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/main/awk.adb"),
+               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "direct Text_IO writes must stay in main containment or platform adapter");
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],
