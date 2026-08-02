@@ -564,20 +564,32 @@ package body Awk_Tests.Process is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("-F")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk missing option argument",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
+
+      procedure Expect_Missing (Option : String) is
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+           [new String'(Option)];
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Option & " exits with usage status");
+            Assert (Contains (Output, "missing argument for " & Option),
+                    Option & " explains the missing argument");
+            Assert (Contains (Output, "hint: use --help"),
+                    Option & " emits the usage hint");
+         end;
+      end Expect_Missing;
    begin
-      Assert (Status = 2, "missing option argument exits with usage status");
-      Assert (U.To_String (Output) = "", "missing option argument writes no stdout");
+      Expect_Missing ("-F");
+      Expect_Missing ("-v");
+      Expect_Missing ("-f");
    end Test_Process_Missing_Option_Argument_Status;
 
    procedure Test_Process_Program_File_Stdin_Unsupported
