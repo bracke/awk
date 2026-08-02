@@ -1293,6 +1293,16 @@ procedure Awk_Workflows is
          Suite_Add_Suffix     => ".Case_Type)",
          Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
          Quiet                => True);
+      Project_Tools.Release_Checks.Require_GPR_Main_Inventory
+        (Project_File       => "../awk.gpr",
+         Documentation_File => "../README.md",
+         Source_Directory   => "../src/main",
+         Quiet              => True);
+      Project_Tools.Release_Checks.Require_GPR_Main_Inventory
+        (Project_File       => "awk_tests.gpr",
+         Documentation_File => "../docs/testing.md",
+         Source_Directory   => "src",
+         Quiet              => True);
       Public_Spec_Docs;
       Files.Require_Contains
         ("src/awk_tests-process.adb", "with Project_Tools.Test_Fixtures",
