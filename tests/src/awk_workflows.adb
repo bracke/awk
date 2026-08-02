@@ -605,11 +605,18 @@ procedure Awk_Workflows is
          and then Files.File_Exists ("src/awk_tests-diagnostics.adb"),
          "diagnostic tests must live in a subsystem test package");
       Require
+        (Files.File_Exists ("src/awk_tests-localization.ads")
+         and then Files.File_Exists ("src/awk_tests-localization.adb"),
+         "localization tests must live in a subsystem test package");
+      Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
          "aggregate suite must include CLI option subsystem tests");
       Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Diagnostics.Case_Type"),
          "aggregate suite must include diagnostic subsystem tests");
+      Require
+        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Localization.Case_Type"),
+         "aggregate suite must include localization subsystem tests");
       Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Operands.Case_Type"),
          "aggregate suite must include operand subsystem tests");

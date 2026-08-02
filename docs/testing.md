@@ -10,7 +10,8 @@ Subsystem-focused AUnit packages live alongside the aggregate suite. The
 `awk_tests-program_sources` owns program-source resolution tests. The
 `awk_tests-operands` package owns operand classification tests, and
 `awk_tests-diagnostics` owns structured diagnostic rendering and sanitizing
-tests.
+tests. The `awk_tests-localization` package owns catalog validation,
+locale-fallback, localized CLI text, and AWK-output locale-separation tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 integration and process-boundary coverage.
 

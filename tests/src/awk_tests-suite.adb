@@ -12,7 +12,6 @@ with GNAT.OS_Lib;
 with System;
 with System.Address_To_Access_Conversions;
 
-with Awk_Catalog_Policy;
 with Awk_CLI;
 with Awk_CLI.Compatibility;
 with Awk_CLI.Environment;
@@ -26,6 +25,7 @@ with Awk_CLI.Redirections;
 with Project_Tools.Processes;
 with Awk_Tests.CLI_Options;
 with Awk_Tests.Diagnostics;
+with Awk_Tests.Localization;
 with Awk_Tests.Operands;
 with Awk_Tests.Program_Sources;
 
@@ -959,128 +959,6 @@ package body Awk_Tests.Suite is
          "command getline supported through awklib callback");
    end Test_Conformance_Manifest;
 
-   procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
-      English : constant String := File_Text ("../resources/messages/en/catalog.txt");
-      Danish  : constant String := File_Text ("../resources/messages/da/catalog.txt");
-
-      procedure Require_Key (Key : String) is
-      begin
-         Assert (Contains (Catalog, Key & " ="), "catalog contains " & Key);
-      end Require_Key;
-   begin
-      Assert (Awk_Catalog_Policy.Failure_Message (Catalog) = "",
-              "combined catalog has only expected keys and valid placeholders");
-      Assert
-        (Awk_Catalog_Policy.Failure_Message
-           (English, Combined_Catalog => False, Locale => "en") = "",
-         "English shard has only expected keys and valid placeholders");
-      Assert
-        (Awk_Catalog_Policy.Failure_Message
-           (Danish, Combined_Catalog => False, Locale => "da") = "",
-         "Danish shard has only expected keys and valid placeholders");
-
-      for Index in 1 .. Awk_Catalog_Policy.Required_Key_Count loop
-         declare
-            Suffix : constant String := Awk_Catalog_Policy.Required_Key (Index);
-         begin
-            Require_Key ("en." & Suffix);
-            Require_Key ("da." & Suffix);
-         end;
-      end loop;
-   end Test_Catalog_Key_Coverage;
-
-   procedure Test_Catalog_Policy_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-   begin
-      Assert
-        (Contains
-           (Awk_Catalog_Policy.Failure_Message
-              ("en.awk.usage.unknown_option = bad {option"),
-            "malformed placeholder"),
-         "unclosed placeholder is rejected");
-      Assert
-        (Contains
-           (Awk_Catalog_Policy.Failure_Message
-              ("en.awk.extra = extra"),
-            "unknown catalog key"),
-         "unknown message key is rejected");
-      Assert
-        (Contains
-           (Awk_Catalog_Policy.Failure_Message
-              ("en.awk.usage.unknown_option: bad"),
-            "malformed catalog line"),
-         "malformed assignment syntax is rejected");
-      Assert
-        (Contains
-           (Awk_Catalog_Policy.Failure_Message
-              ("default_locale = da" & LF &
-               "en.awk.usage.unknown_option = bad {option}"),
-            "invalid default locale"),
-         "combined catalog default locale is fixed to English");
-   end Test_Catalog_Policy_Failures;
-
-   procedure Test_Localized_Diagnostics (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Context : Awk_CLI.Invocation_Context;
-      Status  : Awk_CLI.Exit_Code;
-   begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
-      Status := Awk_CLI.Run (Context);
-      Assert (Status = 2, "Danish usage error status");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "ukendt tilvalg"),
-              "Danish diagnostic is selected");
-   end Test_Localized_Diagnostics;
-
-   procedure Test_Unsupported_Locale_Fallback (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Context : Awk_CLI.Invocation_Context;
-      Status  : Awk_CLI.Exit_Code;
-   begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "fr_FR.UTF-8");
-      Status := Awk_CLI.Run (Context);
-      Assert (Status = 2, "unsupported locale usage status");
-      Assert (Contains (Awk_CLI.Standard_Error (Context), "unknown option"),
-              "unsupported locale falls back to catalog default");
-   end Test_Unsupported_Locale_Fallback;
-
-   procedure Test_Awk_Output_Unchanged_By_Locale (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Context : Awk_CLI.Invocation_Context;
-      Status  : Awk_CLI.Exit_Code;
-   begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""not localized"" }");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
-      Status := Awk_CLI.Run (Context);
-      Assert (Status = 0, "localized context execution succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "not localized" & LF,
-              "AWK output is not localized");
-   end Test_Awk_Output_Unchanged_By_Locale;
-
-   procedure Test_Version_Uses_Localized_Labels (T : in out AUnit.Test_Cases.Test_Case'Class) is
-      pragma Unreferenced (T);
-      Context : Awk_CLI.Invocation_Context;
-      Status  : Awk_CLI.Exit_Code;
-   begin
-      Awk_CLI.Add_Argument (Context, "--version");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
-      Status := Awk_CLI.Run (Context);
-      Assert (Status = 0, "localized version succeeds");
-      Assert (Contains (Awk_CLI.Standard_Output (Context), "awk 0.1.0"),
-              "program version is catalog-rendered");
-      Assert (Contains (Awk_CLI.Standard_Output (Context), "awklib 0.1.0"),
-              "interpreter version is catalog-rendered");
-      Assert (Contains (Awk_CLI.Standard_Output (Context), "licens MIT"),
-              "license label follows selected locale");
-   end Test_Version_Uses_Localized_Labels;
-
    procedure Test_Process_Version (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1692,16 +1570,6 @@ package body Awk_Tests.Suite is
          "context mixed input order and spelling");
       Registration.Register_Routine (T, Test_Compatibility_Registry'Access, "compatibility registry");
       Registration.Register_Routine (T, Test_Conformance_Manifest'Access, "conformance manifest");
-      Registration.Register_Routine (T, Test_Catalog_Key_Coverage'Access, "catalog key coverage");
-      Registration.Register_Routine (T, Test_Catalog_Policy_Failures'Access, "catalog policy failures");
-      Registration.Register_Routine (T, Test_Localized_Diagnostics'Access, "localized diagnostics");
-      Registration.Register_Routine
-        (T, Test_Unsupported_Locale_Fallback'Access,
-         "unsupported locale fallback");
-      Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
-      Registration.Register_Routine
-        (T, Test_Version_Uses_Localized_Labels'Access,
-         "version localized labels");
       Registration.Register_Routine (T, Test_Process_Version'Access, "process version");
       Registration.Register_Routine (T, Test_Process_Direct_File_Input'Access, "process direct file input");
       Registration.Register_Routine
@@ -1756,6 +1624,7 @@ package body Awk_Tests.Suite is
       pragma Warnings (Off, "use of an anonymous access type allocator");
       Result.Add_Test (new Awk_Tests.CLI_Options.Case_Type);
       Result.Add_Test (new Awk_Tests.Diagnostics.Case_Type);
+      Result.Add_Test (new Awk_Tests.Localization.Case_Type);
       Result.Add_Test (new Awk_Tests.Operands.Case_Type);
       Result.Add_Test (new Awk_Tests.Program_Sources.Case_Type);
       Result.Add_Test (new CLI_Case);
