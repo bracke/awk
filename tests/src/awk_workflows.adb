@@ -1,12 +1,8 @@
 with Ada.Command_Line;
 with Ada.Directories;
-with Ada.Environment_Variables;
 with Ada.Exceptions;
-with Ada.Streams;
-with Ada.Streams.Stream_IO;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
-with Interfaces;
 
 with GNAT.OS_Lib;
 
@@ -31,11 +27,9 @@ procedure Awk_Workflows is
    package Text renames Project_Tools.Text;
    package TOML renames Project_Tools.TOML;
    package U renames Ada.Strings.Unbounded;
-   use type Interfaces.Unsigned_64;
 
    Root : constant String := "..";
    Alr  : constant String := Proc.Locate_Command ("alr");
-   Env  : constant String := Proc.Locate_Command ("env");
 
    procedure Put_Info (Message : String) is
    begin
@@ -55,63 +49,10 @@ procedure Awk_Workflows is
    end Require;
 
    procedure Run_Alr_Build (Directory : String; Release_Mode : Boolean := False) is
-      package Env_Vars renames Ada.Environment_Variables;
-
-      function Derived_Home return String is
-         Marker : constant String := "/.getada/bin/alr";
-      begin
-         if Alr'Length > Marker'Length
-           and then Alr (Alr'Last - Marker'Length + 1 .. Alr'Last) = Marker
-         then
-            return Alr (Alr'First .. Alr'Last - Marker'Length);
-         else
-            return "";
-         end if;
-      end Derived_Home;
-
-      function Value_Or_Empty (Name : String) return String is
-      begin
-         if Env_Vars.Exists (Name) then
-            return Env_Vars.Value (Name);
-         else
-            return "";
-         end if;
-      end Value_Or_Empty;
-
-      Alr_Args : constant GNAT.OS_Lib.Argument_List :=
-        (if Release_Mode
-         then [new String'("--non-interactive"),
-               new String'("build"),
-               new String'("--release"),
-               new String'("--profiles=*=release")]
-         else Project_Tools.Alire.Noninteractive_Build_Args);
-      Home : constant String := Derived_Home;
-      Path : constant String := Value_Or_Empty ("PATH");
    begin
-      Require (Alr /= "", "alr executable not found");
-
-      if Env /= "" and then Home /= "" then
-         declare
-            Args : GNAT.OS_Lib.Argument_List (1 .. Alr_Args'Length + 6);
-         begin
-            Args (1) := new String'("-i");
-            Args (2) := new String'("HOME=" & Home);
-            Args (3) := new String'("XDG_DATA_HOME=" & Home & "/.local/share");
-            Args (4) := new String'("XDG_CONFIG_HOME=" & Home & "/.config");
-            Args (5) := new String'("PATH=" & Path);
-            Args (6) := new String'(Alr);
-
-            for Index in Alr_Args'Range loop
-               Args (Index - Alr_Args'First + 7) := new String'(Alr_Args (Index).all);
-            end loop;
-
-            if Proc.Run_Status ("alr build", Directory, Env, Args) /= 0 then
-               Fail ("alr build failed in " & Directory);
-            end if;
-         end;
-      elsif Proc.Run_Status ("alr build", Directory, Alr, Alr_Args) /= 0 then
-         Fail ("alr build failed in " & Directory);
-      end if;
+      Project_Tools.Alire.Run_Build
+        (Directory    => Directory,
+         Release_Mode => Release_Mode);
    end Run_Alr_Build;
 
    procedure Run_Binary (Directory, Program : String) is
@@ -146,33 +87,6 @@ procedure Awk_Workflows is
 
    function File_Has (Path, Pattern : String) return Boolean is
      (Files.File_Contains (Path, Pattern));
-
-   function Line_Value (Text, Key : String) return String is
-      Prefix : constant String := Key & " =";
-      Start  : Positive;
-   begin
-      if Text'Length < Prefix'Length then
-         return "";
-      end if;
-
-      for Index in Text'First .. Text'Last - Prefix'Length + 1 loop
-         if (Index = Text'First or else Text (Index - 1) = ASCII.LF)
-           and then Text (Index .. Index + Prefix'Length - 1) = Prefix
-         then
-            Start := Index + Prefix'Length;
-            if Start <= Text'Last and then Text (Start) = ' ' then
-               Start := Start + 1;
-            end if;
-            for Last in Start .. Text'Last loop
-               if Text (Last) = ASCII.LF then
-                  return Text (Start .. Last - 1);
-               end if;
-            end loop;
-            return Text (Start .. Text'Last);
-         end if;
-      end loop;
-      return "";
-   end Line_Value;
 
    procedure Docs is
       Required_Docs : constant Files.Path_List :=
@@ -405,14 +319,15 @@ procedure Awk_Workflows is
       procedure Require_Key (Key : String) is
       begin
          Require (Contains (Catalog, Key & " ="), "message catalog missing key: " & Key);
-         Require (Line_Value (Catalog, Key) /= "", "message catalog has empty key: " & Key);
+         Require (Text.Line_Value (Catalog, Key) /= "",
+                  "message catalog has empty key: " & Key);
       end Require_Key;
 
       procedure Require_Shard_Key (Shard, Key, Name : String) is
       begin
          Require (Contains (Shard, Key & " ="),
                   Name & " catalog shard missing key: " & Key);
-         Require (Line_Value (Shard, Key) /= "",
+         Require (Text.Line_Value (Shard, Key) /= "",
                   Name & " catalog shard has empty key: " & Key);
       end Require_Shard_Key;
    begin
@@ -443,8 +358,8 @@ procedure Awk_Workflows is
             Require_Shard_Key (English, "en." & Suffix, "English");
             Require_Shard_Key (Danish, "da." & Suffix, "Danish");
             Require
-              (Awk_Catalog_Policy.Placeholders (Line_Value (Catalog, "en." & Suffix)) =
-               Awk_Catalog_Policy.Placeholders (Line_Value (Catalog, "da." & Suffix)),
+              (Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, "en." & Suffix)) =
+               Awk_Catalog_Policy.Placeholders (Text.Line_Value (Catalog, "da." & Suffix)),
                "placeholder mismatch between locales for " & Suffix);
          end;
       end loop;
@@ -495,93 +410,24 @@ procedure Awk_Workflows is
    end Conformance;
 
    procedure Source_Policy is
-      function Allowed_Path (Path, Allowed : String) return Boolean is
-      begin
-         return Path = Allowed;
-      end Allowed_Path;
-
       function First_Workflow_Script return String is
-         All_Files : constant Files.Path_List :=
-           Files.List_Tree
-             ("..", "*",
-              Skip_Entries =>
-                [U.To_Unbounded_String (".git"),
-                 U.To_Unbounded_String ("alire"),
-                 U.To_Unbounded_String ("obj"),
-                 U.To_Unbounded_String ("bin"),
-                 U.To_Unbounded_String ("dist"),
-                 U.To_Unbounded_String ("config")]);
       begin
-         for Path of All_Files loop
-            declare
-               Name : constant String := U.To_String (Path);
-           begin
-               if Contains (Name, ".sh")
-                 or else Contains (Name, ".py")
-                 or else Contains (Name, ".ps1")
-                 or else Contains (Name, "Makefile")
-                 or else Contains (Name, ".js")
-               then
-                  return Name;
-               end if;
-            end;
-         end loop;
-         return "";
+         return Files.First_File_Name_Containing
+           ("..",
+            Name_Tokens =>
+              [U.To_Unbounded_String (".sh"),
+               U.To_Unbounded_String (".py"),
+               U.To_Unbounded_String (".ps1"),
+               U.To_Unbounded_String ("Makefile"),
+               U.To_Unbounded_String (".js")],
+            Skip_Entries =>
+              [U.To_Unbounded_String (".git"),
+               U.To_Unbounded_String ("alire"),
+               U.To_Unbounded_String ("obj"),
+               U.To_Unbounded_String ("bin"),
+               U.To_Unbounded_String ("dist"),
+               U.To_Unbounded_String ("config")]);
       end First_Workflow_Script;
-
-      function First_Unexpected_Dependency
-        (Pattern      : String;
-         Allowed_Body : String;
-         Allowed_Spec : String := "") return String
-      is
-         Ads_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.ads");
-         Adb_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.adb");
-      begin
-         for Path of Ads_Files loop
-            declare
-               Name : constant String := U.To_String (Path);
-            begin
-               if File_Has (Name, Pattern)
-                 and then not Allowed_Path (Name, Allowed_Body)
-                 and then (Allowed_Spec = "" or else not Allowed_Path (Name, Allowed_Spec))
-               then
-                  return Name;
-               end if;
-            end;
-         end loop;
-
-         for Path of Adb_Files loop
-            declare
-               Name : constant String := U.To_String (Path);
-            begin
-               if File_Has (Name, Pattern)
-                 and then not Allowed_Path (Name, Allowed_Body)
-                 and then (Allowed_Spec = "" or else not Allowed_Path (Name, Allowed_Spec))
-               then
-                  return Name;
-               end if;
-            end;
-         end loop;
-
-         return "";
-      end First_Unexpected_Dependency;
-
-      procedure Require_No_Production_Code_Tokens
-        (Forbidden_Tokens : Ada_Source.String_List)
-      is
-         Ads_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.ads");
-         Adb_Files : constant Files.Path_List := Files.List_Tree ("../src", "*.adb");
-      begin
-         for Path of Ads_Files loop
-            Ada_Source.Require_No_Code_Tokens
-              (U.To_String (Path), Forbidden_Tokens, Quiet => True);
-         end loop;
-
-         for Path of Adb_Files loop
-            Ada_Source.Require_No_Code_Tokens
-              (U.To_String (Path), Forbidden_Tokens, Quiet => True);
-         end loop;
-      end Require_No_Production_Code_Tokens;
 
       Unexpected : U.Unbounded_String;
    begin
@@ -595,7 +441,11 @@ procedure Awk_Workflows is
           U.To_Unbounded_String ("Awklib.Interpreter")],
          Quiet => True);
       Require
-        (First_Unexpected_Dependency ("with Awklib", "../src/library/awk_cli-execution.adb") = "",
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "with Awklib",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb")]) = "",
          "only execution adapter may depend on awklib");
       Require
         (File_Has ("../src/library/awk_cli-localization.adb", "with Messages"),
@@ -613,10 +463,12 @@ procedure Awk_Workflows is
          Quiet => True);
       Unexpected :=
         U.To_Unbounded_String
-          (First_Unexpected_Dependency
-             ("with Messages",
-              "../src/library/awk_cli-localization.adb",
-              "../src/library/awk_cli-localization.ads"));
+          (Ada_Source.First_Source_File_Containing
+             ("../src",
+              "with Messages",
+              Allowed_Files =>
+                [U.To_Unbounded_String ("../src/library/awk_cli-localization.adb"),
+                 U.To_Unbounded_String ("../src/library/awk_cli-localization.ads")]));
       Require (U.To_String (Unexpected) = "",
                "only localization adapter may depend on messages: " & U.To_String (Unexpected));
       Require
@@ -628,16 +480,22 @@ procedure Awk_Workflows is
          [U.To_Unbounded_String ("Terminal_Styles")],
          Quiet => True);
       Require
-        (First_Unexpected_Dependency ("with Terminal_Styles", "../src/library/awk_cli-output.adb") = "",
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "with Terminal_Styles",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
          "only presentation layer may depend on terminal_styles");
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-output.adb",
          [U.To_Unbounded_String ("Character'Val (27)")],
          Quiet => True);
-      Require_No_Production_Code_Tokens
-        ([U.To_Unbounded_String ("gawk"),
-          U.To_Unbounded_String ("mawk"),
-          U.To_Unbounded_String ("nawk")]);
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src",
+         ([U.To_Unbounded_String ("gawk"),
+           U.To_Unbounded_String ("mawk"),
+           U.To_Unbounded_String ("nawk")]),
+         Quiet => True);
       Project_Tools.AUnit_Checks.Require_Registered_Test_Packages
         (Test_Dir             => "src",
          Spec_Pattern         => "awk_tests-*.ads",
@@ -754,47 +612,6 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("resources/messages/en/catalog.txt"),
          U.To_Unbounded_String ("resources/messages/da/catalog.txt")];
 
-      function Hex_64 (Value : Interfaces.Unsigned_64) return String is
-         Hex_Digits : constant String := "0123456789abcdef";
-         Result     : String (1 .. 16);
-         Work       : Interfaces.Unsigned_64 := Value;
-      begin
-         for Index in reverse Result'Range loop
-            Result (Index) := Hex_Digits (Natural (Work mod 16) + 1);
-            Work := Work / 16;
-         end loop;
-         return Result;
-      end Hex_64;
-
-      function Checksum (Path : String) return String is
-         package SIO renames Ada.Streams.Stream_IO;
-         File       : SIO.File_Type;
-         Buffer     : Ada.Streams.Stream_Element_Array (1 .. 8192);
-         Last       : Ada.Streams.Stream_Element_Offset;
-         FNV_Offset : constant Interfaces.Unsigned_64 := 16#cbf29ce484222325#;
-         FNV_Prime  : constant Interfaces.Unsigned_64 := 16#00000100000001b3#;
-         Result     : Interfaces.Unsigned_64 := FNV_Offset;
-      begin
-         SIO.Open (File, SIO.In_File, Path);
-         while not SIO.End_Of_File (File) loop
-            SIO.Read (File, Buffer, Last);
-            for Index in Buffer'First .. Last loop
-               Result := (Result xor Interfaces.Unsigned_64 (Buffer (Index))) * FNV_Prime;
-            end loop;
-         end loop;
-         SIO.Close (File);
-         return Hex_64 (Result);
-      exception
-         when others =>
-            if SIO.Is_Open (File) then
-               SIO.Close (File);
-            end if;
-            return "0000000000000000";
-      end Checksum;
-
-      function Length_Of (Path : String) return Natural is
-        (Natural (Dir.Size (Path)));
-
       procedure Add_Manifest_Line
         (Buffer : in out U.Unbounded_String;
          Path   : String)
@@ -802,39 +619,16 @@ procedure Awk_Workflows is
       begin
          U.Append
            (Buffer,
-            Path & " bytes=" & Natural'Image (Length_Of (Dist & "/" & Path))
-            & " fnv1a64=" & Checksum (Dist & "/" & Path)
-            & ASCII.LF);
+            Project_Tools.Release_Checks.Manifest_Line (Dist, Path) & ASCII.LF);
       end Add_Manifest_Line;
 
       procedure Require_Package_File (Path : String) is
       begin
          Files.Require_File (Dist & "/" & Path, "missing package file: " & Path);
-         Require (Length_Of (Dist & "/" & Path) > 0, "empty package file: " & Path);
-      end Require_Package_File;
-
-      procedure Require_Manifest_Entry (Path : String) is
-         Expected_Line : constant String :=
-           Path & " bytes=" & Natural'Image (Length_Of (Dist & "/" & Path))
-           & " fnv1a64=" & Checksum (Dist & "/" & Path);
-      begin
          Require
-           (Files.Has_Line (Dist & "/MANIFEST.txt", Expected_Line),
-            "package manifest missing entry: " & Path);
-      end Require_Manifest_Entry;
-
-      function Manifest_Line_Count return Natural is
-         Text   : constant String := File_Text (Dist & "/MANIFEST.txt");
-         Breaks : constant Natural := Project_Tools.Text.Count (Text, "" & ASCII.LF);
-      begin
-         if Text'Length = 0 then
-            return 0;
-         elsif Text (Text'Last) = ASCII.LF then
-            return Breaks;
-         else
-            return Breaks + 1;
-         end if;
-      end Manifest_Line_Count;
+           (Project_Tools.Release_Checks.File_Length (Dist & "/" & Path) > 0,
+            "empty package file: " & Path);
+      end Require_Package_File;
 
       procedure Copy_Package_File (Path : String) is
          Source : constant String :=
@@ -844,6 +638,7 @@ procedure Awk_Workflows is
       end Copy_Package_File;
 
       Manifest : U.Unbounded_String;
+      Manifest_Path : constant String := Dist & "/MANIFEST.txt";
    begin
       if Release_Mode then
          Run_Alr_Build (Root, Release_Mode => True);
@@ -863,19 +658,20 @@ procedure Awk_Workflows is
          Require_Package_File (U.To_String (Path));
          Add_Manifest_Line (Manifest, U.To_String (Path));
       end loop;
-      Files.Write_Text_File (Dist & "/MANIFEST.txt", U.To_String (Manifest));
+      Files.Write_Text_File (Manifest_Path, U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
       Require
-        (File_Has (Dist & "/MANIFEST.txt", "fnv1a64="),
+        (File_Has (Manifest_Path, "fnv1a64="),
          "package manifest must include FNV-1a-64 checksum fields");
       Require
-        (not File_Has (Dist & "/MANIFEST.txt", " checksum="),
+        (not File_Has (Manifest_Path, " checksum="),
          "package manifest must not use legacy checksum field");
       Require
-        (Manifest_Line_Count = Package_Files'Length,
+        (Project_Tools.Release_Checks.Manifest_Line_Count (Manifest_Path) = Package_Files'Length,
          "package manifest must contain one line per packaged file");
       for Path of Package_Files loop
-         Require_Manifest_Entry (U.To_String (Path));
+         Project_Tools.Release_Checks.Require_Manifest_Entry
+           (Manifest_Path, Dist, U.To_String (Path), Quiet => True);
       end loop;
       Put_Info ("packaged " & Dist);
    end Package_Artifact;
