@@ -419,12 +419,17 @@ procedure Awk_Workflows is
          "production use rejected in favor of `hostkit`",
          "workflow docs must describe process-boundary source policy",
          Quiet => True);
-      Require
-        (Files.File_Contains ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
-                                           "  `hostkit`")
-         and then Files.File_Contains ("../docs/ai/package-contracts.md",
-                            "Only `Awk_CLI.Platform` may call `hostkit`."),
-         "architecture docs must describe hostkit platform boundary");
+      Files.Require_Contains
+        ("../docs/architecture.md",
+         "only production package that directly depends on" & ASCII.LF &
+         "  `hostkit`",
+         "architecture docs must describe hostkit platform boundary",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/package-contracts.md",
+         "Only `Awk_CLI.Platform` may call `hostkit`.",
+         "architecture docs must describe hostkit platform boundary",
+         Quiet => True);
       Files.Require_Contains
         ("../docs/ai/traceability.md", "| 1 | Project identity |",
          "traceability docs must map project identity", Quiet => True);
