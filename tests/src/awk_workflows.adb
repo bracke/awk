@@ -15,6 +15,7 @@ with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
+with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
 with Project_Tools.TOML;
 
@@ -25,6 +26,7 @@ procedure Awk_Workflows is
    package Manifests renames Project_Tools.Alire_Manifests.Validation;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
+   package Fixtures renames Project_Tools.Test_Fixtures;
    package Text renames Project_Tools.Text;
    package TOML renames Project_Tools.TOML;
    package U renames Ada.Strings.Unbounded;
@@ -96,9 +98,6 @@ procedure Awk_Workflows is
       Project_Tools.Release_Checks.Require_Clean_Git_Worktree
         ("awk", Root, Quiet => True);
    end Require_Clean_Repository;
-
-   function File_Text (Path : String) return String is
-     (U.To_String (Text.Read_Text_File (Path)));
 
    procedure Docs is
       Required_Docs : constant Files.Path_List :=
@@ -345,8 +344,8 @@ procedure Awk_Workflows is
    end Docs;
 
    procedure Metadata is
-      Root_Alire  : constant String := File_Text ("../alire.toml");
-      Tests_Alire : constant String := File_Text ("alire.toml");
+      Root_Alire  : constant String := Fixtures.Read_Text_File ("../alire.toml");
+      Tests_Alire : constant String := Fixtures.Read_Text_File ("alire.toml");
    begin
       Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
@@ -414,9 +413,9 @@ procedure Awk_Workflows is
    end Metadata;
 
    procedure Catalogs is
-      Catalog    : constant String := File_Text ("../resources/messages/catalog.txt");
-      English    : constant String := File_Text ("../resources/messages/en/catalog.txt");
-      Danish     : constant String := File_Text ("../resources/messages/da/catalog.txt");
+      Catalog    : constant String := Fixtures.Read_Text_File ("../resources/messages/catalog.txt");
+      English    : constant String := Fixtures.Read_Text_File ("../resources/messages/en/catalog.txt");
+      Danish     : constant String := Fixtures.Read_Text_File ("../resources/messages/da/catalog.txt");
 
       procedure Require_Key (Key : String) is
       begin
@@ -699,7 +698,7 @@ procedure Awk_Workflows is
    end Catalogs;
 
    procedure Conformance is
-      Manifest : constant String := File_Text ("conformance/manifest/cases.txt");
+      Manifest : constant String := Fixtures.Read_Text_File ("conformance/manifest/cases.txt");
 
       procedure Require_Case (Id, Status, Case_File, Expected, Reference : String) is
          Line : constant String :=
@@ -713,9 +712,9 @@ procedure Awk_Workflows is
          Files.Require_File
            ("conformance/" & Expected,
             "conformance expected file missing: " & Expected);
-         Require (File_Text ("conformance/" & Case_File) /= "",
+         Require (Fixtures.Read_Text_File ("conformance/" & Case_File) /= "",
                   "conformance case file is empty: " & Case_File);
-         Require (File_Text ("conformance/" & Expected) /= "",
+         Require (Fixtures.Read_Text_File ("conformance/" & Expected) /= "",
                   "conformance expected file is empty: " & Expected);
       end Require_Case;
    begin
@@ -772,9 +771,9 @@ procedure Awk_Workflows is
    end Exit_Constant_Value;
 
    procedure Exit_Status_Drift is
-      Source    : constant String := File_Text ("../src/library/awk_cli-diagnostics.ads");
-      Docs      : constant String := File_Text ("../docs/diagnostics.md");
-      Reference : constant String := File_Text ("../docs/command-line-reference.md");
+      Source    : constant String := Fixtures.Read_Text_File ("../src/library/awk_cli-diagnostics.ads");
+      Docs      : constant String := Fixtures.Read_Text_File ("../docs/diagnostics.md");
+      Reference : constant String := Fixtures.Read_Text_File ("../docs/command-line-reference.md");
       Allowed   : U.Unbounded_String;
 
       procedure Require_Exit (Name : String) is
@@ -828,9 +827,9 @@ procedure Awk_Workflows is
    end Exit_Status_Drift;
 
    procedure Option_Drift is
-      Reference : constant String := File_Text ("../docs/command-line-reference.md");
-      Quickstart : constant String := File_Text ("../docs/quickstart.md");
-      Catalog   : constant String := File_Text ("../resources/messages/catalog.txt");
+      Reference : constant String := Fixtures.Read_Text_File ("../docs/command-line-reference.md");
+      Quickstart : constant String := Fixtures.Read_Text_File ("../docs/quickstart.md");
+      Catalog   : constant String := Fixtures.Read_Text_File ("../resources/messages/catalog.txt");
 
       procedure Require_Option (Spelling : String) is
       begin
@@ -875,7 +874,7 @@ procedure Awk_Workflows is
       procedure Require_Packaged (Path : String) is
       begin
          Require
-           (Text.Contains (File_Text ("src/awk_workflows.adb"),
+           (Text.Contains (Fixtures.Read_Text_File ("src/awk_workflows.adb"),
                       "U.To_Unbounded_String (""" & Path & """)"),
             "package file list missing: " & Path);
       end Require_Packaged;
@@ -915,7 +914,7 @@ procedure Awk_Workflows is
          Prefix : constant String := """awk.";
 
          function First_In_File (Name : String) return String is
-            Source_Text : constant String := File_Text (Name);
+            Source_Text : constant String := Fixtures.Read_Text_File (Name);
             Start       : Natural := Project_Tools.Text.Index (Source_Text, Prefix);
          begin
             while Start /= 0 loop
