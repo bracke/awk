@@ -12,6 +12,8 @@ Subsystem-focused AUnit packages live alongside the aggregate suite. The
 `awk_tests-diagnostics` owns structured diagnostic rendering and sanitizing
 tests. The `awk_tests-localization` package owns catalog validation,
 locale-fallback, localized CLI text, and AWK-output locale-separation tests.
+The `awk_tests-redirections` package owns in-memory output-redirection success,
+append, ordering, and failure tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 integration and process-boundary coverage.
 

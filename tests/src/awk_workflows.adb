@@ -609,6 +609,10 @@ procedure Awk_Workflows is
          and then Files.File_Exists ("src/awk_tests-localization.adb"),
          "localization tests must live in a subsystem test package");
       Require
+        (Files.File_Exists ("src/awk_tests-redirections.ads")
+         and then Files.File_Exists ("src/awk_tests-redirections.adb"),
+         "redirection tests must live in a subsystem test package");
+      Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
          "aggregate suite must include CLI option subsystem tests");
       Require
@@ -623,6 +627,9 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Program_Sources.Case_Type"),
          "aggregate suite must include program source subsystem tests");
+      Require
+        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Redirections.Case_Type"),
+         "aggregate suite must include redirection subsystem tests");
       Require
         (Contains (File_Text ("src/awk_workflows.adb"), "--release"),
          "release workflow must use Alire release builds");
