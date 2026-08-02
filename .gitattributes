@@ -1,0 +1,11 @@
+* text=auto
+
+*.adb text eol=lf
+*.ads text eol=lf
+*.gpr text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+
+resources/messages/**/*.txt text eol=lf
+tests/fixtures/** text eol=lf
+tests/conformance/** text eol=lf

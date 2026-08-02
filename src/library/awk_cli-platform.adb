@@ -354,12 +354,12 @@ package body Awk_CLI.Platform is
    function Locale return String is
       Native : constant String := Hostkit.Host.Native_Locale;
    begin
-      if Native /= "" then
-         return Native;
-      elsif Ada.Environment_Variables.Exists ("LC_ALL") and then Ada.Environment_Variables.Value ("LC_ALL") /= "" then
+      if Ada.Environment_Variables.Exists ("LC_ALL") and then Ada.Environment_Variables.Value ("LC_ALL") /= "" then
          return Ada.Environment_Variables.Value ("LC_ALL");
       elsif Ada.Environment_Variables.Exists ("LANG") and then Ada.Environment_Variables.Value ("LANG") /= "" then
          return Ada.Environment_Variables.Value ("LANG");
+      elsif Native /= "" then
+         return Native;
       else
          return "en";
       end if;
