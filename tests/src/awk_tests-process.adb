@@ -756,6 +756,36 @@ package body Awk_Tests.Process is
       end;
    end Test_Process_Unsupported_Locale_Fallback;
 
+   procedure Test_Process_Diagnostic_Sanitizes_Hostile_Argument
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Escape : constant String := [1 => Character'Val (27)];
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("--bad" & LF & "awk: error: forged" & Escape & "[2J")];
+   begin
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 2, "hostile process argument exits with usage status");
+         Assert
+           (not Contains (Output, LF & "awk: error: forged"),
+            "process diagnostic cannot be forged with an embedded newline");
+         Assert (not Contains (Output, Escape),
+                 "process diagnostic emits no raw terminal escape");
+         Assert
+           (Contains (Output, "\nawk: error: forged\e[2J"),
+            "process diagnostic renders unsafe characters visibly");
+      end;
+   end Test_Process_Diagnostic_Sanitizes_Hostile_Argument;
+
    procedure Test_Process_Explicit_Stdin_Eof
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -1383,6 +1413,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Unsupported_Locale_Fallback'Access,
          "process unsupported locale fallback");
+      Registration.Register_Routine
+        (T, Test_Process_Diagnostic_Sanitizes_Hostile_Argument'Access,
+         "process diagnostic sanitizes hostile argument");
       Registration.Register_Routine
         (T, Test_Process_Explicit_Stdin_Eof'Access,
          "process explicit stdin eof");
