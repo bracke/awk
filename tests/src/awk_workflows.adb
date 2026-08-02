@@ -427,35 +427,32 @@ procedure Awk_Workflows is
    end Conformance;
 
    procedure Source_Policy is
-      function Is_Generated_Or_Dependency_Path (Path : String) return Boolean is
-      begin
-         return Contains (Path, "/alire/")
-           or else Contains (Path, "/obj/")
-           or else Contains (Path, "/bin/")
-           or else Contains (Path, "/dist/")
-           or else Contains (Path, "/config/");
-      end Is_Generated_Or_Dependency_Path;
-
       function Allowed_Path (Path, Allowed : String) return Boolean is
       begin
          return Path = Allowed;
       end Allowed_Path;
 
       function First_Workflow_Script return String is
-         All_Files : constant Files.Path_List := Files.List_Tree ("..", "*");
+         All_Files : constant Files.Path_List :=
+           Files.List_Tree
+             ("..", "*",
+              Skip_Entries =>
+                [U.To_Unbounded_String (".git"),
+                 U.To_Unbounded_String ("alire"),
+                 U.To_Unbounded_String ("obj"),
+                 U.To_Unbounded_String ("bin"),
+                 U.To_Unbounded_String ("dist"),
+                 U.To_Unbounded_String ("config")]);
       begin
          for Path of All_Files loop
             declare
                Name : constant String := U.To_String (Path);
            begin
-               if not Is_Generated_Or_Dependency_Path (Name)
-                 and then not Contains (Name, "/.git/")
-                 and then
-                   (Contains (Name, ".sh")
-                    or else Contains (Name, ".py")
-                    or else Contains (Name, ".ps1")
-                    or else Contains (Name, "Makefile")
-                    or else Contains (Name, ".js"))
+               if Contains (Name, ".sh")
+                 or else Contains (Name, ".py")
+                 or else Contains (Name, ".ps1")
+                 or else Contains (Name, "Makefile")
+                 or else Contains (Name, ".js")
                then
                   return Name;
                end if;
@@ -611,17 +608,12 @@ procedure Awk_Workflows is
       Install_Boundary;
    end Verify;
 
-   procedure Remove_If_Exists (Path : String) is
-   begin
-      Files.Delete_Tree (Path);
-   end Remove_If_Exists;
-
    procedure Clean is
    begin
-      Remove_If_Exists ("../obj");
-      Remove_If_Exists ("../bin");
-      Remove_If_Exists ("obj");
-      Remove_If_Exists ("bin");
+      Files.Delete_Tree ("../obj");
+      Files.Delete_Tree ("../bin");
+      Files.Delete_Tree ("obj");
+      Files.Delete_Tree ("bin");
       Put_Info ("cleaned build outputs");
    end Clean;
 
@@ -759,7 +751,7 @@ procedure Awk_Workflows is
       else
          Build;
       end if;
-      Remove_If_Exists ("../dist");
+      Files.Delete_Tree ("../dist");
       Dir.Create_Path (Dist & "/bin");
       Dir.Create_Path (Dist & "/resources/messages");
       Dir.Create_Path (Dist & "/resources/messages/en");
