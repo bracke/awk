@@ -315,7 +315,7 @@ ca.awk.help.options.version =   --version              mostra la informació de 
 ca.awk.help.options.terminator =   --                     acaba el processament d opcions; els noms de fitxer que comencen amb - funcionen després
 ca.awk.help.operands = Els operands d entrada són fitxers, -, o name=value amb un nom que coincideix amb [A-Za-z_][A-Za-z0-9_]*.
 ca.awk.help.stdin = Sense operand d entrada s usa l entrada estàndard. Els operands - repetits consumeixen el mateix flux una vegada; els posteriors veuen el final del fitxer.
-ca.awk.help.exit_statuses = Estats: 0 èxit, 1 error AWK, 2 error d ús, 3 error d entrada/sortida de l amfitrió, 70 error intern.
+ca.awk.help.exit_statuses = Estats: 0 èxit, 1 error de l intèrpret AWK, 2 error d ús, 3 error d entrada/sortida de l amfitrió, 70 error intern.
 ca.awk.help.compatibility.heading = Compatibilitat
 ca.awk.help.compatibility.awklib_limitations = No es declara conformitat POSIX completa. El llenguatge AWK i l execució segueixen awklib i les limitacions documentades. getline: awklib.
 ca.awk.version.program = awk {version}
@@ -565,7 +565,7 @@ es.awk.help.options.version =   --version              muestra información de v
 es.awk.help.options.terminator =   --                     termina el procesamiento de opciones; después valen archivos que empiezan por -
 es.awk.help.operands = Los operandos de entrada son archivos, -, o name=value con nombre que coincida con [A-Za-z_][A-Za-z0-9_]*.
 es.awk.help.stdin = Sin operando de entrada se usa la entrada estándar. Los - repetidos consumen el mismo flujo una vez; los posteriores ven el fin de archivo.
-es.awk.help.exit_statuses = Estados: 0 éxito, 1 error AWK, 2 error de uso, 3 error de entrada/salida del sistema, 70 error interno.
+es.awk.help.exit_statuses = Estados: 0 éxito, 1 error del intérprete AWK, 2 error de uso, 3 error de entrada/salida del sistema, 70 error interno.
 es.awk.help.compatibility.heading = Compatibilidad
 es.awk.help.compatibility.awklib_limitations = No se afirma conformidad POSIX completa. El lenguaje AWK y la ejecución siguen awklib y las limitaciones documentadas. getline: awklib.
 es.awk.version.program = awk {version}
@@ -1165,7 +1165,7 @@ la.awk.help.options.version =   --version              informationem versionis o
 la.awk.help.options.terminator =   --                     tractationem optionum finit; nomina fasciculorum a - incipientia postea valent
 la.awk.help.operands = Operanda input sunt fasciculi, -, aut name=value cui nomen congruit [A-Za-z_][A-Za-z0-9_]*.
 la.awk.help.stdin = Sine operando introitus, introitus ordinarius adhibetur. Repetita - eundem rivum semel consumunt; posteriora finem fasciculi vident.
-la.awk.help.exit_statuses = Status: 0 successus, 1 error AWK, 2 error usus, 3 error introitus/exitus hospitis, 70 error internus.
+la.awk.help.exit_statuses = Status: 0 successus, 1 error interpretis AWK, 2 error usus, 3 error introitus/exitus hospitis, 70 error internus.
 la.awk.help.compatibility.heading = Compatibilitas
 la.awk.help.compatibility.awklib_limitations = Conformitas POSIX plena non affirmatur. Lingua AWK et executio awklib et limites scriptos sequuntur. getline: awklib.
 la.awk.version.program = awk {version}
