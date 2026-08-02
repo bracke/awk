@@ -115,7 +115,7 @@ az.awk.help.options.version =   --version              versiya məlumatını gö
 az.awk.help.options.terminator =   --                     seçim emalını bitir; bundan sonra - ilə başlayan fayl adları işləyir
 az.awk.help.operands = Proqramdan sonrakı operandlar adlı giriş faylları, standart giriş üçün - və ya adı [A-Za-z_][A-Za-z0-9_]* ilə uyğun təyinatlardır.
 az.awk.help.stdin = Giriş operandı yoxdursa, standart giriş gizli istifadə olunur. Təkrar - operandları tək standart giriş axınını bir dəfə oxuyur; sonrakılar fayl sonunu görür.
-az.awk.help.exit_statuses = Çıxış kodları: 0 uğur, 1 interpretator xətası, 2 istifadə xətası, 3 host I/O xətası, 70 daxili xəta.
+az.awk.help.exit_statuses = Çıxış kodları: 0 uğur, 1 interpretator xətası, 2 istifadə xətası, 3 host giriş-çıxış xətası, 70 daxili xəta.
 az.awk.help.compatibility.heading = Uyğunluq
 az.awk.help.compatibility.awklib_limitations = Bu proqram tam POSIX uyğunluğu iddia etmir. AWK dili və icra davranışı seçilmiş awklib versiyası və layihənin sənədləşdirdiyi qeydli məhdudiyyətlərlə məhdudlaşır. getline: awklib.
 az.awk.version.program = awk {version}
@@ -265,7 +265,7 @@ bs.awk.help.options.version =   --version              prikaži verziju i izađi
 bs.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju sa - rade poslije toga
 bs.awk.help.operands = Ulazni operandi su datoteke, -, ili name=value sa imenom koje odgovara [A-Za-z_][A-Za-z0-9_]*.
 bs.awk.help.stdin = Bez ulaznog operanda koristi se standardni ulaz. Ponovljeni - operandi troše isti tok jednom; kasniji vide EOF.
-bs.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška upotrebe, 3 host I/O, 70 interna greška.
+bs.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška upotrebe, 3 greška ulaza/izlaza domaćina, 70 interna greška.
 bs.awk.help.compatibility.heading = Usklađenost
 bs.awk.help.compatibility.awklib_limitations = Nema tvrdnje o punoj POSIX usklađenosti. AWK jezik i izvršavanje slijede awklib i dokumentovana ograničenja. getline: awklib.
 bs.awk.version.program = awk {version}
@@ -315,7 +315,7 @@ ca.awk.help.options.version =   --version              mostra la informació de 
 ca.awk.help.options.terminator =   --                     acaba el processament d opcions; els noms de fitxer que comencen amb - funcionen després
 ca.awk.help.operands = Els operands d entrada són fitxers, -, o name=value amb un nom que coincideix amb [A-Za-z_][A-Za-z0-9_]*.
 ca.awk.help.stdin = Sense operand d entrada s usa l entrada estàndard. Els operands - repetits consumeixen el mateix flux una vegada; els posteriors veuen EOF.
-ca.awk.help.exit_statuses = Estats: 0 èxit, 1 error AWK, 2 error d ús, 3 host I/O, 70 error intern.
+ca.awk.help.exit_statuses = Estats: 0 èxit, 1 error AWK, 2 error d ús, 3 error d entrada/sortida de l amfitrió, 70 error intern.
 ca.awk.help.compatibility.heading = Compatibilitat
 ca.awk.help.compatibility.awklib_limitations = No es declara conformitat POSIX completa. El llenguatge AWK i l execució segueixen awklib i les limitacions documentades. getline: awklib.
 ca.awk.version.program = awk {version}
@@ -365,7 +365,7 @@ cnr.awk.help.options.version =   --version              prikaži verziju i izađ
 cnr.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju sa - rade poslije toga
 cnr.awk.help.operands = Ulazni operandi su datoteke, -, ili name=value sa imenom koje odgovara [A-Za-z_][A-Za-z0-9_]*.
 cnr.awk.help.stdin = Bez ulaznog operanda koristi se standardni ulaz. Ponovljeni - operandi troše isti tok jednom; kasniji vide EOF.
-cnr.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška upotrebe, 3 host I/O, 70 interna greška.
+cnr.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška upotrebe, 3 greška ulaza/izlaza domaćina, 70 interna greška.
 cnr.awk.help.compatibility.heading = Usklađenost
 cnr.awk.help.compatibility.awklib_limitations = Nema tvrdnje o punoj POSIX usklađenosti. AWK jezik i izvršavanje slijede awklib i dokumentovana ograničenja. getline: awklib.
 cnr.awk.version.program = awk {version}
@@ -415,7 +415,7 @@ cs.awk.help.options.version =   --version              zobrazí informace o verz
 cs.awk.help.options.terminator =   --                     ukončí zpracování voleb; názvy souborů začínající - fungují potom
 cs.awk.help.operands = Vstupní operandy jsou soubory, -, nebo name=value se jménem odpovídajícím [A-Za-z_][A-Za-z0-9_]*.
 cs.awk.help.stdin = Bez vstupního operandu se použije standardní vstup. Opakované - spotřebuje stejný proud jednou; pozdější použití vidí EOF.
-cs.awk.help.exit_statuses = Stavy: 0 úspěch, 1 chyba AWK, 2 chyba použití, 3 host I/O, 70 interní chyba.
+cs.awk.help.exit_statuses = Stavy: 0 úspěch, 1 chyba AWK, 2 chyba použití, 3 chyba vstupu/výstupu hostitele, 70 interní chyba.
 cs.awk.help.compatibility.heading = Kompatibilita
 cs.awk.help.compatibility.awklib_limitations = Neprohlašuje se úplná shoda POSIX. Jazyk AWK a běh se řídí awklib a dokumentovanými omezeními. getline: awklib.
 cs.awk.version.program = awk {version}
@@ -565,7 +565,7 @@ es.awk.help.options.version =   --version              muestra información de v
 es.awk.help.options.terminator =   --                     termina el procesamiento de opciones; después valen archivos que empiezan por -
 es.awk.help.operands = Los operandos de entrada son archivos, -, o name=value con nombre que coincida con [A-Za-z_][A-Za-z0-9_]*.
 es.awk.help.stdin = Sin operando de entrada se usa la entrada estándar. Los - repetidos consumen el mismo flujo una vez; los posteriores ven EOF.
-es.awk.help.exit_statuses = Estados: 0 éxito, 1 error AWK, 2 error de uso, 3 host I/O, 70 error interno.
+es.awk.help.exit_statuses = Estados: 0 éxito, 1 error AWK, 2 error de uso, 3 error de entrada/salida del sistema, 70 error interno.
 es.awk.help.compatibility.heading = Compatibilidad
 es.awk.help.compatibility.awklib_limitations = No se afirma conformidad POSIX completa. El lenguaje AWK y la ejecución siguen awklib y las limitaciones documentadas. getline: awklib.
 es.awk.version.program = awk {version}
@@ -615,7 +615,7 @@ et.awk.help.options.version =   --version              näitab versiooniinfot ja
 et.awk.help.options.terminator =   --                     lõpetab suvandite töötlemise; - algusega failinimed töötavad pärast seda
 et.awk.help.operands = Sisendoperandid on failid, -, või name=value nimega, mis vastab [A-Za-z_][A-Za-z0-9_]*.
 et.awk.help.stdin = Sisendoperandita kasutatakse standardsisendit. Korduvad - operandid tarbivad sama voo üks kord; hilisemad näevad EOF.
-et.awk.help.exit_statuses = Olekud: 0 edu, 1 AWK tõrge, 2 kasutusviga, 3 host I/O, 70 sisemine viga.
+et.awk.help.exit_statuses = Olekud: 0 edu, 1 AWK tõrge, 2 kasutusviga, 3 hosti sisend/väljundviga, 70 sisemine viga.
 et.awk.help.compatibility.heading = Ühilduvus
 et.awk.help.compatibility.awklib_limitations = Täielikku POSIX vastavust ei väideta. AWK keel ja käitus järgivad awklib-i ning dokumenteeritud piiranguid. getline: awklib.
 et.awk.version.program = awk {version}
@@ -665,7 +665,7 @@ fi.awk.help.options.version =   --version              näyttää versiotiedot j
 fi.awk.help.options.terminator =   --                     päättää valitsimien käsittelyn; - alkavat tiedostonimet toimivat sen jälkeen
 fi.awk.help.operands = Syöteoperandit ovat tiedostoja, -, tai name=value, jonka nimi vastaa [A-Za-z_][A-Za-z0-9_]*.
 fi.awk.help.stdin = Ilman syöteoperandia käytetään vakiosyötettä. Toistuvat - operandit kuluttavat saman virran kerran; myöhemmät näkevät EOF.
-fi.awk.help.exit_statuses = Tilat: 0 onnistui, 1 AWK-virhe, 2 käyttövirhe, 3 host I/O, 70 sisäinen virhe.
+fi.awk.help.exit_statuses = Tilat: 0 onnistui, 1 AWK-virhe, 2 käyttövirhe, 3 isäntäjärjestelmän syöte/tulostevirhe, 70 sisäinen virhe.
 fi.awk.help.compatibility.heading = Yhteensopivuus
 fi.awk.help.compatibility.awklib_limitations = Täyttä POSIX-yhteensopivuutta ei väitetä. AWK-kieli ja suoritus seuraavat awklibia ja dokumentoituja rajoituksia. getline: awklib.
 fi.awk.version.program = awk {version}
@@ -715,7 +715,7 @@ fr.awk.help.options.version =   --version              affiche les informations 
 fr.awk.help.options.terminator =   --                     termine le traitement des options; les noms de fichiers commençant par - fonctionnent ensuite
 fr.awk.help.operands = Les opérandes d entrée sont des fichiers, -, ou name=value dont le nom correspond à [A-Za-z_][A-Za-z0-9_]*.
 fr.awk.help.stdin = Sans opérande d entrée, l entrée standard est utilisée. Les - répétés consomment le même flux une fois; les suivants voient EOF.
-fr.awk.help.exit_statuses = États: 0 succès, 1 erreur AWK, 2 erreur d utilisation, 3 host I/O, 70 erreur interne.
+fr.awk.help.exit_statuses = États: 0 succès, 1 erreur AWK, 2 erreur d utilisation, 3 erreur d entrée/sortie de l hôte, 70 erreur interne.
 fr.awk.help.compatibility.heading = Compatibilité
 fr.awk.help.compatibility.awklib_limitations = Aucune conformité POSIX complète n est revendiquée. Le langage AWK et l exécution suivent awklib et les limites documentées. getline: awklib.
 fr.awk.version.program = awk {version}
@@ -765,7 +765,7 @@ ga.awk.help.options.version =   --version              taispeáin eolas leagain 
 ga.awk.help.options.terminator =   --                     críochnaíonn próiseáil roghanna; oibríonn ainmneacha comhaid le - ina dhiaidh
 ga.awk.help.operands = Is comhaid, -, nó name=value le hainm [A-Za-z_][A-Za-z0-9_]* iad na hoibreanna ionchuir.
 ga.awk.help.stdin = Gan oibreann ionchuir úsáidtear ionchur caighdeánach. Itheann - arís agus arís eile an sruth céanna uair amháin; feiceann cinn níos déanaí EOF.
-ga.awk.help.exit_statuses = Stádais: 0 rath, 1 earráid AWK, 2 earráid úsáide, 3 host I/O, 70 earráid inmheánach.
+ga.awk.help.exit_statuses = Stádais: 0 rath, 1 earráid AWK, 2 earráid úsáide, 3 earráid ionchuir/aschuir an ósta, 70 earráid inmheánach.
 ga.awk.help.compatibility.heading = Comhoiriúnacht
 ga.awk.help.compatibility.awklib_limitations = Ní mhaítear comhréireacht POSIX iomlán. Leanann teanga AWK agus rith awklib agus teorainneacha doiciméadaithe. getline: awklib.
 ga.awk.version.program = awk {version}
@@ -815,7 +815,7 @@ hr.awk.help.options.version =   --version              prikaži informacije o ve
 hr.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju s - rade nakon toga
 hr.awk.help.operands = Ulazni operandi su datoteke, -, ili name=value s imenom koje odgovara [A-Za-z_][A-Za-z0-9_]*.
 hr.awk.help.stdin = Bez ulaznog operanda koristi se standardni ulaz. Ponovljeni - operandi troše isti tok jednom; kasniji vide EOF.
-hr.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška uporabe, 3 host I/O, 70 interna greška.
+hr.awk.help.exit_statuses = Statusi: 0 uspjeh, 1 AWK greška, 2 greška uporabe, 3 greška ulaza/izlaza domaćina, 70 interna greška.
 hr.awk.help.compatibility.heading = Sukladnost
 hr.awk.help.compatibility.awklib_limitations = Ne tvrdi se potpuna POSIX sukladnost. AWK jezik i izvršavanje slijede awklib i dokumentirana ograničenja. getline: awklib.
 hr.awk.version.program = awk {version}
@@ -865,7 +865,7 @@ hu.awk.help.options.version =   --version              verzióinformáció megje
 hu.awk.help.options.terminator =   --                     lezárja az opciófeldolgozást; a - kezdetű fájlnevek ezután működnek
 hu.awk.help.operands = A bemeneti operandusok fájlok, -, vagy name=value, ahol a név illeszkedik erre: [A-Za-z_][A-Za-z0-9_]*.
 hu.awk.help.stdin = Bemeneti operandus nélkül a standard bemenet használatos. Az ismételt - ugyanazt a folyamot egyszer fogyasztja; később EOF látszik.
-hu.awk.help.exit_statuses = Állapotok: 0 siker, 1 AWK hiba, 2 használati hiba, 3 host I/O, 70 belső hiba.
+hu.awk.help.exit_statuses = Állapotok: 0 siker, 1 AWK hiba, 2 használati hiba, 3 gazdarendszer bemeneti/kimeneti hibája, 70 belső hiba.
 hu.awk.help.compatibility.heading = Kompatibilitás
 hu.awk.help.compatibility.awklib_limitations = Nincs teljes POSIX megfelelőségi állítás. Az AWK nyelv és futás az awklib-et és a dokumentált korlátokat követi. getline: awklib.
 hu.awk.version.program = awk {version}
@@ -965,7 +965,7 @@ is.awk.help.options.version =   --version              sýnir útgáfuupplýsing
 is.awk.help.options.terminator =   --                     lýkur valkostavinnslu; skráarnöfn sem byrja á - virka eftir það
 is.awk.help.operands = Inntaksliðir eru skrár, -, eða name=value með nafni sem passar við [A-Za-z_][A-Za-z0-9_]*.
 is.awk.help.stdin = Án inntaksliðs er staðalinntak notað. Endurtekin - nota sama straum einu sinni; seinni sjá EOF.
-is.awk.help.exit_statuses = Stöður: 0 tókst, 1 AWK-villa, 2 notkunarvilla, 3 host I/O, 70 innri villa.
+is.awk.help.exit_statuses = Stöður: 0 tókst, 1 AWK-villa, 2 notkunarvilla, 3 inntaks/úttaksvilla hýsils, 70 innri villa.
 is.awk.help.compatibility.heading = Samhæfni
 is.awk.help.compatibility.awklib_limitations = Ekki er fullyrt um fulla POSIX-samhæfni. AWK-mál og keyrsla fylgja awklib og skráðum takmörkunum. getline: awklib.
 is.awk.version.program = awk {version}
@@ -1015,7 +1015,7 @@ it.awk.help.options.version =   --version              mostra informazioni di ve
 it.awk.help.options.terminator =   --                     termina l elaborazione delle opzioni; poi valgono file che iniziano con -
 it.awk.help.operands = Gli operandi di input sono file, -, o name=value con nome corrispondente a [A-Za-z_][A-Za-z0-9_]*.
 it.awk.help.stdin = Senza operando di input si usa lo input standard. I - ripetuti consumano lo stesso flusso una volta; i successivi vedono EOF.
-it.awk.help.exit_statuses = Stati: 0 successo, 1 errore AWK, 2 errore d uso, 3 host I/O, 70 errore interno.
+it.awk.help.exit_statuses = Stati: 0 successo, 1 errore AWK, 2 errore d uso, 3 errore di input/output dell host, 70 errore interno.
 it.awk.help.compatibility.heading = Compatibilità
 it.awk.help.compatibility.awklib_limitations = Non si dichiara piena conformità POSIX. Linguaggio AWK ed esecuzione seguono awklib e i limiti documentati. getline: awklib.
 it.awk.version.program = awk {version}
@@ -1165,7 +1165,7 @@ la.awk.help.options.version =   --version              informationem versionis o
 la.awk.help.options.terminator =   --                     tractationem optionum finit; nomina fasciculorum a - incipientia postea valent
 la.awk.help.operands = Operanda input sunt fasciculi, -, aut name=value cui nomen congruit [A-Za-z_][A-Za-z0-9_]*.
 la.awk.help.stdin = Sine operando input, input standard adhibetur. Repetita - eundem rivum semel consumunt; posteriora EOF vident.
-la.awk.help.exit_statuses = Status: 0 successus, 1 error AWK, 2 error usus, 3 host I/O, 70 error internus.
+la.awk.help.exit_statuses = Status: 0 successus, 1 error AWK, 2 error usus, 3 error introitus/exitus hospitis, 70 error internus.
 la.awk.help.compatibility.heading = Compatibilitas
 la.awk.help.compatibility.awklib_limitations = Conformitas POSIX plena non affirmatur. Lingua AWK et executio awklib et limites scriptos sequuntur. getline: awklib.
 la.awk.version.program = awk {version}
@@ -1215,7 +1215,7 @@ lb.awk.help.options.version =   --version              Versiounsinformatioun wei
 lb.awk.help.options.terminator =   --                     schléisst Optiounsveraarbechtung of; Dateinimm mat - funktionéieren duerno
 lb.awk.help.operands = Input-Operande si Fichieren, -, oder name=value mat Numm passend op [A-Za-z_][A-Za-z0-9_]*.
 lb.awk.help.stdin = Ouni Input-Operand gëtt Standardinput benotzt. Widderholl - verbrauchen dee selwechte Stroum eemol; spéider gesinn EOF.
-lb.awk.help.exit_statuses = Status: 0 Erfolleg, 1 AWK-Feeler, 2 Benotzungsfeeler, 3 host I/O, 70 interne Feeler.
+lb.awk.help.exit_statuses = Status: 0 Erfolleg, 1 AWK-Feeler, 2 Benotzungsfeeler, 3 Input/Output-Feeler vum Host, 70 interne Feeler.
 lb.awk.help.compatibility.heading = Kompatibilitéit
 lb.awk.help.compatibility.awklib_limitations = Keng Fuerderung vu voller POSIX-Konformitéit. AWK-Sprooch a Laf verfollegen awklib an dokumentéiert Grenzen. getline: awklib.
 lb.awk.version.program = awk {version}
@@ -1265,7 +1265,7 @@ lt.awk.help.options.version =   --version              rodo versijos informacij�
 lt.awk.help.options.terminator =   --                     baigia parinkčių apdorojimą; po to veikia failų vardai prasidedantys -
 lt.awk.help.operands = Įvesties operandai yra failai, -, arba name=value su vardu pagal [A-Za-z_][A-Za-z0-9_]*.
 lt.awk.help.stdin = Be įvesties operando naudojama standartinė įvestis. Pakartoti - operandai tą patį srautą sunaudoja vieną kartą; vėlesni mato EOF.
-lt.awk.help.exit_statuses = Būsenos: 0 sėkmė, 1 AWK klaida, 2 naudojimo klaida, 3 host I/O, 70 vidinė klaida.
+lt.awk.help.exit_statuses = Būsenos: 0 sėkmė, 1 AWK klaida, 2 naudojimo klaida, 3 pagrindinio kompiuterio įvesties/išvesties klaida, 70 vidinė klaida.
 lt.awk.help.compatibility.heading = Suderinamumas
 lt.awk.help.compatibility.awklib_limitations = Visiškos POSIX atitikties neteigiama. AWK kalba ir vykdymas seka awklib ir dokumentuotus apribojimus. getline: awklib.
 lt.awk.version.program = awk {version}
@@ -1315,7 +1315,7 @@ lv.awk.help.options.version =   --version              rāda versijas informāci
 lv.awk.help.options.terminator =   --                     beidz opciju apstrādi; failu vārdi ar sākuma - darbojas pēc tam
 lv.awk.help.operands = Ievades operandi ir faili, -, vai name=value ar vārdu, kas atbilst [A-Za-z_][A-Za-z0-9_]*.
 lv.awk.help.stdin = Bez ievades operanda izmanto standarta ievadi. Atkārtoti - patērē to pašu plūsmu vienreiz; vēlākie redz EOF.
-lv.awk.help.exit_statuses = Statusi: 0 panākumi, 1 AWK kļūda, 2 lietošanas kļūda, 3 host I/O, 70 iekšēja kļūda.
+lv.awk.help.exit_statuses = Statusi: 0 panākumi, 1 AWK kļūda, 2 lietošanas kļūda, 3 resursdatora ievades/izvades kļūda, 70 iekšēja kļūda.
 lv.awk.help.compatibility.heading = Saderība
 lv.awk.help.compatibility.awklib_limitations = Netiek apgalvota pilna POSIX atbilstība. AWK valoda un izpilde seko awklib un dokumentētiem ierobežojumiem. getline: awklib.
 lv.awk.version.program = awk {version}
@@ -1415,7 +1415,7 @@ mt.awk.help.options.version =   --version              uri informazzjoni tal-ver
 mt.awk.help.options.terminator =   --                     itemm l-ipproċessar tal-għażliet; ismijiet ta fajls li jibdew b - jaħdmu wara
 mt.awk.help.operands = L-operandi ta input huma fajls, -, jew name=value b isem li jaqbel ma [A-Za-z_][A-Za-z0-9_]*.
 mt.awk.help.stdin = Mingħajr operand ta input tintuża l-input standard. - ripetuti jikkunsmaw l-istess fluss darba; ta wara jaraw EOF.
-mt.awk.help.exit_statuses = Status: 0 suċċess, 1 żball AWK, 2 żball ta użu, 3 host I/O, 70 żball intern.
+mt.awk.help.exit_statuses = Status: 0 suċċess, 1 żball AWK, 2 żball ta użu, 3 żball ta input/output tal-host, 70 żball intern.
 mt.awk.help.compatibility.heading = Kompatibbiltà
 mt.awk.help.compatibility.awklib_limitations = Ma ssirx pretensjoni ta konformità POSIX sħiħa. Il-lingwa AWK u l-eżekuzzjoni jsegwu awklib u l-limiti dokumentati. getline: awklib.
 mt.awk.version.program = awk {version}
@@ -1465,7 +1465,7 @@ nl.awk.help.options.version =   --version              toon versie-informatie en
 nl.awk.help.options.terminator =   --                     beëindigt optieverwerking; bestandsnamen die met - beginnen werken daarna
 nl.awk.help.operands = Invoeroperanden zijn bestanden, -, of name=value met naam passend bij [A-Za-z_][A-Za-z0-9_]*.
 nl.awk.help.stdin = Zonder invoeroperand wordt standaardinvoer gebruikt. Herhaalde - verbruiken dezelfde stroom eenmaal; latere zien EOF.
-nl.awk.help.exit_statuses = Statussen: 0 succes, 1 AWK-fout, 2 gebruiksfout, 3 host I/O, 70 interne fout.
+nl.awk.help.exit_statuses = Statussen: 0 succes, 1 AWK-fout, 2 gebruiksfout, 3 invoer/uitvoerfout van de host, 70 interne fout.
 nl.awk.help.compatibility.heading = Compatibiliteit
 nl.awk.help.compatibility.awklib_limitations = Er wordt geen volledige POSIX-conformiteit geclaimd. AWK-taal en uitvoering volgen awklib en gedocumenteerde beperkingen. getline: awklib.
 nl.awk.version.program = awk {version}
@@ -1515,7 +1515,7 @@ no.awk.help.options.version =   --version              vis versjonsinformasjon o
 no.awk.help.options.terminator =   --                     avslutter valgbehandling; filnavn som begynner med - virker etterpå
 no.awk.help.operands = Inndataoperander er filer, -, eller name=value med navn som matcher [A-Za-z_][A-Za-z0-9_]*.
 no.awk.help.stdin = Uten inndataoperand brukes standard inndata. Gjentatte - operander bruker samme strøm én gang; senere ser EOF.
-no.awk.help.exit_statuses = Statuser: 0 suksess, 1 AWK-feil, 2 bruksfeil, 3 host I/O, 70 intern feil.
+no.awk.help.exit_statuses = Statuser: 0 suksess, 1 AWK-feil, 2 bruksfeil, 3 inn-/utdatafeil fra verten, 70 intern feil.
 no.awk.help.compatibility.heading = Kompatibilitet
 no.awk.help.compatibility.awklib_limitations = Ingen påstand om full POSIX-samsvar. AWK-språk og kjøring følger awklib og dokumenterte begrensninger. getline: awklib.
 no.awk.version.program = awk {version}
@@ -1565,7 +1565,7 @@ pl.awk.help.options.version =   --version              pokaż informacje o wersj
 pl.awk.help.options.terminator =   --                     kończy przetwarzanie opcji; nazwy plików zaczynające się od - działają później
 pl.awk.help.operands = Operandy wejścia to pliki, -, albo name=value z nazwą pasującą do [A-Za-z_][A-Za-z0-9_]*.
 pl.awk.help.stdin = Bez operandu wejścia używane jest standardowe wejście. Powtórzone - zużywają ten sam strumień raz; późniejsze widzą EOF.
-pl.awk.help.exit_statuses = Statusy: 0 sukces, 1 błąd AWK, 2 błąd użycia, 3 host I/O, 70 błąd wewnętrzny.
+pl.awk.help.exit_statuses = Statusy: 0 sukces, 1 błąd AWK, 2 błąd użycia, 3 błąd wejścia/wyjścia hosta, 70 błąd wewnętrzny.
 pl.awk.help.compatibility.heading = Zgodność
 pl.awk.help.compatibility.awklib_limitations = Nie deklaruje się pełnej zgodności POSIX. Język AWK i wykonanie podążają za awklib i udokumentowanymi ograniczeniami. getline: awklib.
 pl.awk.version.program = awk {version}
@@ -1615,7 +1615,7 @@ pt.awk.help.options.version =   --version              mostra informação de ve
 pt.awk.help.options.terminator =   --                     termina o processamento de opções; nomes de ficheiro iniciados por - funcionam depois
 pt.awk.help.operands = Os operandos de entrada são ficheiros, -, ou name=value com nome que corresponde a [A-Za-z_][A-Za-z0-9_]*.
 pt.awk.help.stdin = Sem operando de entrada usa-se a entrada padrão. Operandos - repetidos consomem o mesmo fluxo uma vez; os seguintes veem EOF.
-pt.awk.help.exit_statuses = Estados: 0 sucesso, 1 erro AWK, 2 erro de uso, 3 host I/O, 70 erro interno.
+pt.awk.help.exit_statuses = Estados: 0 sucesso, 1 erro AWK, 2 erro de uso, 3 erro de entrada/saída do hospedeiro, 70 erro interno.
 pt.awk.help.compatibility.heading = Compatibilidade
 pt.awk.help.compatibility.awklib_limitations = Não se declara conformidade POSIX completa. A linguagem AWK e a execução seguem awklib e limitações documentadas. getline: awklib.
 pt.awk.version.program = awk {version}
@@ -1665,7 +1665,7 @@ rm.awk.help.options.version =   --version              mussa infurmaziun da vers
 rm.awk.help.options.terminator =   --                     finescha l elavuraziun d opziuns; nums da datotecas cun - funcziunan suenter
 rm.awk.help.operands = Operands d input èn datotecas, -, u name=value cun num che correspunda a [A-Za-z_][A-Za-z0-9_]*.
 rm.awk.help.stdin = Senza operand d input vegn duvrà input standard. - repetids consumeschan il medem current ina giada; suandants vesan EOF.
-rm.awk.help.exit_statuses = Status: 0 success, 1 errur AWK, 2 errur d utilisaziun, 3 host I/O, 70 errur intern.
+rm.awk.help.exit_statuses = Status: 0 success, 1 errur AWK, 2 errur d utilisaziun, 3 errur d input/output dal host, 70 errur intern.
 rm.awk.help.compatibility.heading = Cumpatibilitad
 rm.awk.help.compatibility.awklib_limitations = Naginas pretensiuns da cumpletta conformitad POSIX. Lingua AWK ed execuziun suondan awklib e limitaziuns documentadas. getline: awklib.
 rm.awk.version.program = awk {version}
@@ -1715,7 +1715,7 @@ ro.awk.help.options.version =   --version              afișează informații de
 ro.awk.help.options.terminator =   --                     termină procesarea opțiunilor; numele de fișiere care încep cu - funcționează după
 ro.awk.help.operands = Operanzii de intrare sunt fișiere, -, sau name=value cu nume potrivit cu [A-Za-z_][A-Za-z0-9_]*.
 ro.awk.help.stdin = Fără operand de intrare se folosește intrarea standard. Operanzii - repetați consumă același flux o dată; cei ulteriori văd EOF.
-ro.awk.help.exit_statuses = Stări: 0 succes, 1 eroare AWK, 2 eroare de utilizare, 3 host I/O, 70 eroare internă.
+ro.awk.help.exit_statuses = Stări: 0 succes, 1 eroare AWK, 2 eroare de utilizare, 3 eroare de intrare/ieșire a gazdei, 70 eroare internă.
 ro.awk.help.compatibility.heading = Compatibilitate
 ro.awk.help.compatibility.awklib_limitations = Nu se revendică conformitate POSIX completă. Limbajul AWK și execuția urmează awklib și limitările documentate. getline: awklib.
 ro.awk.version.program = awk {version}
@@ -1815,7 +1815,7 @@ sk.awk.help.options.version =   --version              zobrazí informácie o ve
 sk.awk.help.options.terminator =   --                     ukončí spracovanie volieb; názvy súborov začínajúce - fungujú potom
 sk.awk.help.operands = Vstupné operandy sú súbory, -, alebo name=value s menom zodpovedajúcim [A-Za-z_][A-Za-z0-9_]*.
 sk.awk.help.stdin = Bez vstupného operandu sa použije štandardný vstup. Opakované - spotrebujú rovnaký prúd raz; neskoršie vidia EOF.
-sk.awk.help.exit_statuses = Stavy: 0 úspech, 1 chyba AWK, 2 chyba použitia, 3 host I/O, 70 interná chyba.
+sk.awk.help.exit_statuses = Stavy: 0 úspech, 1 chyba AWK, 2 chyba použitia, 3 chyba vstupu/výstupu hostiteľa, 70 interná chyba.
 sk.awk.help.compatibility.heading = Kompatibilita
 sk.awk.help.compatibility.awklib_limitations = Neuvádza sa úplná zhoda POSIX. Jazyk AWK a beh sa riadia awklib a dokumentovanými obmedzeniami. getline: awklib.
 sk.awk.version.program = awk {version}
@@ -1865,7 +1865,7 @@ sl.awk.help.options.version =   --version              prikaže informacije o ra
 sl.awk.help.options.terminator =   --                     konča obdelavo možnosti; imena datotek, ki se začnejo z -, delujejo potem
 sl.awk.help.operands = Vhodni operandi so datoteke, -, ali name=value z imenom, ki ustreza [A-Za-z_][A-Za-z0-9_]*.
 sl.awk.help.stdin = Brez vhodnega operanda se uporabi standardni vhod. Ponovljeni - porabijo isti tok enkrat; poznejši vidijo EOF.
-sl.awk.help.exit_statuses = Stanja: 0 uspeh, 1 napaka AWK, 2 napaka uporabe, 3 host I/O, 70 notranja napaka.
+sl.awk.help.exit_statuses = Stanja: 0 uspeh, 1 napaka AWK, 2 napaka uporabe, 3 napaka vhoda/izhoda gostitelja, 70 notranja napaka.
 sl.awk.help.compatibility.heading = Združljivost
 sl.awk.help.compatibility.awklib_limitations = Ne trdi se popolna skladnost POSIX. Jezik AWK in izvajanje sledita awklib in dokumentiranim omejitvam. getline: awklib.
 sl.awk.version.program = awk {version}
@@ -1915,7 +1915,7 @@ sq.awk.help.options.version =   --version              shfaq informacionin e ver
 sq.awk.help.options.terminator =   --                     mbyll përpunimin e opsioneve; emrat e skedarëve që fillojnë me - punojnë pas kësaj
 sq.awk.help.operands = Operandët e hyrjes janë skedarë, -, ose name=value me emër që përputhet me [A-Za-z_][A-Za-z0-9_]*.
 sq.awk.help.stdin = Pa operand hyrjeje përdoret hyrja standarde. Operandët - të përsëritur konsumojnë të njëjtin rrjedhë një herë; të mëvonshmit shohin EOF.
-sq.awk.help.exit_statuses = Statuset: 0 sukses, 1 gabim AWK, 2 gabim përdorimi, 3 host I/O, 70 gabim i brendshëm.
+sq.awk.help.exit_statuses = Statuset: 0 sukses, 1 gabim AWK, 2 gabim përdorimi, 3 gabim hyrje/dalje i hostit, 70 gabim i brendshëm.
 sq.awk.help.compatibility.heading = Përputhshmëri
 sq.awk.help.compatibility.awklib_limitations = Nuk pretendohet përputhje e plotë POSIX. Gjuha AWK dhe ekzekutimi ndjekin awklib dhe kufizimet e dokumentuara. getline: awklib.
 sq.awk.version.program = awk {version}
@@ -2015,7 +2015,7 @@ sv.awk.help.options.version =   --version              visa versionsinformation 
 sv.awk.help.options.terminator =   --                     avslutar alternativtolkning; filnamn som börjar med - fungerar efteråt
 sv.awk.help.operands = Inmatningsoperander är filer, -, eller name=value med namn som matchar [A-Za-z_][A-Za-z0-9_]*.
 sv.awk.help.stdin = Utan inmatningsoperand används standardindata. Upprepade - förbrukar samma ström en gång; senare ser EOF.
-sv.awk.help.exit_statuses = Status: 0 lyckat, 1 AWK-fel, 2 användningsfel, 3 host I/O, 70 internt fel.
+sv.awk.help.exit_statuses = Status: 0 lyckat, 1 AWK-fel, 2 användningsfel, 3 in-/utdatafel från värden, 70 internt fel.
 sv.awk.help.compatibility.heading = Kompatibilitet
 sv.awk.help.compatibility.awklib_limitations = Ingen fullständig POSIX-överensstämmelse hävdas. AWK-språk och körning följer awklib och dokumenterade begränsningar. getline: awklib.
 sv.awk.version.program = awk {version}
@@ -2065,7 +2065,7 @@ tr.awk.help.options.version =   --version              sürüm bilgisini göster
 tr.awk.help.options.terminator =   --                     seçenek işlemeyi bitirir; - ile başlayan dosya adları sonra çalışır
 tr.awk.help.operands = Girdi operandları dosyalar, -, veya adı [A-Za-z_][A-Za-z0-9_]* ile eşleşen name=value değerleridir.
 tr.awk.help.stdin = Girdi operandı yoksa standart girdi kullanılır. Tekrarlanan - aynı akışı bir kez tüketir; sonrakiler EOF görür.
-tr.awk.help.exit_statuses = Durumlar: 0 başarı, 1 AWK hatası, 2 kullanım hatası, 3 host I/O, 70 iç hata.
+tr.awk.help.exit_statuses = Durumlar: 0 başarı, 1 AWK hatası, 2 kullanım hatası, 3 ana sistem giriş/çıkış hatası, 70 iç hata.
 tr.awk.help.compatibility.heading = Uyumluluk
 tr.awk.help.compatibility.awklib_limitations = Tam POSIX uyumluluğu iddia edilmez. AWK dili ve yürütme awklib ile belgelenmiş sınırlamaları izler. getline: awklib.
 tr.awk.version.program = awk {version}
