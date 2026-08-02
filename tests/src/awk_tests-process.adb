@@ -407,6 +407,32 @@ package body Awk_Tests.Process is
       Assert (Status = 2, "unknown option exits with usage status");
    end Test_Process_Usage_Status;
 
+   procedure Test_Process_No_Arguments_Missing_Program
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
+   begin
+      declare
+         Status : aliased Integer := -1;
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output
+             (Command    => "../bin/awk",
+              Arguments  => Args,
+              Input      => "",
+              Status     => Status'Access,
+              Err_To_Out => True);
+      begin
+         Assert (Status = 2, "no arguments exits with usage status");
+         Assert (Contains (Output, "missing AWK program"),
+                 "no arguments reports missing program");
+         Assert (Contains (Output, "hint: use --help"),
+                 "no arguments emits the usage hint");
+         Assert (not Contains (Output, Character'Val (27) & "["),
+                 "no-argument diagnostic is not styled by default capture");
+      end;
+   end Test_Process_No_Arguments_Missing_Program;
+
    procedure Test_Process_Invalid_Color_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -1376,6 +1402,9 @@ package body Awk_Tests.Process is
         (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
          "process AWK output color always");
       Registration.Register_Routine (T, Test_Process_Usage_Status'Access, "process usage status");
+      Registration.Register_Routine
+        (T, Test_Process_No_Arguments_Missing_Program'Access,
+         "process no arguments missing program");
       Registration.Register_Routine
         (T, Test_Process_Invalid_Color_Status'Access,
          "process invalid color status");

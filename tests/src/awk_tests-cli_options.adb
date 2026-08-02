@@ -58,6 +58,23 @@ package body Awk_Tests.CLI_Options is
       end;
    end Test_Bad_Options;
 
+   procedure Test_Empty_Arguments_Report_Missing_Program
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      declare
+         Result : constant Opt.Parse_Result := Opt.Parse (Args);
+      begin
+         Assert (not Result.Ok, "empty argument vector is a usage failure");
+         Assert
+           (Awk_CLI.Diagnostics.Status_For (Result.Diagnostic) =
+            Awk_CLI.Diagnostics.Usage_Exit,
+            "empty argument vector exits with usage status");
+      end;
+   end Test_Empty_Arguments_Report_Missing_Program;
+
    procedure Test_Option_Matrix (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Args : Opt.String_Vectors.Vector;
@@ -298,6 +315,9 @@ package body Awk_Tests.CLI_Options is
    begin
       Registration.Register_Routine (T, Test_Options'Access, "option parser");
       Registration.Register_Routine (T, Test_Bad_Options'Access, "usage diagnostics");
+      Registration.Register_Routine
+        (T, Test_Empty_Arguments_Report_Missing_Program'Access,
+         "empty arguments report missing program");
       Registration.Register_Routine (T, Test_Option_Matrix'Access, "option matrix");
       Registration.Register_Routine
         (T, Test_Option_Order_And_Index_Preservation'Access,

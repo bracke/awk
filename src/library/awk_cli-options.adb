@@ -76,6 +76,15 @@ package body Awk_CLI.Options is
                         Original_Text => U.To_Unbounded_String (Text)));
       end Add_V;
    begin
+      if Arguments.Is_Empty then
+         return
+           (Ok => False,
+            Color => Result.Color,
+            Diagnostic =>
+              D.Make ("awk.usage.missing_program", D.Error, D.Usage,
+                      Hint_Id => "awk.hint.use_help"));
+      end if;
+
       while Index <= Positive (Arguments.Length) loop
          declare
             Current : constant String := Arg (Index);
