@@ -178,6 +178,32 @@ package body Awk_Tests.CLI_Options is
       end;
    end Test_Options_After_Direct_Program_Are_Operands;
 
+   procedure Test_Options_After_File_Mode_Operand_Are_Operands
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args : Opt.String_Vectors.Vector;
+   begin
+      Args.Append (U.To_Unbounded_String ("-f"));
+      Args.Append (U.To_Unbounded_String ("program.awk"));
+      Args.Append (U.To_Unbounded_String ("input.txt"));
+      Args.Append (U.To_Unbounded_String ("-vX=late"));
+      declare
+         Result : constant Opt.Parse_Result := Opt.Parse (Args);
+      begin
+         Assert (Result.Ok, "post-input option-looking operands parse");
+         Assert (Result.Options.Program_Files.Length = 1, "program file retained");
+         Assert (Result.Options.Initial_Assignments.Is_Empty,
+                 "-v after first file-mode operand is not an initial assignment");
+         Assert (Result.Options.Operands.Length = 2,
+                 "file-mode operand and later option-looking operand are retained");
+         Assert (U.To_String (Result.Options.Operands.Element (2).Text) = "-vX=late",
+                 "post-input option-looking argument spelling is preserved");
+         Assert (Result.Options.Operands.Element (2).Original_Index = 4,
+                 "post-input option-looking argument index is preserved");
+      end;
+   end Test_Options_After_File_Mode_Operand_Are_Operands;
+
    procedure Test_Option_Failures (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
 
@@ -279,6 +305,9 @@ package body Awk_Tests.CLI_Options is
       Registration.Register_Routine
         (T, Test_Options_After_Direct_Program_Are_Operands'Access,
          "options after direct program are operands");
+      Registration.Register_Routine
+        (T, Test_Options_After_File_Mode_Operand_Are_Operands'Access,
+         "options after file-mode operand are operands");
       Registration.Register_Routine (T, Test_Option_Failures'Access, "option failures");
       Registration.Register_Routine
         (T, Test_Option_Failure_Color_Preservation'Access,

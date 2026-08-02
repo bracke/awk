@@ -163,6 +163,40 @@ package body Awk_Tests.Process is
               "process -f reads second input after runtime assignment operand");
    end Test_Process_Program_Files;
 
+   procedure Test_Process_Option_Looking_Operand_After_File_Mode_Input
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Target : constant String := "-vX=late";
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
+        [new String'("-f"),
+         new String'("tests/fixtures/programs/print-first.awk"),
+         new String'("tests/fixtures/input/basic.txt"),
+         new String'(Target),
+         new String'("tests/fixtures/input/second.txt")];
+      Status : Integer;
+   begin
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Write_Text_File ("../" & Target, "late-option-file" & LF);
+      Status :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process file-mode late option operand",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+      Assert (Status = 0, "file-mode late option-looking operand exits successfully");
+      Assert (Contains (U.To_String (Output), "one" & LF & "three"),
+              "first input file is processed");
+      Assert (Contains (U.To_String (Output), "late-option-file" & LF),
+              "late option-looking operand is processed as a filename");
+      Assert (Contains (U.To_String (Output), "five" & LF),
+              "input after late runtime assignment is processed");
+      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+   end Test_Process_Option_Looking_Operand_After_File_Mode_Input;
+
    procedure Test_Process_Help_Color_Never (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -806,6 +840,9 @@ package body Awk_Tests.Process is
         (T, Test_Process_Option_Looking_File_After_Program'Access,
          "process option-looking file after program");
       Registration.Register_Routine (T, Test_Process_Program_Files'Access, "process -f program files");
+      Registration.Register_Routine
+        (T, Test_Process_Option_Looking_Operand_After_File_Mode_Input'Access,
+         "process file-mode late option operand");
       Registration.Register_Routine (T, Test_Process_Help_Color_Never'Access, "process help color never");
       Registration.Register_Routine
         (T, Test_Process_Help_Short_Circuits_Runtime'Access,
