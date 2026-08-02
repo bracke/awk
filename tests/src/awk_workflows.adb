@@ -491,7 +491,9 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("If no input operand is present"),
             U.To_Unbounded_String ("Exit statuses: 0 success"),
             U.To_Unbounded_String ("This program does not claim complete POSIX conformance"),
-            U.To_Unbounded_String ("getline behavior follows awklib.")];
+            U.To_Unbounded_String ("getline behavior follows awklib."),
+            U.To_Unbounded_String ("POSIX awk workflow"),
+            U.To_Unbounded_String ("awklib defines behavior")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
