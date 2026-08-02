@@ -6,6 +6,52 @@ on:
   workflow_dispatch:
 
 jobs:
+  native-build-and-test:
+    name: native build/test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    env:
+      ALIRE_NONINTERACTIVE: "true"
+    strategy:
+      fail-fast: false
+      matrix:
+        # gnat_native=15.2.1 ships no aarch64-darwin binary, so use Intel macOS.
+        os: [ubuntu-latest, macos-15-intel, windows-latest]
+    steps:
+      - name: Check out awk
+        uses: actions/checkout@v7
+        with:
+          path: awk
+
+      - name: Check out sibling crates (transitive pin closure)
+        uses: bracke/project_tools/.github/actions/checkout-ada-siblings@main
+        with:
+          root: awk
+
+      - name: Set up Alire
+        uses: alire-project/setup-alire@v6
+        with:
+          toolchain: gnat_native=15.2.1 gprbuild
+
+      - name: Raise Alire solver timeout
+        shell: bash
+        run: alr settings --global --set solver.timeout 600
+
+      - name: Build awk
+        working-directory: awk
+        run: alr --non-interactive build
+
+      - name: Build and run AUnit suite
+        working-directory: awk/tests
+        shell: bash
+        run: |
+          alr --non-interactive build
+          if [ -f ./bin/awk_tests_main.exe ]; then
+            ./bin/awk_tests_main.exe
+          else
+            ./bin/awk_tests_main
+          fi
+
   linux-release-check:
     name: Linux release checklist
     runs-on: ubuntu-latest

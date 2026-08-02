@@ -1391,6 +1391,11 @@ procedure Awk_Workflows is
         ("../.github/workflows/ci.yml", "./bin/awk_workflows release",
          "CI workflow must delegate release gates to Ada tooling",
          Quiet => True);
+      Files.Require_Contains
+        ("../.github/workflows/ci.yml",
+         "os: [ubuntu-latest, macos-15-intel, windows-latest]",
+         "CI workflow must include native Linux, macOS, and Windows build/test coverage",
+         Quiet => True);
       Require
         (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
                                              "      Verify;"),
