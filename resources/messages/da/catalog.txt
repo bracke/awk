@@ -6,7 +6,7 @@ da.awk.help.usage.program_files = Brug: awk [tilvalg] -f programfil [-f programf
 da.awk.help.options.field_separator =   -F sep, -Fsep          saet FS foer koersel; sidste forekomst vinder
 da.awk.help.options.variable =   -v navn=vaerdi, -vnavn=vaerdi  tildel variabel foer BEGIN; bevares i kommandolinjeorden
 da.awk.help.options.program_file =   -f fil, -ffil          laes AWK-kilde fra fil; flere filer sammenfojes i orden
-da.awk.help.options.color =   --color=auto|always|never  style kun CLI-ejet hjaelp og diagnostik
+da.awk.help.options.color =   --color=auto|always|never  style kun kommandolinjens hjaelp og diagnostik
 da.awk.help.options.help =   --help                 vis denne hjaelp og afslut
 da.awk.help.options.version =   --version              vis versionsoplysninger og afslut
 da.awk.help.options.terminator =   --                     afslut tilvalgsbehandling; filnavne der begynder med '-' virker efter dette

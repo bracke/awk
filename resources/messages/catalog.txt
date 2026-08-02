@@ -57,7 +57,7 @@ da.awk.help.usage.program_files = Brug: awk [tilvalg] -f programfil [-f programf
 da.awk.help.options.field_separator =   -F sep, -Fsep          saet FS foer koersel; sidste forekomst vinder
 da.awk.help.options.variable =   -v navn=vaerdi, -vnavn=vaerdi  tildel variabel foer BEGIN; bevares i kommandolinjeorden
 da.awk.help.options.program_file =   -f fil, -ffil          laes AWK-kilde fra fil; flere filer sammenfojes i orden
-da.awk.help.options.color =   --color=auto|always|never  style kun CLI-ejet hjaelp og diagnostik
+da.awk.help.options.color =   --color=auto|always|never  style kun kommandolinjens hjaelp og diagnostik
 da.awk.help.options.help =   --help                 vis denne hjaelp og afslut
 da.awk.help.options.version =   --version              vis versionsoplysninger og afslut
 da.awk.help.options.terminator =   --                     afslut tilvalgsbehandling; filnavne der begynder med '-' virker efter dette
@@ -109,7 +109,7 @@ az.awk.help.usage.program_files = İstifadə: awk [seçimlər] -f proqram-faylı
 az.awk.help.options.field_separator =   -F sep, -Fsep          icradan əvvəl FS təyin et; sonuncu dəyər qalib gəlir
 az.awk.help.options.variable =   -v name=value, -vname=value  BEGIN-dən əvvəl dəyişən təyin et; komanda sətri ardıcıllığı saxlanılır
 az.awk.help.options.program_file =   -f file, -ffile        AWK mənbəyini fayldan oxu; bir neçə fayl ardıcıllıqla birləşdirilir
-az.awk.help.options.color =   --color=auto|always|never  yalnız CLI-yə məxsus kömək və diaqnostikanı üslublandır
+az.awk.help.options.color =   --color=auto|always|never  yalnız komanda sətrinə məxsus kömək və diaqnostikanı üslublandır
 az.awk.help.options.help =   --help                 bu köməyi göstər və çıx
 az.awk.help.options.version =   --version              versiya məlumatını göstər və çıx
 az.awk.help.options.terminator =   --                     seçim emalını bitir; bundan sonra - ilə başlayan fayl adları işləyir
@@ -159,7 +159,7 @@ be.awk.help.usage.program_files = Выкарыстанне: awk [опцыі] -f 
 be.awk.help.options.field_separator =   -F sep, -Fsep          задаць FS перад выкананнем; апошняе значэнне перамагае
 be.awk.help.options.variable =   -v name=value, -vname=value  задаць зменную перад BEGIN; парадак каманднага радка захоўваецца
 be.awk.help.options.program_file =   -f file, -ffile        чытаць зыходны код AWK з файла; некалькі файлаў абʼядноўваюцца па парадку
-be.awk.help.options.color =   --color=auto|always|never  стылізаваць толькі дапамогу і дыягностыку CLI
+be.awk.help.options.color =   --color=auto|always|never  стылізаваць толькі дапамогу і дыягностыку каманднага радка
 be.awk.help.options.help =   --help                 паказаць гэтую дапамогу і выйсці
 be.awk.help.options.version =   --version              паказаць звесткі пра версію і выйсці
 be.awk.help.options.terminator =   --                     скончыць апрацоўку опцый; пасля гэтага працуюць імёны файлаў з -
@@ -209,7 +209,7 @@ bg.awk.help.usage.program_files = Употреба: awk [опции] -f прог
 bg.awk.help.options.field_separator =   -F sep, -Fsep          задава FS преди изпълнение; последната стойност печели
 bg.awk.help.options.variable =   -v name=value, -vname=value  задава променлива преди BEGIN; редът от командния ред се запазва
 bg.awk.help.options.program_file =   -f file, -ffile        чете AWK източник от файл; няколко файла се слепват по ред
-bg.awk.help.options.color =   --color=auto|always|never  оцветява само помощта и диагностиката на CLI
+bg.awk.help.options.color =   --color=auto|always|never  оцветява само помощта и диагностиката на командния ред
 bg.awk.help.options.help =   --help                 показва тази помощ и излиза
 bg.awk.help.options.version =   --version              показва информация за версията и излиза
 bg.awk.help.options.terminator =   --                     край на обработката на опции; имена на файлове с - работят след това
@@ -259,7 +259,7 @@ bs.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka 
 bs.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost važi
 bs.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje varijablu prije BEGIN; redoslijed komandne linije se čuva
 bs.awk.help.options.program_file =   -f file, -ffile        čita AWK program iz datoteke; više -f datoteka se spaja redom
-bs.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku CLI-ja
+bs.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku komandne linije
 bs.awk.help.options.help =   --help                 pokaži ovu pomoć i izađi
 bs.awk.help.options.version =   --version              prikaži verziju i izađi
 bs.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju sa - rade poslije toga
@@ -309,7 +309,7 @@ ca.awk.help.usage.program_files = Ús: awk [opcions] -f fitxer-programa [-f fitx
 ca.awk.help.options.field_separator =   -F sep, -Fsep          estableix FS abans de l execució; guanya l última aparició
 ca.awk.help.options.variable =   -v name=value, -vname=value  assigna una variable abans de BEGIN; es conserva l ordre de la línia d ordres
 ca.awk.help.options.program_file =   -f file, -ffile        llegeix el programa AWK d un fitxer; diversos -f es concatenen en ordre
-ca.awk.help.options.color =   --color=auto|always|never  aplica estil només a l ajuda i els diagnòstics del CLI
+ca.awk.help.options.color =   --color=auto|always|never  aplica estil només a l ajuda i els diagnòstics de la línia d ordres
 ca.awk.help.options.help =   --help                 mostra aquesta ajuda i surt
 ca.awk.help.options.version =   --version              mostra la informació de versió i surt
 ca.awk.help.options.terminator =   --                     acaba el processament d opcions; els noms de fitxer que comencen amb - funcionen després
@@ -359,7 +359,7 @@ cnr.awk.help.usage.program_files = Upotreba: awk [opcije] -f programska-datoteka
 cnr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; posljednja vrijednost važi
 cnr.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje promjenljivu prije BEGIN; redosljed komandne linije se čuva
 cnr.awk.help.options.program_file =   -f file, -ffile        čita AWK program iz datoteke; više -f datoteka se spaja redom
-cnr.awk.help.options.color =   --color=auto|always|never  stilizuje samo pomoć i dijagnostiku CLI-ja
+cnr.awk.help.options.color =   --color=auto|always|never  stilizuje samo pomoć i dijagnostiku komandne linije
 cnr.awk.help.options.help =   --help                 prikaži ovu pomoć i izađi
 cnr.awk.help.options.version =   --version              prikaži verziju i izađi
 cnr.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju sa - rade poslije toga
@@ -409,7 +409,7 @@ cs.awk.help.usage.program_files = Použití: awk [volby] -f soubor-programu [-f 
 cs.awk.help.options.field_separator =   -F sep, -Fsep          nastaví FS před spuštěním; platí poslední výskyt
 cs.awk.help.options.variable =   -v name=value, -vname=value  přiřadí proměnnou před BEGIN; pořadí příkazového řádku se zachová
 cs.awk.help.options.program_file =   -f file, -ffile        načte AWK program ze souboru; více -f se spojí v pořadí
-cs.awk.help.options.color =   --color=auto|always|never  styluje jen nápovědu a diagnostiku CLI
+cs.awk.help.options.color =   --color=auto|always|never  styluje jen nápovědu a diagnostiku příkazového řádku
 cs.awk.help.options.help =   --help                 zobrazí tuto nápovědu a skončí
 cs.awk.help.options.version =   --version              zobrazí informace o verzi a skončí
 cs.awk.help.options.terminator =   --                     ukončí zpracování voleb; názvy souborů začínající - fungují potom
@@ -459,7 +459,7 @@ de.awk.help.usage.program_files = Verwendung: awk [Optionen] -f Programmdatei [-
 de.awk.help.options.field_separator =   -F sep, -Fsep          setzt FS vor der Ausführung; der letzte Wert gilt
 de.awk.help.options.variable =   -v name=value, -vname=value  weist vor BEGIN eine Variable zu; Reihenfolge der Kommandozeile bleibt erhalten
 de.awk.help.options.program_file =   -f file, -ffile        liest das AWK-Programm aus einer Datei; mehrere -f werden der Reihe nach verbunden
-de.awk.help.options.color =   --color=auto|always|never  gestaltet nur CLI-Hilfe und Diagnostik
+de.awk.help.options.color =   --color=auto|always|never  gestaltet nur Kommandozeilenhilfe und Diagnostik
 de.awk.help.options.help =   --help                 diese Hilfe anzeigen und beenden
 de.awk.help.options.version =   --version              Versionsinformationen anzeigen und beenden
 de.awk.help.options.terminator =   --                     beendet die Optionsverarbeitung; Dateinamen mit führendem - funktionieren danach
@@ -509,7 +509,7 @@ el.awk.help.usage.program_files = Χρήση: awk [επιλογές] -f αρχε
 el.awk.help.options.field_separator =   -F sep, -Fsep          ορίζει το FS πριν από την εκτέλεση· υπερισχύει η τελευταία εμφάνιση
 el.awk.help.options.variable =   -v name=value, -vname=value  ορίζει μεταβλητή πριν από το BEGIN· διατηρείται η σειρά γραμμής εντολών
 el.awk.help.options.program_file =   -f file, -ffile        διαβάζει πηγή AWK από αρχείο· πολλά αρχεία ενώνονται με τη σειρά
-el.awk.help.options.color =   --color=auto|always|never  μορφοποιεί μόνο βοήθεια και διαγνωστικά του CLI
+el.awk.help.options.color =   --color=auto|always|never  μορφοποιεί μόνο βοήθεια και διαγνωστικά της γραμμής εντολών
 el.awk.help.options.help =   --help                 εμφανίζει αυτή τη βοήθεια και τερματίζει
 el.awk.help.options.version =   --version              εμφανίζει πληροφορίες έκδοσης και τερματίζει
 el.awk.help.options.terminator =   --                     τερματίζει την επεξεργασία επιλογών· μετά λειτουργούν ονόματα αρχείων που αρχίζουν με -
@@ -559,7 +559,7 @@ es.awk.help.usage.program_files = Uso: awk [opciones] -f archivo-programa [-f ar
 es.awk.help.options.field_separator =   -F sep, -Fsep          define FS antes de ejecutar; gana la última aparición
 es.awk.help.options.variable =   -v name=value, -vname=value  asigna una variable antes de BEGIN; se conserva el orden de la línea de órdenes
 es.awk.help.options.program_file =   -f file, -ffile        lee el programa AWK desde un archivo; varios -f se concatenan en orden
-es.awk.help.options.color =   --color=auto|always|never  aplica estilo solo a la ayuda y diagnósticos del CLI
+es.awk.help.options.color =   --color=auto|always|never  aplica estilo solo a la ayuda y diagnósticos de la línea de órdenes
 es.awk.help.options.help =   --help                 muestra esta ayuda y sale
 es.awk.help.options.version =   --version              muestra información de versión y sale
 es.awk.help.options.terminator =   --                     termina el procesamiento de opciones; después valen archivos que empiezan por -
@@ -609,7 +609,7 @@ et.awk.help.usage.program_files = Kasutus: awk [suvandid] -f programmifail [-f p
 et.awk.help.options.field_separator =   -F sep, -Fsep          seab FS enne käivitust; viimane väärtus jääb kehtima
 et.awk.help.options.variable =   -v name=value, -vname=value  määrab muutuja enne BEGIN; käsurea järjekord säilib
 et.awk.help.options.program_file =   -f file, -ffile        loeb AWK programmi failist; mitu -f faili liidetakse järjekorras
-et.awk.help.options.color =   --color=auto|always|never  vormindab ainult CLI abi ja diagnostika
+et.awk.help.options.color =   --color=auto|always|never  vormindab ainult käsurea abi ja diagnostika
 et.awk.help.options.help =   --help                 näitab seda abi ja lõpetab
 et.awk.help.options.version =   --version              näitab versiooniinfot ja lõpetab
 et.awk.help.options.terminator =   --                     lõpetab suvandite töötlemise; - algusega failinimed töötavad pärast seda
@@ -659,7 +659,7 @@ fi.awk.help.usage.program_files = Käyttö: awk [valitsimet] -f ohjelmatiedosto 
 fi.awk.help.options.field_separator =   -F sep, -Fsep          asettaa FS ennen suoritusta; viimeinen arvo voittaa
 fi.awk.help.options.variable =   -v name=value, -vname=value  asettaa muuttujan ennen BEGIN; komentorivin järjestys säilyy
 fi.awk.help.options.program_file =   -f file, -ffile        lukee AWK-ohjelman tiedostosta; useat -f tiedostot yhdistetään järjestyksessä
-fi.awk.help.options.color =   --color=auto|always|never  tyylittää vain CLI-ohjeen ja diagnostiikan
+fi.awk.help.options.color =   --color=auto|always|never  tyylittää vain komentorivin ohjeen ja diagnostiikan
 fi.awk.help.options.help =   --help                 näyttää tämän ohjeen ja poistuu
 fi.awk.help.options.version =   --version              näyttää versiotiedot ja poistuu
 fi.awk.help.options.terminator =   --                     päättää valitsimien käsittelyn; - alkavat tiedostonimet toimivat sen jälkeen
@@ -709,7 +709,7 @@ fr.awk.help.usage.program_files = Utilisation: awk [paramètres] -f fichier-prog
 fr.awk.help.options.field_separator =   -F sep, -Fsep          définit FS avant l exécution; la dernière occurrence gagne
 fr.awk.help.options.variable =   -v name=value, -vname=value  affecte une variable avant BEGIN; l ordre de la ligne de commande est conservé
 fr.awk.help.options.program_file =   -f file, -ffile        lit le programme AWK depuis un fichier; plusieurs -f sont concaténés dans l ordre
-fr.awk.help.options.color =   --color=auto|always|never  colore seulement l aide et les diagnostics du CLI
+fr.awk.help.options.color =   --color=auto|always|never  colore seulement l aide et les diagnostics de la ligne de commande
 fr.awk.help.options.help =   --help                 affiche cette aide et quitte
 fr.awk.help.options.version =   --version              affiche les informations de version et quitte
 fr.awk.help.options.terminator =   --                     termine le traitement des options; les noms de fichiers commençant par - fonctionnent ensuite
@@ -759,7 +759,7 @@ ga.awk.help.usage.program_files = Úsáid: awk [roghanna] -f comhad-cláir [-f c
 ga.awk.help.options.field_separator =   -F sep, -Fsep          socraíonn FS roimh rith; buaileann an luach deireanach
 ga.awk.help.options.variable =   -v name=value, -vname=value  sannann athróg roimh BEGIN; coinnítear ord na líne ordaithe
 ga.awk.help.options.program_file =   -f file, -ffile        léann clár AWK ó chomhad; ceanglaítear il -f in ord
-ga.awk.help.options.color =   --color=auto|always|never  stílíonn ach cabhair agus diagnóisic an CLI
+ga.awk.help.options.color =   --color=auto|always|never  stílíonn ach cabhair agus diagnóisic na líne ordaithe
 ga.awk.help.options.help =   --help                 taispeáin an chabhair seo agus scoir
 ga.awk.help.options.version =   --version              taispeáin eolas leagain agus scoir
 ga.awk.help.options.terminator =   --                     críochnaíonn próiseáil roghanna; oibríonn ainmneacha comhaid le - ina dhiaidh
@@ -809,7 +809,7 @@ hr.awk.help.usage.program_files = Uporaba: awk [opcije] -f programska-datoteka [
 hr.awk.help.options.field_separator =   -F sep, -Fsep          postavlja FS prije izvršavanja; zadnja vrijednost vrijedi
 hr.awk.help.options.variable =   -v name=value, -vname=value  dodjeljuje varijablu prije BEGIN; redoslijed naredbenog retka se čuva
 hr.awk.help.options.program_file =   -f file, -ffile        čita AWK program iz datoteke; više -f datoteka se spaja redom
-hr.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku CLI-ja
+hr.awk.help.options.color =   --color=auto|always|never  stilizira samo pomoć i dijagnostiku naredbenog retka
 hr.awk.help.options.help =   --help                 prikaži ovu pomoć i izađi
 hr.awk.help.options.version =   --version              prikaži informacije o verziji i izađi
 hr.awk.help.options.terminator =   --                     završava obradu opcija; imena datoteka koja počinju s - rade nakon toga
@@ -859,7 +859,7 @@ hu.awk.help.usage.program_files = Használat: awk [opciók] -f programfájl [-f 
 hu.awk.help.options.field_separator =   -F sep, -Fsep          beállítja az FS értéket futás előtt; az utolsó érték nyer
 hu.awk.help.options.variable =   -v name=value, -vname=value  változót állít be BEGIN előtt; a parancssori sorrend megmarad
 hu.awk.help.options.program_file =   -f file, -ffile        AWK programot olvas fájlból; több -f sorrendben összefűződik
-hu.awk.help.options.color =   --color=auto|always|never  csak a CLI súgót és diagnosztikát formázza
+hu.awk.help.options.color =   --color=auto|always|never  csak a parancssori súgót és diagnosztikát formázza
 hu.awk.help.options.help =   --help                 megjeleníti ezt a súgót és kilép
 hu.awk.help.options.version =   --version              verzióinformáció megjelenítése és kilépés
 hu.awk.help.options.terminator =   --                     lezárja az opciófeldolgozást; a - kezdetű fájlnevek ezután működnek
@@ -909,7 +909,7 @@ hy.awk.help.usage.program_files = Օգտագործում: awk [ընտրանքն�
 hy.awk.help.options.field_separator =   -F sep, -Fsep          սահմանում է FS-ը կատարումից առաջ· վերջին նշումը հաղթում է
 hy.awk.help.options.variable =   -v name=value, -vname=value  սահմանում է փոփոխականը BEGIN-ից առաջ· հրամանային տողի հերթը պահվում է
 hy.awk.help.options.program_file =   -f file, -ffile        կարդում է AWK աղբյուրը ֆայլից· մի քանի ֆայլ միացվում են հերթով
-hy.awk.help.options.color =   --color=auto|always|never  ոճավորում է միայն CLI-ի օգնությունն ու ախտորոշումները
+hy.awk.help.options.color =   --color=auto|always|never  ոճավորում է միայն հրամանային տողի օգնությունն ու ախտորոշումները
 hy.awk.help.options.help =   --help                 ցույց է տալիս այս օգնությունը և ավարտում է
 hy.awk.help.options.version =   --version              ցույց է տալիս տարբերակի տեղեկությունը և ավարտում է
 hy.awk.help.options.terminator =   --                     ավարտում է ընտրանքների մշակումը· դրանից հետո աշխատում են - նշանով սկսվող ֆայլանունները
@@ -959,7 +959,7 @@ is.awk.help.usage.program_files = Notkun: awk [valkostir] -f forritsskra [-f for
 is.awk.help.options.field_separator =   -F sep, -Fsep          stillir FS fyrir keyrslu; síðasta gildið gildir
 is.awk.help.options.variable =   -v name=value, -vname=value  úthlutar breytu fyrir BEGIN; röð skipanalínu helst
 is.awk.help.options.program_file =   -f file, -ffile        les AWK-forrit úr skrá; mörg -f eru sameinuð í röð
-is.awk.help.options.color =   --color=auto|always|never  stílar aðeins CLI-hjálp og greiningar
+is.awk.help.options.color =   --color=auto|always|never  stílar aðeins skipanalínuhjálp og greiningar
 is.awk.help.options.help =   --help                 sýnir þessa hjálp og hættir
 is.awk.help.options.version =   --version              sýnir útgáfuupplýsingar og hættir
 is.awk.help.options.terminator =   --                     lýkur valkostavinnslu; skráarnöfn sem byrja á - virka eftir það
@@ -1009,7 +1009,7 @@ it.awk.help.usage.program_files = Uso: awk [opzioni] -f file-programma [-f file-
 it.awk.help.options.field_separator =   -F sep, -Fsep          imposta FS prima dell esecuzione; vince l ultimo valore
 it.awk.help.options.variable =   -v name=value, -vname=value  assegna una variabile prima di BEGIN; l ordine della riga di comando è conservato
 it.awk.help.options.program_file =   -f file, -ffile        legge il programma AWK da un file; più -f sono concatenati in ordine
-it.awk.help.options.color =   --color=auto|always|never  applica stile solo ad aiuto e diagnostica CLI
+it.awk.help.options.color =   --color=auto|always|never  applica stile solo ad aiuto e diagnostica della riga di comando
 it.awk.help.options.help =   --help                 mostra questo aiuto ed esce
 it.awk.help.options.version =   --version              mostra informazioni di versione ed esce
 it.awk.help.options.terminator =   --                     termina l elaborazione delle opzioni; poi valgono file che iniziano con -
@@ -1059,7 +1059,7 @@ ka.awk.help.usage.program_files = გამოყენება: awk [პარ
 ka.awk.help.options.field_separator =   -F sep, -Fsep          აყენებს FS-ს შესრულებამდე· ბოლო მითითება მოქმედებს
 ka.awk.help.options.variable =   -v name=value, -vname=value  აყენებს ცვლადს BEGIN-მდე· ბრძანების ხაზის რიგი ინახება
 ka.awk.help.options.program_file =   -f file, -ffile        კითხულობს AWK წყაროს ფაილიდან· რამდენიმე ფაილი ერთიანდება რიგით
-ka.awk.help.options.color =   --color=auto|always|never  აფორმებს მხოლოდ CLI-ის დახმარებას და დიაგნოსტიკას
+ka.awk.help.options.color =   --color=auto|always|never  აფორმებს მხოლოდ ბრძანების ხაზის დახმარებას და დიაგნოსტიკას
 ka.awk.help.options.help =   --help                 აჩვენებს ამ დახმარებას და ასრულებს მუშაობას
 ka.awk.help.options.version =   --version              აჩვენებს ვერსიის ინფორმაციას და ასრულებს მუშაობას
 ka.awk.help.options.terminator =   --                     ასრულებს პარამეტრების დამუშავებას· ამის შემდეგ მუშაობს - ნიშნით დაწყებული ფაილის სახელები
@@ -1109,7 +1109,7 @@ kk.awk.help.usage.program_files = Пайдалану: awk [опциялар] -f 
 kk.awk.help.options.field_separator =   -F sep, -Fsep          орындау алдында FS орнатады· соңғы көрсетілім жеңеді
 kk.awk.help.options.variable =   -v name=value, -vname=value  BEGIN алдында айнымалы орнатады· командалық жол реті сақталады
 kk.awk.help.options.program_file =   -f file, -ffile        AWK бастапқы мәтінін файлдан оқиды· бірнеше файл ретімен біріктіріледі
-kk.awk.help.options.color =   --color=auto|always|never  тек CLI көмегі мен диагностикасын безендіреді
+kk.awk.help.options.color =   --color=auto|always|never  тек командалық жол көмегі мен диагностикасын безендіреді
 kk.awk.help.options.help =   --help                 осы көмекті көрсетіп, шығады
 kk.awk.help.options.version =   --version              нұсқа ақпаратын көрсетіп, шығады
 kk.awk.help.options.terminator =   --                     опцияларды өңдеуді аяқтайды· бұдан кейін - таңбасымен басталатын файл атаулары жұмыс істейді
@@ -1159,7 +1159,7 @@ la.awk.help.usage.program_files = Usus: awk [optationes] -f fasciculus-programma
 la.awk.help.options.field_separator =   -F sep, -Fsep          FS ante executionem ponit; ultimum valet
 la.awk.help.options.variable =   -v name=value, -vname=value  variabilem ante BEGIN assignat; ordo lineae imperii servatur
 la.awk.help.options.program_file =   -f file, -ffile        programma AWK ex fasciculo legit; plura -f ordine iunguntur
-la.awk.help.options.color =   --color=auto|always|never  solam opem et diagnostica CLI ornat
+la.awk.help.options.color =   --color=auto|always|never  solam opem et diagnostica lineae imperii ornat
 la.awk.help.options.help =   --help                 hoc auxilium ostendit et exit
 la.awk.help.options.version =   --version              informationem versionis ostendit et exit
 la.awk.help.options.terminator =   --                     tractationem optionum finit; nomina fasciculorum a - incipientia postea valent
@@ -1209,7 +1209,7 @@ lb.awk.help.usage.program_files = Benotzung: awk [Optiounen] -f Programmdatei [-
 lb.awk.help.options.field_separator =   -F sep, -Fsep          setzt FS virum Laf; de leschte Wäert zielt
 lb.awk.help.options.variable =   -v name=value, -vname=value  setzt eng Variabel viru BEGIN; Kommandozeilereiefolleg bleift erhalen
 lb.awk.help.options.program_file =   -f file, -ffile        liest den AWK-Programm aus engem Fichier; méi -f ginn an der Rei verbonnen
-lb.awk.help.options.color =   --color=auto|always|never  styléiert nëmmen CLI-Hëllef an Diagnostik
+lb.awk.help.options.color =   --color=auto|always|never  styléiert nëmmen Kommandozeil-Hëllef an Diagnostik
 lb.awk.help.options.help =   --help                 dës Hëllef weisen an ophalen
 lb.awk.help.options.version =   --version              Versiounsinformatioun weisen an ophalen
 lb.awk.help.options.terminator =   --                     schléisst Optiounsveraarbechtung of; Dateinimm mat - funktionéieren duerno
@@ -1259,7 +1259,7 @@ lt.awk.help.usage.program_files = Naudojimas: awk [parinktys] -f programos-faila
 lt.awk.help.options.field_separator =   -F sep, -Fsep          nustato FS prieš vykdymą; galioja paskutinė reikšmė
 lt.awk.help.options.variable =   -v name=value, -vname=value  priskiria kintamąjį prieš BEGIN; komandų eilutės tvarka išlaikoma
 lt.awk.help.options.program_file =   -f file, -ffile        skaito AWK programą iš failo; keli -f sujungiami eilės tvarka
-lt.awk.help.options.color =   --color=auto|always|never  stilizuoja tik CLI pagalbą ir diagnostiką
+lt.awk.help.options.color =   --color=auto|always|never  stilizuoja tik komandų eilutės pagalbą ir diagnostiką
 lt.awk.help.options.help =   --help                 rodo šią pagalbą ir baigia
 lt.awk.help.options.version =   --version              rodo versijos informaciją ir baigia
 lt.awk.help.options.terminator =   --                     baigia parinkčių apdorojimą; po to veikia failų vardai prasidedantys -
@@ -1309,7 +1309,7 @@ lv.awk.help.usage.program_files = Lietojums: awk [opcijas] -f programmas-fails [
 lv.awk.help.options.field_separator =   -F sep, -Fsep          iestata FS pirms izpildes; pēdējā vērtība uzvar
 lv.awk.help.options.variable =   -v name=value, -vname=value  piešķir mainīgo pirms BEGIN; komandrindas secība saglabājas
 lv.awk.help.options.program_file =   -f file, -ffile        lasa AWK programmu no faila; vairāki -f tiek savienoti secībā
-lv.awk.help.options.color =   --color=auto|always|never  stilizē tikai CLI palīdzību un diagnostiku
+lv.awk.help.options.color =   --color=auto|always|never  stilizē tikai komandrindas palīdzību un diagnostiku
 lv.awk.help.options.help =   --help                 rāda šo palīdzību un iziet
 lv.awk.help.options.version =   --version              rāda versijas informāciju un iziet
 lv.awk.help.options.terminator =   --                     beidz opciju apstrādi; failu vārdi ar sākuma - darbojas pēc tam
@@ -1359,7 +1359,7 @@ mk.awk.help.usage.program_files = Употреба: awk [опции] -f прог
 mk.awk.help.options.field_separator =   -F sep, -Fsep          поставува FS пред извршување· последното појавување победува
 mk.awk.help.options.variable =   -v name=value, -vname=value  поставува променлива пред BEGIN· се зачувува редоследот од командната линија
 mk.awk.help.options.program_file =   -f file, -ffile        чита AWK извор од датотека· повеќе датотеки се спојуваат по ред
-mk.awk.help.options.color =   --color=auto|always|never  стилизира само CLI помош и дијагностика
+mk.awk.help.options.color =   --color=auto|always|never  стилизира само помош и дијагностика на командната линија
 mk.awk.help.options.help =   --help                 ја прикажува оваа помош и излегува
 mk.awk.help.options.version =   --version              прикажува информации за верзија и излегува
 mk.awk.help.options.terminator =   --                     го завршува обработувањето опции· потоа работат имиња на датотеки што почнуваат со -
@@ -1409,7 +1409,7 @@ mt.awk.help.usage.program_files = Użu: awk [għażliet] -f fajl-programm [-f fa
 mt.awk.help.options.field_separator =   -F sep, -Fsep          jistabbilixxi FS qabel l eżekuzzjoni; l-aħħar valur jirbaħ
 mt.awk.help.options.variable =   -v name=value, -vname=value  jassenja varjabbli qabel BEGIN; tinżamm l-ordni tal-linja tal-kmand
 mt.awk.help.options.program_file =   -f file, -ffile        jaqra programm AWK minn fajl; diversi -f jingħaqdu fl-ordni
-mt.awk.help.options.color =   --color=auto|always|never  jistilizza biss għajnuna u dijanjostika CLI
+mt.awk.help.options.color =   --color=auto|always|never  jistilizza biss għajnuna u dijanjostika tal-linja tal-kmand
 mt.awk.help.options.help =   --help                 uri din l-għajnuna u oħroġ
 mt.awk.help.options.version =   --version              uri informazzjoni tal-verżjoni u oħroġ
 mt.awk.help.options.terminator =   --                     itemm l-ipproċessar tal-għażliet; ismijiet ta fajls li jibdew b - jaħdmu wara
@@ -1459,7 +1459,7 @@ nl.awk.help.usage.program_files = Gebruik: awk [opties] -f programmabestand [-f 
 nl.awk.help.options.field_separator =   -F sep, -Fsep          stelt FS in vóór uitvoering; de laatste waarde wint
 nl.awk.help.options.variable =   -v name=value, -vname=value  wijst een variabele toe vóór BEGIN; opdrachtregelvolgorde blijft behouden
 nl.awk.help.options.program_file =   -f file, -ffile        leest AWK-programma uit een bestand; meerdere -f worden op volgorde samengevoegd
-nl.awk.help.options.color =   --color=auto|always|never  style alleen CLI-help en diagnostiek
+nl.awk.help.options.color =   --color=auto|always|never  style alleen opdrachtregelhulp en diagnostiek
 nl.awk.help.options.help =   --help                 toon deze hulp en stop
 nl.awk.help.options.version =   --version              toon versie-informatie en stop
 nl.awk.help.options.terminator =   --                     beëindigt optieverwerking; bestandsnamen die met - beginnen werken daarna
@@ -1509,7 +1509,7 @@ no.awk.help.usage.program_files = Bruk: awk [valg] -f programfil [-f programfil.
 no.awk.help.options.field_separator =   -F sep, -Fsep          setter FS før kjøring; siste verdi gjelder
 no.awk.help.options.variable =   -v name=value, -vname=value  tilordner en variabel før BEGIN; kommandolinjerekkefølge beholdes
 no.awk.help.options.program_file =   -f file, -ffile        leser AWK-program fra fil; flere -f slås sammen i rekkefølge
-no.awk.help.options.color =   --color=auto|always|never  stiler bare CLI-hjelp og diagnostikk
+no.awk.help.options.color =   --color=auto|always|never  stiler bare kommandolinjehjelp og diagnostikk
 no.awk.help.options.help =   --help                 vis denne hjelpen og avslutt
 no.awk.help.options.version =   --version              vis versjonsinformasjon og avslutt
 no.awk.help.options.terminator =   --                     avslutter valgbehandling; filnavn som begynner med - virker etterpå
@@ -1559,7 +1559,7 @@ pl.awk.help.usage.program_files = Użycie: awk [opcje] -f plik-programu [-f plik
 pl.awk.help.options.field_separator =   -F sep, -Fsep          ustawia FS przed wykonaniem; obowiązuje ostatnia wartość
 pl.awk.help.options.variable =   -v name=value, -vname=value  przypisuje zmienną przed BEGIN; kolejność wiersza poleceń jest zachowana
 pl.awk.help.options.program_file =   -f file, -ffile        czyta program AWK z pliku; wiele -f łączy się w kolejności
-pl.awk.help.options.color =   --color=auto|always|never  stylizuje tylko pomoc i diagnostykę CLI
+pl.awk.help.options.color =   --color=auto|always|never  stylizuje tylko pomoc i diagnostykę wiersza poleceń
 pl.awk.help.options.help =   --help                 pokaż tę pomoc i zakończ
 pl.awk.help.options.version =   --version              pokaż informacje o wersji i zakończ
 pl.awk.help.options.terminator =   --                     kończy przetwarzanie opcji; nazwy plików zaczynające się od - działają później
@@ -1609,7 +1609,7 @@ pt.awk.help.usage.program_files = Uso: awk [opções] -f ficheiro-programa [-f f
 pt.awk.help.options.field_separator =   -F sep, -Fsep          define FS antes da execução; vence o último valor
 pt.awk.help.options.variable =   -v name=value, -vname=value  atribui uma variável antes de BEGIN; a ordem da linha de comando é preservada
 pt.awk.help.options.program_file =   -f file, -ffile        lê o programa AWK de um ficheiro; vários -f são concatenados por ordem
-pt.awk.help.options.color =   --color=auto|always|never  aplica estilo apenas à ajuda e diagnósticos do CLI
+pt.awk.help.options.color =   --color=auto|always|never  aplica estilo apenas à ajuda e diagnósticos da linha de comando
 pt.awk.help.options.help =   --help                 mostra esta ajuda e sai
 pt.awk.help.options.version =   --version              mostra informação de versão e sai
 pt.awk.help.options.terminator =   --                     termina o processamento de opções; nomes de ficheiro iniciados por - funcionam depois
@@ -1659,7 +1659,7 @@ rm.awk.help.usage.program_files = Utilisaziun: awk [opziuns] -f datoteca-program
 rm.awk.help.options.field_separator =   -F sep, -Fsep          metta FS avant l execuziun; l ultima valur vala
 rm.awk.help.options.variable =   -v name=value, -vname=value  attribuescha ina variabla avant BEGIN; l urden da la lingia da cumond resta
 rm.awk.help.options.program_file =   -f file, -ffile        legia il program AWK d in datoteca; plirs -f vegnan cumbinads en urden
-rm.awk.help.options.color =   --color=auto|always|never  stilescha mo agid e diagnostica dal CLI
+rm.awk.help.options.color =   --color=auto|always|never  stilescha mo agid e diagnostica da la lingia da cumond
 rm.awk.help.options.help =   --help                 mussa quest agid e finescha
 rm.awk.help.options.version =   --version              mussa infurmaziun da versiun e finescha
 rm.awk.help.options.terminator =   --                     finescha l elavuraziun d opziuns; nums da datotecas cun - funcziunan suenter
@@ -1709,7 +1709,7 @@ ro.awk.help.usage.program_files = Utilizare: awk [opțiuni] -f fișier-program [
 ro.awk.help.options.field_separator =   -F sep, -Fsep          setează FS înainte de execuție; ultima valoare câștigă
 ro.awk.help.options.variable =   -v name=value, -vname=value  atribuie o variabilă înainte de BEGIN; ordinea liniei de comandă se păstrează
 ro.awk.help.options.program_file =   -f file, -ffile        citește programul AWK din fișier; mai multe -f se concatenează în ordine
-ro.awk.help.options.color =   --color=auto|always|never  stilizează doar ajutorul și diagnosticele CLI
+ro.awk.help.options.color =   --color=auto|always|never  stilizează doar ajutorul și diagnosticele liniei de comandă
 ro.awk.help.options.help =   --help                 afișează acest ajutor și iese
 ro.awk.help.options.version =   --version              afișează informații de versiune și iese
 ro.awk.help.options.terminator =   --                     termină procesarea opțiunilor; numele de fișiere care încep cu - funcționează după
@@ -1759,7 +1759,7 @@ ru.awk.help.usage.program_files = Использование: awk [параме�
 ru.awk.help.options.field_separator =   -F sep, -Fsep          задает FS перед выполнением· последнее указание имеет силу
 ru.awk.help.options.variable =   -v name=value, -vname=value  задает переменную перед BEGIN· порядок командной строки сохраняется
 ru.awk.help.options.program_file =   -f file, -ffile        читает исходный текст AWK из файла· несколько файлов объединяются по порядку
-ru.awk.help.options.color =   --color=auto|always|never  оформляет только помощь и диагностику CLI
+ru.awk.help.options.color =   --color=auto|always|never  оформляет только помощь и диагностику командной строки
 ru.awk.help.options.help =   --help                 показывает эту помощь и завершает работу
 ru.awk.help.options.version =   --version              показывает сведения о версии и завершает работу
 ru.awk.help.options.terminator =   --                     завершает обработку параметров· после этого работают имена файлов, начинающиеся с -
@@ -1809,7 +1809,7 @@ sk.awk.help.usage.program_files = Použitie: awk [voľby] -f súbor-programu [-f
 sk.awk.help.options.field_separator =   -F sep, -Fsep          nastaví FS pred spustením; platí posledná hodnota
 sk.awk.help.options.variable =   -v name=value, -vname=value  priradí premennú pred BEGIN; poradie príkazového riadka sa zachová
 sk.awk.help.options.program_file =   -f file, -ffile        načíta AWK program zo súboru; viac -f sa spojí v poradí
-sk.awk.help.options.color =   --color=auto|always|never  štýluje iba pomoc a diagnostiku CLI
+sk.awk.help.options.color =   --color=auto|always|never  štýluje iba pomoc a diagnostiku príkazového riadka
 sk.awk.help.options.help =   --help                 zobrazí túto pomoc a skončí
 sk.awk.help.options.version =   --version              zobrazí informácie o verzii a skončí
 sk.awk.help.options.terminator =   --                     ukončí spracovanie volieb; názvy súborov začínajúce - fungujú potom
@@ -1859,7 +1859,7 @@ sl.awk.help.usage.program_files = Uporaba: awk [možnosti] -f programska-datotek
 sl.awk.help.options.field_separator =   -F sep, -Fsep          nastavi FS pred izvajanjem; velja zadnja vrednost
 sl.awk.help.options.variable =   -v name=value, -vname=value  dodeli spremenljivko pred BEGIN; vrstni red ukazne vrstice se ohrani
 sl.awk.help.options.program_file =   -f file, -ffile        prebere AWK program iz datoteke; več -f se združi po vrsti
-sl.awk.help.options.color =   --color=auto|always|never  oblikuje samo pomoč in diagnostiko CLI
+sl.awk.help.options.color =   --color=auto|always|never  oblikuje samo pomoč in diagnostiko ukazne vrstice
 sl.awk.help.options.help =   --help                 prikaže to pomoč in konča
 sl.awk.help.options.version =   --version              prikaže informacije o različici in konča
 sl.awk.help.options.terminator =   --                     konča obdelavo možnosti; imena datotek, ki se začnejo z -, delujejo potem
@@ -1909,7 +1909,7 @@ sq.awk.help.usage.program_files = Përdorimi: awk [opsione] -f skedar-programi [
 sq.awk.help.options.field_separator =   -F sep, -Fsep          vendos FS para ekzekutimit; fiton vlera e fundit
 sq.awk.help.options.variable =   -v name=value, -vname=value  cakton një ndryshore para BEGIN; ruhet rendi i linjës së komandës
 sq.awk.help.options.program_file =   -f file, -ffile        lexon programin AWK nga skedari; disa -f bashkohen me radhë
-sq.awk.help.options.color =   --color=auto|always|never  stilizon vetëm ndihmën dhe diagnostikën CLI
+sq.awk.help.options.color =   --color=auto|always|never  stilizon vetëm ndihmën dhe diagnostikën e linjës së komandës
 sq.awk.help.options.help =   --help                 shfaq këtë ndihmë dhe del
 sq.awk.help.options.version =   --version              shfaq informacionin e versionit dhe del
 sq.awk.help.options.terminator =   --                     mbyll përpunimin e opsioneve; emrat e skedarëve që fillojnë me - punojnë pas kësaj
@@ -1959,7 +1959,7 @@ sr.awk.help.usage.program_files = Употреба: awk [опције] -f про
 sr.awk.help.options.field_separator =   -F sep, -Fsep          поставља FS пре извршавања· последње појављивање важи
 sr.awk.help.options.variable =   -v name=value, -vname=value  поставља променљиву пре BEGIN· редослед командне линије се чува
 sr.awk.help.options.program_file =   -f file, -ffile        чита AWK извор из датотеке· више датотека се спаја редом
-sr.awk.help.options.color =   --color=auto|always|never  стилизује само CLI помоћ и дијагностику
+sr.awk.help.options.color =   --color=auto|always|never  стилизује само помоћ и дијагностику командне линије
 sr.awk.help.options.help =   --help                 приказује ову помоћ и излази
 sr.awk.help.options.version =   --version              приказује податке о верзији и излази
 sr.awk.help.options.terminator =   --                     завршава обраду опција· после тога раде имена датотека која почињу са -
@@ -2009,7 +2009,7 @@ sv.awk.help.usage.program_files = Användning: awk [flaggor] -f programfil [-f p
 sv.awk.help.options.field_separator =   -F sep, -Fsep          sätter FS före körning; sista värdet gäller
 sv.awk.help.options.variable =   -v name=value, -vname=value  tilldelar en variabel före BEGIN; kommandoradsordningen bevaras
 sv.awk.help.options.program_file =   -f file, -ffile        läser AWK-program från fil; flera -f sammanfogas i ordning
-sv.awk.help.options.color =   --color=auto|always|never  formaterar bara CLI-hjälp och diagnostik
+sv.awk.help.options.color =   --color=auto|always|never  formaterar bara kommandoradshjälp och diagnostik
 sv.awk.help.options.help =   --help                 visa denna hjälp och avsluta
 sv.awk.help.options.version =   --version              visa versionsinformation och avsluta
 sv.awk.help.options.terminator =   --                     avslutar alternativtolkning; filnamn som börjar med - fungerar efteråt
@@ -2059,7 +2059,7 @@ tr.awk.help.usage.program_files = Kullanım: awk [seçenekler] -f program-dosyas
 tr.awk.help.options.field_separator =   -F sep, -Fsep          yürütmeden önce FS ayarlar; son değer geçerlidir
 tr.awk.help.options.variable =   -v name=value, -vname=value  BEGIN öncesi değişken atar; komut satırı sırası korunur
 tr.awk.help.options.program_file =   -f file, -ffile        AWK programını dosyadan okur; birden çok -f sırayla birleştirilir
-tr.awk.help.options.color =   --color=auto|always|never  yalnızca CLI yardımını ve tanılarını biçimlendirir
+tr.awk.help.options.color =   --color=auto|always|never  yalnızca komut satırı yardımını ve tanılarını biçimlendirir
 tr.awk.help.options.help =   --help                 bu yardımı gösterir ve çıkar
 tr.awk.help.options.version =   --version              sürüm bilgisini gösterir ve çıkar
 tr.awk.help.options.terminator =   --                     seçenek işlemeyi bitirir; - ile başlayan dosya adları sonra çalışır
@@ -2109,7 +2109,7 @@ uk.awk.help.usage.program_files = Використання: awk [парамет�
 uk.awk.help.options.field_separator =   -F sep, -Fsep          задає FS перед виконанням· остання поява має силу
 uk.awk.help.options.variable =   -v name=value, -vname=value  задає змінну перед BEGIN· порядок командного рядка зберігається
 uk.awk.help.options.program_file =   -f file, -ffile        читає вихідний текст AWK з файлу· кілька файлів обєднуються за порядком
-uk.awk.help.options.color =   --color=auto|always|never  стилізує лише довідку та діагностику CLI
+uk.awk.help.options.color =   --color=auto|always|never  стилізує лише довідку та діагностику командного рядка
 uk.awk.help.options.help =   --help                 показує цю довідку й завершує роботу
 uk.awk.help.options.version =   --version              показує відомості про версію й завершує роботу
 uk.awk.help.options.terminator =   --                     завершує обробку параметрів· після цього працюють імена файлів, що починаються з -
