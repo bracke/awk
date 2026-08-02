@@ -954,18 +954,16 @@ procedure Awk_Workflows is
    end Exit_Status_Drift;
 
    procedure Option_Drift is
-      Reference : constant String := Fixtures.Read_Text_File ("../docs/command-line-reference.md");
-      Quickstart : constant String := Fixtures.Read_Text_File ("../docs/quickstart.md");
-      Catalog   : constant String := Fixtures.Read_Text_File ("../resources/messages/catalog.txt");
-
       procedure Require_Option (Spelling : String) is
       begin
-         Require
-           (Text.Contains (Reference, Spelling),
-            "command-line reference missing accepted option: " & Spelling);
-         Require
-           (Text.Contains (Catalog, Spelling),
-            "help catalog missing accepted option: " & Spelling);
+         Files.Require_Contains
+           ("../docs/command-line-reference.md", Spelling,
+            "command-line reference missing accepted option: " & Spelling,
+            Quiet => True);
+         Files.Require_Contains
+           ("../resources/messages/catalog.txt", Spelling,
+            "help catalog missing accepted option: " & Spelling,
+            Quiet => True);
       end Require_Option;
    begin
       Require_Option ("-F");
@@ -975,15 +973,26 @@ procedure Awk_Workflows is
       Require_Option ("--help");
       Require_Option ("--version");
       Require_Option ("--");
-      Require
-        (Text.Contains (Reference, "--color=auto|always|never")
-         and then Text.Contains (Catalog, "--color=auto|always|never"),
-         "color modes must stay documented in reference and help catalog");
-      Require
-        (Text.Contains (Quickstart, "awk '{ print $1 }'")
-         and then Text.Contains (Quickstart, "awk -F:")
-         and then Text.Contains (Quickstart, "awk -f script.awk"),
-         "quickstart must document direct, -F, and -f invocation examples");
+      Files.Require_Contains
+        ("../docs/command-line-reference.md", "--color=auto|always|never",
+         "color modes must stay documented in reference and help catalog",
+         Quiet => True);
+      Files.Require_Contains
+        ("../resources/messages/catalog.txt", "--color=auto|always|never",
+         "color modes must stay documented in reference and help catalog",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/quickstart.md", "awk '{ print $1 }'",
+         "quickstart must document direct, -F, and -f invocation examples",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/quickstart.md", "awk -F:",
+         "quickstart must document direct, -F, and -f invocation examples",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/quickstart.md", "awk -f script.awk",
+         "quickstart must document direct, -F, and -f invocation examples",
+         Quiet => True);
       Put_Info ("option drift checks passed");
    end Option_Drift;
 
