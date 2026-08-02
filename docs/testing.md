@@ -61,8 +61,9 @@ locale policy, validates the conformance manifest, checks local Alire workspace 
 checks adapter isolation through parsed Ada `with` clauses, rejects
 handwritten ANSI code tokens in production source while allowing the diagnostic
 sanitizer to recognize ESC for escaping, rejects system-AWK fallback code
-tokens in production source, verifies command-line and low-level OS process
-access stay in the main containment boundary or platform adapter, rejects
+tokens in production source, verifies command-line access stays in the main
+containment boundary or platform adapter, rejects direct `GNAT.OS_Lib`,
+`GNAT.Expect`, and `/bin/sh` production use in favor of `hostkit`, rejects
 shell/script workflow files, and runs an Alire install-boundary check into a
 temporary prefix.
 

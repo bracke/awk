@@ -259,11 +259,17 @@ procedure Awk_Workflows is
                             "diagnostic ESC recognition for escaping"),
          "workflow docs must describe production-wide ANSI source policy");
       Require
-        (File_Has ("../docs/testing.md", "command-line and low-level OS process" & ASCII.LF &
-                                      "access stay in the main containment boundary or platform adapter")
+        (File_Has ("../docs/testing.md", "command-line access stays in the main" & ASCII.LF &
+                                      "containment boundary or platform adapter")
          and then File_Has ("../docs/ai/workflows.md",
-                            "command-line and low-level OS process access" & ASCII.LF &
-                            "confined to main containment or the platform adapter"),
+                            "command-line access confined to main containment" & ASCII.LF &
+                            "or the platform adapter")
+         and then File_Has ("../docs/testing.md",
+                            "rejects direct `GNAT.OS_Lib`," & ASCII.LF &
+                            "`GNAT.Expect`, and `/bin/sh` production use in favor of `hostkit`")
+         and then File_Has ("../docs/ai/workflows.md",
+                            "direct `GNAT.OS_Lib`, `GNAT.Expect`, and `/bin/sh`" & ASCII.LF &
+                            "production use rejected in favor of `hostkit`"),
          "workflow docs must describe process-boundary source policy");
       Require
         (File_Has ("../docs/architecture.md", "only production package that directly depends on" & ASCII.LF &
@@ -634,13 +640,10 @@ procedure Awk_Workflows is
               [U.To_Unbounded_String ("../src/main/awk.adb"),
                U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
          "process command-line access must stay in main containment or platform adapter");
-      Require
-        (Ada_Source.First_Source_File_Containing
-           ("../src",
-            "GNAT.OS_Lib",
-            Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
-         "low-level OS process helpers must stay in platform adapter");
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src",
+         [U.To_Unbounded_String ("GNAT.OS_Lib")],
+         Quiet => True);
       Require
         (Ada_Source.First_Source_File_Containing
            ("../src",
