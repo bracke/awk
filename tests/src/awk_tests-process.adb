@@ -1,6 +1,5 @@
 with AUnit.Assertions;
 
-with Ada.Command_Line;
 with Ada.Strings.Unbounded;
 
 with GNAT.Expect;
@@ -18,24 +17,22 @@ package body Awk_Tests.Process is
 
    LF : constant String := [1 => ASCII.LF];
 
-   function Executable_Suffix return String is
-      Self : constant String := Ada.Command_Line.Command_Name;
-   begin
-      if Self'Length >= 4 and then Self (Self'Last - 3 .. Self'Last) = ".exe" then
-         return ".exe";
-      end if;
-
-      return "";
-   end Executable_Suffix;
-
    function Awk_From_Repository_Root return String is
    begin
-      return "./bin/awk" & Executable_Suffix;
+      if Project_Tools.Files.File_Exists ("../bin/awk.exe") then
+         return "./bin/awk.exe";
+      end if;
+
+      return "./bin/awk";
    end Awk_From_Repository_Root;
 
    function Awk_From_Tests_Directory return String is
    begin
-      return "../bin/awk" & Executable_Suffix;
+      if Project_Tools.Files.File_Exists ("../bin/awk.exe") then
+         return "../bin/awk.exe";
+      end if;
+
+      return "../bin/awk";
    end Awk_From_Tests_Directory;
 
    procedure Ensure_Filesystem_Fixture_Directory is
