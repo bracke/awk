@@ -2,6 +2,8 @@ with AUnit.Assertions;
 
 with Ada.Strings.Fixed;
 
+with Project_Tools.Files;
+
 with Awk_Catalog_Policy;
 with Awk_CLI;
 with Awk_CLI.Localization;
@@ -271,7 +273,7 @@ package body Awk_Tests.Localization is
       Catalog_Path : constant String := "/tmp/awk-localization-fallback.catalog";
       Catalog      : Awk_CLI.Localization.Catalog;
    begin
-      Write_Text_File
+      Project_Tools.Files.Write_Text_File
         (Catalog_Path,
          "default_locale = en" & LF
          & "en.awk.internal.localization_failed = localization failed for message key: {detail}" & LF

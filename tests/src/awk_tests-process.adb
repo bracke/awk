@@ -129,7 +129,7 @@ package body Awk_Tests.Process is
          new String'(Target)];
       Status : Integer;
    begin
-      Write_Text_File ("../" & Target, "dash data" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "dash data" & LF);
       Status :=
         Project_Tools.Processes.Run_Status
           (Label   => "awk process dash filename",
@@ -191,7 +191,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Write_Text_File ("../" & Target, "operand-file" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "operand-file" & LF);
       Status :=
         Project_Tools.Processes.Run_Status
           (Label   => "awk option-looking file after program",
@@ -219,7 +219,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Write_Text_File ("../" & Target, "short-option-file" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "short-option-file" & LF);
       Status :=
         Project_Tools.Processes.Run_Status
           (Label   => "awk short option-looking file after program",
@@ -276,7 +276,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Write_Text_File ("../" & Target, "late-option-file" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "late-option-file" & LF);
       Status :=
         Project_Tools.Processes.Run_Status
           (Label   => "awk process file-mode late option operand",
@@ -738,7 +738,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Write_Text_File ("../" & Target, "old" & LF & "content" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "old" & LF & "content" & LF);
 
       Status :=
         Project_Tools.Processes.Run_Status
@@ -770,7 +770,7 @@ package body Awk_Tests.Process is
       Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Write_Text_File ("../" & Target, "existing" & LF);
+      Project_Tools.Files.Write_Text_File ("../" & Target, "existing" & LF);
 
       Status :=
         Project_Tools.Processes.Run_Status
@@ -1338,7 +1338,7 @@ package body Awk_Tests.Process is
          new String'("tests/fixtures/input/regex_numbers.txt")];
       Status : Integer;
    begin
-      Write_Text_File
+      Project_Tools.Files.Write_Text_File
         ("../tests/fixtures/input/regex_numbers.txt",
          "alpha 7" & LF &
          "skip me" & LF &

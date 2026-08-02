@@ -1,6 +1,5 @@
 with Ada.Strings.Unbounded;
 
-with Project_Tools.Files;
 with Project_Tools.Text;
 
 package body Awk_Tests.Support is
@@ -20,8 +19,4 @@ package body Awk_Tests.Support is
       end if;
    end File_Text;
 
-   procedure Write_Text_File (Path, Content : String) is
-   begin
-      Project_Tools.Files.Write_Text_File (Path, Content);
-   end Write_Text_File;
 end Awk_Tests.Support;
