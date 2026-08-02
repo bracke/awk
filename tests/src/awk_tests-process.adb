@@ -789,21 +789,44 @@ package body Awk_Tests.Process is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("-v"),
-         new String'("1bad=value")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk process invalid -v",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
+
+      procedure Expect_Invalid
+        (Args    : GNAT.OS_Lib.Argument_List;
+         Message : String)
+      is
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Contains (Output, "invalid assignment: 1bad=value"),
+                    Message & " explains the invalid assignment");
+            Assert (Contains (Output, "hint: use --help"),
+                    Message & " emits the usage hint");
+            Assert (not Contains (Output, "1" & LF),
+                    Message & " does not execute the AWK program");
+         end;
+      end Expect_Invalid;
    begin
-      Assert (Status = 2, "process invalid -v exits with usage status");
-      Assert (U.To_String (Output) = "", "process invalid -v writes no stdout");
+      declare
+         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+           [new String'("-v"),
+            new String'("1bad=value"),
+            new String'("BEGIN { print 1 }")];
+         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+           [new String'("-v1bad=value"),
+            new String'("BEGIN { print 1 }")];
+      begin
+         Expect_Invalid (Separate_Args, "separate invalid -v");
+         Expect_Invalid (Attached, "attached invalid -v");
+      end;
    end Test_Process_Invalid_V_Assignment;
 
    procedure Test_Process_Environment_Propagation
