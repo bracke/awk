@@ -625,6 +625,10 @@ procedure Awk_Workflows is
          and then Files.File_Exists ("src/awk_tests-inputs.adb"),
          "input tests must live in a subsystem test package");
       Require
+        (Files.File_Exists ("src/awk_tests-environment.ads")
+         and then Files.File_Exists ("src/awk_tests-environment.adb"),
+         "environment tests must live in a subsystem test package");
+      Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
          "aggregate suite must include CLI option subsystem tests");
       Require
@@ -651,6 +655,9 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Inputs.Case_Type"),
          "aggregate suite must include input subsystem tests");
+      Require
+        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Environment.Case_Type"),
+         "aggregate suite must include environment subsystem tests");
       Require
         (Contains (File_Text ("src/awk_workflows.adb"), "--release"),
          "release workflow must use Alire release builds");

@@ -17,7 +17,8 @@ append, ordering, and failure tests. The `awk_tests-execution` package owns
 direct execution-adapter and live callback tests. The `awk_tests-process`
 package owns real-executable process-boundary tests. The `awk_tests-inputs`
 package owns in-memory standard-input, named-input, file-failure, and input
-ordering tests.
+ordering tests. The `awk_tests-environment` package owns `ENVIRON`,
+environment normalization, and environment-confidentiality tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 in-memory integration coverage.
 
