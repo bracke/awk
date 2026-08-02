@@ -19,6 +19,7 @@ The tests crate pins only workspace tooling dependencies:
 | --- | --- | --- | --- |
 | `awk` | `~0.1.0` | `..` | Relative pin to the root crate under test. |
 | `project_tools` | `~0.1.0` | `../../project_tools` | Shared Ada workflow tooling. |
+| `messages` | `~0.1.0` | `../../messages` | Catalog consistency checks use the public messages APIs. |
 
 No direct dependency may use an unrestricted wildcard constraint in a release
 candidate. The workflow validates the expected local workspace pins so the

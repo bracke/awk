@@ -538,6 +538,11 @@ procedure Awk_Workflows is
         ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev""",
          "dependency policy must document the current hostkit dev constraint",
          Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md",
+         "| `messages` | `~0.1.0` | `../../messages` |",
+         "dependency policy must document the tests messages dependency",
+         Quiet => True);
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
       Files.Require_Contains
