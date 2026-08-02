@@ -395,10 +395,12 @@ procedure Awk_Workflows is
       begin
          Require (Files.Has_Line ("conformance/manifest/cases.txt", Line),
                   "conformance manifest missing case: " & Id);
-         Require (Files.File_Exists ("conformance/" & Case_File),
-                  "conformance case file missing: " & Case_File);
-         Require (Files.File_Exists ("conformance/" & Expected),
-                  "conformance expected file missing: " & Expected);
+         Files.Require_File
+           ("conformance/" & Case_File,
+            "conformance case file missing: " & Case_File);
+         Files.Require_File
+           ("conformance/" & Expected,
+            "conformance expected file missing: " & Expected);
          Require (File_Text ("conformance/" & Case_File) /= "",
                   "conformance case file is empty: " & Case_File);
          Require (File_Text ("conformance/" & Expected) /= "",
@@ -583,7 +585,7 @@ procedure Awk_Workflows is
          Fail ("alr install failed");
       end if;
 
-      Require (Files.File_Exists (Prefix & "/bin/awk"), "installed awk executable missing");
+      Files.Require_File (Prefix & "/bin/awk", "installed awk executable missing");
       if Proc.Run_Status
           ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
            Output, Quiet => True) /= 0
@@ -709,7 +711,7 @@ procedure Awk_Workflows is
 
       procedure Require_Package_File (Path : String) is
       begin
-         Require (Files.File_Exists (Dist & "/" & Path), "missing package file: " & Path);
+         Files.Require_File (Dist & "/" & Path, "missing package file: " & Path);
          Require (Length_Of (Dist & "/" & Path) > 0, "empty package file: " & Path);
       end Require_Package_File;
 
