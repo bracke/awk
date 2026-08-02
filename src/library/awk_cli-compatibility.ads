@@ -1,4 +1,9 @@
 package Awk_CLI.Compatibility is
+   --  Internal registry of reviewed compatibility behavior.
+   --
+   --  Entries are not a promise of full POSIX conformance. They record how the
+   --  resolved awklib version behaves for CLI compatibility review.
+
    type Compatibility_Status is
      (Supported,
       Supported_With_Documented_Difference,
@@ -21,12 +26,29 @@ package Awk_CLI.Compatibility is
       Encoding);
 
    function Count return Natural;
+   --  Return the number of reviewed registry entries.
+
    function Id (Index : Positive) return String with Pre => Index <= Count;
+   --  Return the stable compatibility ID for entry Index.
+
    function Area (Index : Positive) return Compatibility_Area with Pre => Index <= Count;
+   --  Return the functional area covered by entry Index.
+
    function Status (Index : Positive) return Compatibility_Status with Pre => Index <= Count;
+   --  Return the reviewed support status for entry Index.
+
    function Description (Index : Positive) return String with Pre => Index <= Count;
+   --  Return the concise behavior description for entry Index.
+
    function Source (Index : Positive) return String with Pre => Index <= Count;
+   --  Return the awklib capability or limitation source for entry Index.
+
    function Documentation (Index : Positive) return String with Pre => Index <= Count;
+   --  Return the documentation reference for entry Index.
+
    function Test_Reference (Index : Positive) return String with Pre => Index <= Count;
+   --  Return the closest test reference for entry Index.
+
    function Has_Id (Value : String) return Boolean;
+   --  Return whether Value is present as a stable registry ID.
 end Awk_CLI.Compatibility;

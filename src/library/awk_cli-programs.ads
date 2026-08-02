@@ -5,6 +5,11 @@ with Awk_CLI.Options;
 with Awk_CLI.Platform;
 
 package Awk_CLI.Programs is
+   --  AWK program source resolution.
+   --
+   --  This package chooses direct source versus -f files and concatenates
+   --  source segments. It never parses or rewrites AWK source.
+
    package U renames Ada.Strings.Unbounded;
 
    type Source_Segment is record
@@ -36,4 +41,5 @@ package Awk_CLI.Programs is
       Read_File : not null access function
         (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Resolve_Result;
+   --  Resolve the program source and remaining operands from parsed options.
 end Awk_CLI.Programs;

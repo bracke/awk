@@ -3,6 +3,11 @@ with Ada.Strings.Unbounded;
 with Awk_CLI.Options;
 
 package Awk_CLI.Operands is
+   --  Classification of post-program operands.
+   --
+   --  The classifier identifies filenames, standard-input markers, and
+   --  command-line runtime assignments without interpreting AWK values.
+
    package U renames Ada.Strings.Unbounded;
 
    type Operand_Kind is (Named_File, Standard_Input, Runtime_Assignment);
@@ -20,4 +25,5 @@ package Awk_CLI.Operands is
 
    function Classify
      (Operands : Awk_CLI.Options.Operand_Vectors.Vector) return Operand_Vectors.Vector;
+   --  Classify operands while preserving spelling, order, and original indexes.
 end Awk_CLI.Operands;

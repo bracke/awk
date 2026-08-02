@@ -3,6 +3,11 @@ with Ada.Strings.Unbounded;
 with Awk_CLI.Diagnostics;
 
 package Awk_CLI.Redirections is
+   --  Host-side materialization of redirected AWK output.
+   --
+   --  Content is written exactly as produced by awklib and is never localized
+   --  or styled here.
+
    package U renames Ada.Strings.Unbounded;
 
    type Write_Status is (Write_Success, Open_Failed, Write_Failed);
@@ -30,4 +35,5 @@ package Awk_CLI.Redirections is
       Write_File : not null access function
         (Path : String; Content : String; Append : Boolean) return Write_Status)
       return Materialize_Result;
+   --  Write captured redirections in order and stop on the first host failure.
 end Awk_CLI.Redirections;

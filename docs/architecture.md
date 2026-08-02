@@ -22,6 +22,11 @@ Production adapter boundaries:
   execution for `command | getline`, locale, catalog path lookup, and
   environment interaction.
 
+The `Awk_CLI` specs are documented because they are visible to the executable
+and test crate, but they are internal CLI infrastructure rather than a stable
+reusable library API. Compatibility commitments apply to the installed
+`awk` executable and documented command-line behavior.
+
 `Awk_CLI.Run` coordinates a complete invocation through explicit result paths:
 parse options, resolve program source, classify operands, collect environment,
 execute `awklib` once, forward standard output, materialize live redirection

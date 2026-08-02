@@ -1,6 +1,8 @@
 with Ada.Strings.Unbounded;
 
 package Awk_CLI.Diagnostics is
+   --  Structured diagnostics and exit-status mapping for CLI-authored text.
+
    package U renames Ada.Strings.Unbounded;
 
    type Diagnostic_Severity is
@@ -37,13 +39,18 @@ package Awk_CLI.Diagnostics is
       Value      : String := "";
       Detail     : String := "";
       Hint_Id    : String := "") return Diagnostic;
+   --  Build a diagnostic with stable message identity and typed arguments.
 
    function With_Source
      (Item        : Diagnostic;
       Source_Name : String;
       Line        : Positive;
       Column      : Natural := 0) return Diagnostic;
+   --  Return Item with source-location metadata attached.
 
    function Escape (Text : String) return String;
+   --  Escape untrusted text for diagnostic presentation only.
+
    function Status_For (Item : Diagnostic) return Exit_Code;
+   --  Map Item to the stable process exit status registry.
 end Awk_CLI.Diagnostics;

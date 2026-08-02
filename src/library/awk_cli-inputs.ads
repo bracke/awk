@@ -5,6 +5,11 @@ with Awk_CLI.Operands;
 with Awk_CLI.Platform;
 
 package Awk_CLI.Inputs is
+   --  Input materialization for named files and standard input.
+   --
+   --  This package owns host input loading only; AWK record and field behavior
+   --  remains in awklib.
+
    package U renames Ada.Strings.Unbounded;
 
    type Input_File is record
@@ -30,4 +35,6 @@ package Awk_CLI.Inputs is
       Read_File : not null access function
         (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Load_Result;
+   --  Load explicit input operands and implicit standard input into
+   --  interpreter-ready file records.
 end Awk_CLI.Inputs;

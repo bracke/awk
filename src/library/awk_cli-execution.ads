@@ -9,6 +9,11 @@ with Awk_CLI.Platform;
 with Awk_CLI.Redirections;
 
 package Awk_CLI.Execution is
+   --  Sole adapter between the CLI and awklib interpreter APIs.
+   --
+   --  No awklib-specific type is exposed by this spec. Callers pass CLI-owned
+   --  structures and receive CLI-owned execution results.
+
    package U renames Ada.Strings.Unbounded;
 
    type Execution_Result (Ok : Boolean := False) is record
@@ -51,6 +56,7 @@ package Awk_CLI.Execution is
       Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
       Environment     : Awk_CLI.Environment.Entry_Vectors.Vector)
       return Execution_Result;
+   --  Execute with memory-backed inputs and captured output.
 
    function Execute_Live
      (Program_Source  : String;
@@ -63,6 +69,8 @@ package Awk_CLI.Execution is
       Read_Command    : Live_Command_Reader := null;
       User_Data       : System.Address := System.Null_Address)
       return Execution_Result;
+   --  Execute with live output and redirection callbacks, but memory-backed
+   --  main input.
 
    function Execute_Live_Input
      (Program_Source  : String;
@@ -77,9 +85,18 @@ package Awk_CLI.Execution is
       Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector :=
         Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
       return Execution_Result;
+   --  Execute with live main-input, output, redirection, and optional command
+   --  or auxiliary file callbacks.
 
    function Supports_Positional_Runtime_Assignments return Boolean;
+   --  Return whether the resolved awklib path supports positional assignments.
+
    function Supports_Redirection_Append_Mode return Boolean;
+   --  Return whether append redirection intent is exposed by the adapter.
+
    function Supports_Streaming_Execution return Boolean;
+   --  Return whether the adapter uses streaming callbacks for execution.
+
    function Interpreter_Version return String;
+   --  Return the resolved or built-against awklib version string.
 end Awk_CLI.Execution;

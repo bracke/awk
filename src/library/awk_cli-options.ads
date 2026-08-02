@@ -3,6 +3,11 @@ with Ada.Strings.Unbounded;
 with Awk_CLI.Diagnostics;
 
 package Awk_CLI.Options is
+   --  Deterministic POSIX-style command-line option parser.
+   --
+   --  Parser failures are returned explicitly as diagnostics rather than
+   --  raised as ordinary operational exceptions.
+
    package U renames Ada.Strings.Unbounded;
 
    type Color_Mode is (Color_Auto, Color_Always, Color_Never);
@@ -56,6 +61,11 @@ package Awk_CLI.Options is
      (Index_Type => Positive, Element_Type => U.Unbounded_String, "=" => U."=");
 
    function Parse (Arguments : String_Vectors.Vector) return Parse_Result;
+   --  Parse raw process arguments into options, program files, and operands.
+
    function Is_Assignment_Text (Text : String) return Boolean;
+   --  Return whether Text matches the CLI assignment-name grammar.
+
    procedure Split_Assignment (Text : String; Name, Value : out U.Unbounded_String);
+   --  Split Text at the first '=' while preserving the complete value suffix.
 end Awk_CLI.Options;
