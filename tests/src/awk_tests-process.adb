@@ -579,6 +579,27 @@ package body Awk_Tests.Process is
               "process stdin data reaches installed executable");
    end Test_Process_Explicit_Stdin_Data;
 
+   procedure Test_Process_Repeated_Stdin_Data
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
+        [new String'("{ print NR "":"" $0 }"),
+         new String'("-"),
+         new String'("-")];
+      Status : aliased Integer := -1;
+      Output : constant String :=
+        GNAT.Expect.Get_Command_Output
+          (Command   => "../bin/awk",
+           Arguments => Args,
+           Input     => "alpha" & LF & "beta" & LF,
+           Status    => Status'Access);
+   begin
+      Assert (Status = 0, "repeated stdin operands exit successfully");
+      Assert (Output = "1:alpha" & LF & "2:beta",
+              "first stdin operand consumes data and later stdin observes EOF");
+   end Test_Process_Repeated_Stdin_Data;
+
    procedure Test_Process_Runtime_Assignment_Argv
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
@@ -741,6 +762,9 @@ package body Awk_Tests.Process is
       Registration.Register_Routine
         (T, Test_Process_Explicit_Stdin_Data'Access,
          "process explicit stdin data");
+      Registration.Register_Routine
+        (T, Test_Process_Repeated_Stdin_Data'Access,
+         "process repeated stdin data");
       Registration.Register_Routine
         (T, Test_Process_Runtime_Assignment_Argv'Access,
          "process runtime assignment ARGV");
