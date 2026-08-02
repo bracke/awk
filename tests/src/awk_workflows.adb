@@ -269,7 +269,7 @@ procedure Awk_Workflows is
          "command-line reference must document runtime assignment operands");
       Require
         (Contains (File_Text ("../docs/command-line-reference.md"),
-                   "Supports_Positional_Runtime_Assignments = False"),
+                   "Supports_Positional_Runtime_Assignments = True"),
          "command-line reference must document positional assignment capability");
       Require
         (Contains (File_Text ("../docs/architecture.md"), "Awk_CLI.Execution"),
@@ -277,9 +277,6 @@ procedure Awk_Workflows is
       Require
         (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
          "architecture docs must document testable invocation context");
-      Require
-        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-ASSIGNMENT-001"),
-         "compatibility registry is missing assignment limitation");
       Require
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-REGEX-001"),
          "compatibility registry is missing regex limitation");
@@ -464,9 +461,9 @@ procedure Awk_Workflows is
         ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
          "expected/print_first_field.txt", "field processing through awklib");
       Require_Case
-        ("AWK-CONF-ASSIGNMENT-001", "Supported_With_Documented_Difference",
+        ("AWK-CONF-ASSIGNMENT-001", "Supported",
          "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
-         "AWK-COMPAT-ASSIGNMENT-001");
+         "positional runtime assignment supported");
       Require_Case
         ("AWK-CONF-REDIRECTION-001", "Supported",
          "cases/append_redirection.awk", "expected/append_redirection.txt",

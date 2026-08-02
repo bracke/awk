@@ -16,7 +16,6 @@ closest current test reference.
 | `AWK-COMPAT-GETLINE-002` | Getline | Unsupported by awklib | `awklib 0.1.0` | `compatibility registry` | `command | getline` is not implemented by the CLI. |
 | `AWK-COMPAT-UTF8-001` | Encoding | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | Malformed UTF-8 handling is inherited from `awklib`. |
 | `AWK-COMPAT-PRINTF-001` | Output formatting | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | `%c` field-width behavior is inherited from `awklib`. |
-| `AWK-COMPAT-ASSIGNMENT-001` | Command line | Supported with documented difference | `awklib 0.1.0` Arguments API; `Awk_CLI.Execution.Supports_Positional_Runtime_Assignments = False` | `context runtime assignment limitation` | `awklib` does not expose exact positional runtime-assignment execution. The CLI preserves operand spelling/order in `ARGV` but does not emulate a custom record loop. |
 
 An `awklib` dependency update requires rebuilding, running all tests, reviewing
 upstream behavior, updating this registry and document, and changing test

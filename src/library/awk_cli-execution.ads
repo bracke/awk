@@ -34,6 +34,7 @@ package Awk_CLI.Execution is
 
    type Live_Input_Reader is access function
      (User_Data    : System.Address;
+      Operand_Index : Positive;
       Filename     : out U.Unbounded_String;
       Text         : out U.Unbounded_String;
       End_Of_Input : out Boolean) return Awk_CLI.Platform.Read_Status;

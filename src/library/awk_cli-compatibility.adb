@@ -46,14 +46,7 @@ package body Awk_CLI.Compatibility is
        Description   => new String'("printf %c field-width behavior is inherited from awklib"),
        Source        => new String'("awklib 0.1.0"),
        Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("compatibility registry")),
-      (Id            => new String'("AWK-COMPAT-ASSIGNMENT-001"),
-       Area          => Command_Line,
-       Status        => Supported_With_Documented_Difference,
-       Description   => new String'("positional runtime assignment execution cannot be represented exactly"),
-       Source        => new String'("awklib 0.1.0 Arguments API"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("context runtime assignment limitation"))];
+       Test_Reference => new String'("compatibility registry"))];
 
    function Count return Natural is (Entries'Length);
 

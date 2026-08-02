@@ -24,10 +24,11 @@ data.
 Runtime assignment operands are recognized only when the name before the first
 `=` matches `[A-Za-z_][A-Za-z0-9_]*`. The complete value after the first `=` is
 preserved. Other operands are named input files except `-`, which selects the
-single standard-input stream at that position. The resolved execution adapter
-reports `Awk_CLI.Execution.Supports_Positional_Runtime_Assignments = False`, so
-exact POSIX interspersed runtime-assignment execution is documented as
-`AWK-COMPAT-ASSIGNMENT-001` rather than emulated by a CLI-side record loop.
+single standard-input stream at that position. Runtime assignments are applied
+at their operand positions after `BEGIN`, before the following input operand,
+and before `END` when trailing assignments remain. The resolved execution
+adapter reports `Awk_CLI.Execution.Supports_Positional_Runtime_Assignments =
+True` (`Supports_Positional_Runtime_Assignments = True`).
 
 When no explicit input file or `-` operand is present, standard input is used
 implicitly. Repeated `-` operands are allowed; after the first one consumes the

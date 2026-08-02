@@ -997,24 +997,35 @@ package body Awk_Tests.Suite is
          "ARGV preserves operand spelling and order");
    end Test_Context_Argv_Argc;
 
-   procedure Test_Context_Runtime_Assignment_Limitation
+   procedure Test_Context_Runtime_Assignment_Positions
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print X; print ARGV[1] }");
+      Awk_CLI.Add_Argument
+        (Context,
+         "BEGIN { print ""begin"", X } " &
+         "{ print FILENAME, FNR, X, $0 } " &
+         "END { print ""end"", X }");
+      Awk_CLI.Add_Argument (Context, "first.txt");
       Awk_CLI.Add_Argument (Context, "X=42");
+      Awk_CLI.Add_Argument (Context, "first.txt");
+      Awk_CLI.Add_Argument (Context, "X=99");
+      Awk_CLI.Add_File (Context, "first.txt", "one" & LF);
       Status := Awk_CLI.Run (Context);
-      Assert (Status = 0, "runtime assignment limitation run succeeds");
-      Assert (not Awk_CLI.Execution.Supports_Positional_Runtime_Assignments,
-              "execution adapter exposes missing positional assignment capability");
-      Assert (Contains (Awk_CLI.Standard_Output (Context), LF & "X=42" & LF),
-              "AWK-COMPAT-ASSIGNMENT-001: assignment operand remains in ARGV");
-      Assert (not Contains (Awk_CLI.Standard_Output (Context), "42" & LF & "X=42"),
-              "AWK-COMPAT-ASSIGNMENT-001: CLI does not emulate positional assignment");
-   end Test_Context_Runtime_Assignment_Limitation;
+      Assert (Status = 0, "runtime assignment run succeeds");
+      Assert (Awk_CLI.Execution.Supports_Positional_Runtime_Assignments,
+              "execution adapter exposes positional assignment support");
+      Assert
+        (Awk_CLI.Standard_Output (Context) =
+         "begin " & LF &
+         "first.txt 1  one" & LF &
+         "first.txt 1 42 one" & LF &
+         "end 99" & LF,
+         "runtime assignments are applied at operand positions");
+   end Test_Context_Runtime_Assignment_Positions;
 
    procedure Test_Context_Repeated_Stdin (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -1076,16 +1087,14 @@ package body Awk_Tests.Suite is
       Conformance : constant String := File_Text ("conformance/manifest/cases.txt");
       Has_Difference : Boolean := False;
       Has_Unsupported : Boolean := False;
-      Has_Command_Line : Boolean := False;
       Has_Getline : Boolean := False;
    begin
-      Assert (Awk_CLI.Compatibility.Count >= 6, "registry has accepted limitation entries");
+      Assert (Awk_CLI.Compatibility.Count >= 5, "registry has accepted limitation entries");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-REGEX-001"), "regex ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-001"), "getline BEGIN ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-GETLINE-002"), "pipe getline ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-ASSIGNMENT-001"), "assignment ID present");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
          declare
@@ -1121,8 +1130,6 @@ package body Awk_Tests.Suite is
                null;
          end case;
          case Awk_CLI.Compatibility.Area (Index) is
-            when Awk_CLI.Compatibility.Command_Line =>
-               Has_Command_Line := True;
             when Awk_CLI.Compatibility.Getline =>
                Has_Getline := True;
             when others =>
@@ -1131,10 +1138,7 @@ package body Awk_Tests.Suite is
       end loop;
       Assert (Has_Difference, "registry includes documented differences");
       Assert (Has_Unsupported, "registry includes unsupported awklib cases");
-      Assert (Has_Command_Line, "registry includes command-line area");
       Assert (Has_Getline, "registry includes getline area");
-      Assert (Contains (Conformance, "AWK-COMPAT-ASSIGNMENT-001"),
-              "conformance manifest references assignment limitation");
       Assert (Contains (Conformance, "AWK-COMPAT-GETLINE-002"),
               "conformance manifest references getline limitation");
       Assert
@@ -1177,9 +1181,9 @@ package body Awk_Tests.Suite is
         ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
          "expected/print_first_field.txt", "field processing through awklib");
       Require_Case
-        ("AWK-CONF-ASSIGNMENT-001", "Supported_With_Documented_Difference",
+        ("AWK-CONF-ASSIGNMENT-001", "Supported",
          "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
-         "AWK-COMPAT-ASSIGNMENT-001");
+         "positional runtime assignment supported");
       Require_Case
         ("AWK-CONF-REDIRECTION-001", "Supported",
          "cases/append_redirection.awk", "expected/append_redirection.txt",
@@ -1188,8 +1192,6 @@ package body Awk_Tests.Suite is
         ("AWK-CONF-GETLINE-001", "Unsupported_By_Awklib",
          "cases/command_getline.awk", "expected/command_getline.txt",
          "AWK-COMPAT-GETLINE-002");
-      Assert (Contains (Manifest, "Supported_With_Documented_Difference"),
-              "manifest includes documented differences");
       Assert (Contains (Manifest, "Unsupported_By_Awklib"),
               "manifest includes unsupported awklib cases");
    end Test_Conformance_Manifest;
@@ -1909,8 +1911,8 @@ package body Awk_Tests.Suite is
          "context auxiliary getline file");
       Registration.Register_Routine (T, Test_Context_Argv_Argc'Access, "context ARGV/ARGC");
       Registration.Register_Routine
-        (T, Test_Context_Runtime_Assignment_Limitation'Access,
-         "context runtime assignment limitation");
+        (T, Test_Context_Runtime_Assignment_Positions'Access,
+         "context runtime assignment positions");
       Registration.Register_Routine (T, Test_Context_Repeated_Stdin'Access, "context repeated stdin");
       Registration.Register_Routine
         (T, Test_Context_Assignment_Only_Uses_Implicit_Stdin'Access,
