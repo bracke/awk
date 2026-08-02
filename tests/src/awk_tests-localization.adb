@@ -2,6 +2,7 @@ with AUnit.Assertions;
 
 with Awk_Catalog_Policy;
 with Awk_CLI;
+with Awk_CLI.Localization;
 with Awk_Tests.Support;
 
 package body Awk_Tests.Localization is
@@ -108,6 +109,34 @@ package body Awk_Tests.Localization is
               "unsupported locale falls back to catalog default");
    end Test_Unsupported_Locale_Fallback;
 
+   procedure Test_Localized_Parameters_Are_Escaped
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Catalog : Awk_CLI.Localization.Catalog;
+      Escape  : constant String := [1 => Character'Val (27)];
+   begin
+      Awk_CLI.Localization.Initialize
+        (Catalog, "../resources/messages/catalog.txt", "en");
+      declare
+         Text : constant String :=
+           Awk_CLI.Localization.Text
+             (Catalog,
+              "awk.usage.unknown_option",
+              "option",
+              "--bad" & LF & "awk: error: forged" & Escape & "[2J");
+      begin
+         Assert
+           (Contains (Text, "--bad\nawk: error: forged\e[2J"),
+            "localized parameter interpolation renders unsafe characters visibly");
+         Assert
+           (not Contains (Text, LF & "awk: error: forged"),
+            "localized parameter cannot forge a diagnostic line");
+         Assert (not Contains (Text, Escape),
+                 "localized parameter interpolation emits no raw escape");
+      end;
+   end Test_Localized_Parameters_Are_Escaped;
+
    procedure Test_Awk_Output_Unchanged_By_Locale (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Context : Awk_CLI.Invocation_Context;
@@ -149,6 +178,9 @@ package body Awk_Tests.Localization is
       Registration.Register_Routine
         (T, Test_Unsupported_Locale_Fallback'Access,
          "unsupported locale fallback");
+      Registration.Register_Routine
+        (T, Test_Localized_Parameters_Are_Escaped'Access,
+         "localized parameter escaping");
       Registration.Register_Routine (T, Test_Awk_Output_Unchanged_By_Locale'Access, "AWK output locale separation");
       Registration.Register_Routine
         (T, Test_Version_Uses_Localized_Labels'Access,
