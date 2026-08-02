@@ -544,20 +544,31 @@ package body Awk_Tests.Process is
 
    procedure Test_Process_Invalid_Color_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("--color=sparkles")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk invalid color",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
+
+      procedure Expect_Invalid (Argument, Value, Message : String) is
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+           [new String'(Argument)];
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Contains (Output, "invalid color mode: " & Value),
+                    Message & " reports the invalid color value");
+            Assert (Contains (Output, "hint: use --help"),
+                    Message & " emits the usage hint");
+         end;
+      end Expect_Invalid;
    begin
-      Assert (Status = 2, "invalid color mode exits with usage status");
-      Assert (U.To_String (Output) = "", "invalid color mode writes no stdout");
+      Expect_Invalid ("--color=sparkles", "sparkles", "non-empty invalid color");
+      Expect_Invalid ("--color=", "", "empty invalid color");
    end Test_Process_Invalid_Color_Status;
 
    procedure Test_Process_Missing_Option_Argument_Status
