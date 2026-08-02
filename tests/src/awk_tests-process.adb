@@ -750,7 +750,9 @@ package body Awk_Tests.Process is
       Assert
         (Contains (File_Text ("../" & Target), "existing") and then
          Contains (File_Text ("../" & Target), "first" & LF & "second"),
-         "append redirection preserves existing file content");
+         "append redirection preserves existing content and write order");
+      Assert (File_Text ("../" & Target) /= "first" & LF & "second",
+              "append redirection does not replace existing file content");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Append_Redirection;
