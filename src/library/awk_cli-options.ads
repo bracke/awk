@@ -47,6 +47,7 @@ package Awk_CLI.Options is
          when True =>
             Options : Parsed_Options;
          when False =>
+            Color      : Color_Mode := Color_Auto;
             Diagnostic : Awk_CLI.Diagnostics.Diagnostic;
       end case;
    end record;

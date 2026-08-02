@@ -629,6 +629,7 @@ package body Awk_CLI is
         (Catalog, U.To_String (Context.Catalog_Path), U.To_String (Context.Locale));
 
       if not Parsed.Ok then
+         Awk_CLI.Output.Set_Color (Parsed.Color);
          return Emit_Diagnostic (Parsed.Diagnostic);
       end if;
 

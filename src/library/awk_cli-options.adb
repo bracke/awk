@@ -45,8 +45,9 @@ package body Awk_CLI.Options is
       end if;
    end Split_Assignment;
 
-   function Missing (Option : String) return Parse_Result is
+   function Missing (Option : String; Color : Color_Mode := Color_Auto) return Parse_Result is
      (Ok => False,
+      Color => Color,
       Diagnostic =>
         D.Make ("awk.usage.missing_option_argument", D.Error, D.Usage,
                 Name => "option", Value => Option, Hint_Id => "awk.hint.use_help"));
@@ -100,6 +101,7 @@ package body Awk_CLI.Options is
                   else
                      return
                        (Ok => False,
+                        Color => Result.Color,
                         Diagnostic =>
                           D.Make ("awk.usage.invalid_color_mode", D.Error, D.Usage,
                                   Name => "value", Value => Value,
@@ -108,7 +110,7 @@ package body Awk_CLI.Options is
                end;
             elsif Current = "-F" then
                if Index = Positive (Arguments.Length) then
-                  return Missing ("-F");
+                  return Missing ("-F", Result.Color);
                end if;
                Index := Index + 1;
                Result.Has_Field_Separator := True;
@@ -119,12 +121,13 @@ package body Awk_CLI.Options is
                  U.To_Unbounded_String (Current (Current'First + 2 .. Current'Last));
             elsif Current = "-v" then
                if Index = Positive (Arguments.Length) then
-                  return Missing ("-v");
+                  return Missing ("-v", Result.Color);
                end if;
                Index := Index + 1;
                if not Is_Assignment_Text (Arg (Index)) then
                   return
                     (Ok => False,
+                     Color => Result.Color,
                      Diagnostic =>
                        D.Make ("awk.usage.invalid_assignment", D.Error, D.Usage,
                                Name => "assignment", Value => Arg (Index),
@@ -138,6 +141,7 @@ package body Awk_CLI.Options is
                   if not Is_Assignment_Text (Text) then
                      return
                        (Ok => False,
+                        Color => Result.Color,
                         Diagnostic =>
                           D.Make ("awk.usage.invalid_assignment", D.Error, D.Usage,
                                   Name => "assignment", Value => Text,
@@ -147,12 +151,13 @@ package body Awk_CLI.Options is
                end;
             elsif Current = "-f" then
                if Index = Positive (Arguments.Length) then
-                  return Missing ("-f");
+                  return Missing ("-f", Result.Color);
                end if;
                Index := Index + 1;
                if Arg (Index) = "-" then
                   return
                     (Ok => False,
+                     Color => Result.Color,
                      Diagnostic =>
                        D.Make ("awk.usage.program_file_stdin_unsupported", D.Error, D.Usage,
                                Name => "option", Value => "-f -",
@@ -168,6 +173,7 @@ package body Awk_CLI.Options is
                   if Name = "-" then
                      return
                        (Ok => False,
+                        Color => Result.Color,
                         Diagnostic =>
                           D.Make ("awk.usage.program_file_stdin_unsupported", D.Error, D.Usage,
                                   Name => "option", Value => "-f-",
@@ -180,6 +186,7 @@ package body Awk_CLI.Options is
             else
                return
                  (Ok => False,
+                  Color => Result.Color,
                   Diagnostic =>
                     D.Make ("awk.usage.unknown_option", D.Error, D.Usage,
                             Name => "option", Value => Current,
@@ -196,6 +203,7 @@ package body Awk_CLI.Options is
       then
          return
            (Ok => False,
+            Color => Result.Color,
             Diagnostic =>
               D.Make ("awk.usage.missing_program", D.Error, D.Usage,
                       Hint_Id => "awk.hint.use_help"));
