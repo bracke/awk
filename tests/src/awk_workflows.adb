@@ -141,6 +141,9 @@ procedure Awk_Workflows is
    function Contains (Text, Pattern : String) return Boolean is
      (Project_Tools.Text.Contains (Text, Pattern));
 
+   function File_Has (Path, Pattern : String) return Boolean is
+     (Files.File_Contains (Path, Pattern));
+
    function Line_Value (Text, Key : String) return String is
       Prefix : constant String := Key & " =";
       Start  : Positive;
@@ -192,143 +195,139 @@ procedure Awk_Workflows is
    begin
       Files.Require_Files (Required_Docs, "missing required documentation");
       Require
-        (Contains (File_Text ("../README.md"), "does not claim complete POSIX conformance"),
+        (File_Has ("../README.md", "does not claim complete POSIX conformance"),
          "README must not claim full POSIX conformance");
       Require
-        (Contains (File_Text ("../README.md"), "./bin/awk_tests_main"),
+        (File_Has ("../README.md", "./bin/awk_tests_main"),
          "README must document the current AUnit executable");
       Require
-        (Contains (File_Text ("../README.md"), "--color=auto|always|never"),
+        (File_Has ("../README.md", "--color=auto|always|never"),
          "README must document color policy");
       Require
-        (Contains (File_Text ("../README.md"), "Windows"),
+        (File_Has ("../README.md", "Windows"),
          "README must include Windows quoting guidance");
       Require
-        (Contains (File_Text ("../alire.toml"), "licenses = ""MIT"""),
+        (File_Has ("../alire.toml", "licenses = ""MIT"""),
          "root crate must declare MIT license");
       Require
-        (Contains (File_Text ("alire.toml"), "licenses = ""MIT"""),
+        (File_Has ("alire.toml", "licenses = ""MIT"""),
          "tests crate must declare MIT license");
       Require
-        (Contains (File_Text ("../LICENSE"), "MIT License"),
+        (File_Has ("../LICENSE", "MIT License"),
          "LICENSE must contain MIT license text");
       Require
-        (Contains (File_Text ("../docs/command-line-reference.md"), "-f program-file"),
+        (File_Has ("../docs/command-line-reference.md", "-f program-file"),
          "command-line reference must document program-file invocation");
       Require
-        (Contains (File_Text ("../docs/command-line-reference.md"), "Runtime assignment operands"),
+        (File_Has ("../docs/command-line-reference.md", "Runtime assignment operands"),
          "command-line reference must document runtime assignment operands");
       Require
-        (Contains (File_Text ("../docs/command-line-reference.md"),
+        (File_Has ("../docs/command-line-reference.md",
                    "Supports_Positional_Runtime_Assignments = True"),
          "command-line reference must document positional assignment capability");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "Awk_CLI.Execution"),
+        (File_Has ("../docs/architecture.md", "Awk_CLI.Execution"),
          "architecture docs must document execution adapter isolation");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "Invocation_Context"),
+        (File_Has ("../docs/architecture.md", "Invocation_Context"),
          "architecture docs must document testable invocation context");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"),
+        (File_Has ("../docs/compatibility.md",
                    "No current compatibility-registry entries are active"),
          "compatibility docs must state the empty active registry");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
+        (File_Has ("../docs/compatibility.md", "Test reference"),
          "compatibility docs must include test references");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "Status"),
+        (File_Has ("../docs/compatibility.md", "Status"),
          "compatibility docs must include status names");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "Source"),
+        (File_Has ("../docs/compatibility.md", "Source"),
          "compatibility docs must include limitation source");
       Require
-        (Contains (File_Text ("../docs/diagnostics.md"), "destination-aware terminal detection"),
+        (File_Has ("../docs/diagnostics.md", "destination-aware terminal detection"),
          "diagnostics docs must document destination-aware terminal styling");
       Require
-        (Contains (File_Text ("../docs/diagnostics.md"), "open failures from read failures"),
+        (File_Has ("../docs/diagnostics.md", "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "main input is callback-driven"),
+        (File_Has ("../docs/architecture.md", "main input is callback-driven"),
          "architecture docs must document memory-oriented host integration");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "AWK record splitting"),
+        (File_Has ("../docs/architecture.md", "AWK record splitting"),
          "architecture docs must document awklib text streaming callbacks");
       Require
-        (Contains (File_Text ("../docs/architecture.md"),
+        (File_Has ("../docs/architecture.md",
                    "Supports_Redirection_Append_Mode = True"),
          "architecture docs must document append redirection capability");
       Require
-        (Contains (File_Text ("../docs/architecture.md"),
+        (File_Has ("../docs/architecture.md",
                    "Supports_Streaming_Execution = True"),
          "architecture docs must document streaming capability");
       Require
-        (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),
+        (File_Has ("../docs/testing.md", "structured diagnostic"),
          "testing docs must mention structured diagnostic assertions");
       Require
-        (Contains (File_Text ("../docs/testing.md"), "awk_tests-cli_options"),
+        (File_Has ("../docs/testing.md", "awk_tests-cli_options"),
          "testing docs must document subsystem test packages");
       Require
-        (Contains (File_Text ("../docs/testing.md"), "conformance manifest"),
+        (File_Has ("../docs/testing.md", "conformance manifest"),
          "testing docs must mention conformance manifest validation");
       Require
-        (Contains (File_Text ("../docs/testing.md"), "Alire install-boundary"),
+        (File_Has ("../docs/testing.md", "Alire install-boundary"),
          "testing docs must mention install-boundary validation");
       Require
-        (Contains (File_Text ("../docs/testing.md"), "FNV-1a-64"),
+        (File_Has ("../docs/testing.md", "FNV-1a-64"),
          "testing docs must mention release checksum validation");
       Require
-        (Contains (File_Text ("../docs/building.md"), "install boundary"),
+        (File_Has ("../docs/building.md", "install boundary"),
          "building docs must mention install boundary verification");
       Require
-        (Contains (File_Text ("../docs/releasing.md"), "--release --profiles=*=release"),
+        (File_Has ("../docs/releasing.md", "--release --profiles=*=release"),
          "release docs must document release-profile builds");
       Require
-        (Contains (File_Text ("../docs/releasing.md"), "clean git working tree"),
+        (File_Has ("../docs/releasing.md", "clean git working tree"),
          "release docs must document clean-tree enforcement");
       Require
-        (Contains (File_Text ("../docs/releasing.md"), "FNV-1a-64"),
+        (File_Has ("../docs/releasing.md", "FNV-1a-64"),
          "release docs must document manifest checksum algorithm");
       Require
-        (Contains (File_Text ("../docs/releasing.md"), "temporary prefix"),
+        (File_Has ("../docs/releasing.md", "temporary prefix"),
          "release docs must document temporary install-prefix validation");
       Put_Info ("documentation checks passed");
    end Docs;
 
    procedure Metadata is
-      Root_Alire  : constant String := File_Text ("../alire.toml");
-      Tests_Alire : constant String := File_Text ("alire.toml");
-      Root_Gpr    : constant String := File_Text ("../awk.gpr");
-      Tests_Gpr   : constant String := File_Text ("awk_tests.gpr");
    begin
-      Require (Contains (Root_Alire, "name = ""awk"""),
+      Require (File_Has ("../alire.toml", "name = ""awk"""),
                "root crate name must be awk");
-      Require (Contains (Root_Alire, "executables = [""awk""]"),
+      Require (File_Has ("../alire.toml", "executables = [""awk""]"),
                "root crate must install executable awk");
-      Require (Contains (Root_Alire, "project-files = [""awk.gpr""]"),
+      Require (File_Has ("../alire.toml", "project-files = [""awk.gpr""]"),
                "root crate must use awk.gpr");
-      Require (Contains (Root_Alire, "awklib = "),
+      Require (File_Has ("../alire.toml", "awklib = "),
                "root crate must depend on awklib");
-      Require (Contains (Root_Alire, "terminal_styles = "),
+      Require (File_Has ("../alire.toml", "terminal_styles = "),
                "root crate must depend on terminal_styles");
-      Require (Contains (Root_Alire, "messages = "),
+      Require (File_Has ("../alire.toml", "messages = "),
                "root crate must depend on messages");
-      Require (Contains (Tests_Alire, "name = ""awk_tests"""),
+      Require (File_Has ("alire.toml", "name = ""awk_tests"""),
                "tests crate name must be awk_tests");
-      Require (Contains (Tests_Alire, "awk = "),
+      Require (File_Has ("alire.toml", "awk = "),
                "tests crate must depend on awk");
-      Require (Contains (Tests_Alire, "aunit = "),
+      Require (File_Has ("alire.toml", "aunit = "),
                "tests crate must depend on AUnit");
-      Require (Contains (Tests_Alire, "project_tools = "),
+      Require (File_Has ("alire.toml", "project_tools = "),
                "tests crate must depend on project_tools");
-      Require (Contains (Tests_Alire, "awk = { path = "".."" }"),
+      Require (File_Has ("alire.toml", "awk = { path = "".."" }"),
                "tests crate must pin awk relatively");
-      Require (Contains (Root_Gpr, "-gnat2022"),
+      Require (File_Has ("../awk.gpr", "-gnat2022"),
                "root project must compile with Ada 2022");
-      Require (Contains (Tests_Gpr, "-gnat2022"),
+      Require (File_Has ("awk_tests.gpr", "-gnat2022"),
                "tests project must compile with Ada 2022");
-      Require (Contains (Root_Gpr, "for Main use (""awk.adb"")"),
+      Require (File_Has ("../awk.gpr", "for Main use (""awk.adb"")"),
                "root project main must be awk.adb");
-      Require (Contains (Tests_Gpr, "awk_workflows.adb"),
+      Require (File_Has ("awk_tests.gpr", "awk_workflows.adb"),
                "tests project must build workflow executable");
       Put_Info ("metadata checks passed");
    end Metadata;
@@ -395,9 +394,9 @@ procedure Awk_Workflows is
            Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
       begin
          Require (Contains (Manifest, Line), "conformance manifest missing case: " & Id);
-         Require (Dir.Exists ("conformance/" & Case_File),
+         Require (Files.File_Exists ("conformance/" & Case_File),
                   "conformance case file missing: " & Case_File);
-         Require (Dir.Exists ("conformance/" & Expected),
+         Require (Files.File_Exists ("conformance/" & Expected),
                   "conformance expected file missing: " & Expected);
          Require (File_Text ("conformance/" & Case_File) /= "",
                   "conformance case file is empty: " & Case_File);
@@ -477,7 +476,7 @@ procedure Awk_Workflows is
             declare
                Name : constant String := U.To_String (Path);
             begin
-               if Contains (File_Text (Name), Pattern)
+               if File_Has (Name, Pattern)
                  and then not Allowed_Path (Name, Allowed_Body)
                  and then (Allowed_Spec = "" or else not Allowed_Path (Name, Allowed_Spec))
                then
@@ -490,7 +489,7 @@ procedure Awk_Workflows is
             declare
                Name : constant String := U.To_String (Path);
             begin
-               if Contains (File_Text (Name), Pattern)
+               if File_Has (Name, Pattern)
                  and then not Allowed_Path (Name, Allowed_Body)
                  and then (Allowed_Spec = "" or else not Allowed_Path (Name, Allowed_Spec))
                then
@@ -502,16 +501,27 @@ procedure Awk_Workflows is
          return "";
       end First_Unexpected_Dependency;
 
+      procedure Require_Source_Pair
+        (Spec_Path : String;
+         Body_Path : String;
+         Message   : String) is
+      begin
+         Files.Require_Files
+           ([U.To_Unbounded_String (Spec_Path),
+             U.To_Unbounded_String (Body_Path)],
+            Message);
+      end Require_Source_Pair;
+
       Unexpected : U.Unbounded_String;
    begin
       Require
-        (Contains (File_Text ("../src/library/awk_cli-execution.adb"), "with Awklib"),
+        (File_Has ("../src/library/awk_cli-execution.adb", "with Awklib"),
          "execution adapter must bridge to awklib");
       Require
         (First_Unexpected_Dependency ("with Awklib", "../src/library/awk_cli-execution.adb") = "",
          "only execution adapter may depend on awklib");
       Require
-        (Contains (File_Text ("../src/library/awk_cli-localization.adb"), "with Messages"),
+        (File_Has ("../src/library/awk_cli-localization.adb", "with Messages"),
          "localization adapter must bridge to messages");
       Unexpected :=
         U.To_Unbounded_String
@@ -522,13 +532,13 @@ procedure Awk_Workflows is
       Require (U.To_String (Unexpected) = "",
                "only localization adapter may depend on messages: " & U.To_String (Unexpected));
       Require
-        (Contains (File_Text ("../src/library/awk_cli-output.adb"), "with Terminal_Styles"),
+        (File_Has ("../src/library/awk_cli-output.adb", "with Terminal_Styles"),
          "presentation layer must bridge to terminal_styles");
       Require
         (First_Unexpected_Dependency ("with Terminal_Styles", "../src/library/awk_cli-output.adb") = "",
          "only presentation layer may depend on terminal_styles");
       Require
-        (not Contains (File_Text ("../src/library/awk_cli-output.adb"), "Character'Val (27)"),
+        (not File_Has ("../src/library/awk_cli-output.adb", "Character'Val (27)"),
          "presentation layer must not emit handwritten ANSI escapes");
       Require
         (not Files.Any_File_Contains ("../src", "gawk"),
@@ -539,110 +549,96 @@ procedure Awk_Workflows is
       Require
         (not Files.Any_File_Contains ("../src", "nawk"),
          "production source must not invoke or reference external nawk fallback");
-      Require
-        (Files.File_Exists ("src/awk_tests-cli_options.ads")
-         and then Files.File_Exists ("src/awk_tests-cli_options.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-cli_options.ads", "src/awk_tests-cli_options.adb",
          "option parser tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-program_sources.ads")
-         and then Files.File_Exists ("src/awk_tests-program_sources.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-program_sources.ads", "src/awk_tests-program_sources.adb",
          "program source tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-operands.ads")
-         and then Files.File_Exists ("src/awk_tests-operands.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-operands.ads", "src/awk_tests-operands.adb",
          "operand tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-diagnostics.ads")
-         and then Files.File_Exists ("src/awk_tests-diagnostics.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-diagnostics.ads", "src/awk_tests-diagnostics.adb",
          "diagnostic tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-localization.ads")
-         and then Files.File_Exists ("src/awk_tests-localization.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-localization.ads", "src/awk_tests-localization.adb",
          "localization tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-redirections.ads")
-         and then Files.File_Exists ("src/awk_tests-redirections.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-redirections.ads", "src/awk_tests-redirections.adb",
          "redirection tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-execution.ads")
-         and then Files.File_Exists ("src/awk_tests-execution.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-execution.ads", "src/awk_tests-execution.adb",
          "execution tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-process.ads")
-         and then Files.File_Exists ("src/awk_tests-process.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-process.ads", "src/awk_tests-process.adb",
          "process tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-inputs.ads")
-         and then Files.File_Exists ("src/awk_tests-inputs.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-inputs.ads", "src/awk_tests-inputs.adb",
          "input tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-environment.ads")
-         and then Files.File_Exists ("src/awk_tests-environment.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-environment.ads", "src/awk_tests-environment.adb",
          "environment tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-terminal_styles.ads")
-         and then Files.File_Exists ("src/awk_tests-terminal_styles.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-terminal_styles.ads", "src/awk_tests-terminal_styles.adb",
          "terminal styling tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-compatibility.ads")
-         and then Files.File_Exists ("src/awk_tests-compatibility.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-compatibility.ads", "src/awk_tests-compatibility.adb",
          "compatibility tests must live in a subsystem test package");
-      Require
-        (Files.File_Exists ("src/awk_tests-support.ads")
-         and then Files.File_Exists ("src/awk_tests-support.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-support.ads", "src/awk_tests-support.adb",
          "shared test helpers must live in a support package");
-      Require
-        (Files.File_Exists ("src/awk_tests-context.ads")
-         and then Files.File_Exists ("src/awk_tests-context.adb"),
+      Require_Source_Pair
+        ("src/awk_tests-context.ads", "src/awk_tests-context.adb",
          "context integration tests must live in a subsystem test package");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.CLI_Options.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.CLI_Options.Case_Type"),
          "aggregate suite must include CLI option subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Diagnostics.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Diagnostics.Case_Type"),
          "aggregate suite must include diagnostic subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Localization.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Localization.Case_Type"),
          "aggregate suite must include localization subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Operands.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Operands.Case_Type"),
          "aggregate suite must include operand subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Program_Sources.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Program_Sources.Case_Type"),
          "aggregate suite must include program source subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Redirections.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Redirections.Case_Type"),
          "aggregate suite must include redirection subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Execution.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Execution.Case_Type"),
          "aggregate suite must include execution subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Process.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Process.Case_Type"),
          "aggregate suite must include process subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Inputs.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Inputs.Case_Type"),
          "aggregate suite must include input subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Environment.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Environment.Case_Type"),
          "aggregate suite must include environment subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Terminal_Styles.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Terminal_Styles.Case_Type"),
          "aggregate suite must include terminal styling subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Compatibility.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Compatibility.Case_Type"),
          "aggregate suite must include compatibility subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_tests-suite.adb"), "Awk_Tests.Context.Case_Type"),
+        (File_Has ("src/awk_tests-suite.adb", "Awk_Tests.Context.Case_Type"),
          "aggregate suite must include context subsystem tests");
       Require
-        (Contains (File_Text ("src/awk_workflows.adb"), "--release"),
+        (File_Has ("src/awk_workflows.adb", "--release"),
          "release workflow must use Alire release builds");
       Require
-        (Contains (File_Text ("src/awk_workflows.adb"), "status"),
+        (File_Has ("src/awk_workflows.adb", "status"),
          "release workflow must check git status");
       Require
-        (not Contains (File_Text ("src/awk_workflows.adb"), "release"") then" & ASCII.LF &
-                                                     "      Verify;"),
+        (not File_Has ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
+                                             "      Verify;"),
          "release workflow must not reuse development verify gate");
       Require
         (First_Workflow_Script = "",
@@ -856,10 +852,10 @@ procedure Awk_Workflows is
       Files.Write_Text_File (Dist & "/MANIFEST.txt", U.To_String (Manifest));
       Require_Package_File ("MANIFEST.txt");
       Require
-        (Contains (File_Text (Dist & "/MANIFEST.txt"), "fnv1a64="),
+        (File_Has (Dist & "/MANIFEST.txt", "fnv1a64="),
          "package manifest must include FNV-1a-64 checksum fields");
       Require
-        (not Contains (File_Text (Dist & "/MANIFEST.txt"), " checksum="),
+        (not File_Has (Dist & "/MANIFEST.txt", " checksum="),
          "package manifest must not use legacy checksum field");
       Require
         (Manifest_Line_Count = Package_Files'Length,
