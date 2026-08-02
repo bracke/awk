@@ -752,10 +752,10 @@ package body Awk_Tests.Process is
 
       Assert (Status = 0, "process redirection exits successfully");
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
-      Assert (File_Text ("../" & Target) = "saved", "process redirection file content");
-      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), "old"),
+      Assert (Trimmed_File_Text ("../" & Target) = "saved", "process redirection file content");
+      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
-      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), Character'Val (27) & "["),
               "color=always does not style redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -785,12 +785,12 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process append redirection exits successfully");
       Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
-        (Project_Tools.Text.Contains (File_Text ("../" & Target), "existing") and then
-         Project_Tools.Text.Contains (File_Text ("../" & Target), "first" & LF & "second"),
+        (Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "existing") and then
+         Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), "first" & LF & "second"),
          "append redirection preserves existing content and write order");
-      Assert (File_Text ("../" & Target) /= "first" & LF & "second",
+      Assert (Trimmed_File_Text ("../" & Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
-      Assert (not Project_Tools.Text.Contains (File_Text ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Trimmed_File_Text ("../" & Target), Character'Val (27) & "["),
               "color=always does not style appended redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);

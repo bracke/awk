@@ -5,7 +5,7 @@ with Project_Tools.Text;
 package body Awk_Tests.Support is
    package U renames Ada.Strings.Unbounded;
 
-   function File_Text (Path : String) return String is
+   function Trimmed_File_Text (Path : String) return String is
       Result : constant String :=
         U.To_String (Project_Tools.Text.Read_Text_File (Path));
    begin
@@ -14,6 +14,6 @@ package body Awk_Tests.Support is
       else
          return Result;
       end if;
-   end File_Text;
+   end Trimmed_File_Text;
 
 end Awk_Tests.Support;

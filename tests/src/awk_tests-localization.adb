@@ -26,9 +26,9 @@ package body Awk_Tests.Localization is
 
    procedure Test_Catalog_Key_Coverage (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
-      English : constant String := File_Text ("../resources/messages/en/catalog.txt");
-      Danish  : constant String := File_Text ("../resources/messages/da/catalog.txt");
+      Catalog : constant String := Trimmed_File_Text ("../resources/messages/catalog.txt");
+      English : constant String := Trimmed_File_Text ("../resources/messages/en/catalog.txt");
+      Danish  : constant String := Trimmed_File_Text ("../resources/messages/da/catalog.txt");
 
       procedure Require_Key (Key : String) is
       begin
@@ -119,7 +119,7 @@ package body Awk_Tests.Localization is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Catalog : constant String := File_Text ("../resources/messages/catalog.txt");
+      Catalog : constant String := Trimmed_File_Text ("../resources/messages/catalog.txt");
       Escape  : constant String := [1 => Character'Val (27)];
 
       function Catalog_Value (Key : String) return String is
