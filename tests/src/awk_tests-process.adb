@@ -596,21 +596,43 @@ package body Awk_Tests.Process is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("-f"),
-         new String'("-")];
-      Status : constant Integer :=
-        Project_Tools.Processes.Run_Status
-          (Label   => "awk -f stdin unsupported",
-           Dir     => "..",
-           Program => "./bin/awk",
-           Args    => Args,
-           Output  => Output,
-           Quiet   => True);
+
+      procedure Expect_Unsupported
+        (Args    : GNAT.OS_Lib.Argument_List;
+         Message : String)
+      is
+      begin
+         declare
+            Status : aliased Integer := -1;
+            Output : constant String :=
+              GNAT.Expect.Get_Command_Output
+                (Command    => "../bin/awk",
+                 Arguments  => Args,
+                 Input      => "",
+                 Status     => Status'Access,
+                 Err_To_Out => True);
+         begin
+            Assert (Status = 2, Message & " exits with usage status");
+            Assert
+              (Contains
+                 (Output,
+                  "program file '-' is unsupported because standard input is reserved for AWK data"),
+               Message & " explains why stdin program files are rejected");
+            Assert (Contains (Output, "hint: use -- before filenames that begin with '-'"),
+                    Message & " emits the option-terminator hint");
+         end;
+      end Expect_Unsupported;
    begin
-      Assert (Status = 2, "-f - exits with usage status");
-      Assert (U.To_String (Output) = "", "-f - writes no stdout");
+      declare
+         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+           [new String'("-f"),
+            new String'("-")];
+         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+           [new String'("-f-")];
+      begin
+         Expect_Unsupported (Separate_Args, "separate -f -");
+         Expect_Unsupported (Attached, "attached -f-");
+      end;
    end Test_Process_Program_File_Stdin_Unsupported;
 
    procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
