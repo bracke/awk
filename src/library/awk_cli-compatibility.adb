@@ -53,14 +53,7 @@ package body Awk_CLI.Compatibility is
        Description   => new String'("positional runtime assignment execution cannot be represented exactly"),
        Source        => new String'("awklib 0.1.0 Arguments API"),
        Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("context runtime assignment limitation")),
-      (Id            => new String'("AWK-COMPAT-STREAMING-001"),
-       Area          => Input,
-       Status        => Supported_With_Documented_Difference,
-       Description   => new String'("execution is memory-oriented rather than streaming"),
-       Source        => new String'("CLI host input adapters over awklib 0.1.0 Run_Text_Streaming API"),
-       Documentation => new String'("docs/compatibility.md"),
-       Test_Reference => new String'("awklib execution adapter"))];
+       Test_Reference => new String'("context runtime assignment limitation"))];
 
    function Count return Natural is (Entries'Length);
 

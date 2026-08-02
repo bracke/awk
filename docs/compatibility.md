@@ -17,7 +17,6 @@ closest current test reference.
 | `AWK-COMPAT-UTF8-001` | Encoding | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | Malformed UTF-8 handling is inherited from `awklib`. |
 | `AWK-COMPAT-PRINTF-001` | Output formatting | Supported with documented difference | `awklib 0.1.0` | `compatibility registry` | `%c` field-width behavior is inherited from `awklib`. |
 | `AWK-COMPAT-ASSIGNMENT-001` | Command line | Supported with documented difference | `awklib 0.1.0` Arguments API; `Awk_CLI.Execution.Supports_Positional_Runtime_Assignments = False` | `context runtime assignment limitation` | `awklib` does not expose exact positional runtime-assignment execution. The CLI preserves operand spelling/order in `ARGV` but does not emulate a custom record loop. |
-| `AWK-COMPAT-STREAMING-001` | Input | Supported with documented difference | CLI host input adapters; `Awk_CLI.Execution.Supports_Streaming_Execution = False` | `awklib execution adapter` | The execution adapter uses `awklib` text-streaming callbacks, but the current CLI host adapters still load process stdin and named files before entering the interpreter. The CLI does not emulate streaming with a custom AWK record loop. |
 
 An `awklib` dependency update requires rebuilding, running all tests, reviewing
 upstream behavior, updating this registry and document, and changing test

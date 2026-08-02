@@ -5,6 +5,7 @@ with Awk_CLI.Environment;
 with Awk_CLI.Inputs;
 with Awk_CLI.Operands;
 with Awk_CLI.Options;
+with Awk_CLI.Platform;
 with Awk_CLI.Redirections;
 
 package Awk_CLI.Execution is
@@ -31,6 +32,12 @@ package Awk_CLI.Execution is
       Content   : String;
       Append    : Boolean) return Awk_CLI.Redirections.Write_Status;
 
+   type Live_Input_Reader is access function
+     (User_Data    : System.Address;
+      Filename     : out U.Unbounded_String;
+      Text         : out U.Unbounded_String;
+      End_Of_Input : out Boolean) return Awk_CLI.Platform.Read_Status;
+
    function Execute
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -48,6 +55,19 @@ package Awk_CLI.Execution is
       Write_Output    : not null Live_Output_Writer;
       Write_Redirection : not null Live_Redirection_Writer;
       User_Data       : System.Address := System.Null_Address)
+      return Execution_Result;
+
+   function Execute_Live_Input
+     (Program_Source  : String;
+      Options         : Awk_CLI.Options.Parsed_Options;
+      Operands        : Awk_CLI.Operands.Operand_Vectors.Vector;
+      Environment     : Awk_CLI.Environment.Entry_Vectors.Vector;
+      Read_Input      : not null Live_Input_Reader;
+      Write_Output    : not null Live_Output_Writer;
+      Write_Redirection : not null Live_Redirection_Writer;
+      User_Data       : System.Address := System.Null_Address;
+      Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector :=
+        Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
       return Execution_Result;
 
    function Supports_Positional_Runtime_Assignments return Boolean;

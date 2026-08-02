@@ -440,8 +440,8 @@ package body Awk_Tests.Suite is
       begin
          Assert (Exec.Ok, "execution succeeds");
          Assert (U.To_String (Exec.Standard_Output) = "8" & LF, "-v visible before BEGIN");
-         Assert (not Awk_CLI.Execution.Supports_Streaming_Execution,
-                 "execution adapter exposes memory-oriented awklib boundary");
+         Assert (Awk_CLI.Execution.Supports_Streaming_Execution,
+                 "execution adapter exposes live awklib input callbacks");
       end;
    end Test_Execution;
 
@@ -767,6 +767,17 @@ package body Awk_Tests.Suite is
               "input file open diagnostic is rendered");
 
       Awk_CLI.Clear (Context);
+      Awk_CLI.Add_Argument (Context, "BEGIN { print ""begin"" } { print }");
+      Awk_CLI.Add_Argument (Context, "missing.txt");
+      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Status := Awk_CLI.Run (Context);
+      Assert (Status = 3, "lazy missing input file is still host I/O");
+      Assert (Awk_CLI.Standard_Output (Context) = "begin" & LF,
+              "BEGIN output is emitted before lazy input open failure");
+      Assert (Contains (Awk_CLI.Standard_Error (Context), "cannot open input file"),
+              "lazy input file open diagnostic is rendered");
+
+      Awk_CLI.Clear (Context);
       Awk_CLI.Add_Argument (Context, "{ print }");
       Awk_CLI.Add_Argument (Context, "unreadable.txt");
       Awk_CLI.Add_File (Context, "unreadable.txt", "", Readable => False);
@@ -1075,7 +1086,6 @@ package body Awk_Tests.Suite is
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-UTF8-001"), "UTF-8 ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-PRINTF-001"), "printf ID present");
       Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-ASSIGNMENT-001"), "assignment ID present");
-      Assert (Awk_CLI.Compatibility.Has_Id ("AWK-COMPAT-STREAMING-001"), "streaming ID present");
 
       for Index in 1 .. Awk_CLI.Compatibility.Count loop
          declare

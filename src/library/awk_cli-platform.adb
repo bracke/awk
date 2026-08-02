@@ -1,12 +1,13 @@
 with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
-with Ada.Streams.Stream_IO;
 with Ada.Text_IO;
 
 package body Awk_CLI.Platform is
-   package SIO renames Ada.Streams.Stream_IO;
    use type SIO.Count;
+   use type Ada.Streams.Stream_Element_Offset;
+
+   Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
 
    function Process_Arguments return Awk_CLI.Options.String_Vectors.Vector is
       Result : Awk_CLI.Options.String_Vectors.Vector;
@@ -67,6 +68,113 @@ package body Awk_CLI.Platform is
          Content := U.Null_Unbounded_String;
          return (if Opened then Read_Failed else Open_Failed);
    end Read_File;
+
+   function Open_Input_File (Path : String; Stream : in out Input_Stream) return Read_Status is
+   begin
+      Close_Input (Stream);
+      if not Ada.Directories.Exists (Path) then
+         return Open_Failed;
+      end if;
+      SIO.Open (Stream.File, SIO.In_File, Path);
+      Stream.Opened := True;
+      Stream.Is_Stdin := False;
+      Stream.Stdin_Done := False;
+      return Read_Success;
+   exception
+      when others =>
+         Close_Input (Stream);
+         return Open_Failed;
+   end Open_Input_File;
+
+   function Open_Standard_Input (Stream : in out Input_Stream) return Read_Status is
+   begin
+      Close_Input (Stream);
+      Stream.Opened := True;
+      Stream.Is_Stdin := True;
+      Stream.Stdin_Done := False;
+      return Read_Success;
+   end Open_Standard_Input;
+
+   function Read_Input_Chunk
+     (Stream : in out Input_Stream;
+      Content : out U.Unbounded_String;
+      End_Of_File : out Boolean) return Read_Status
+   is
+   begin
+      Content := U.Null_Unbounded_String;
+      End_Of_File := False;
+
+      if not Stream.Opened then
+         End_Of_File := True;
+         return Read_Failed;
+      end if;
+
+      if Stream.Is_Stdin then
+         if Stream.Stdin_Done or else Ada.Text_IO.End_Of_File then
+            Stream.Stdin_Done := True;
+            End_Of_File := True;
+            return Read_Success;
+         end if;
+
+         U.Append (Content, Ada.Text_IO.Get_Line);
+         if not Ada.Text_IO.End_Of_File then
+            U.Append (Content, ASCII.LF);
+         end if;
+         return Read_Success;
+      end if;
+
+      if SIO.End_Of_File (Stream.File) then
+         End_Of_File := True;
+         return Read_Success;
+      end if;
+
+      declare
+         Buffer : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
+         Last   : Ada.Streams.Stream_Element_Offset;
+      begin
+         SIO.Read (Stream.File, Buffer, Last);
+         if Last < Buffer'First then
+            End_Of_File := True;
+            return Read_Success;
+         end if;
+
+         declare
+            Text : String (1 .. Natural (Last - Buffer'First + 1));
+         begin
+            for Index in Text'Range loop
+               Text (Index) :=
+                 Character'Val
+                   (Buffer
+                      (Buffer'First
+                       + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
+            end loop;
+            Content := U.To_Unbounded_String (Text);
+         end;
+      end;
+
+      End_Of_File := False;
+      return Read_Success;
+   exception
+      when others =>
+         Content := U.Null_Unbounded_String;
+         End_Of_File := True;
+         return Read_Failed;
+   end Read_Input_Chunk;
+
+   procedure Close_Input (Stream : in out Input_Stream) is
+   begin
+      if Stream.Opened and then not Stream.Is_Stdin and then SIO.Is_Open (Stream.File) then
+         SIO.Close (Stream.File);
+      end if;
+      Stream.Opened := False;
+      Stream.Is_Stdin := False;
+      Stream.Stdin_Done := False;
+   exception
+      when others =>
+         Stream.Opened := False;
+         Stream.Is_Stdin := False;
+         Stream.Stdin_Done := False;
+   end Close_Input;
 
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
       File : SIO.File_Type;

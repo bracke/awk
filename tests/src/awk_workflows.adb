@@ -287,9 +287,6 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-GETLINE-002"),
          "compatibility registry is missing command-pipe getline limitation");
       Require
-        (Contains (File_Text ("../docs/compatibility.md"), "AWK-COMPAT-STREAMING-001"),
-         "compatibility registry is missing streaming limitation");
-      Require
         (Contains (File_Text ("../docs/compatibility.md"), "Test reference"),
          "compatibility docs must include test references");
       Require
@@ -305,7 +302,7 @@ procedure Awk_Workflows is
         (Contains (File_Text ("../docs/diagnostics.md"), "open failures from read failures"),
          "diagnostics docs must document open/read failure distinction");
       Require
-        (Contains (File_Text ("../docs/architecture.md"), "partly memory-oriented"),
+        (Contains (File_Text ("../docs/architecture.md"), "main input is callback-driven"),
          "architecture docs must document memory-oriented host integration");
       Require
         (Contains (File_Text ("../docs/architecture.md"), "AWK record splitting"),
@@ -316,7 +313,7 @@ procedure Awk_Workflows is
          "architecture docs must document append redirection capability");
       Require
         (Contains (File_Text ("../docs/architecture.md"),
-                   "Supports_Streaming_Execution = False"),
+                   "Supports_Streaming_Execution = True"),
          "architecture docs must document streaming capability");
       Require
         (Contains (File_Text ("../docs/testing.md"), "structured diagnostic"),

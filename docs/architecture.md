@@ -22,20 +22,19 @@ Production adapter boundaries:
   catalog path lookup, and environment interaction.
 
 `Awk_CLI.Run` coordinates a complete invocation through explicit result paths:
-parse options, resolve program source, classify operands, load inputs, collect
-environment, execute `awklib` once, materialize redirections, forward standard
-output, and render controlled diagnostics on failure.
+parse options, resolve program source, classify operands, collect environment,
+execute `awklib` once, forward standard output, materialize live redirection
+writes, and render controlled diagnostics on failure.
 
-V1 remains partly memory-oriented at the CLI host boundary. The CLI may hold
-complete program source, standard input, and named input files in memory before
-entering the interpreter. The execution adapter uses `awklib`
-`Run_Text_Streaming` callbacks so AWK record splitting, standard output
-production, and redirected write mode remain owned by `awklib`. The execution
-adapter reports
-`Awk_CLI.Execution.Supports_Streaming_Execution = False` for the resolved
-end-to-end CLI host integration because process input is still loaded before
-execution; this is tracked as `AWK-COMPAT-STREAMING-001` instead of emulated by
-a CLI-side record loop. The adapter reports
+V1 remains partly memory-oriented for program source, in-memory test fixtures,
+and auxiliary `getline < file` content that `awklib` accepts through a
+registration map. The main input is callback-driven: process named files are opened
+when their operand is reached, read in chunks, and passed to `awklib`
+`Run_Text_Streaming`, while process standard input is consumed only when an
+implicit or explicit standard-input operand is reached. AWK record splitting,
+standard output production, and redirected write mode remain owned by `awklib`.
+The execution adapter reports
+`Awk_CLI.Execution.Supports_Streaming_Execution = True`. The adapter reports
 `Awk_CLI.Execution.Supports_Redirection_Append_Mode = True`, because
 `awklib` now provides live redirected write callbacks with append/truncate mode.
 
