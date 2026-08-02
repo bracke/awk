@@ -30,7 +30,6 @@ procedure Awk_Workflows is
    package U renames Ada.Strings.Unbounded;
 
    Root : constant String := "..";
-   Alr  : constant String := Proc.Locate_Command ("alr");
    No_Arguments : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
 
    Package_Files : constant Files.Path_List :=
@@ -1172,12 +1171,18 @@ procedure Awk_Workflows is
       Version_Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("--version")];
    begin
-      Require (Alr /= "", "alr executable not found");
+      Proc.Require_Command ("alr", "alr executable not found", Quiet => True);
       Files.Delete_Tree (Prefix);
 
-      if Proc.Run_Status ("alr install", Root, Alr, Install_Args, Output, Quiet => True) /= 0 then
-         Fail ("alr install failed");
-      end if;
+      declare
+         Alr : constant String := Proc.Locate_Command ("alr");
+      begin
+         if Proc.Run_Status
+             ("alr install", Root, Alr, Install_Args, Output, Quiet => True) /= 0
+         then
+            Fail ("alr install failed");
+         end if;
+      end;
 
       Files.Require_File (Prefix & "/bin/awk", "installed awk executable missing");
       if Proc.Run_Status
