@@ -500,7 +500,8 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("AWK CLI"),
             U.To_Unbounded_String ("AWK-CLI"),
             U.To_Unbounded_String ("EOF"),
-            U.To_Unbounded_String ("CLI")];
+            U.To_Unbounded_String ("CLI"),
+            U.To_Unbounded_String ("input standard")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
@@ -549,7 +550,8 @@ procedure Awk_Workflows is
             U.To_Unbounded_String ("error: {"),
             U.To_Unbounded_String (" / {option}"),
             U.To_Unbounded_String ("hint: {detail}"),
-            U.To_Unbounded_String ("AWK-data")];
+            U.To_Unbounded_String ("AWK-data"),
+            U.To_Unbounded_String ("input standard")];
       begin
          for Locale_Index in 1 .. Awk_Catalog_Policy.Supported_Locale_Count loop
             declare
