@@ -815,18 +815,15 @@ procedure Awk_Workflows is
 
       function Manifest_Line_Count return Natural is
          Text   : constant String := File_Text (Dist & "/MANIFEST.txt");
-         Result : Natural := 0;
+         Breaks : constant Natural := Project_Tools.Text.Count (Text, "" & ASCII.LF);
       begin
          if Text'Length = 0 then
             return 0;
+         elsif Text (Text'Last) = ASCII.LF then
+            return Breaks;
+         else
+            return Breaks + 1;
          end if;
-         Result := 1;
-         for Ch of Text loop
-            if Ch = ASCII.LF then
-               Result := Result + 1;
-            end if;
-         end loop;
-         return Result;
       end Manifest_Line_Count;
 
       procedure Copy_Package_File (Path : String) is
