@@ -1187,14 +1187,15 @@ procedure Awk_Workflows is
          Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
          Quiet                => True);
       Public_Spec_Docs;
-      Require
-        (Files.File_Contains ("src/awk_tests-process.adb",
-                              "with Project_Tools.Test_Fixtures")
-         and then Files.File_Contains ("src/awk_tests-localization.adb",
-                                       "with Project_Tools.Test_Fixtures")
-         and then Files.File_Contains ("src/awk_tests-compatibility.adb",
-                                       "with Project_Tools.Test_Fixtures"),
-         "fixture file reads must use project_tools directly");
+      Files.Require_Contains
+        ("src/awk_tests-process.adb", "with Project_Tools.Test_Fixtures",
+         "fixture file reads must use project_tools directly", Quiet => True);
+      Files.Require_Contains
+        ("src/awk_tests-localization.adb", "with Project_Tools.Test_Fixtures",
+         "fixture file reads must use project_tools directly", Quiet => True);
+      Files.Require_Contains
+        ("src/awk_tests-compatibility.adb", "with Project_Tools.Test_Fixtures",
+         "fixture file reads must use project_tools directly", Quiet => True);
       Files.Require_Contains
         ("src/awk_workflows.adb", "--release",
          "release workflow must use Alire release builds", Quiet => True);
