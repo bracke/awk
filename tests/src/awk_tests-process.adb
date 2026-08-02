@@ -267,6 +267,45 @@ package body Awk_Tests.Process is
       Assert (Status = 2, "unknown option exits with usage status");
    end Test_Process_Usage_Status;
 
+   procedure Test_Process_Invalid_Color_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("--color=sparkles")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk invalid color",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 2, "invalid color mode exits with usage status");
+      Assert (U.To_String (Output) = "", "invalid color mode writes no stdout");
+   end Test_Process_Invalid_Color_Status;
+
+   procedure Test_Process_Program_File_Stdin_Unsupported
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
+        [new String'("-f"),
+         new String'("-")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk -f stdin unsupported",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 2, "-f - exits with usage status");
+      Assert (U.To_String (Output) = "", "-f - writes no stdout");
+   end Test_Process_Program_File_Stdin_Unsupported;
+
    procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Output : Project_Tools.Processes.Unbounded_String;
@@ -598,6 +637,12 @@ package body Awk_Tests.Process is
         (T, Test_Process_Awk_Output_Unstyled_With_Color_Always'Access,
          "process AWK output color always");
       Registration.Register_Routine (T, Test_Process_Usage_Status'Access, "process usage status");
+      Registration.Register_Routine
+        (T, Test_Process_Invalid_Color_Status'Access,
+         "process invalid color status");
+      Registration.Register_Routine
+        (T, Test_Process_Program_File_Stdin_Unsupported'Access,
+         "process -f stdin unsupported");
       Registration.Register_Routine
         (T, Test_Process_Missing_Program_File'Access,
          "process missing program file");
