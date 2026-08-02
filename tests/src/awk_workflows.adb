@@ -194,7 +194,8 @@ procedure Awk_Workflows is
          U.To_Unbounded_String ("../docs/ai/package-contracts.md"),
          U.To_Unbounded_String ("../docs/ai/invariants.md"),
          U.To_Unbounded_String ("../docs/ai/workflows.md"),
-         U.To_Unbounded_String ("../docs/ai/prohibited-designs.md")];
+         U.To_Unbounded_String ("../docs/ai/prohibited-designs.md"),
+         U.To_Unbounded_String ("../docs/ai/traceability.md")];
    begin
       Files.Require_Files (Required_Docs, "missing required documentation");
       Require
@@ -314,6 +315,18 @@ procedure Awk_Workflows is
         (File_Has ("../docs/ai/workflows.md", "expected local" & ASCII.LF &
                                              "Alire workspace pins"),
          "AI workflow docs must mention workspace pin validation");
+      Require
+        (File_Has ("../docs/ai/traceability.md", "| 1 | Project identity |"),
+         "traceability docs must map project identity");
+      Require
+        (File_Has ("../docs/ai/traceability.md", "| 13 | Execution adapter |"),
+         "traceability docs must map execution adapter");
+      Require
+        (File_Has ("../docs/ai/traceability.md", "| 39 | Tooling requirements |"),
+         "traceability docs must map tooling requirements");
+      Require
+        (File_Has ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
+         "traceability docs must map definition of done");
       Put_Info ("documentation checks passed");
    end Docs;
 
