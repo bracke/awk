@@ -296,26 +296,30 @@ procedure Awk_Workflows is
          and then Files.File_Contains ("../docs/ai/traceability.md", "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
                                                         "`hostkit = ""=0.1.0-dev""`"),
          "release traceability docs must mention current dev dependency constraints");
-      Require
-        (Files.File_Contains ("../docs/releasing.md", "temporary prefix"),
-         "release docs must document temporary install-prefix validation");
-      Require
-        (Files.File_Contains ("../docs/dependency-policy.md", "workspace release model"),
-         "dependency policy must document workspace release model");
-      Require
-        (Files.File_Contains ("../docs/dependency-policy.md", "No direct dependency may use an unrestricted wildcard"),
-         "dependency policy must reject wildcard release constraints");
-      Require
-        (Files.File_Contains ("../docs/dependency-policy.md", "Publish readiness is a separate gate"),
-         "dependency policy must document publish readiness separation");
-      Require
-        (Files.File_Contains ("../docs/ai/workflows.md", "parsed" & ASCII.LF &
-                                             "Ada `with` clauses"),
-         "AI workflow docs must mention parsed Ada source-policy validation");
-      Require
-        (Files.File_Contains ("../docs/ai/workflows.md", "expected local" & ASCII.LF &
-                                             "Alire workspace pins"),
-         "AI workflow docs must mention workspace pin validation");
+      Files.Require_Contains
+        ("../docs/releasing.md", "temporary prefix",
+         "release docs must document temporary install-prefix validation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md", "workspace release model",
+         "dependency policy must document workspace release model", Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md",
+         "No direct dependency may use an unrestricted wildcard",
+         "dependency policy must reject wildcard release constraints",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md", "Publish readiness is a separate gate",
+         "dependency policy must document publish readiness separation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/workflows.md", "parsed" & ASCII.LF & "Ada `with` clauses",
+         "AI workflow docs must mention parsed Ada source-policy validation",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/workflows.md",
+         "expected local" & ASCII.LF & "Alire workspace pins",
+         "AI workflow docs must mention workspace pin validation", Quiet => True);
       Require
         (Files.File_Contains ("../docs/testing.md", "production source while allowing the diagnostic" & ASCII.LF &
                                       "sanitizer to recognize ESC")
@@ -343,18 +347,18 @@ procedure Awk_Workflows is
          and then Files.File_Contains ("../docs/ai/package-contracts.md",
                             "Only `Awk_CLI.Platform` may call `hostkit`."),
          "architecture docs must describe hostkit platform boundary");
-      Require
-        (Files.File_Contains ("../docs/ai/traceability.md", "| 1 | Project identity |"),
-         "traceability docs must map project identity");
-      Require
-        (Files.File_Contains ("../docs/ai/traceability.md", "| 13 | Execution adapter |"),
-         "traceability docs must map execution adapter");
-      Require
-        (Files.File_Contains ("../docs/ai/traceability.md", "| 39 | Tooling requirements |"),
-         "traceability docs must map tooling requirements");
-      Require
-        (Files.File_Contains ("../docs/ai/traceability.md", "| 49 | Definition of done |"),
-         "traceability docs must map definition of done");
+      Files.Require_Contains
+        ("../docs/ai/traceability.md", "| 1 | Project identity |",
+         "traceability docs must map project identity", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/traceability.md", "| 13 | Execution adapter |",
+         "traceability docs must map execution adapter", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/traceability.md", "| 39 | Tooling requirements |",
+         "traceability docs must map tooling requirements", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/traceability.md", "| 49 | Definition of done |",
+         "traceability docs must map definition of done", Quiet => True);
       Put_Info ("documentation checks passed");
    end Docs;
 
@@ -364,18 +368,24 @@ procedure Awk_Workflows is
    begin
       Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
                "root crate name must be awk");
-      Require (Files.File_Contains ("../alire.toml", "executables = [""awk""]"),
-               "root crate must install executable awk");
-      Require (Files.File_Contains ("../alire.toml", "project-files = [""awk.gpr""]"),
-               "root crate must use awk.gpr");
-      Require (Files.File_Contains ("../alire.toml", "awklib = "),
-               "root crate must depend on awklib");
-      Require (Files.File_Contains ("../alire.toml", "terminal_styles = "),
-               "root crate must depend on terminal_styles");
-      Require (Files.File_Contains ("../alire.toml", "messages = "),
-               "root crate must depend on messages");
-      Require (Files.File_Contains ("../alire.toml", "hostkit = "),
-               "root crate must depend on hostkit");
+      Files.Require_Contains
+        ("../alire.toml", "executables = [""awk""]",
+         "root crate must install executable awk", Quiet => True);
+      Files.Require_Contains
+        ("../alire.toml", "project-files = [""awk.gpr""]",
+         "root crate must use awk.gpr", Quiet => True);
+      Files.Require_Contains
+        ("../alire.toml", "awklib = ",
+         "root crate must depend on awklib", Quiet => True);
+      Files.Require_Contains
+        ("../alire.toml", "terminal_styles = ",
+         "root crate must depend on terminal_styles", Quiet => True);
+      Files.Require_Contains
+        ("../alire.toml", "messages = ",
+         "root crate must depend on messages", Quiet => True);
+      Files.Require_Contains
+        ("../alire.toml", "hostkit = ",
+         "root crate must depend on hostkit", Quiet => True);
       Require (not Text.Contains (Root_Alire, "awklib = ""*"""),
                "root awklib dependency must not use wildcard constraint");
       Require (not Text.Contains (Root_Alire, "terminal_styles = ""*"""),
@@ -384,24 +394,32 @@ procedure Awk_Workflows is
                "root messages dependency must not use wildcard constraint");
       Require (not Text.Contains (Root_Alire, "hostkit = ""*"""),
                "root hostkit dependency must not use wildcard constraint");
-      Require
-        (Files.File_Contains ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev"""),
-         "dependency policy must document the current terminal_styles dev constraint");
-      Require
-        (Files.File_Contains ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev"""),
-         "dependency policy must document the current hostkit dev constraint");
+      Files.Require_Contains
+        ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev""",
+         "dependency policy must document the current terminal_styles dev constraint",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev""",
+         "dependency policy must document the current hostkit dev constraint",
+         Quiet => True);
       Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
                "tests crate name must be awk_tests");
-      Require (Files.File_Contains ("alire.toml", "awk = "),
-               "tests crate must depend on awk");
-      Require (Files.File_Contains ("alire.toml", "aunit = "),
-               "tests crate must depend on AUnit");
-      Require (Files.File_Contains ("alire.toml", "project_tools = "),
-               "tests crate must depend on project_tools");
-      Require (Files.File_Contains ("alire.toml", "messages = "),
-               "tests crate must depend on messages for catalog consistency checks");
-      Require (Files.File_Contains ("alire.toml", "awk = { path = "".."" }"),
-               "tests crate must pin awk relatively");
+      Files.Require_Contains
+        ("alire.toml", "awk = ",
+         "tests crate must depend on awk", Quiet => True);
+      Files.Require_Contains
+        ("alire.toml", "aunit = ",
+         "tests crate must depend on AUnit", Quiet => True);
+      Files.Require_Contains
+        ("alire.toml", "project_tools = ",
+         "tests crate must depend on project_tools", Quiet => True);
+      Files.Require_Contains
+        ("alire.toml", "messages = ",
+         "tests crate must depend on messages for catalog consistency checks",
+         Quiet => True);
+      Files.Require_Contains
+        ("alire.toml", "awk = { path = "".."" }",
+         "tests crate must pin awk relatively", Quiet => True);
       Manifests.Require_Workspace_Pin ("../alire.toml", "awklib", "../awklib", Quiet => True);
       Manifests.Require_Workspace_Pin
         ("../alire.toml", "terminal_styles", "../terminal_styles", Quiet => True);
@@ -412,14 +430,18 @@ procedure Awk_Workflows is
         ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
       Manifests.Require_Workspace_Pin
         ("alire.toml", "messages", "../../messages", Quiet => True);
-      Require (Files.File_Contains ("../awk.gpr", "-gnat2022"),
-               "root project must compile with Ada 2022");
-      Require (Files.File_Contains ("awk_tests.gpr", "-gnat2022"),
-               "tests project must compile with Ada 2022");
-      Require (Files.File_Contains ("../awk.gpr", "for Main use (""awk.adb"")"),
-               "root project main must be awk.adb");
-      Require (Files.File_Contains ("awk_tests.gpr", "awk_workflows.adb"),
-               "tests project must build workflow executable");
+      Files.Require_Contains
+        ("../awk.gpr", "-gnat2022",
+         "root project must compile with Ada 2022", Quiet => True);
+      Files.Require_Contains
+        ("awk_tests.gpr", "-gnat2022",
+         "tests project must compile with Ada 2022", Quiet => True);
+      Files.Require_Contains
+        ("../awk.gpr", "for Main use (""awk.adb"")",
+         "root project main must be awk.adb", Quiet => True);
+      Files.Require_Contains
+        ("awk_tests.gpr", "awk_workflows.adb",
+         "tests project must build workflow executable", Quiet => True);
       Require (TOML.String_Value_After (Root_Alire, "licenses =", Root_Alire'First) = "MIT",
                "root crate must declare MIT license");
       Require (TOML.String_Value_After (Tests_Alire, "licenses =", Tests_Alire'First) = "MIT",
