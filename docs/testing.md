@@ -13,7 +13,8 @@ Subsystem-focused AUnit packages live alongside the aggregate suite. The
 tests. The `awk_tests-localization` package owns catalog validation,
 locale-fallback, localized CLI text, and AWK-output locale-separation tests.
 The `awk_tests-redirections` package owns in-memory output-redirection success,
-append, ordering, and failure tests.
+append, ordering, and failure tests. The `awk_tests-execution` package owns
+direct execution-adapter and live callback tests.
 `awk_tests-suite` remains the top-level aggregator and still contains broader
 integration and process-boundary coverage.
 
