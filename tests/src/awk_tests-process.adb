@@ -941,6 +941,27 @@ package body Awk_Tests.Process is
               "process command getline reads command output");
    end Test_Process_Command_Getline;
 
+   procedure Test_Process_Auxiliary_File_Getline
+     (T : in out AUnit.Test_Cases.Test_Case'Class)
+   is
+      pragma Unreferenced (T);
+      Output : Project_Tools.Processes.Unbounded_String;
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
+        [new String'("BEGIN { getline line < ""tests/fixtures/input/basic.txt""; print line }")];
+      Status : constant Integer :=
+        Project_Tools.Processes.Run_Status
+          (Label   => "awk process auxiliary getline",
+           Dir     => "..",
+           Program => "./bin/awk",
+           Args    => Args,
+           Output  => Output,
+           Quiet   => True);
+   begin
+      Assert (Status = 0, "process auxiliary file getline exits successfully");
+      Assert (Contains (U.To_String (Output), "one two" & LF),
+              "process getline < file reads registered host file");
+   end Test_Process_Auxiliary_File_Getline;
+
    overriding procedure Register_Tests (T : in out Case_Type) is
       use AUnit.Test_Cases;
    begin
@@ -1036,5 +1057,8 @@ package body Awk_Tests.Process is
       Registration.Register_Routine (T, Test_Process_Runtime_Failure'Access, "process runtime failure");
       Registration.Register_Routine (T, Test_Process_Multiple_Files'Access, "process multiple files");
       Registration.Register_Routine (T, Test_Process_Command_Getline'Access, "process command getline");
+      Registration.Register_Routine
+        (T, Test_Process_Auxiliary_File_Getline'Access,
+         "process auxiliary file getline");
    end Register_Tests;
 end Awk_Tests.Process;
