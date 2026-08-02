@@ -935,10 +935,11 @@ package body Awk_Tests.Process is
       pragma Unreferenced (T);
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Output : Project_Tools.Processes.Unbounded_String;
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("AWK_PROCESS_ENV=visible"),
+         new String'("AWK_PROCESS_EMPTY="),
          new String'("./bin/awk"),
-         new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""] }"),
+         new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
          new String'("unused=value")];
       Status : Integer;
    begin
@@ -954,6 +955,8 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process environment propagation exits successfully");
       Assert (Contains (U.To_String (Output), "visible" & LF),
               "process environment reaches awklib ENVIRON");
+      Assert (Contains (U.To_String (Output), "empty=" & LF),
+              "empty process environment values are preserved");
    end Test_Process_Environment_Propagation;
 
    procedure Test_Process_Danish_Diagnostic_From_Locale
