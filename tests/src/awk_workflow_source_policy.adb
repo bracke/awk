@@ -431,6 +431,16 @@ package body Awk_Workflow_Source_Policy is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
+         "package Host_Metadata is",
+         "platform host metadata helpers must be grouped",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "function Environment_Value_Or_Empty",
+         "platform locale lookup must centralize environment value reads",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
          "type Command_Run_Files is record",
          "command-getline temp-file state must be grouped",
          Quiet => True);

@@ -458,51 +458,83 @@ package body Awk_CLI.Platform is
       return Write_Standard_Stream (Interfaces.C_Streams.stderr, Content);
    end Write_Standard_Error;
 
-   function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean is
-   begin
-      return Interfaces.C_Streams.isatty (File_Descriptor) = 1;
-   exception
-      when Constraint_Error | Program_Error =>
-         return False;
-   end Is_Terminal;
+   package Host_Metadata is
+      function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean;
+      function No_Color_Active return Boolean;
+      function Locale return String;
+      function Catalog_Path return String;
+   end Host_Metadata;
+
+   package body Host_Metadata is
+      function Environment_Value_Or_Empty (Name : String) return String is
+      begin
+         if Ada.Environment_Variables.Exists (Name) then
+            return Ada.Environment_Variables.Value (Name);
+         else
+            return "";
+         end if;
+      exception
+         when Constraint_Error | Program_Error =>
+            return "";
+      end Environment_Value_Or_Empty;
+
+      function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean is
+      begin
+         return Interfaces.C_Streams.isatty (File_Descriptor) = 1;
+      exception
+         when Constraint_Error | Program_Error =>
+            return False;
+      end Is_Terminal;
+
+      function No_Color_Active return Boolean is
+      begin
+         return Ada.Environment_Variables.Exists ("NO_COLOR");
+      exception
+         when Constraint_Error | Program_Error =>
+            return False;
+      end No_Color_Active;
+
+      function Locale return String is
+         LC_All : constant String := Environment_Value_Or_Empty ("LC_ALL");
+         Lang   : constant String := Environment_Value_Or_Empty ("LANG");
+         Native : constant String := Hostkit.Host.Native_Locale;
+      begin
+         if LC_All /= "" then
+            return LC_All;
+         elsif Lang /= "" then
+            return Lang;
+         elsif Native /= "" then
+            return Native;
+         else
+            return "en";
+         end if;
+      exception
+         when Constraint_Error | Program_Error =>
+            return "en";
+      end Locale;
+
+      function Catalog_Path return String is
+      begin
+         if Ada.Directories.Exists ("resources/messages/catalog.txt") then
+            return "resources/messages/catalog.txt";
+         else
+            return "../resources/messages/catalog.txt";
+         end if;
+      end Catalog_Path;
+   end Host_Metadata;
 
    function Standard_Output_Is_Terminal return Boolean is
-     (Is_Terminal (1));
+     (Host_Metadata.Is_Terminal (1));
 
    function Standard_Error_Is_Terminal return Boolean is
-     (Is_Terminal (2));
+     (Host_Metadata.Is_Terminal (2));
 
    function No_Color_Active return Boolean is
-   begin
-      return Ada.Environment_Variables.Exists ("NO_COLOR");
-   exception
-      when Constraint_Error | Program_Error =>
-         return False;
-   end No_Color_Active;
+     (Host_Metadata.No_Color_Active);
 
    function Locale return String is
-      Native : constant String := Hostkit.Host.Native_Locale;
-   begin
-      if Ada.Environment_Variables.Exists ("LC_ALL") and then Ada.Environment_Variables.Value ("LC_ALL") /= "" then
-         return Ada.Environment_Variables.Value ("LC_ALL");
-      elsif Ada.Environment_Variables.Exists ("LANG") and then Ada.Environment_Variables.Value ("LANG") /= "" then
-         return Ada.Environment_Variables.Value ("LANG");
-      elsif Native /= "" then
-         return Native;
-      else
-         return "en";
-      end if;
-   exception
-      when Constraint_Error | Program_Error =>
-         return "en";
-   end Locale;
+     (Host_Metadata.Locale);
 
    function Catalog_Path return String is
-   begin
-      if Ada.Directories.Exists ("resources/messages/catalog.txt") then
-         return "resources/messages/catalog.txt";
-      else
-         return "../resources/messages/catalog.txt";
-      end if;
-   end Catalog_Path;
+     (Host_Metadata.Catalog_Path);
 end Awk_CLI.Platform;
