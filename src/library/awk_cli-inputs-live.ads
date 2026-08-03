@@ -5,10 +5,10 @@ with Awk_CLI.Platform;
 with Awk_CLI.Redirections;
 
 package Awk_CLI.Inputs.Live is
-   --  Live host input/output callback state for the awklib execution adapter.
+   --  Live host callback state for the awklib execution adapter.
    --
-   --  This package owns streaming host input and output integration only. AWK
-   --  record, field, getline, and redirection semantics remain in awklib.
+   --  This package owns input selection and callback state. AWK record, field,
+   --  getline, and redirection semantics remain in awklib.
 
    type Live_Input_State is limited private;
 
@@ -63,7 +63,7 @@ package Awk_CLI.Inputs.Live is
    function Write_Output
      (User_Data : System.Address;
       Content   : String) return Boolean;
-   --  Forward exact AWK standard output to the invocation destination.
+   --  Forward exact AWK standard output through the context I/O adapter.
    --  @param User_Data Address of Live_Input_State.
    --  @param Content Exact AWK standard output chunk.
    --  @return True when output was accepted.
@@ -78,7 +78,7 @@ package Awk_CLI.Inputs.Live is
       Path      : String;
       Content   : String;
       Append    : Boolean) return Awk_CLI.Redirections.Write_Status;
-   --  Materialize one live redirected-output write.
+   --  Forward one live redirected-output write through the context I/O adapter.
    --  @param User_Data Address of Live_Input_State.
    --  @param Path AWK redirection target path.
    --  @param Content Exact redirected output chunk.

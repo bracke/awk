@@ -1,3 +1,4 @@
+with Awk_CLI.Context_IO;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Environment;
 with Awk_CLI.Execution;
@@ -170,21 +171,6 @@ package body Awk_CLI is
    function Written_File_Append (Context : Invocation_Context; Index : Positive) return Boolean is
      (Context.Writes.Element (Index).Append);
 
-   function Write_Context_Stdout
-     (Context : in out Invocation_Context;
-      Content : String) return Boolean
-   is
-   begin
-      if Context.Stdout_Fails then
-         return False;
-      end if;
-      U.Append (Context.Standard_Out, Content);
-      if Context.Use_Process then
-         return Awk_CLI.Platform.Write_Standard_Output (Content);
-      end if;
-      return True;
-   end Write_Context_Stdout;
-
    function Run (Context : in out Invocation_Context) return Exit_Code is
       Catalog : Awk_CLI.Localization.Catalog;
 
@@ -281,7 +267,7 @@ package body Awk_CLI is
       Awk_CLI.Output.Set_Color (Parsed.Options.Color);
 
       if Parsed.Options.Help_Requested then
-         if Write_Context_Stdout
+         if Awk_CLI.Context_IO.Write_Standard_Output
            (Context, Awk_CLI.Output.Help
               (Catalog, Context.Stdout_Terminal, Context.No_Color))
          then
@@ -290,7 +276,9 @@ package body Awk_CLI is
             return Exit_Code (D.IO_Exit);
          end if;
       elsif Parsed.Options.Version_Requested then
-         if Write_Context_Stdout (Context, Awk_CLI.Output.Version (Catalog)) then
+         if Awk_CLI.Context_IO.Write_Standard_Output
+           (Context, Awk_CLI.Output.Version (Catalog))
+         then
             return Exit_Code (D.Success_Exit);
          else
             return Exit_Code (D.IO_Exit);

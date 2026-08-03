@@ -1,9 +1,7 @@
-with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.IO_Exceptions;
-with Ada.Strings.Fixed;
 with Interfaces.C_Streams;
 with System;
 with Hostkit;
@@ -13,35 +11,9 @@ with Hostkit.Process;
 with Hostkit.Shell;
 
 package body Awk_CLI.Platform is
-   use type SIO.Count;
    use type Ada.Streams.Stream_Element_Offset;
 
    Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
-
-   function Image (Value : Natural) return String is
-     (Ada.Strings.Fixed.Trim (Natural'Image (Value), Ada.Strings.Left));
-
-   function Time_Image return String is
-      Raw : constant String := Duration'Image (Ada.Calendar.Seconds (Ada.Calendar.Clock));
-      Result : String := Raw;
-   begin
-      for C of Result loop
-         if C = ' ' or else C = '.' then
-            C := '-';
-         end if;
-      end loop;
-      return Result;
-   end Time_Image;
-
-   function Hash_Image (Text : String) return String is
-      type Hash_Value is mod 2 ** 32;
-      Value : Hash_Value := 2166136261;
-   begin
-      for C of Text loop
-         Value := (Value xor Character'Pos (C)) * 16777619;
-      end loop;
-      return Image (Natural (Value mod Hash_Value (Natural'Last)));
-   end Hash_Image;
 
    function Join (Directory, Name : String) return String is
      (Ada.Directories.Compose (Containing_Directory => Directory, Name => Name));
@@ -65,30 +37,6 @@ package body Awk_CLI.Platform is
       when Ada.Directories.Name_Error | Ada.Directories.Use_Error =>
          null;
    end Delete_Tree_If_Present;
-
-   function Create_Command_Temp_Dir (Command : String) return String is
-      Base : constant String := Hostkit.Fs.Temp_Directory;
-   begin
-      for Attempt in 1 .. 1000 loop
-         declare
-            Candidate : constant String :=
-              Join
-                (Base,
-                 "awk-command-getline-"
-                 & Time_Image & "-"
-                 & Hash_Image (Command) & "-"
-                 & Image (Attempt));
-         begin
-            Ada.Directories.Create_Directory (Candidate);
-            return Candidate;
-         exception
-            when Ada.Directories.Use_Error | Ada.Directories.Name_Error =>
-               null;
-         end;
-      end loop;
-
-      return "";
-   end Create_Command_Temp_Dir;
 
    function Process_Arguments return Awk_CLI.Options.String_Vectors.Vector is
       Result : Awk_CLI.Options.String_Vectors.Vector;
@@ -127,8 +75,30 @@ package body Awk_CLI.Platform is
 
    function Read_File (Path : String; Content : out U.Unbounded_String) return Read_Status is
       File   : SIO.File_Type;
-      Size   : Ada.Streams.Stream_IO.Count;
       Opened : Boolean := False;
+
+      procedure Append_Buffer
+        (Buffer : Ada.Streams.Stream_Element_Array;
+         Last   : Ada.Streams.Stream_Element_Offset)
+      is
+      begin
+         if Last < Buffer'First then
+            return;
+         end if;
+
+         declare
+            Text : String (1 .. Natural (Last - Buffer'First + 1));
+         begin
+            for Index in Text'Range loop
+               Text (Index) :=
+                 Character'Val
+                   (Buffer
+                      (Buffer'First
+                       + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
+            end loop;
+            U.Append (Content, Text);
+         end;
+      end Append_Buffer;
    begin
       Content := U.Null_Unbounded_String;
       if not Ada.Directories.Exists (Path) then
@@ -136,20 +106,17 @@ package body Awk_CLI.Platform is
       end if;
       SIO.Open (File, SIO.In_File, Path);
       Opened := True;
-      Size := SIO.Size (File);
-      if Size > 0 then
+
+      while not SIO.End_Of_File (File) loop
          declare
-            Buffer : Ada.Streams.Stream_Element_Array (1 .. Ada.Streams.Stream_Element_Offset (Size));
+            Buffer : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
             Last   : Ada.Streams.Stream_Element_Offset;
-            Text   : String (1 .. Natural (Size));
          begin
             SIO.Read (File, Buffer, Last);
-            for Index in 1 .. Natural (Last) loop
-               Text (Index) := Character'Val (Buffer (Ada.Streams.Stream_Element_Offset (Index)));
-            end loop;
-            Content := U.To_Unbounded_String (Text (1 .. Natural (Last)));
+            Append_Buffer (Buffer, Last);
          end;
-      end if;
+      end loop;
+
       SIO.Close (File);
       return Read_Success;
    exception
@@ -322,7 +289,8 @@ package body Awk_CLI.Platform is
       Args        : Hostkit.String_Vectors.Vector;
       Status      : Hostkit.Process.Process_Outcome;
       Ignored     : Integer := -1;
-      Temp_Dir    : constant String := Create_Command_Temp_Dir (Command);
+      Temp_Dir    : constant String :=
+        Hostkit.Fs.Create_Temporary_Directory ("awk-command-getline");
       Stdin_Path  : constant String := Join (Temp_Dir, "stdin");
       Stdout_Path : constant String := Join (Temp_Dir, "stdout");
       Stderr_Path : constant String := Join (Temp_Dir, "stderr");
