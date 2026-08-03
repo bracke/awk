@@ -51,7 +51,7 @@ usecase = "documentation workflow gate"
 [[body]]
 path = "src/library/awk_cli-platform.adb"
 split_prefix = "src/library/awk_cli-platform"
-target_lines = 412
+target_lines = 407
 max_lines = 540
 min_headroom_lines = 40
 max_bytes = 30000

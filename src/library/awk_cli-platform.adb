@@ -210,42 +210,37 @@ package body Awk_CLI.Platform is
          Status  : Hostkit.Process.Process_Outcome;
          Ignored : Integer := -1;
          Files   : Command_Run_Files;
+         Success : Boolean := False;
       begin
          Output := U.Null_Unbounded_String;
          Files := Create_Command_Run_Files;
 
-         if not Command_Run_Files_Available (Files) then
-            Cleanup_Command_Run_Files (Files);
-            return False;
-         end if;
-
-         if not Write_File (U.To_String (Files.Stdin_Path), "", Append => False) then
-            Cleanup_Command_Run_Files (Files);
-            return False;
-         end if;
-
-         Args.Append (Hostkit.UString'(U.To_Unbounded_String (Hostkit.Shell.Command_Option)));
-         Args.Append (Hostkit.UString'(U.To_Unbounded_String (Command)));
-
-         Status :=
-           Hostkit.Process.Run_Captured
-             (Program     => Hostkit.Shell.Executable,
-              Arguments   => Args,
-              Stdin_Path  => U.To_String (Files.Stdin_Path),
-              Stdout_Path => U.To_String (Files.Stdout_Path),
-              Stderr_Path => U.To_String (Files.Stderr_Path));
-
-         if Status.Started
-           and then not Status.Timed_Out
-           and then Read_File (U.To_String (Files.Stdout_Path), Output) = Read_Success
+         if Command_Run_Files_Available (Files)
+           and then Write_File (U.To_String (Files.Stdin_Path), "", Append => False)
          then
-            Cleanup_Command_Run_Files (Files);
-            Ignored := Status.Exit_Status;
-            return Ignored >= 0;
+            Args.Append
+              (Hostkit.UString'(U.To_Unbounded_String (Hostkit.Shell.Command_Option)));
+            Args.Append (Hostkit.UString'(U.To_Unbounded_String (Command)));
+
+            Status :=
+              Hostkit.Process.Run_Captured
+                (Program     => Hostkit.Shell.Executable,
+                 Arguments   => Args,
+                 Stdin_Path  => U.To_String (Files.Stdin_Path),
+                 Stdout_Path => U.To_String (Files.Stdout_Path),
+                 Stderr_Path => U.To_String (Files.Stderr_Path));
+
+            if Status.Started
+              and then not Status.Timed_Out
+              and then Read_File (U.To_String (Files.Stdout_Path), Output) = Read_Success
+            then
+               Ignored := Status.Exit_Status;
+               Success := Ignored >= 0;
+            end if;
          end if;
 
          Cleanup_Command_Run_Files (Files);
-         return False;
+         return Success;
       exception
          when Ada.Directories.Name_Error | Ada.Directories.Use_Error
             | Constraint_Error | Program_Error | Storage_Error =>
