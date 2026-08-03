@@ -18,6 +18,29 @@ package body Awk_CLI.Platform is
    function Join (Directory, Name : String) return String is
      (Ada.Directories.Compose (Containing_Directory => Directory, Name => Name));
 
+   function Text_From_Buffer
+     (Buffer : Ada.Streams.Stream_Element_Array;
+      Last   : Ada.Streams.Stream_Element_Offset) return String
+   is
+   begin
+      if Last < Buffer'First then
+         return "";
+      end if;
+
+      declare
+         Text : String (1 .. Natural (Last - Buffer'First + 1));
+      begin
+         for Index in Text'Range loop
+            Text (Index) :=
+              Character'Val
+                (Buffer
+                   (Buffer'First
+                    + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
+         end loop;
+         return Text;
+      end;
+   end Text_From_Buffer;
+
    procedure Delete_If_Present (Path : String) is
    begin
       if Path /= "" and then Ada.Directories.Exists (Path) then
@@ -77,28 +100,6 @@ package body Awk_CLI.Platform is
       File   : SIO.File_Type;
       Opened : Boolean := False;
 
-      procedure Append_Buffer
-        (Buffer : Ada.Streams.Stream_Element_Array;
-         Last   : Ada.Streams.Stream_Element_Offset)
-      is
-      begin
-         if Last < Buffer'First then
-            return;
-         end if;
-
-         declare
-            Text : String (1 .. Natural (Last - Buffer'First + 1));
-         begin
-            for Index in Text'Range loop
-               Text (Index) :=
-                 Character'Val
-                   (Buffer
-                      (Buffer'First
-                       + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
-            end loop;
-            U.Append (Content, Text);
-         end;
-      end Append_Buffer;
    begin
       Content := U.Null_Unbounded_String;
       if not Ada.Directories.Exists (Path) then
@@ -113,7 +114,7 @@ package body Awk_CLI.Platform is
             Last   : Ada.Streams.Stream_Element_Offset;
          begin
             SIO.Read (File, Buffer, Last);
-            Append_Buffer (Buffer, Last);
+            U.Append (Content, Text_From_Buffer (Buffer, Last));
          end;
       end loop;
 
@@ -240,18 +241,7 @@ package body Awk_CLI.Platform is
             return Read_Success;
          end if;
 
-         declare
-            Text : String (1 .. Natural (Last - Buffer'First + 1));
-         begin
-            for Index in Text'Range loop
-               Text (Index) :=
-                 Character'Val
-                   (Buffer
-                      (Buffer'First
-                       + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
-            end loop;
-            Content := U.To_Unbounded_String (Text);
-         end;
+         Content := U.To_Unbounded_String (Text_From_Buffer (Buffer, Last));
       end;
 
       End_Of_File := False;
@@ -294,14 +284,26 @@ package body Awk_CLI.Platform is
       Stdin_Path  : constant String := Join (Temp_Dir, "stdin");
       Stdout_Path : constant String := Join (Temp_Dir, "stdout");
       Stderr_Path : constant String := Join (Temp_Dir, "stderr");
+
+      procedure Cleanup is
+      begin
+         if Temp_Dir /= "" then
+            Delete_If_Present (Stdin_Path);
+            Delete_If_Present (Stdout_Path);
+            Delete_If_Present (Stderr_Path);
+            Delete_Tree_If_Present (Temp_Dir);
+         end if;
+      end Cleanup;
    begin
       Output := U.Null_Unbounded_String;
 
       if Temp_Dir = "" or else Hostkit.Shell.Executable = "" then
+         Cleanup;
          return False;
       end if;
 
       if not Write_File (Stdin_Path, "", Append => False) then
+         Cleanup;
          return False;
       end if;
 
@@ -320,27 +322,18 @@ package body Awk_CLI.Platform is
         and then not Status.Timed_Out
         and then Read_File (Stdout_Path, Output) = Read_Success
       then
-         Delete_If_Present (Stdin_Path);
-         Delete_If_Present (Stdout_Path);
-         Delete_If_Present (Stderr_Path);
-         Delete_Tree_If_Present (Temp_Dir);
+         Cleanup;
          Ignored := Status.Exit_Status;
          return Ignored >= 0;
       end if;
 
-      Delete_If_Present (Stdin_Path);
-      Delete_If_Present (Stdout_Path);
-      Delete_If_Present (Stderr_Path);
-      Delete_Tree_If_Present (Temp_Dir);
+      Cleanup;
       return False;
    exception
       when Ada.Directories.Name_Error | Ada.Directories.Use_Error
          | Constraint_Error | Program_Error | Storage_Error =>
          Output := U.Null_Unbounded_String;
-         Delete_If_Present (Stdin_Path);
-         Delete_If_Present (Stdout_Path);
-         Delete_If_Present (Stderr_Path);
-         Delete_Tree_If_Present (Temp_Dir);
+         Cleanup;
          return False;
    end Run_Command;
 

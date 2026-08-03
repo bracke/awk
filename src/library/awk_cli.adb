@@ -1,6 +1,5 @@
 with Awk_CLI.Context_IO;
 with Awk_CLI.Diagnostics;
-with Awk_CLI.Environment;
 with Awk_CLI.Execution;
 with Awk_CLI.Inputs;
 with Awk_CLI.Inputs.Live;
@@ -186,57 +185,7 @@ package body Awk_CLI is
       function Read_Context_File
         (Path : String;
          Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
-      is
-      begin
-         for File of Context.Files loop
-            if U.To_String (File.Path) = Path then
-               if not File.Openable then
-                  Content := U.Null_Unbounded_String;
-                  return Awk_CLI.Platform.Open_Failed;
-               elsif not File.Readable then
-                  Content := U.Null_Unbounded_String;
-                  return Awk_CLI.Platform.Read_Failed;
-               else
-                  Content := File.Content;
-                  return Awk_CLI.Platform.Read_Success;
-               end if;
-            end if;
-         end loop;
-
-         if Context.Use_Process then
-            return Awk_CLI.Platform.Read_File (Path, Content);
-         end if;
-
-         Content := U.Null_Unbounded_String;
-         return Awk_CLI.Platform.Open_Failed;
-      end Read_Context_File;
-
-      function Write_Context_Stderr (Content : String) return Boolean is
-      begin
-         if Context.Stderr_Fails then
-            return False;
-         end if;
-         U.Append (Context.Standard_Err, Content);
-         if Context.Use_Process then
-            return Awk_CLI.Platform.Write_Standard_Error (Content);
-         end if;
-         return True;
-      end Write_Context_Stderr;
-
-      function Current_Environment return Awk_CLI.Environment.Entry_Vectors.Vector is
-         Result : Awk_CLI.Environment.Entry_Vectors.Vector;
-      begin
-         if Context.Use_Process and then Context.Environment.Is_Empty then
-            return Awk_CLI.Environment.Collect;
-         end if;
-
-         for Item of Context.Environment loop
-            Result.Append
-              (Awk_CLI.Environment.Env_Entry'
-                 (Name => Item.Name, Value => Item.Value));
-         end loop;
-         return Awk_CLI.Environment.Normalize (Result);
-      end Current_Environment;
+      is (Awk_CLI.Context_IO.Read_File (Context, Path, Content));
 
       function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
       begin
@@ -244,8 +193,9 @@ package body Awk_CLI is
          Context.Diagnostic_Id := Item.Message_Id;
          Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
          Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
-         if not Write_Context_Stderr
-           (Awk_CLI.Output.Diagnostic_Text
+         if not Awk_CLI.Context_IO.Write_Standard_Error
+           (Context,
+            Awk_CLI.Output.Diagnostic_Text
               (Catalog, Item, Context.Stderr_Terminal, Context.No_Color))
          then
             return Exit_Code (D.IO_Exit);
@@ -253,82 +203,114 @@ package body Awk_CLI is
          return Exit_Code (D.Status_For (Item));
       end Emit_Diagnostic;
 
-      Parsed : constant Awk_CLI.Options.Parse_Result :=
-        Awk_CLI.Options.Parse (Parsed_Arguments);
+      function Emit_Internal_Diagnostic return Exit_Code is
+         Item : constant D.Diagnostic :=
+           D.Make
+             ("awk.internal.unexpected_exception",
+              D.Internal_Error,
+              D.Internal);
+      begin
+         Context.Diagnostic_Set := True;
+         Context.Diagnostic_Id := Item.Message_Id;
+         Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
+         Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
+         if not Awk_CLI.Context_IO.Write_Standard_Error
+           (Context,
+            Awk_CLI.Output.Diagnostic_Text
+              (Catalog, Item, Context.Stderr_Terminal, Context.No_Color))
+         then
+            return Exit_Code (D.Internal_Exit);
+         end if;
+         return Exit_Code (D.Internal_Exit);
+      exception
+         when others =>
+            return Exit_Code (D.Internal_Exit);
+      end Emit_Internal_Diagnostic;
+
+      function Execute_Parsed
+        (Parsed : Awk_CLI.Options.Parse_Result) return Exit_Code
+      is
+      begin
+         if not Parsed.Ok then
+            Awk_CLI.Output.Set_Color (Parsed.Color);
+            return Emit_Diagnostic (Parsed.Diagnostic);
+         end if;
+
+         Awk_CLI.Output.Set_Color (Parsed.Options.Color);
+
+         if Parsed.Options.Help_Requested then
+            if Awk_CLI.Context_IO.Write_Standard_Output
+              (Context, Awk_CLI.Output.Help
+                 (Catalog, Context.Stdout_Terminal, Context.No_Color))
+            then
+               return Exit_Code (D.Success_Exit);
+            else
+               return Exit_Code (D.IO_Exit);
+            end if;
+         elsif Parsed.Options.Version_Requested then
+            if Awk_CLI.Context_IO.Write_Standard_Output
+              (Context, Awk_CLI.Output.Version (Catalog))
+            then
+               return Exit_Code (D.Success_Exit);
+            else
+               return Exit_Code (D.IO_Exit);
+            end if;
+         end if;
+
+         declare
+            Source_Result : constant Awk_CLI.Programs.Resolve_Result :=
+              Awk_CLI.Programs.Resolve (Parsed.Options, Read_Context_File'Access);
+         begin
+            if not Source_Result.Ok then
+               return Emit_Diagnostic (Source_Result.Diagnostic);
+            end if;
+
+            declare
+               Classified : aliased constant Awk_CLI.Operands.Operand_Vectors.Vector :=
+                 Awk_CLI.Operands.Classify (Source_Result.Source.Operands);
+            begin
+               declare
+                  Input_State : aliased Awk_CLI.Inputs.Live.Live_Input_State;
+               begin
+                  Awk_CLI.Inputs.Live.Initialize (Input_State, Context, Classified);
+                  declare
+                     Exec_Result : constant Awk_CLI.Execution.Execution_Result :=
+                       Awk_CLI.Execution.Execute_Live_Input
+                         (U.To_String (Source_Result.Source.Text),
+                          Parsed.Options, Classified,
+                          Awk_CLI.Context_IO.Current_Environment (Context),
+                          Awk_CLI.Inputs.Live.Read'Access,
+                          Awk_CLI.Inputs.Live.Write_Output'Access,
+                          Awk_CLI.Inputs.Live.Write_Redirection'Access,
+                          Read_Command => Awk_CLI.Inputs.Live.Read_Command'Access,
+                          User_Data => Input_State'Address,
+                          Auxiliary_Files => Awk_CLI.Inputs.Live.Auxiliary_Files (Context));
+                  begin
+                     Awk_CLI.Inputs.Live.Close (Input_State);
+                     if not Exec_Result.Ok then
+                        return Emit_Diagnostic (Exec_Result.Diagnostic);
+                     end if;
+
+                     if Exec_Result.Exit_Status < 0 or else Exec_Result.Exit_Status > 255 then
+                        return Exit_Code (D.Interpreter_Exit);
+                     else
+                        return Exit_Code (Exec_Result.Exit_Status);
+                     end if;
+                  end;
+               end;
+            end;
+         end;
+      exception
+         when others =>
+            return Emit_Internal_Diagnostic;
+      end Execute_Parsed;
    begin
       Awk_CLI.Localization.Initialize
         (Catalog, U.To_String (Context.Catalog_Path), U.To_String (Context.Locale));
 
-      if not Parsed.Ok then
-         Awk_CLI.Output.Set_Color (Parsed.Color);
-         return Emit_Diagnostic (Parsed.Diagnostic);
-      end if;
-
-      Awk_CLI.Output.Set_Color (Parsed.Options.Color);
-
-      if Parsed.Options.Help_Requested then
-         if Awk_CLI.Context_IO.Write_Standard_Output
-           (Context, Awk_CLI.Output.Help
-              (Catalog, Context.Stdout_Terminal, Context.No_Color))
-         then
-            return Exit_Code (D.Success_Exit);
-         else
-            return Exit_Code (D.IO_Exit);
-         end if;
-      elsif Parsed.Options.Version_Requested then
-         if Awk_CLI.Context_IO.Write_Standard_Output
-           (Context, Awk_CLI.Output.Version (Catalog))
-         then
-            return Exit_Code (D.Success_Exit);
-         else
-            return Exit_Code (D.IO_Exit);
-         end if;
-      end if;
-
-      declare
-         Source_Result : constant Awk_CLI.Programs.Resolve_Result :=
-           Awk_CLI.Programs.Resolve (Parsed.Options, Read_Context_File'Access);
-      begin
-         if not Source_Result.Ok then
-            return Emit_Diagnostic (Source_Result.Diagnostic);
-         end if;
-
-         declare
-            Classified : aliased constant Awk_CLI.Operands.Operand_Vectors.Vector :=
-              Awk_CLI.Operands.Classify (Source_Result.Source.Operands);
-         begin
-            declare
-               Input_State : aliased Awk_CLI.Inputs.Live.Live_Input_State;
-            begin
-               Awk_CLI.Inputs.Live.Initialize (Input_State, Context, Classified);
-               declare
-                  Exec_Result : constant Awk_CLI.Execution.Execution_Result :=
-                    Awk_CLI.Execution.Execute_Live_Input
-                      (U.To_String (Source_Result.Source.Text),
-                       Parsed.Options, Classified, Current_Environment,
-                       Awk_CLI.Inputs.Live.Read'Access,
-                       Awk_CLI.Inputs.Live.Write_Output'Access,
-                       Awk_CLI.Inputs.Live.Write_Redirection'Access,
-                       Read_Command => Awk_CLI.Inputs.Live.Read_Command'Access,
-                       User_Data => Input_State'Address,
-                       Auxiliary_Files => Awk_CLI.Inputs.Live.Auxiliary_Files (Context));
-               begin
-                  Awk_CLI.Inputs.Live.Close (Input_State);
-                  if not Exec_Result.Ok then
-                     return Emit_Diagnostic (Exec_Result.Diagnostic);
-                  end if;
-
-                  if Exec_Result.Exit_Status < 0 or else Exec_Result.Exit_Status > 255 then
-                     return Exit_Code (D.Interpreter_Exit);
-                  else
-                     return Exit_Code (Exec_Result.Exit_Status);
-                  end if;
-               end;
-            end;
-         end;
-      end;
+      return Execute_Parsed (Awk_CLI.Options.Parse (Parsed_Arguments));
    exception
       when others =>
-         return Exit_Code (D.Internal_Exit);
+         return Emit_Internal_Diagnostic;
    end Run;
 end Awk_CLI;

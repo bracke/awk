@@ -1,7 +1,34 @@
-with Awk_CLI.Platform;
-
 package body Awk_CLI.Context_IO is
    use type U.Unbounded_String;
+
+   function Read_File
+     (Context : Invocation_Context;
+      Path    : String;
+      Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
+   is
+   begin
+      for File of Context.Files loop
+         if U.To_String (File.Path) = Path then
+            if not File.Openable then
+               Content := U.Null_Unbounded_String;
+               return Awk_CLI.Platform.Open_Failed;
+            elsif not File.Readable then
+               Content := U.Null_Unbounded_String;
+               return Awk_CLI.Platform.Read_Failed;
+            else
+               Content := File.Content;
+               return Awk_CLI.Platform.Read_Success;
+            end if;
+         end if;
+      end loop;
+
+      if Context.Use_Process then
+         return Awk_CLI.Platform.Read_File (Path, Content);
+      end if;
+
+      Content := U.Null_Unbounded_String;
+      return Awk_CLI.Platform.Open_Failed;
+   end Read_File;
 
    function Write_Standard_Output
      (Context : in out Invocation_Context;
@@ -19,6 +46,23 @@ package body Awk_CLI.Context_IO is
 
       return True;
    end Write_Standard_Output;
+
+   function Write_Standard_Error
+     (Context : in out Invocation_Context;
+      Content : String) return Boolean
+   is
+   begin
+      if Context.Stderr_Fails then
+         return False;
+      end if;
+
+      U.Append (Context.Standard_Err, Content);
+      if Context.Use_Process then
+         return Awk_CLI.Platform.Write_Standard_Error (Content);
+      end if;
+
+      return True;
+   end Write_Standard_Error;
 
    function Write_File
      (Context : in out Invocation_Context;
@@ -100,4 +144,22 @@ package body Awk_CLI.Context_IO is
 
       return Awk_CLI.Redirections.Write_Success;
    end Write_File;
+
+   function Current_Environment
+     (Context : Invocation_Context) return Awk_CLI.Environment.Entry_Vectors.Vector
+   is
+      Result : Awk_CLI.Environment.Entry_Vectors.Vector;
+   begin
+      if Context.Use_Process and then Context.Environment.Is_Empty then
+         return Awk_CLI.Environment.Collect;
+      end if;
+
+      for Item of Context.Environment loop
+         Result.Append
+           (Awk_CLI.Environment.Env_Entry'
+              (Name => Item.Name, Value => Item.Value));
+      end loop;
+
+      return Awk_CLI.Environment.Normalize (Result);
+   end Current_Environment;
 end Awk_CLI.Context_IO;
