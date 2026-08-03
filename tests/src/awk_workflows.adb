@@ -5,6 +5,7 @@ with Ada.Text_IO;
 
 with GNAT.OS_Lib;
 
+with Awk_CLI.Diagnostics;
 with Awk_Workflow_Catalogs;
 with Awk_Workflow_Docs;
 with Awk_Workflow_Metadata;
@@ -20,6 +21,7 @@ with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
+   package D renames Awk_CLI.Diagnostics;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package Fixtures renames Project_Tools.Test_Fixtures;
@@ -127,46 +129,24 @@ procedure Awk_Workflows is
       Put_Info ("conformance checks passed");
    end Conformance;
 
-   function Exit_Constant_Value (Source, Name : String) return String is
-      Mark : Natural := Text.Index (Source, Name);
-      Scan : Natural;
-      Last : Natural;
-   begin
-      if Mark = 0 then
-         return "";
-      end if;
-
-      Mark := Text.Index_From (Source, ":=", Mark);
-      if Mark = 0 then
-         return "";
-      end if;
-
-      Scan := Mark + 2;
-      while Scan <= Source'Last and then Source (Scan) = ' ' loop
-         Scan := Scan + 1;
-      end loop;
-
-      Last := Scan - 1;
-      while Last < Source'Last and then Source (Last + 1) in '0' .. '9' loop
-         Last := Last + 1;
-      end loop;
-
-      if Last < Scan then
-         return "";
-      end if;
-      return Source (Scan .. Last);
-   end Exit_Constant_Value;
-
    procedure Exit_Status_Drift is
-      Source    : constant String := Fixtures.Read_Text_File ("../src/library/awk_cli-diagnostics.ads");
       Docs      : constant String := Fixtures.Read_Text_File ("../docs/diagnostics.md");
       Reference : constant String := Fixtures.Read_Text_File ("../docs/command-line-reference.md");
       Allowed   : U.Unbounded_String;
 
-      procedure Require_Exit (Name : String) is
-         Value : constant String := Exit_Constant_Value (Source, Name);
+      function Image (Value : D.Exit_Code) return String is
+         Raw : constant String := D.Exit_Code'Image (Value);
       begin
-         Require (Value /= "", "exit status constant missing from source: " & Name);
+         if Raw'Length > 0 and then Raw (Raw'First) = ' ' then
+            return Raw (Raw'First + 1 .. Raw'Last);
+         else
+            return Raw;
+         end if;
+      end Image;
+
+      procedure Require_Exit (Name : String; Status : D.Exit_Code) is
+         Value : constant String := Image (Status);
+      begin
          U.Append (Allowed, " " & Value & " ");
          Require
            (Text.Contains (Docs, "| `" & Value & "` |"),
@@ -179,11 +159,11 @@ procedure Awk_Workflows is
 
       From : Positive := Docs'First;
    begin
-      Require_Exit ("Success_Exit");
-      Require_Exit ("Interpreter_Exit");
-      Require_Exit ("Usage_Exit");
-      Require_Exit ("IO_Exit");
-      Require_Exit ("Internal_Exit");
+      Require_Exit ("Success_Exit", D.Success_Exit);
+      Require_Exit ("Interpreter_Exit", D.Interpreter_Exit);
+      Require_Exit ("Usage_Exit", D.Usage_Exit);
+      Require_Exit ("IO_Exit", D.IO_Exit);
+      Require_Exit ("Internal_Exit", D.Internal_Exit);
 
       while From <= Docs'Last loop
          declare

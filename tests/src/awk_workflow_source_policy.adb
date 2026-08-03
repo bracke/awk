@@ -634,6 +634,14 @@ package body Awk_Workflow_Source_Policy is
            ("src/awk_workflows.adb", "Run_AUnit;",
             "workflow AUnit execution must be reusable across build modes", Quiet => True);
          Files.Require_Contains
+           ("src/awk_workflows.adb", "with Awk_CLI.Diagnostics",
+            "exit status drift checks must use compiled diagnostic constants",
+            Quiet => True);
+         Ada_Source.Require_No_Code_Tokens
+           ("src/awk_workflows.adb",
+            [U.To_Unbounded_String ("Exit_Constant_Value")],
+            Quiet => True);
+         Files.Require_Contains
            ("src/awk_workflows.adb", "Require_Clean_Repository;",
             "release workflow must check git status", Quiet => True);
          Files.Require_Contains
