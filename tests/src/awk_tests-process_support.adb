@@ -1,4 +1,5 @@
 with Project_Tools.Files;
+with Project_Tools.Processes;
 with Project_Tools.Test_Fixtures;
 
 with Awk_CLI.Localization;
@@ -24,15 +25,15 @@ package body Awk_Tests.Process_Support is
       return "../bin/awk";
    end Awk_From_Tests_Directory;
 
-   function Process_Harness_Preserves_Empty_Arguments return Boolean is
+   function Project_Tools_Preserves_Empty_Arguments return Boolean is
    begin
-      --  The process harness drops an empty string argument on the Windows
+      --  The project_tools process helper drops an empty string argument on the Windows
       --  runner. The in-memory harness still tests empty direct programs.
       return not Project_Tools.Files.File_Exists ("../bin/awk.exe");
-   end Process_Harness_Preserves_Empty_Arguments;
+   end Project_Tools_Preserves_Empty_Arguments;
 
    function Run_Awk_Err_To_Out
-     (Args  : Awk_Tests.Process_Harness.Argument_List;
+     (Args  : GNAT.OS_Lib.Argument_List;
       Input : String := "") return Captured_Process
    is
    begin
@@ -41,12 +42,12 @@ package body Awk_Tests.Process_Support is
 
    function Run_Command_Err_To_Out
      (Command : String;
-      Args    : Awk_Tests.Process_Harness.Argument_List;
+      Args    : GNAT.OS_Lib.Argument_List;
       Input   : String := "") return Captured_Process
    is
       Status : aliased Integer := -1;
       Output : constant String :=
-        Awk_Tests.Process_Harness.Command_Output
+        Project_Tools.Processes.Command_Output
           (Command    => Command,
            Arguments  => Args,
            Input      => Input,
@@ -62,23 +63,24 @@ package body Awk_Tests.Process_Support is
      (Label   : String;
       Dir     : String;
       Program : String;
-      Args    : Awk_Tests.Process_Harness.Argument_List) return Captured_Process
+      Args    : GNAT.OS_Lib.Argument_List) return Captured_Process
    is
-      Output : Awk_Tests.Process_Harness.Output_Text;
+      Output : Project_Tools.Processes.Unbounded_String;
       Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
+        Project_Tools.Processes.Run_Status
           (Label   => Label,
            Dir     => Dir,
            Program => Program,
            Args    => Args,
-           Output  => Output);
+           Output  => Output,
+           Quiet   => True);
    begin
       return (Status => Status, Output => Output);
    end Run_Process;
 
    function Run_Awk
      (Label : String;
-      Args  : Awk_Tests.Process_Harness.Argument_List) return Captured_Process
+      Args  : GNAT.OS_Lib.Argument_List) return Captured_Process
    is
    begin
       return Run_Process

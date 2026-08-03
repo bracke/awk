@@ -1,11 +1,13 @@
 with AUnit.Assertions;
 
+with GNAT.OS_Lib;
+
 with Awk_Tests.Process_Diagnostics;
-with Awk_Tests.Process_Harness;
 with Awk_Tests.Process_IO;
 with Awk_Tests.Process_Language;
 with Awk_Tests.Process_Options;
 with Awk_Tests.Process_Support;
+with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process is
@@ -22,8 +24,8 @@ package body Awk_Tests.Process is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("AWK_PROCESS_ENV=visible"),
          new String'("AWK_PROCESS_EMPTY="),
          new String'(Awk_From_Repository_Root),

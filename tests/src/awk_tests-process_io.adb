@@ -1,6 +1,7 @@
 with AUnit.Assertions;
 
-with Awk_Tests.Process_Harness;
+with GNAT.OS_Lib;
+
 with Awk_Tests.Process_Support;
 with Project_Tools.Files;
 with Project_Tools.Text;
@@ -11,7 +12,7 @@ package body Awk_Tests.Process_IO is
 
    procedure Test_Process_Direct_File_Input (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print $2 }"),
          new String'("tests/fixtures/input/basic.txt")];
       Result : constant Captured_Process := Run_Awk ("awk direct file input", Args);
@@ -25,7 +26,7 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/-dash-input.txt";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("--"),
          new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
@@ -47,7 +48,7 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "--version";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
    begin
@@ -69,7 +70,7 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "-F";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
    begin
@@ -88,7 +89,7 @@ package body Awk_Tests.Process_IO is
    end Test_Process_Short_Option_Looking_File_After_Program;
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 6) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 6) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/begin.awk"),
          new String'("-ftests/fixtures/programs/print-first.awk"),
@@ -108,7 +109,7 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "-vX=late";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/print-first.awk"),
          new String'("tests/fixtures/input/basic.txt"),
@@ -134,7 +135,7 @@ package body Awk_Tests.Process_IO is
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("--color=always"),
          new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
    begin
@@ -160,7 +161,7 @@ package body Awk_Tests.Process_IO is
    procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_append.txt";
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("--color=always"),
          new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
    begin
@@ -193,7 +194,7 @@ package body Awk_Tests.Process_IO is
       Target : constant String := "tests/fixtures/filesystem";
 
       procedure Expect_Failure (Operator, Message : String) is
-         Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
            [new String'
               ("BEGIN { print ""x"" " & Operator & " """ & Target & """; print ""after"" }")];
       begin
@@ -223,7 +224,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print }"),
          new String'("-")];
       Result : constant Captured_Process := Run_Awk ("awk process explicit stdin eof", Args);
@@ -235,7 +236,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print NR "":"" $2 }"),
          new String'("-")];
       Result : constant Captured_Process :=
@@ -250,7 +251,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("{ print NR "":"" $1 }")];
       Result : constant Captured_Process :=
         Run_Awk_Err_To_Out (Args, "red blue" & LF & "green yellow");
@@ -264,7 +265,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("{ print NR "":"" $0 }"),
          new String'("-"),
          new String'("-")];
@@ -280,7 +281,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("BEGIN { print ARGC; print ARGV[1]; print ARGV[2] }"),
          new String'("name=value"),
          new String'("tests/fixtures/input/basic.txt")];
@@ -296,7 +297,7 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("BEGIN { print ""begin"", X } { print FILENAME, FNR, X, $0 } END { print ""end"", X }"),
          new String'("tests/fixtures/input/basic.txt"),
          new String'("X=42"),

@@ -1,7 +1,9 @@
 with AUnit.Assertions;
 
-with Awk_Tests.Process_Harness;
+with GNAT.OS_Lib;
+
 with Awk_Tests.Process_Support;
+with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process_Diagnostics is
@@ -10,7 +12,7 @@ package body Awk_Tests.Process_Diagnostics is
 
    procedure Test_Process_Usage_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("--bad-option")];
    begin
       declare
@@ -44,7 +46,7 @@ package body Awk_Tests.Process_Diagnostics is
          Styled       : Boolean;
          Message      : String)
       is
-         Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
            [new String'(Color_Option), new String'("--bad")];
       begin
          declare
@@ -77,7 +79,7 @@ package body Awk_Tests.Process_Diagnostics is
          Styled       : Boolean;
          Message      : String)
       is
-         Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
            [new String'(First_Color), new String'(Second_Color), new String'("--bad")];
       begin
          declare
@@ -104,7 +106,7 @@ package body Awk_Tests.Process_Diagnostics is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 0) := [];
+      Args : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -125,7 +127,7 @@ package body Awk_Tests.Process_Diagnostics is
       pragma Unreferenced (T);
 
       procedure Expect_Invalid (Argument, Value, Message : String) is
-         Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
            [new String'(Argument)];
       begin
          declare
@@ -153,7 +155,7 @@ package body Awk_Tests.Process_Diagnostics is
       pragma Unreferenced (T);
 
       procedure Expect_Missing (Option : String) is
-         Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
            [new String'(Option)];
       begin
          declare
@@ -182,7 +184,7 @@ package body Awk_Tests.Process_Diagnostics is
       pragma Unreferenced (T);
 
       procedure Expect_Unsupported
-        (Args    : Awk_Tests.Process_Harness.Argument_List;
+        (Args    : GNAT.OS_Lib.Argument_List;
          Message : String)
       is
       begin
@@ -203,10 +205,10 @@ package body Awk_Tests.Process_Diagnostics is
       end Expect_Unsupported;
    begin
       declare
-         Separate_Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
            [new String'("-f"),
             new String'("-")];
-         Attached : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
            [new String'("-f-")];
       begin
          Expect_Unsupported (Separate_Args, "separate -f -");
@@ -215,7 +217,7 @@ package body Awk_Tests.Process_Diagnostics is
    end Test_Process_Program_File_Stdin_Unsupported;
    procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/no-such-program.awk")];
    begin
@@ -246,7 +248,7 @@ package body Awk_Tests.Process_Diagnostics is
    end Test_Process_Missing_Program_File;
    procedure Test_Process_Missing_Input_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("{ print }"),
          new String'("tests/fixtures/input/no-such-input.txt")];
    begin
@@ -281,7 +283,7 @@ package body Awk_Tests.Process_Diagnostics is
       pragma Unreferenced (T);
 
       procedure Expect_Invalid
-        (Args    : Awk_Tests.Process_Harness.Argument_List;
+        (Args    : GNAT.OS_Lib.Argument_List;
          Message : String)
       is
       begin
@@ -306,11 +308,11 @@ package body Awk_Tests.Process_Diagnostics is
       end Expect_Invalid;
    begin
       declare
-         Separate_Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
            [new String'("-v"),
             new String'("1bad=value"),
             new String'("BEGIN { print 1 }")];
-         Attached : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
            [new String'("-v1bad=value"),
             new String'("BEGIN { print 1 }")];
       begin
@@ -322,8 +324,8 @@ package body Awk_Tests.Process_Diagnostics is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=da"),
          new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
@@ -344,11 +346,11 @@ package body Awk_Tests.Process_Diagnostics is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env     : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
+      Env     : constant String := Project_Tools.Processes.Locate_Command ("env");
       Doubled : constant String :=
         Character'Val (16#C3#) & Character'Val (16#83#)
         & Character'Val (16#C2#);
-      Args    : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args    : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=el"),
          new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
@@ -369,8 +371,8 @@ package body Awk_Tests.Process_Diagnostics is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=zz_ZZ.UTF-8"),
          new String'(Awk_From_Tests_Directory),
          new String'("--bad")];
@@ -395,7 +397,7 @@ package body Awk_Tests.Process_Diagnostics is
    is
       pragma Unreferenced (T);
       Escape : constant String := [1 => Character'Val (27)];
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("--bad" & LF & "awk: error: forged" & Escape & "[2J")];
    begin
       declare
@@ -415,7 +417,7 @@ package body Awk_Tests.Process_Diagnostics is
    end Test_Process_Diagnostic_Sanitizes_Hostile_Argument;
    procedure Test_Process_Parse_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN {")];
    begin
       declare
@@ -436,7 +438,7 @@ package body Awk_Tests.Process_Diagnostics is
    end Test_Process_Parse_Failure;
    procedure Test_Process_Runtime_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { print 1 / 0 }")];
    begin
       declare

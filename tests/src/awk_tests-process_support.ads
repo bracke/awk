@@ -1,5 +1,5 @@
 with Ada.Strings.Unbounded;
-with Awk_Tests.Process_Harness;
+with GNAT.OS_Lib;
 
 package Awk_Tests.Process_Support is
    --  Shared helpers for process-level AUnit suites.
@@ -15,8 +15,8 @@ package Awk_Tests.Process_Support is
    function Awk_From_Tests_Directory return String;
    --  Return the built awk executable path relative to tests/.
 
-   --  @return True when the host process harness preserves empty arguments.
-   function Process_Harness_Preserves_Empty_Arguments return Boolean;
+   --  @return True when project_tools process execution preserves empty arguments.
+   function Project_Tools_Preserves_Empty_Arguments return Boolean;
    --  Return whether process tests can rely on empty command-line arguments.
 
    type Captured_Process is record
@@ -25,13 +25,13 @@ package Awk_Tests.Process_Support is
    end record;
 
    function Run_Awk_Err_To_Out
-     (Args  : Awk_Tests.Process_Harness.Argument_List;
+     (Args  : GNAT.OS_Lib.Argument_List;
       Input : String := "") return Captured_Process;
    --  Run the built awk executable from tests/ with stderr merged into output.
 
    function Run_Command_Err_To_Out
      (Command : String;
-      Args    : Awk_Tests.Process_Harness.Argument_List;
+      Args    : GNAT.OS_Lib.Argument_List;
       Input   : String := "") return Captured_Process;
    --  Run an arbitrary command with stderr merged into output.
 
@@ -39,12 +39,12 @@ package Awk_Tests.Process_Support is
      (Label   : String;
       Dir     : String;
       Program : String;
-      Args    : Awk_Tests.Process_Harness.Argument_List) return Captured_Process;
+      Args    : GNAT.OS_Lib.Argument_List) return Captured_Process;
    --  Run a process through the status harness and capture stdout.
 
    function Run_Awk
      (Label : String;
-      Args  : Awk_Tests.Process_Harness.Argument_List) return Captured_Process;
+      Args  : GNAT.OS_Lib.Argument_List) return Captured_Process;
    --  Run the built awk executable from the repository root and capture stdout.
 
    function Output_String (Result : Captured_Process) return String;

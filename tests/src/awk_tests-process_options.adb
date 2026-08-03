@@ -1,7 +1,9 @@
 with AUnit.Assertions;
 
-with Awk_Tests.Process_Harness;
+with GNAT.OS_Lib;
+
 with Awk_Tests.Process_Support;
+with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process_Options is
@@ -10,7 +12,7 @@ package body Awk_Tests.Process_Options is
 
    procedure Test_Process_Version (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("--version")];
       Result : constant Captured_Process := Run_Awk ("awk --version", Args);
    begin
@@ -33,8 +35,8 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("LC_ALL=da"),
          new String'(Awk_From_Repository_Root),
          new String'("--version")];
@@ -62,10 +64,10 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("")];
    begin
-      if not Process_Harness_Preserves_Empty_Arguments then
+      if not Project_Tools_Preserves_Empty_Arguments then
          return;
       end if;
 
@@ -80,7 +82,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("--"),
          new String'("BEGIN { print ARGV[1]; print ARGV[2]; print ARGV[3] }"),
          new String'("--help"),
@@ -106,7 +108,7 @@ package body Awk_Tests.Process_Options is
    end Test_Process_Option_Terminator_Long_Operands;
    procedure Test_Process_Help_Color_Never (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("--color=never"), new String'("--help")];
       Result : constant Captured_Process := Run_Awk ("awk help no color", Args);
    begin
@@ -136,7 +138,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 4) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
         [new String'("--help"),
          new String'("-f"),
          new String'("tests/fixtures/programs/no-such-program.awk"),
@@ -150,7 +152,7 @@ package body Awk_Tests.Process_Options is
    end Test_Process_Help_Short_Circuits_Runtime;
    procedure Test_Process_Help_Color_Always (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("--color=always"), new String'("--help")];
       Result : constant Captured_Process := Run_Awk ("awk help color always", Args);
    begin
@@ -162,8 +164,8 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 4) :=
+      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
         [new String'("NO_COLOR=1"),
          new String'(Awk_From_Repository_Root),
          new String'("--color=auto"),
@@ -185,7 +187,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("--version"),
          new String'("-f"),
          new String'("tests/fixtures/programs/no-such-program.awk")];
@@ -201,7 +203,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("--color=always"),
          new String'("BEGIN { print ""plain"" }")];
       Result : constant Captured_Process := Run_Awk ("awk output color always", Args);
@@ -213,7 +215,7 @@ package body Awk_Tests.Process_Options is
    end Test_Process_Awk_Output_Unstyled_With_Color_Always;
    procedure Test_Process_Field_Separator (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 4) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
         [new String'("-F"),
          new String'(" "),
          new String'("{ print $1 ""/"" $2 }"),
@@ -228,7 +230,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 4) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 4) :=
         [new String'("-F:"),
          new String'("-F "),
          new String'("{ print $2 }"),
@@ -241,7 +243,7 @@ package body Awk_Tests.Process_Options is
    end Test_Process_Attached_Field_Separator_Final_Wins;
    procedure Test_Process_V_Assignment (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("-vX=41"),
          new String'("BEGIN { print X + 1 }")];
       Result : constant Captured_Process := Run_Awk ("awk process -v", Args);
@@ -254,7 +256,7 @@ package body Awk_Tests.Process_Options is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
         [new String'("-vX=first"),
          new String'("-v"),
          new String'("X=second"),

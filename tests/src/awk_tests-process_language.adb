@@ -1,6 +1,7 @@
 with AUnit.Assertions;
 
-with Awk_Tests.Process_Harness;
+with GNAT.OS_Lib;
+
 with Awk_Tests.Process_Support;
 with Project_Tools.Files;
 with Project_Tools.Text;
@@ -11,7 +12,7 @@ package body Awk_Tests.Process_Language is
 
    procedure Test_Process_Multiple_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("{ print FILENAME "":"" FNR "":"" $1 }"),
          new String'("tests/fixtures/input/basic.txt"),
          new String'("tests/fixtures/input/second.txt")];
@@ -30,7 +31,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("/^[a-z]+ [0-9]+$/ { print $1, $2 + 3, substr($1, 2, 2), length($1) }"),
          new String'("tests/fixtures/input/regex_numbers.txt")];
    begin
@@ -58,7 +59,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { printf ""%s:%03d\n"", ""n"", 7 }")];
       Result : constant Captured_Process := Run_Awk ("awk process printf formatting", Args);
    begin
@@ -71,7 +72,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { if (""beta"" > ""alpha"") print ""string""; if (5 >= 3) print ""number""; if (""7"" == 7) print ""coerce"" }")];
       Result : constant Captured_Process := Run_Awk ("awk process comparisons", Args);
    begin
@@ -88,7 +89,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { s = ""aa""; sub(/a|aa/, ""X"", s); print s }")];
       Result : constant Captured_Process := Run_Awk ("awk process sub replacement", Args);
    begin
@@ -101,7 +102,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { s = ""banana""; print gsub(/a/, ""A"", s), s; print index(s, ""nA""), toupper(""Ada"") }")];
       Result : constant Captured_Process := Run_Awk ("awk process string builtins", Args);
    begin
@@ -116,7 +117,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { n = split(""a:b:c"", parts, "":""); print n, parts[2] }")];
       Result : constant Captured_Process := Run_Awk ("awk process split builtin", Args);
    begin
@@ -129,7 +130,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { print sprintf(""%s-%02d"", ""x"", 4); print match(""abc123"", /[0-9]+/), RSTART, RLENGTH }")];
       Result : constant Captured_Process := Run_Awk ("awk process match and sprintf", Args);
    begin
@@ -144,7 +145,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { OFS="":""; ORS=""|""; print tolower(""ADA""), int(3.9), sqrt(9) }")];
       Result : constant Captured_Process := Run_Awk ("awk process separators and numeric builtins", Args);
    begin
@@ -157,7 +158,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { print sin(0), cos(0), exp(0), log(1), atan2(0, -1) }")];
       Result : constant Captured_Process := Run_Awk ("awk process math builtins", Args);
    begin
@@ -170,7 +171,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { a[""x""] = 1; a[""y""] = 2; delete a[""x""]; for (k in a) print k, a[k]; i = 0; while (i < 2) { print ""w"", i; i++ } }")];
       Result : constant Captured_Process := Run_Awk ("awk process arrays delete and while", Args);
    begin
@@ -189,7 +190,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("BEGIN { for (i = 0; i < 4; i++) { if (i == 1) continue; if (i == 3) break; print ""loop"", i } } { if ($1 == ""one"") next; print (NF ? $1 : ""empty"") }"),
          new String'("tests/fixtures/input/basic.txt")];
       Result : constant Captured_Process := Run_Awk ("awk process next ternary break continue", Args);
@@ -209,7 +210,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("BEGIN { FS="" ""; OFS=""|"" } { $2 = toupper($2); print $0, NF }"),
          new String'("tests/fixtures/input/basic.txt")];
       Result : constant Captured_Process := Run_Awk ("awk process field assignment rebuilds record", Args);
@@ -225,7 +226,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
         [new String'("BEGIN { FS="" ""; OFS="":"" } { $0 = toupper($0); print $1, $2, NF }"),
          new String'("tests/fixtures/input/basic.txt")];
       Result : constant Captured_Process := Run_Awk ("awk process record assignment resplits fields", Args);
@@ -239,7 +240,7 @@ package body Awk_Tests.Process_Language is
 
    procedure Test_Process_Command_Getline (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { ""printf x"" | getline value; print value }")];
       Result : constant Captured_Process := Run_Awk ("awk process command getline", Args);
    begin
@@ -252,7 +253,7 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
+      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
         [new String'("BEGIN { getline line < ""tests/fixtures/input/basic.txt""; print line }")];
       Result : constant Captured_Process := Run_Awk ("awk process auxiliary getline", Args);
    begin
