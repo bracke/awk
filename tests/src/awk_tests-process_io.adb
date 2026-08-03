@@ -242,16 +242,10 @@ package body Awk_Tests.Process_IO is
               ("BEGIN { print ""x"" " & Operator & " """ & Target & """; print ""after"" }")];
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 3, Message & " exits with host I/O status");
+            Assert (Result.Status = 3, Message & " exits with host I/O status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Error_Header
@@ -295,15 +289,11 @@ package body Awk_Tests.Process_IO is
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("{ print NR "":"" $2 }"),
          new String'("-")];
-      Status : aliased Integer := -1;
-      Output : constant String :=
-        Awk_Tests.Process_Harness.Command_Output
-          (Command    => Awk_From_Tests_Directory,
-           Arguments => Args,
-           Input     => "one two" & LF & "three four",
-           Status    => Status'Access);
+      Result : constant Captured_Process :=
+        Run_Awk_Err_To_Out (Args, "one two" & LF & "three four");
+      Output : constant String := Output_String (Result);
    begin
-      Assert (Status = 0, "explicit stdin data exits successfully");
+      Assert (Result.Status = 0, "explicit stdin data exits successfully");
       Assert (Output = "1:two" & LF & "2:four",
               "process stdin data reaches installed executable");
    end Test_Process_Explicit_Stdin_Data;
@@ -313,15 +303,11 @@ package body Awk_Tests.Process_IO is
       pragma Unreferenced (T);
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 1) :=
         [new String'("{ print NR "":"" $1 }")];
-      Status : aliased Integer := -1;
-      Output : constant String :=
-        Awk_Tests.Process_Harness.Command_Output
-          (Command    => Awk_From_Tests_Directory,
-           Arguments => Args,
-           Input     => "red blue" & LF & "green yellow",
-           Status    => Status'Access);
+      Result : constant Captured_Process :=
+        Run_Awk_Err_To_Out (Args, "red blue" & LF & "green yellow");
+      Output : constant String := Output_String (Result);
    begin
-      Assert (Status = 0, "implicit stdin data exits successfully");
+      Assert (Result.Status = 0, "implicit stdin data exits successfully");
       Assert (Output = "1:red" & LF & "2:green",
               "missing input operands read standard input at process boundary");
    end Test_Process_Implicit_Stdin_Data;
@@ -333,15 +319,11 @@ package body Awk_Tests.Process_IO is
         [new String'("{ print NR "":"" $0 }"),
          new String'("-"),
          new String'("-")];
-      Status : aliased Integer := -1;
-      Output : constant String :=
-        Awk_Tests.Process_Harness.Command_Output
-          (Command    => Awk_From_Tests_Directory,
-           Arguments => Args,
-           Input     => "alpha" & LF & "beta",
-           Status    => Status'Access);
+      Result : constant Captured_Process :=
+        Run_Awk_Err_To_Out (Args, "alpha" & LF & "beta");
+      Output : constant String := Output_String (Result);
    begin
-      Assert (Status = 0, "repeated stdin operands exit successfully");
+      Assert (Result.Status = 0, "repeated stdin operands exit successfully");
       Assert (Output = "1:alpha" & LF & "2:beta",
               "first stdin operand consumes data and later stdin observes EOF");
    end Test_Process_Repeated_Stdin_Data;

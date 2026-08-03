@@ -31,6 +31,36 @@ package body Awk_Tests.Process_Support is
       return not Project_Tools.Files.File_Exists ("../bin/awk.exe");
    end Process_Harness_Preserves_Empty_Arguments;
 
+   function Run_Awk_Err_To_Out
+     (Args  : Awk_Tests.Process_Harness.Argument_List;
+      Input : String := "") return Captured_Process
+   is
+   begin
+      return Run_Command_Err_To_Out (Awk_From_Tests_Directory, Args, Input);
+   end Run_Awk_Err_To_Out;
+
+   function Run_Command_Err_To_Out
+     (Command : String;
+      Args    : Awk_Tests.Process_Harness.Argument_List;
+      Input   : String := "") return Captured_Process
+   is
+      Status : aliased Integer := -1;
+      Output : constant String :=
+        Awk_Tests.Process_Harness.Command_Output
+          (Command    => Command,
+           Arguments  => Args,
+           Input      => Input,
+           Status     => Status'Access,
+           Err_To_Out => True);
+   begin
+      return
+        (Status => Status,
+         Output => U.To_Unbounded_String (Output));
+   end Run_Command_Err_To_Out;
+
+   function Output_String (Result : Captured_Process) return String is
+     (U.To_String (Result.Output));
+
    procedure Ensure_Filesystem_Fixture_Directory is
    begin
       Fixtures.Make_Directory ("../tests/fixtures/filesystem");

@@ -11,7 +11,7 @@ usecase = "source policy workflow gate"
 [[body]]
 path = "tests/src/awk_tests-process_diagnostics.adb"
 split_prefix = "tests/src/awk_tests-process_diagnostics"
-target_lines = 604
+target_lines = 508
 max_lines = 750
 min_headroom_lines = 50
 max_bytes = 60000
@@ -21,7 +21,7 @@ usecase = "process diagnostic integration tests"
 [[body]]
 path = "tests/src/awk_tests-process_io.adb"
 split_prefix = "tests/src/awk_tests-process_io"
-target_lines = 445
+target_lines = 427
 max_lines = 560
 min_headroom_lines = 40
 max_bytes = 50000

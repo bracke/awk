@@ -14,16 +14,10 @@ package body Awk_Tests.Process_Diagnostics is
         [new String'("--bad-option")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "unknown option exits with usage status");
+         Assert (Result.Status = 2, "unknown option exits with usage status");
          Assert (Project_Tools.Text.Contains
                    (Output,
                     English_Error_Header
@@ -54,16 +48,10 @@ package body Awk_Tests.Process_Diagnostics is
            [new String'(Color_Option), new String'("--bad")];
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Result.Status = 2, Message & " exits with usage status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Text
@@ -93,16 +81,10 @@ package body Awk_Tests.Process_Diagnostics is
            [new String'(First_Color), new String'(Second_Color), new String'("--bad")];
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Result.Status = 2, Message & " exits with usage status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Text
@@ -125,16 +107,10 @@ package body Awk_Tests.Process_Diagnostics is
       Args : constant Awk_Tests.Process_Harness.Argument_List (1 .. 0) := [];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "no arguments exits with usage status");
+         Assert (Result.Status = 2, "no arguments exits with usage status");
          Assert (Project_Tools.Text.Contains
                    (Output, English_Text ("awk.usage.missing_program")),
                  "no arguments reports missing program");
@@ -153,16 +129,10 @@ package body Awk_Tests.Process_Diagnostics is
            [new String'(Argument)];
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Result.Status = 2, Message & " exits with usage status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Text
@@ -187,16 +157,10 @@ package body Awk_Tests.Process_Diagnostics is
            [new String'(Option)];
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Option & " exits with usage status");
+            Assert (Result.Status = 2, Option & " exits with usage status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Text
@@ -223,16 +187,10 @@ package body Awk_Tests.Process_Diagnostics is
       is
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Result.Status = 2, Message & " exits with usage status");
             Assert
               (Project_Tools.Text.Contains
                  (Output,
@@ -262,16 +220,10 @@ package body Awk_Tests.Process_Diagnostics is
          new String'("tests/fixtures/programs/no-such-program.awk")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 3, "missing process program file exits with host I/O status");
+         Assert (Result.Status = 3, "missing process program file exits with host I/O status");
          Assert
            (Project_Tools.Text.Contains
               (Output,
@@ -299,16 +251,10 @@ package body Awk_Tests.Process_Diagnostics is
          new String'("tests/fixtures/input/no-such-input.txt")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 3, "missing process input file exits with host I/O status");
+         Assert (Result.Status = 3, "missing process input file exits with host I/O status");
          Assert
            (Project_Tools.Text.Contains
               (Output,
@@ -340,16 +286,10 @@ package body Awk_Tests.Process_Diagnostics is
       is
       begin
          declare
-            Status : aliased Integer := -1;
-            Output : constant String :=
-              Awk_Tests.Process_Harness.Command_Output
-                (Command    => Awk_From_Tests_Directory,
-                 Arguments  => Args,
-                 Input      => "",
-                 Status     => Status'Access,
-                 Err_To_Out => True);
+            Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+            Output : constant String := Output_String (Result);
          begin
-            Assert (Status = 2, Message & " exits with usage status");
+            Assert (Result.Status = 2, Message & " exits with usage status");
             Assert (Project_Tools.Text.Contains
                       (Output,
                        English_Text
@@ -390,16 +330,10 @@ package body Awk_Tests.Process_Diagnostics is
    begin
       Assert (Env /= "", "env executable is available for locale-bound process test");
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Env,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "Danish process diagnostic exits with usage status");
+         Assert (Result.Status = 2, "Danish process diagnostic exits with usage status");
          Assert (Project_Tools.Text.Contains (Output, "ukendt tilvalg"),
                  "process diagnostic follows LC_ALL locale");
          Assert (Project_Tools.Text.Contains (Output, "tip:"),
@@ -421,16 +355,10 @@ package body Awk_Tests.Process_Diagnostics is
    begin
       Assert (Env /= "", "env executable is available for UTF-8 locale process test");
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Env,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "Greek process diagnostic exits with usage status");
+         Assert (Result.Status = 2, "Greek process diagnostic exits with usage status");
          Assert (Project_Tools.Text.Contains (Output, "άγνωστη επιλογή"),
                  "process diagnostic renders Greek catalog text");
          Assert (not Project_Tools.Text.Contains (Output, Doubled),
@@ -449,16 +377,10 @@ package body Awk_Tests.Process_Diagnostics is
    begin
       Assert (Env /= "", "env executable is available for unsupported-locale process test");
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Env,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "unsupported locale diagnostic exits with usage status");
+         Assert (Result.Status = 2, "unsupported locale diagnostic exits with usage status");
          Assert (Project_Tools.Text.Contains
                    (Output,
                     English_Text ("awk.usage.unknown_option", "option", "--bad")),
@@ -477,16 +399,10 @@ package body Awk_Tests.Process_Diagnostics is
         [new String'("--bad" & LF & "awk: error: forged" & Escape & "[2J")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 2, "hostile process argument exits with usage status");
+         Assert (Result.Status = 2, "hostile process argument exits with usage status");
          Assert
            (not Project_Tools.Text.Contains (Output, LF & "awk: error: forged"),
             "process diagnostic cannot be forged with an embedded newline");
@@ -503,16 +419,10 @@ package body Awk_Tests.Process_Diagnostics is
         [new String'("BEGIN {")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 1, "process parse failure exits with interpreter status");
+         Assert (Result.Status = 1, "process parse failure exits with interpreter status");
          Assert (Project_Tools.Text.Contains
                    (Output,
                     English_Error_Header
@@ -530,16 +440,10 @@ package body Awk_Tests.Process_Diagnostics is
         [new String'("BEGIN { print 1 / 0 }")];
    begin
       declare
-         Status : aliased Integer := -1;
-         Output : constant String :=
-           Awk_Tests.Process_Harness.Command_Output
-             (Command    => Awk_From_Tests_Directory,
-              Arguments  => Args,
-              Input      => "",
-              Status     => Status'Access,
-              Err_To_Out => True);
+         Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
+         Output : constant String := Output_String (Result);
       begin
-         Assert (Status = 1, "process runtime failure exits with interpreter status");
+         Assert (Result.Status = 1, "process runtime failure exits with interpreter status");
          Assert (Project_Tools.Text.Contains
                    (Output,
                     English_Error_Header
