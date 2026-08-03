@@ -403,6 +403,17 @@ package body Awk_Workflow_Source_Policy is
       Files.Require_Contains
         ("src/awk_workflows.adb", "Require_Clean_Repository;",
          "release workflow must check git status", Quiet => True);
+      Files.Require_Contains
+        ("src/awk_workflows.adb",
+         "when Program_Error =>" & ASCII.LF &
+         "      CLI.Set_Exit_Status (CLI.Failure);",
+         "workflow Program_Error containment must fail the process",
+         Quiet => True);
+      Require
+        (not Files.File_Contains
+           ("src/awk_workflows.adb",
+            "when Program_Error =>" & ASCII.LF & "      null;"),
+         "workflow Program_Error containment must not silently succeed");
       Files.Require_File
         ("../.github/workflows/ci.yml",
          "CI workflow must be present", Quiet => True);
