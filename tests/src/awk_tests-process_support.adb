@@ -39,8 +39,9 @@ package body Awk_Tests.Process_Support is
    function Read_Text_File (Path : String) return String is
      (Fixtures.Read_Text_File (Path));
 
-   function English_Text
+   function Locale_Text
      (Key       : String;
+      Locale    : String := "en";
       Name      : String := "";
       Value     : String := "";
       Detail    : String := "") return String
@@ -48,9 +49,16 @@ package body Awk_Tests.Process_Support is
       Catalog : Awk_CLI.Localization.Catalog;
    begin
       Awk_CLI.Localization.Initialize
-        (Catalog, "../resources/messages/catalog.txt", "en");
+        (Catalog, "../resources/messages/catalog.txt", Locale);
       return Awk_CLI.Localization.Text (Catalog, Key, Name, Value, Detail);
-   end English_Text;
+   end Locale_Text;
+
+   function English_Text
+     (Key       : String;
+      Name      : String := "";
+      Value     : String := "";
+      Detail    : String := "") return String is
+     (Locale_Text (Key, "en", Name, Value, Detail));
 
    function English_Hint (Hint_Key : String) return String is
    begin

@@ -25,11 +25,16 @@ package body Awk_Tests.Process_Options is
            Output  => Output);
    begin
       Assert (Status = 0, "process version exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0" & LF),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 English_Text ("awk.version.program", "version", "0.1.0") & LF),
               "process version includes awk version");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awklib 0.1.0" & LF),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 English_Text ("awk.version.interpreter", "version", "0.1.0") & LF),
               "process version includes awklib version");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "license MIT" & LF),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.version.license") & LF),
               "process version includes license");
       Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "version output is not terminal-styled");
@@ -55,11 +60,16 @@ package body Awk_Tests.Process_Options is
            Args    => Args,
            Output  => Output);
       Assert (Status = 0, "localized process version exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 Locale_Text ("awk.version.program", "da", "version", "0.1.0")),
               "localized version includes awk version");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awklib 0.1.0"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 Locale_Text ("awk.version.interpreter", "da", "version", "0.1.0")),
               "localized version includes awklib version");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "licens MIT"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), Locale_Text ("awk.version.license", "da")),
               "process version follows LC_ALL locale");
    end Test_Process_Localized_Version_From_Locale;
    procedure Test_Process_Empty_Direct_Program
@@ -112,9 +122,12 @@ package body Awk_Tests.Process_Options is
            (U.To_String (Output),
             "--help" & LF & "--version" & LF & "--color=always" & LF),
          "long-option-looking values after -- remain AWK operands");
-      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"),
+      Assert (not Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.usage.direct_program")),
               "--help after -- does not request help");
-      Assert (not Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"),
+      Assert (not Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 English_Text ("awk.version.program", "version", "0.1.0")),
               "--version after -- does not request version output");
       Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "--color after -- does not style AWK output");
@@ -133,16 +146,23 @@ package body Awk_Tests.Process_Options is
            Output  => Output);
    begin
       Assert (Status = 0, "process help exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "--                     end option processing"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.usage.direct_program")),
+              "help includes usage");
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.options.terminator")),
               "help documents the option terminator");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Operands after the program"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.operands")),
               "help documents operand classification");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "standard input is used implicitly"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.stdin")),
               "help documents implicit standard input");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Exit statuses: 0 success"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.exit_statuses")),
               "help documents exit statuses");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "does not claim complete POSIX conformance"),
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.compatibility.awklib_limitations")),
               "help documents the compatibility position");
       Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=never suppresses ANSI escapes");
@@ -166,7 +186,9 @@ package body Awk_Tests.Process_Options is
            Output  => Output);
    begin
       Assert (Status = 0, "help ignores later runtime failures");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help text is emitted");
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.usage.direct_program")),
+              "help text is emitted");
    end Test_Process_Help_Short_Circuits_Runtime;
    procedure Test_Process_Help_Color_Always (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
@@ -207,7 +229,9 @@ package body Awk_Tests.Process_Options is
            Args    => Args,
            Output  => Output);
       Assert (Status = 0, "process help auto with NO_COLOR exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "Usage: awk"), "help includes usage");
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output), English_Text ("awk.help.usage.direct_program")),
+              "help includes usage");
       Assert (not Project_Tools.Text.Contains (U.To_String (Output), Character'Val (27) & "["),
               "color=auto honors NO_COLOR through terminal_styles");
    end Test_Process_Help_Auto_Respects_No_Color;
@@ -229,7 +253,10 @@ package body Awk_Tests.Process_Options is
            Output  => Output);
    begin
       Assert (Status = 0, "version ignores later runtime failures");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "awk 0.1.0"), "version text is emitted");
+      Assert (Project_Tools.Text.Contains
+                (U.To_String (Output),
+                 English_Text ("awk.version.program", "version", "0.1.0")),
+              "version text is emitted");
    end Test_Process_Version_Short_Circuits_Runtime;
    procedure Test_Process_Awk_Output_Unstyled_With_Color_Always
      (T : in out AUnit.Test_Cases.Test_Case'Class)

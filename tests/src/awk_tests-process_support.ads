@@ -23,6 +23,14 @@ package Awk_Tests.Process_Support is
    function Read_Text_File (Path : String) return String;
    --  Read fixture text through project_tools.
 
+   function Locale_Text
+     (Key       : String;
+      Locale    : String := "en";
+      Name      : String := "";
+      Value     : String := "";
+      Detail    : String := "") return String;
+   --  Render a message through the production localization adapter.
+
    function English_Text
      (Key       : String;
       Name      : String := "";

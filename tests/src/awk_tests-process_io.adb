@@ -252,7 +252,11 @@ package body Awk_Tests.Process_IO is
                  Err_To_Out => True);
          begin
             Assert (Status = 3, Message & " exits with host I/O status");
-            Assert (Project_Tools.Text.Contains (Output, "awk: error: cannot write output file: " & Target),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Error_Header
+                         (English_Text
+                            ("awk.output_file.write_failed", "path", Target))),
                     Message & " reports the redirected output target");
             Assert (not Project_Tools.Text.Contains (Output, "after"),
                     Message & " does not continue after required output failure");

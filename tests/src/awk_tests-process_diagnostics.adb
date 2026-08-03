@@ -459,9 +459,12 @@ package body Awk_Tests.Process_Diagnostics is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "unsupported locale diagnostic exits with usage status");
-         Assert (Project_Tools.Text.Contains (Output, "unknown option"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Text ("awk.usage.unknown_option", "option", "--bad")),
                  "unsupported locale falls back to English at process boundary");
-         Assert (Project_Tools.Text.Contains (Output, "hint:"),
+         Assert (Project_Tools.Text.Contains
+                   (Output, English_Hint ("awk.hint.use_help")),
                  "fallback process hint is emitted");
       end;
    end Test_Process_Unsupported_Locale_Fallback;
