@@ -53,11 +53,22 @@ procedure Awk_Workflows is
       Project_Tools.Alire.Run_Build (Directory => ".");
    end Build;
 
+   procedure Release_Build is
+   begin
+      Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);
+      Project_Tools.Alire.Run_Build (Directory => ".", Release_Mode => True);
+   end Release_Build;
+
+   procedure Run_AUnit is
+   begin
+      Project_Tools.Release_Checks.Run
+        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
+   end Run_AUnit;
+
    procedure Test is
    begin
       Project_Tools.Alire.Run_Build (Directory => ".");
-      Project_Tools.Release_Checks.Run
-        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
+      Run_AUnit;
    end Test;
 
    procedure Require_Clean_Repository is
@@ -284,10 +295,8 @@ procedure Awk_Workflows is
       Put_Info ("build output policy checks passed");
    end Build_Output_Policy;
 
-   procedure Verify is
+   procedure Core_Quality_Gates is
    begin
-      Build;
-      Test;
       Awk_Workflow_Metadata.Run;
       Awk_Workflow_Docs.Run;
       Awk_Workflow_Catalogs.Run;
@@ -296,6 +305,13 @@ procedure Awk_Workflows is
       Option_Drift;
       Awk_Workflow_Source_Policy.Package_Manifest_Policy;
       Awk_Workflow_Source_Policy.Run;
+   end Core_Quality_Gates;
+
+   procedure Verify is
+   begin
+      Build;
+      Test;
+      Core_Quality_Gates;
       Install_Boundary;
       Build_Output_Policy;
    end Verify;
@@ -336,18 +352,9 @@ begin
       Build_Output_Policy;
    elsif Command = "release" then
       Require_Clean_Repository;
-      Project_Tools.Alire.Run_Build (Directory => Root, Release_Mode => True);
-      Project_Tools.Alire.Run_Build (Directory => ".", Release_Mode => True);
-      Project_Tools.Release_Checks.Run
-        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
-      Awk_Workflow_Metadata.Run;
-      Awk_Workflow_Docs.Run;
-      Awk_Workflow_Catalogs.Run;
-      Conformance;
-      Awk_Workflow_Source_Policy.Run;
-      Exit_Status_Drift;
-      Option_Drift;
-      Awk_Workflow_Source_Policy.Package_Manifest_Policy;
+      Release_Build;
+      Run_AUnit;
+      Core_Quality_Gates;
       Install_Boundary;
       Awk_Workflow_Packaging.Run (Release_Mode => True);
       Build_Output_Policy;

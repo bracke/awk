@@ -618,6 +618,12 @@ package body Awk_Workflow_Source_Policy is
            ("src/awk_workflows.adb", "Release_Mode => True",
             "release workflow must use Alire release builds", Quiet => True);
          Files.Require_Contains
+           ("src/awk_workflows.adb", "procedure Core_Quality_Gates",
+            "shared workflow quality gates must be centralized", Quiet => True);
+         Files.Require_Contains
+           ("src/awk_workflows.adb", "Run_AUnit;",
+            "workflow AUnit execution must be reusable across build modes", Quiet => True);
+         Files.Require_Contains
            ("src/awk_workflows.adb", "Require_Clean_Repository;",
             "release workflow must check git status", Quiet => True);
          Files.Require_Contains
