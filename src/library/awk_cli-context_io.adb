@@ -123,26 +123,30 @@ package body Awk_CLI.Context_IO is
    begin
       if not Context.IO.Files.Is_Empty then
          for Position in Context.IO.Files.First_Index .. Context.IO.Files.Last_Index loop
-            if U.To_String (Context.IO.Files.Element (Position).Path) = Path then
-               if not Context.IO.Files.Element (Position).Openable then
-                  return Awk_CLI.Redirections.Open_Failed;
-               end if;
-               if not Context.IO.Files.Element (Position).Writable then
-                  return Awk_CLI.Redirections.Write_Failed;
-               end if;
-
-               if Context.Config.Use_Process then
-                  if Awk_CLI.Platform.Write_File (Path, Content, Append) then
-                     Update_Virtual_File (Position);
-                     return Awk_CLI.Redirections.Write_Success;
-                  else
+            declare
+               File : constant Virtual_File := Context.IO.Files.Element (Position);
+            begin
+               if U.To_String (File.Path) = Path then
+                  if not File.Openable then
+                     return Awk_CLI.Redirections.Open_Failed;
+                  end if;
+                  if not File.Writable then
                      return Awk_CLI.Redirections.Write_Failed;
                   end if;
-               end if;
 
-               Update_Virtual_File (Position);
-               return Awk_CLI.Redirections.Write_Success;
-            end if;
+                  if Context.Config.Use_Process then
+                     if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+                        Update_Virtual_File (Position);
+                        return Awk_CLI.Redirections.Write_Success;
+                     else
+                        return Awk_CLI.Redirections.Write_Failed;
+                     end if;
+                  end if;
+
+                  Update_Virtual_File (Position);
+                  return Awk_CLI.Redirections.Write_Success;
+               end if;
+            end;
          end loop;
       end if;
 

@@ -341,6 +341,11 @@ package body Awk_Workflow_Source_Policy is
          "procedure Record_Write",
          "context redirection write recording must be centralized",
          Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-context_io.adb",
+         [U.To_Unbounded_String ("Context.IO.Files.Element (Position).Openable"),
+          U.To_Unbounded_String ("Context.IO.Files.Element (Position).Writable")],
+         Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-inputs-live.adb",
          "Awk_CLI.Context_IO.Read_Virtual_File",
@@ -348,8 +353,17 @@ package body Awk_Workflow_Source_Policy is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-context_io.adb",
-         "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
-         "                     Update_Virtual_File (Position);",
+         "File : constant Virtual_File := Context.IO.Files.Element (Position);",
+         "context redirection lookup must use a local virtual-file record",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-context_io.adb",
+         "if Awk_CLI.Platform.Write_File (Path, Content, Append) then",
+         "process redirection must attempt the host write before updating virtual context",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-context_io.adb",
+         "Update_Virtual_File (Position);",
          "process redirection must update virtual context only after host write succeeds",
          Quiet => True);
       Files.Require_Contains
