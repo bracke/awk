@@ -342,6 +342,11 @@ package body Awk_Workflow_Source_Policy is
          "context redirection write recording must be centralized",
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli-inputs-live.adb",
+         "Awk_CLI.Context_IO.Read_Virtual_File",
+         "live input must reuse centralized virtual-file read rules",
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-context_io.adb",
          "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
          "                     Update_Virtual_File (Position);",

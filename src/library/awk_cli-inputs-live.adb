@@ -1,3 +1,4 @@
+with Awk_CLI.Context_IO;
 with Awk_CLI.Live_Context_Callbacks;
 with System.Address_To_Access_Conversions;
 
@@ -75,6 +76,8 @@ package body Awk_CLI.Inputs.Live is
      (State : in out Live_Input_State;
       Path  : String) return Awk_CLI.Platform.Read_Status
    is
+      Found  : Boolean;
+      Status : Awk_CLI.Platform.Read_Status;
    begin
       State.Active := True;
       State.Active_Process := False;
@@ -82,20 +85,15 @@ package body Awk_CLI.Inputs.Live is
       State.Active_Content := U.Null_Unbounded_String;
       State.Active_Position := 1;
 
-      for File of State.Context.IO.Files loop
-         if U.To_String (File.Path) = Path then
-            if not File.Openable then
-               State.Active := False;
-               return Awk_CLI.Platform.Open_Failed;
-            elsif not File.Readable then
-               State.Active := False;
-               return Awk_CLI.Platform.Read_Failed;
-            else
-               State.Active_Content := File.Content;
-               return Awk_CLI.Platform.Read_Success;
-            end if;
+      Status :=
+        Awk_CLI.Context_IO.Read_Virtual_File
+          (State.Context.all, Path, State.Active_Content, Found);
+      if Found then
+         if Status /= Awk_CLI.Platform.Read_Success then
+            State.Active := False;
          end if;
-      end loop;
+         return Status;
+      end if;
 
       if State.Context.Config.Use_Process then
          State.Active_Process := True;

@@ -14,6 +14,17 @@ package Awk_CLI.Context_IO is
    package U renames Ada.Strings.Unbounded;
 
    --  @param Context Invocation context to inspect.
+   --  @param Path Virtual file path to read.
+   --  @param Content Complete virtual file text when reading succeeds.
+   --  @param Found True when Path matched a virtual file entry.
+   --  @return Read status for a found virtual file; Open_Failed when absent.
+   function Read_Virtual_File
+     (Context : Invocation_Context;
+      Path    : String;
+      Content : out U.Unbounded_String;
+      Found   : out Boolean) return Awk_CLI.Platform.Read_Status;
+
+   --  @param Context Invocation context to inspect.
    --  @param Path Host or virtual file path to read.
    --  @param Content Complete file text when reading succeeds.
    --  @return Read status distinguishing success, open failure, and read failure.
