@@ -6,6 +6,7 @@ with Ada.Text_IO;
 
 with GNAT.OS_Lib;
 
+with Awk_Conformance_Cases;
 with Awk_CLI.Diagnostics;
 with Awk_Workflow_Catalogs;
 with Awk_Workflow_Docs;
@@ -85,12 +86,16 @@ procedure Awk_Workflows is
 
 
    procedure Conformance is
-      procedure Require_Case (Id, Status, Case_File, Expected, Reference : String) is
-         Line : constant String :=
-           Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
+      procedure Require_Case (Index : Positive) is
+         Id        : constant String := Awk_Conformance_Cases.Id (Index);
+         Case_File : constant String := Awk_Conformance_Cases.Case_File (Index);
+         Expected  : constant String := Awk_Conformance_Cases.Expected_File (Index);
       begin
-         Require (Files.Has_Line ("conformance/manifest/cases.txt", Line),
-                  "conformance manifest missing case: " & Id);
+         Require
+           (Files.Has_Line
+              ("conformance/manifest/cases.txt",
+               Awk_Conformance_Cases.Manifest_Line (Index)),
+            "conformance manifest missing case: " & Id);
          Files.Require_File
            ("conformance/" & Case_File,
             "conformance case file missing: " & Case_File);
@@ -109,24 +114,9 @@ procedure Awk_Workflows is
       Require
         (Project_Tools.Release_Checks.File_Length ("conformance/manifest/cases.txt") > 0,
          "conformance manifest is missing or empty");
-      Require_Case
-        ("AWK-CONF-PRINT-001", "Supported", "cases/print_record.awk",
-         "expected/print_record.txt", "basic print through awklib");
-      Require_Case
-        ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
-         "expected/print_first_field.txt", "field processing through awklib");
-      Require_Case
-        ("AWK-CONF-ASSIGNMENT-001", "Supported",
-         "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
-         "positional runtime assignment supported");
-      Require_Case
-        ("AWK-CONF-REDIRECTION-001", "Supported",
-         "cases/append_redirection.awk", "expected/append_redirection.txt",
-         "append redirection supported through awklib streaming callbacks");
-      Require_Case
-        ("AWK-CONF-GETLINE-001", "Supported",
-         "cases/command_getline.awk", "expected/command_getline.txt",
-         "command getline supported through awklib callback");
+      for Index in 1 .. Awk_Conformance_Cases.Case_Count loop
+         Require_Case (Index);
+      end loop;
       Put_Info ("conformance checks passed");
    end Conformance;
 

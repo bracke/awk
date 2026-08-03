@@ -1,5 +1,6 @@
 with AUnit.Assertions;
 
+with Awk_Conformance_Cases;
 with Awk_CLI.Compatibility;
 with Project_Tools.Files;
 with Project_Tools.Test_Fixtures;
@@ -62,17 +63,15 @@ package body Awk_Tests.Compatibility is
       pragma Unreferenced (T);
       Manifest : constant String := Fixtures.Read_Text_File ("conformance/manifest/cases.txt");
 
-      procedure Require_Case
-        (Id        : String;
-         Status    : String;
-         Case_File : String;
-         Expected  : String;
-         Reference : String)
-      is
-         Line : constant String :=
-           Id & "|" & Status & "|" & Case_File & "|" & Expected & "|" & Reference;
+      procedure Require_Case (Index : Positive) is
+         Id        : constant String := Awk_Conformance_Cases.Id (Index);
+         Case_File : constant String := Awk_Conformance_Cases.Case_File (Index);
+         Expected  : constant String := Awk_Conformance_Cases.Expected_File (Index);
       begin
-         Assert (Project_Tools.Text.Contains (Manifest, Line), "manifest contains " & Id);
+         Assert
+           (Project_Tools.Text.Contains
+              (Manifest, Awk_Conformance_Cases.Manifest_Line (Index)),
+            "manifest contains " & Id);
          Assert (Project_Tools.Files.File_Exists ("conformance/" & Case_File),
                  "case file exists for " & Id);
          Assert (Project_Tools.Files.File_Exists ("conformance/" & Expected),
@@ -83,24 +82,9 @@ package body Awk_Tests.Compatibility is
                  "expected file is non-empty for " & Id);
       end Require_Case;
    begin
-      Require_Case
-        ("AWK-CONF-PRINT-001", "Supported", "cases/print_record.awk",
-         "expected/print_record.txt", "basic print through awklib");
-      Require_Case
-        ("AWK-CONF-FIELDS-001", "Supported", "cases/print_first_field.awk",
-         "expected/print_first_field.txt", "field processing through awklib");
-      Require_Case
-        ("AWK-CONF-ASSIGNMENT-001", "Supported",
-         "cases/runtime_assignment.awk", "expected/runtime_assignment.txt",
-         "positional runtime assignment supported");
-      Require_Case
-        ("AWK-CONF-REDIRECTION-001", "Supported",
-         "cases/append_redirection.awk", "expected/append_redirection.txt",
-         "append redirection supported through awklib streaming callbacks");
-      Require_Case
-        ("AWK-CONF-GETLINE-001", "Supported",
-         "cases/command_getline.awk", "expected/command_getline.txt",
-         "command getline supported through awklib callback");
+      for Index in 1 .. Awk_Conformance_Cases.Case_Count loop
+         Require_Case (Index);
+      end loop;
    end Test_Conformance_Manifest;
 
    overriding procedure Register_Tests (T : in out Case_Type) is
