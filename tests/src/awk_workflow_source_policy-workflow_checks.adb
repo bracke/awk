@@ -120,6 +120,10 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_workflows.adb", "Awk_Workflow_Install.Boundary;",
          "workflow main must delegate install boundary checks",
          Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "Awk_Workflow_Build_Output.Run;",
+         "workflow main must delegate build-output checks",
+         Quiet => False);
       Ada_Source.Require_No_Code_Tokens
         ("src/awk_workflows.adb",
          [U.To_Unbounded_String ("Exit_Constant_Value")],

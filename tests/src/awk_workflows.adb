@@ -4,6 +4,7 @@ with Ada.Text_IO;
 
 with GNAT.OS_Lib;
 
+with Awk_Workflow_Build_Output;
 with Awk_Workflow_Catalogs;
 with Awk_Workflow_Conformance;
 with Awk_Workflow_Docs;
@@ -15,12 +16,10 @@ with Awk_Workflow_Source_Policy;
 with Project_Tools.Alire;
 with Project_Tools.Files;
 with Project_Tools.Release_Checks;
-with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
    package Files renames Project_Tools.Files;
-   package Tree_Checks renames Project_Tools.Tree_Checks;
 
    Root : constant String := "..";
    No_Arguments : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
@@ -60,13 +59,6 @@ procedure Awk_Workflows is
         ("awk", Root, Quiet => True);
    end Require_Clean_Repository;
 
-   procedure Build_Output_Policy is
-   begin
-      Tree_Checks.Require_No_Nonempty_Stderr ("../obj", Quiet => True);
-      Tree_Checks.Require_No_Nonempty_Stderr ("obj", Quiet => True);
-      Put_Info ("build output policy checks passed");
-   end Build_Output_Policy;
-
    procedure Core_Quality_Gates is
    begin
       Awk_Workflow_Metadata.Run;
@@ -85,7 +77,7 @@ procedure Awk_Workflows is
       Test;
       Core_Quality_Gates;
       Awk_Workflow_Install.Boundary;
-      Build_Output_Policy;
+      Awk_Workflow_Build_Output.Run;
    end Verify;
 
    procedure Clean is
@@ -109,10 +101,10 @@ procedure Awk_Workflows is
 begin
    if Command = "build" then
       Build;
-      Build_Output_Policy;
+      Awk_Workflow_Build_Output.Run;
    elsif Command = "test" then
       Test;
-      Build_Output_Policy;
+      Awk_Workflow_Build_Output.Run;
    elsif Command = "verify" then
       Verify;
    elsif Command = "docs" then
@@ -121,7 +113,7 @@ begin
       Clean;
    elsif Command = "package" then
       Awk_Workflow_Packaging.Run;
-      Build_Output_Policy;
+      Awk_Workflow_Build_Output.Run;
    elsif Command = "release" then
       Require_Clean_Repository;
       Release_Build;
@@ -129,7 +121,7 @@ begin
       Core_Quality_Gates;
       Awk_Workflow_Install.Boundary;
       Awk_Workflow_Packaging.Run (Release_Mode => True);
-      Build_Output_Policy;
+      Awk_Workflow_Build_Output.Run;
    elsif Command = "--help" or else Command = "-h" then
       Usage;
    else
