@@ -1,161 +1,39 @@
 with Ada.Strings.Unbounded;
+with Awk_Catalog_Policy.Keys;
+with Awk_Catalog_Policy.Locales;
 with Project_Tools.Text;
 
 package body Awk_Catalog_Policy is
    package U renames Ada.Strings.Unbounded;
 
-   Required : constant array (Positive range <>) of U.Unbounded_String :=
-     [U.To_Unbounded_String ("awk.help.title"),
-      U.To_Unbounded_String ("awk.help.summary"),
-      U.To_Unbounded_String ("awk.help.usage.direct_program"),
-      U.To_Unbounded_String ("awk.help.usage.program_files"),
-      U.To_Unbounded_String ("awk.help.options.field_separator"),
-      U.To_Unbounded_String ("awk.help.options.variable"),
-      U.To_Unbounded_String ("awk.help.options.program_file"),
-      U.To_Unbounded_String ("awk.help.options.color"),
-      U.To_Unbounded_String ("awk.help.options.help"),
-      U.To_Unbounded_String ("awk.help.options.version"),
-      U.To_Unbounded_String ("awk.help.options.terminator"),
-      U.To_Unbounded_String ("awk.help.operands"),
-      U.To_Unbounded_String ("awk.help.stdin"),
-      U.To_Unbounded_String ("awk.help.exit_statuses"),
-      U.To_Unbounded_String ("awk.help.compatibility.heading"),
-      U.To_Unbounded_String ("awk.help.compatibility.awklib_limitations"),
-      U.To_Unbounded_String ("awk.version.program"),
-      U.To_Unbounded_String ("awk.version.interpreter"),
-      U.To_Unbounded_String ("awk.version.license"),
-      U.To_Unbounded_String ("awk.diagnostic.label.info"),
-      U.To_Unbounded_String ("awk.diagnostic.label.error"),
-      U.To_Unbounded_String ("awk.diagnostic.label.warning"),
-      U.To_Unbounded_String ("awk.diagnostic.label.internal_error"),
-      U.To_Unbounded_String ("awk.diagnostic.header"),
-      U.To_Unbounded_String ("awk.diagnostic.source_location"),
-      U.To_Unbounded_String ("awk.diagnostic.detail"),
-      U.To_Unbounded_String ("awk.diagnostic.hint"),
-      U.To_Unbounded_String ("awk.source.command_line"),
-      U.To_Unbounded_String ("awk.usage.missing_program"),
-      U.To_Unbounded_String ("awk.usage.unknown_option"),
-      U.To_Unbounded_String ("awk.usage.missing_option_argument"),
-      U.To_Unbounded_String ("awk.usage.invalid_assignment"),
-      U.To_Unbounded_String ("awk.usage.invalid_color_mode"),
-      U.To_Unbounded_String ("awk.usage.program_file_stdin_unsupported"),
-      U.To_Unbounded_String ("awk.program_file.open_failed"),
-      U.To_Unbounded_String ("awk.program_file.read_failed"),
-      U.To_Unbounded_String ("awk.input_file.open_failed"),
-      U.To_Unbounded_String ("awk.input_file.read_failed"),
-      U.To_Unbounded_String ("awk.output_file.open_failed"),
-      U.To_Unbounded_String ("awk.output_file.write_failed"),
-      U.To_Unbounded_String ("awk.standard_input.read_failed"),
-      U.To_Unbounded_String ("awk.standard_output.write_failed"),
-      U.To_Unbounded_String ("awk.interpreter.parse_failed"),
-      U.To_Unbounded_String ("awk.interpreter.runtime_failed"),
-      U.To_Unbounded_String ("awk.interpreter.unsupported_operation"),
-      U.To_Unbounded_String ("awk.internal.localization_failed"),
-      U.To_Unbounded_String ("awk.internal.unexpected_exception"),
-      U.To_Unbounded_String ("awk.hint.use_help"),
-      U.To_Unbounded_String ("awk.hint.option_terminator")];
-
-   Supported_Locales : constant array (Positive range <>) of U.Unbounded_String :=
-     [U.To_Unbounded_String ("az"),
-      U.To_Unbounded_String ("be"),
-      U.To_Unbounded_String ("bg"),
-      U.To_Unbounded_String ("bs"),
-      U.To_Unbounded_String ("ca"),
-      U.To_Unbounded_String ("cnr"),
-      U.To_Unbounded_String ("cs"),
-      U.To_Unbounded_String ("da"),
-      U.To_Unbounded_String ("de"),
-      U.To_Unbounded_String ("el"),
-      U.To_Unbounded_String ("en"),
-      U.To_Unbounded_String ("es"),
-      U.To_Unbounded_String ("et"),
-      U.To_Unbounded_String ("fi"),
-      U.To_Unbounded_String ("fr"),
-      U.To_Unbounded_String ("ga"),
-      U.To_Unbounded_String ("hr"),
-      U.To_Unbounded_String ("hu"),
-      U.To_Unbounded_String ("hy"),
-      U.To_Unbounded_String ("is"),
-      U.To_Unbounded_String ("it"),
-      U.To_Unbounded_String ("ka"),
-      U.To_Unbounded_String ("kk"),
-      U.To_Unbounded_String ("la"),
-      U.To_Unbounded_String ("lb"),
-      U.To_Unbounded_String ("lt"),
-      U.To_Unbounded_String ("lv"),
-      U.To_Unbounded_String ("mk"),
-      U.To_Unbounded_String ("mt"),
-      U.To_Unbounded_String ("nl"),
-      U.To_Unbounded_String ("no"),
-      U.To_Unbounded_String ("pl"),
-      U.To_Unbounded_String ("pt"),
-      U.To_Unbounded_String ("rm"),
-      U.To_Unbounded_String ("ro"),
-      U.To_Unbounded_String ("ru"),
-      U.To_Unbounded_String ("sk"),
-      U.To_Unbounded_String ("sl"),
-      U.To_Unbounded_String ("sq"),
-      U.To_Unbounded_String ("sr"),
-      U.To_Unbounded_String ("sv"),
-      U.To_Unbounded_String ("tr"),
-      U.To_Unbounded_String ("uk")];
-
    function Required_Key_Count return Positive is
    begin
-      return Required'Length;
+      return Awk_Catalog_Policy.Keys.Count;
    end Required_Key_Count;
 
    function Required_Key (Index : Positive) return String is
    begin
-      return U.To_String (Required (Index));
+      return Awk_Catalog_Policy.Keys.Item (Index);
    end Required_Key;
 
    function Is_Required_Key (Key : String) return Boolean is
    begin
-      for Item of Required loop
-         if Key = U.To_String (Item) then
-            return True;
-         end if;
-      end loop;
-      return False;
+      return Awk_Catalog_Policy.Keys.Contains (Key);
    end Is_Required_Key;
 
    function Supported_Locale_Count return Positive is
    begin
-      return Supported_Locales'Length;
+      return Awk_Catalog_Policy.Locales.Count;
    end Supported_Locale_Count;
 
    function Supported_Locale (Index : Positive) return String is
    begin
-      return U.To_String (Supported_Locales (Index));
+      return Awk_Catalog_Policy.Locales.Item (Index);
    end Supported_Locale;
 
-   function Locale_Primary (Locale : String) return String is
-      Last : Natural := Locale'Last;
-   begin
-      for Index in Locale'Range loop
-         if Locale (Index) = '-' or else Locale (Index) = '_' or else Locale (Index) = '.' then
-            Last := Index - 1;
-            exit;
-         end if;
-      end loop;
-
-      if Last < Locale'First then
-         return "";
-      end if;
-
-      return Locale (Locale'First .. Last);
-   end Locale_Primary;
-
    function Is_Supported_Locale (Locale : String) return Boolean is
-      Primary : constant String := Locale_Primary (Locale);
    begin
-      for Item of Supported_Locales loop
-         if Primary = U.To_String (Item) then
-            return True;
-         end if;
-      end loop;
-      return False;
+      return Awk_Catalog_Policy.Locales.Contains (Locale);
    end Is_Supported_Locale;
 
    function Is_Letter (Value : Character) return Boolean is
