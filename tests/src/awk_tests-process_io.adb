@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with Ada.Strings.Unbounded;
-
 with Awk_Tests.Process_Harness;
 with Awk_Tests.Process_Support;
 with Project_Tools.Files;
@@ -9,25 +7,17 @@ with Project_Tools.Text;
 
 package body Awk_Tests.Process_IO is
    use AUnit.Assertions;
-   package U renames Ada.Strings.Unbounded;
    use Awk_Tests.Process_Support;
 
    procedure Test_Process_Direct_File_Input (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("{ print $2 }"),
          new String'("tests/fixtures/input/basic.txt")];
-      Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk direct file input",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      Result : constant Captured_Process := Run_Awk ("awk direct file input", Args);
    begin
-      Assert (Status = 0, "process direct file input exits successfully");
-      Assert (U.To_String (Output) = "two" & LF & "four" & LF,
+      Assert (Result.Status = 0, "process direct file input exits successfully");
+      Assert (Output_String (Result) = "two" & LF & "four" & LF,
               "process direct file input output");
    end Test_Process_Direct_File_Input;
    procedure Test_Process_Dash_Filename_After_Terminator
@@ -35,26 +25,21 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/-dash-input.txt";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
         [new String'("--"),
          new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
-      Status : Integer;
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Write_Raw_File ("../" & Target, "dash data" & LF);
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process dash filename",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
-      Assert (Status = 0, "dash-leading filename exits successfully after --");
-      Assert
-        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":dash"),
-         "dash-leading filename is treated as an operand");
+      declare
+         Result : constant Captured_Process := Run_Awk ("awk process dash filename", Args);
+      begin
+         Assert (Result.Status = 0, "dash-leading filename exits successfully after --");
+         Assert
+           (Project_Tools.Text.Contains (Output_String (Result), Target & ":dash"),
+            "dash-leading filename is treated as an operand");
+      end;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Dash_Filename_After_Terminator;
    procedure Test_Process_Option_Looking_File_After_Program
@@ -62,25 +47,21 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "--version";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
-      Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "operand-file" & LF);
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk option-looking file after program",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
-      Assert (Status = 0, "option-looking filename after program exits successfully");
-      Assert
-        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":operand-file" & LF),
-         "post-program --version is read as an input file");
+      declare
+         Result : constant Captured_Process :=
+           Run_Awk ("awk option-looking file after program", Args);
+      begin
+         Assert (Result.Status = 0, "option-looking filename after program exits successfully");
+         Assert
+           (Project_Tools.Text.Contains (Output_String (Result), Target & ":operand-file" & LF),
+            "post-program --version is read as an input file");
+      end;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Option_Looking_File_After_Program;
    procedure Test_Process_Short_Option_Looking_File_After_Program
@@ -88,30 +69,25 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "-F";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("{ print FILENAME "":"" $1 }"),
          new String'(Target)];
-      Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "short-option-file" & LF);
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk short option-looking file after program",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
-      Assert (Status = 0, "short option-looking filename after program exits successfully");
-      Assert
-        (Project_Tools.Text.Contains (U.To_String (Output), Target & ":short-option-file" & LF),
-         "post-program -F is read as an input file");
+      declare
+         Result : constant Captured_Process :=
+           Run_Awk ("awk short option-looking file after program", Args);
+      begin
+         Assert (Result.Status = 0, "short option-looking filename after program exits successfully");
+         Assert
+           (Project_Tools.Text.Contains (Output_String (Result), Target & ":short-option-file" & LF),
+            "post-program -F is read as an input file");
+      end;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Short_Option_Looking_File_After_Program;
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 6) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/begin.awk"),
@@ -119,18 +95,12 @@ package body Awk_Tests.Process_IO is
          new String'("tests/fixtures/input/basic.txt"),
          new String'("tests/fixtures/input/second.txt"),
          new String'("name=value")];
-      Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process -f",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      Result : constant Captured_Process := Run_Awk ("awk process -f", Args);
    begin
-      Assert (Status = 0, "process -f exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "begin" & LF & "one" & LF & "three"),
+      Assert (Result.Status = 0, "process -f exits successfully");
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "begin" & LF & "one" & LF & "three"),
               "process -f loads files in order and reads first input");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "five" & LF),
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "five" & LF),
               "process -f reads second input after runtime assignment operand");
    end Test_Process_Program_Files;
    procedure Test_Process_Option_Looking_Operand_After_File_Mode_Input
@@ -138,56 +108,47 @@ package body Awk_Tests.Process_IO is
    is
       pragma Unreferenced (T);
       Target : constant String := "-vX=late";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
         [new String'("-f"),
          new String'("tests/fixtures/programs/print-first.awk"),
          new String'("tests/fixtures/input/basic.txt"),
          new String'(Target),
          new String'("tests/fixtures/input/second.txt")];
-      Status : Integer;
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "late-option-file" & LF);
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process file-mode late option operand",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
-      Assert (Status = 0, "file-mode late option-looking operand exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "one" & LF & "three"),
-              "first input file is processed");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "late-option-file" & LF),
-              "late option-looking operand is processed as a filename");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "five" & LF),
-              "input after late runtime assignment is processed");
+      declare
+         Result : constant Captured_Process :=
+           Run_Awk ("awk process file-mode late option operand", Args);
+      begin
+         Assert (Result.Status = 0, "file-mode late option-looking operand exits successfully");
+         Assert (Project_Tools.Text.Contains (Output_String (Result), "one" & LF & "three"),
+                 "first input file is processed");
+         Assert (Project_Tools.Text.Contains (Output_String (Result), "late-option-file" & LF),
+                 "late option-looking operand is processed as a filename");
+         Assert (Project_Tools.Text.Contains (Output_String (Result), "five" & LF),
+                 "input after late runtime assignment is processed");
+      end;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
    end Test_Process_Option_Looking_Operand_After_File_Mode_Input;
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("--color=always"),
          new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
-      Status : Integer;
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "old" & LF & "content" & LF);
 
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process redirection",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      declare
+         Result : constant Captured_Process := Run_Awk ("awk process redirection", Args);
+      begin
+         Assert (Result.Status = 0, "process redirection exits successfully");
+         Assert (Output_String (Result) = "", "process redirected output not on stdout");
+      end;
 
-      Assert (Status = 0, "process redirection exits successfully");
-      Assert (U.To_String (Output) = "", "process redirected output not on stdout");
       Assert (Read_Text_File ("../" & Target) = "saved", "process redirection file content");
       Assert (not Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
@@ -199,26 +160,21 @@ package body Awk_Tests.Process_IO is
    procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_append.txt";
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("--color=always"),
          new String'("BEGIN { print ""first"" >> """ & Target & """; print ""second"" >> """ & Target & """ }")];
-      Status : Integer;
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "existing" & LF);
 
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process append redirection",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      declare
+         Result : constant Captured_Process := Run_Awk ("awk process append redirection", Args);
+      begin
+         Assert (Result.Status = 0, "process append redirection exits successfully");
+         Assert (Output_String (Result) = "", "process append redirection not on stdout");
+      end;
 
-      Assert (Status = 0, "process append redirection exits successfully");
-      Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
         (Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "existing") and then
          Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "first" & LF & "second"),
@@ -267,20 +223,13 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 2) :=
         [new String'("{ print }"),
          new String'("-")];
-      Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process explicit stdin eof",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      Result : constant Captured_Process := Run_Awk ("awk process explicit stdin eof", Args);
    begin
-      Assert (Status = 0, "explicit stdin operand accepts EOF");
-      Assert (U.To_String (Output) = "", "EOF stdin produces no records");
+      Assert (Result.Status = 0, "explicit stdin operand accepts EOF");
+      Assert (Output_String (Result) = "", "EOF stdin produces no records");
    end Test_Process_Explicit_Stdin_Eof;
    procedure Test_Process_Explicit_Stdin_Data
      (T : in out AUnit.Test_Cases.Test_Case'Class)
@@ -331,54 +280,40 @@ package body Awk_Tests.Process_IO is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 3) :=
         [new String'("BEGIN { print ARGC; print ARGV[1]; print ARGV[2] }"),
          new String'("name=value"),
          new String'("tests/fixtures/input/basic.txt")];
-      Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process runtime assignment argv",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      Result : constant Captured_Process := Run_Awk ("awk process runtime assignment argv", Args);
    begin
-      Assert (Status = 0, "process runtime assignment ARGV exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "3" & LF & "name=value" & LF),
+      Assert (Result.Status = 0, "process runtime assignment ARGV exits successfully");
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "3" & LF & "name=value" & LF),
               "runtime assignment spelling is preserved in ARGV");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/basic.txt"),
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "tests/fixtures/input/basic.txt"),
               "input filename remains ordered after runtime assignment");
    end Test_Process_Runtime_Assignment_Argv;
    procedure Test_Process_Runtime_Assignment_Positions
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
         [new String'("BEGIN { print ""begin"", X } { print FILENAME, FNR, X, $0 } END { print ""end"", X }"),
          new String'("tests/fixtures/input/basic.txt"),
          new String'("X=42"),
          new String'("tests/fixtures/input/second.txt"),
          new String'("X=99")];
-      Status : constant Integer :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process runtime assignment positions",
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
-           Args    => Args,
-           Output  => Output);
+      Result : constant Captured_Process := Run_Awk ("awk process runtime assignment positions", Args);
    begin
-      Assert (Status = 0, "process runtime assignment positions exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "begin " & LF),
+      Assert (Result.Status = 0, "process runtime assignment positions exits successfully");
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "begin " & LF),
               "initial runtime assignment value is empty before input");
       Assert
-        (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/basic.txt 1  one two"),
+        (Project_Tools.Text.Contains (Output_String (Result), "tests/fixtures/input/basic.txt 1  one two"),
          "first file is processed before interspersed assignment");
       Assert
-        (Project_Tools.Text.Contains (U.To_String (Output), "tests/fixtures/input/second.txt 1 42 five six"),
+        (Project_Tools.Text.Contains (Output_String (Result), "tests/fixtures/input/second.txt 1 42 five six"),
          "interspersed assignment affects following input file");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "end 99" & LF),
+      Assert (Project_Tools.Text.Contains (Output_String (Result), "end 99" & LF),
               "final runtime assignment is visible in END");
    end Test_Process_Runtime_Assignment_Positions;
 
