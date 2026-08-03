@@ -21,7 +21,7 @@ package body Awk_Workflow_Source_Policy.Platform_Checks is
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          [U.To_Unbounded_String ("GNAT.OS_Lib")],
-         Quiet => True);
+         Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("../src",
@@ -32,79 +32,84 @@ package body Awk_Workflow_Source_Policy.Platform_Checks is
         ("../src/library/awk_cli-platform.ads",
          "This is not a system-AWK fallback and must not parse AWK source.",
          "platform command runner must document callback-only ownership",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-live_context_callbacks.adb",
          "Only awklib reaches this callback after parsing/evaluating",
          "live command callback must document awklib ownership",
-         Quiet => True);
+         Quiet => False);
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          [U.To_Unbounded_String ("GNAT.Expect")],
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
-        ("../src/library/awk_cli-platform.adb",
+        ("../src/library/awk_cli-platform-standard_streams.adb",
          "while Remaining > 0 loop",
          "standard stream writes must retry partial writes",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package Byte_IO is",
          "platform byte-buffer helpers must be grouped",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package Host_Metadata is",
          "platform host metadata helpers must be grouped",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package Command_Execution is",
          "platform command execution helpers must be grouped",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package body File_IO is separate;",
          "platform whole-file I/O helpers must be split into a focused subunit",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package body Input_Streams is separate;",
          "platform input stream helpers must be split into a focused subunit",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package body Command_Execution is separate;",
          "platform command execution helpers must be split into a focused subunit",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "package Standard_Streams is",
          "platform standard-stream write helpers must be grouped",
-         Quiet => True);
+         Quiet => False);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "package body Standard_Streams is separate;",
+         "platform standard-stream writes must be split into a focused subunit",
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "function Environment_Value_Or_Empty",
          "platform locale lookup must centralize environment value reads",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform-command_execution.adb",
          "type Command_Run_Files is record",
          "command-getline temp-file state must be grouped",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform-command_execution.adb",
          "procedure Cleanup_Command_Run_Files",
          "command-getline cleanup must be centralized",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform-file_io.adb",
          "Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size))",
          "platform file writes must use bounded chunks",
-         Quiet => True);
+         Quiet => False);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-platform-file_io.adb",
          [U.To_Unbounded_String ("Stream_Element_Array (1 .. Content'Length)")],
-         Quiet => True);
+         Quiet => False);
    end Run;
 end Awk_Workflow_Source_Policy.Platform_Checks;

@@ -460,7 +460,7 @@ package body Awk_Workflow_Source_Policy is
             Minimum_Entries => 16,
             Purpose         => "awk source budget",
             Section         => "body",
-            Quiet           => True);
+            Quiet           => False);
          Source_Budgets.Check_Large_Source_Budget_Coverage
            (Errors        => Errors,
             Root          => "..",
@@ -470,7 +470,7 @@ package body Awk_Workflow_Source_Policy is
               [Source_Budgets.Coverage_Manifest_Entry
                  ("tests/source-budgets.toml", "body")],
             Purpose       => "production large-source budget coverage",
-            Quiet         => True);
+            Quiet         => False);
          Source_Budgets.Check_Large_Source_Budget_Coverage
            (Errors        => Errors,
             Root          => "..",
@@ -480,20 +480,29 @@ package body Awk_Workflow_Source_Policy is
               [Source_Budgets.Coverage_Manifest_Entry
                  ("tests/source-budgets.toml", "body")],
             Purpose       => "test large-source budget coverage",
-            Quiet         => True);
+            Quiet         => False);
 
          Require (Errors = 0, "source budget checks failed");
       end Source_Budget_Policy;
 
    begin
+      Put_Info ("source policy: dependency boundaries");
       Dependency_Boundaries;
+      Put_Info ("source policy: process-global access");
       Process_Global_Access;
+      Put_Info ("source policy: presentation");
       Presentation_Policy;
+      Put_Info ("source policy: runtime state");
       Runtime_State_Policy;
+      Put_Info ("source policy: platform checks");
       Awk_Workflow_Source_Policy.Platform_Checks.Run;
+      Put_Info ("source policy: catalog keys");
       Catalog_Key_Policy;
+      Put_Info ("source policy: project structure");
       Project_Structure_Policy;
+      Put_Info ("source policy: source budgets");
       Source_Budget_Policy;
+      Put_Info ("source policy: workflow checks");
       Awk_Workflow_Source_Policy.Workflow_Checks.Run;
       Put_Info ("source policy checks passed");
    end Run;

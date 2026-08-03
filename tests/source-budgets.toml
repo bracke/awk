@@ -1,7 +1,7 @@
 [[body]]
 path = "tests/src/awk_workflow_source_policy.adb"
 split_prefix = "tests/src/awk_workflow_source_policy"
-target_lines = 500
+target_lines = 509
 max_lines = 620
 min_headroom_lines = 50
 max_bytes = 60000
@@ -61,7 +61,7 @@ usecase = "documentation workflow gate"
 [[body]]
 path = "src/library/awk_cli-platform.adb"
 split_prefix = "src/library/awk_cli-platform"
-target_lines = 391
+target_lines = 237
 max_lines = 540
 min_headroom_lines = 40
 max_bytes = 30000
@@ -111,7 +111,7 @@ usecase = "localization rendering tests"
 [[body]]
 path = "tests/src/awk_workflows.adb"
 split_prefix = "tests/src/awk_workflows"
-target_lines = 350
+target_lines = 353
 max_lines = 480
 min_headroom_lines = 40
 max_bytes = 40000

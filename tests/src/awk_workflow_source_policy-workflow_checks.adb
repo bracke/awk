@@ -39,14 +39,14 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
          ([U.To_Unbounded_String ("gawk"),
            U.To_Unbounded_String ("mawk"),
            U.To_Unbounded_String ("nawk")]),
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
-         "process fixture file reads must use project_tools directly", Quiet => True);
+         "process fixture file reads must use project_tools directly", Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Run_Status",
          "raw process status execution must be centralized in process support",
-         Quiet => True);
+         Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
@@ -59,7 +59,7 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
       Files.Require_Contains
         ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Command_Output",
          "raw process output capture must be centralized in process support",
-         Quiet => True);
+         Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
@@ -73,41 +73,50 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_tests-localization-catalog_cases.adb",
          "with Project_Tools.Test_Fixtures",
          "catalog fixture file reads must use project_tools directly",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-localization-rendering_cases.adb",
          "with Project_Tools.Test_Fixtures",
          "localization rendering fixture file reads must use project_tools directly",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-compatibility.adb", "with Project_Tools.Test_Fixtures",
-         "fixture file reads must use project_tools directly", Quiet => True);
+         "fixture file reads must use project_tools directly", Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb", "Release_Mode => True",
-         "release workflow must use Alire release builds", Quiet => True);
+         "release workflow must use Alire release builds", Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb", "procedure Core_Quality_Gates",
-         "shared workflow quality gates must be centralized", Quiet => True);
+         "shared workflow quality gates must be centralized", Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb", "Run_AUnit;",
-         "workflow AUnit execution must be reusable across build modes", Quiet => True);
+         "workflow AUnit execution must be reusable across build modes", Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb", "with Awk_CLI.Diagnostics",
          "exit status drift checks must use compiled diagnostic constants",
-         Quiet => True);
+         Quiet => False);
       Ada_Source.Require_No_Code_Tokens
         ("src/awk_workflows.adb",
          [U.To_Unbounded_String ("Exit_Constant_Value")],
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb", "Require_Clean_Repository;",
-         "release workflow must check git status", Quiet => True);
+         "release workflow must check git status", Quiet => False);
       Files.Require_Contains
         ("src/awk_workflows.adb",
-         "when Program_Error =>" & ASCII.LF &
-         "      CLI.Set_Exit_Status (CLI.Failure);",
+         "when Program_Error =>",
+         "workflow Program_Error containment must catch expected gate failures",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb",
+         """workflow gate failed""",
+         "workflow Program_Error containment must report expected gate failures",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb",
+         "CLI.Set_Exit_Status (CLI.Failure);",
          "workflow Program_Error containment must fail the process",
-         Quiet => True);
+         Quiet => False);
       Require
         (not Files.File_Contains
            ("src/awk_workflows.adb",
@@ -115,16 +124,16 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
          "workflow Program_Error containment must not silently succeed");
       Files.Require_File
         ("../.github/workflows/ci.yml",
-         "CI workflow must be present", Quiet => True);
+         "CI workflow must be present", Quiet => False);
       Files.Require_Contains
         ("../.github/workflows/ci.yml", "./bin/awk_workflows release",
          "CI workflow must delegate release gates to Ada tooling",
-         Quiet => True);
+         Quiet => False);
       Files.Require_Contains
         ("../.github/workflows/ci.yml",
          "os: [ubuntu-latest, macos-15-intel, windows-latest]",
          "CI workflow must include native Linux, macOS, and Windows build/test coverage",
-         Quiet => True);
+         Quiet => False);
       Require
         (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
                                              "      Verify;"),

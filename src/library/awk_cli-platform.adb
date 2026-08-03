@@ -179,60 +179,7 @@ package body Awk_CLI.Platform is
       function Write_Error (Content : String) return Boolean;
    end Standard_Streams;
 
-   package body Standard_Streams is
-      function Write_Stream
-        (Stream  : Interfaces.C_Streams.FILEs;
-         Content : String) return Boolean
-      is
-         use type Interfaces.C_Streams.size_t;
-         use type System.Address;
-
-         Handle  : constant Interfaces.C_Streams.int :=
-           Interfaces.C_Streams.fileno (Stream);
-         Position  : Natural := Content'First;
-         Remaining : Natural := Content'Length;
-      begin
-         if Stream = Interfaces.C_Streams.NULL_Stream or else Handle < 0 then
-            return False;
-         end if;
-
-         Interfaces.C_Streams.set_binary_mode (Handle);
-
-         while Remaining > 0 loop
-            declare
-               Written : constant Interfaces.C_Streams.size_t :=
-                 Interfaces.C_Streams.fwrite
-                   (Content (Position)'Address,
-                    1,
-                    Interfaces.C_Streams.size_t (Remaining),
-                    Stream);
-               Count : constant Natural := Natural (Written);
-            begin
-               if Count = 0 then
-                  return False;
-               end if;
-
-               Position := Position + Count;
-               Remaining := Remaining - Count;
-            end;
-         end loop;
-
-         return Interfaces.C_Streams.fflush (Stream) = 0;
-      exception
-         when Constraint_Error | Program_Error | Storage_Error =>
-            return False;
-      end Write_Stream;
-
-      function Write_Output (Content : String) return Boolean is
-      begin
-         return Write_Stream (Interfaces.C_Streams.stdout, Content);
-      end Write_Output;
-
-      function Write_Error (Content : String) return Boolean is
-      begin
-         return Write_Stream (Interfaces.C_Streams.stderr, Content);
-      end Write_Error;
-   end Standard_Streams;
+   package body Standard_Streams is separate;
 
    function Write_Standard_Output (Content : String) return Boolean is
    begin
@@ -244,6 +191,26 @@ package body Awk_CLI.Platform is
       return Standard_Streams.Write_Error (Content);
    end Write_Standard_Error;
 
+   function Environment_Value_Or_Empty (Name : String) return String is
+   begin
+      if Ada.Environment_Variables.Exists (Name) then
+         return Ada.Environment_Variables.Value (Name);
+      else
+         return "";
+      end if;
+   exception
+      when Constraint_Error | Program_Error =>
+         return "";
+   end Environment_Value_Or_Empty;
+
+   function Environment_Variable_Exists (Name : String) return Boolean is
+   begin
+      return Ada.Environment_Variables.Exists (Name);
+   exception
+      when Constraint_Error | Program_Error =>
+         return False;
+   end Environment_Variable_Exists;
+
    package Host_Metadata is
       function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean;
       function No_Color_Active return Boolean;
@@ -251,128 +218,7 @@ package body Awk_CLI.Platform is
       function Catalog_Path return String;
    end Host_Metadata;
 
-   package body Host_Metadata is
-      function Environment_Value_Or_Empty (Name : String) return String is
-      begin
-         if Ada.Environment_Variables.Exists (Name) then
-            return Ada.Environment_Variables.Value (Name);
-         else
-            return "";
-         end if;
-      exception
-         when Constraint_Error | Program_Error =>
-            return "";
-      end Environment_Value_Or_Empty;
-
-      function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean is
-      begin
-         return Interfaces.C_Streams.isatty (File_Descriptor) = 1;
-      exception
-         when Constraint_Error | Program_Error =>
-            return False;
-      end Is_Terminal;
-
-      function No_Color_Active return Boolean is
-      begin
-         return Ada.Environment_Variables.Exists ("NO_COLOR");
-      exception
-         when Constraint_Error | Program_Error =>
-            return False;
-      end No_Color_Active;
-
-      function Locale return String is
-         LC_All : constant String := Environment_Value_Or_Empty ("LC_ALL");
-         Lang   : constant String := Environment_Value_Or_Empty ("LANG");
-         Native : constant String := Hostkit.Host.Native_Locale;
-      begin
-         if LC_All /= "" then
-            return LC_All;
-         elsif Lang /= "" then
-            return Lang;
-         elsif Native /= "" then
-            return Native;
-         else
-            return "en";
-         end if;
-      exception
-         when Constraint_Error | Program_Error =>
-            return "en";
-      end Locale;
-
-      function Catalog_Path return String is
-         Executable_Dir : constant String := Hostkit.Fs.Own_Executable_Directory;
-
-         function Child (Directory, Name : String) return String is
-           (Ada.Directories.Compose
-              (Containing_Directory => Directory,
-               Name                 => Name));
-
-         function Catalog_Under (Base : String) return String is
-           (Child (Child (Child (Base, "resources"), "messages"), "catalog.txt"));
-
-         function Message_Catalog_Under (Base : String) return String is
-           (Child (Child (Base, "messages"), "catalog.txt"));
-
-         function Existing_Catalog (Path : String) return String is
-         begin
-            if Path /= "" and then Ada.Directories.Exists (Path) then
-               return Path;
-            else
-               return "";
-            end if;
-         end Existing_Catalog;
-
-         function Installed_Catalog return String is
-         begin
-            if Executable_Dir = "" then
-               return "";
-            else
-               declare
-                  Share_Awk : constant String :=
-                    Child (Child (Child (Executable_Dir, ".."), "share"), "awk");
-                  Installed : constant String :=
-                    Existing_Catalog (Message_Catalog_Under (Share_Awk));
-               begin
-                  if Installed /= "" then
-                     return Installed;
-                  else
-                     return Existing_Catalog (Catalog_Under (Share_Awk));
-                  end if;
-               end;
-            end if;
-         end Installed_Catalog;
-
-         function Development_Catalog return String is
-         begin
-            if Executable_Dir = "" then
-               return "";
-            else
-               return Existing_Catalog (Catalog_Under (Child (Executable_Dir, "..")));
-            end if;
-         end Development_Catalog;
-      begin
-         declare
-            Installed : constant String := Installed_Catalog;
-            Development : constant String := Development_Catalog;
-            Local     : constant String :=
-              Existing_Catalog ("resources/messages/catalog.txt");
-            Test      : constant String :=
-              Existing_Catalog ("../resources/messages/catalog.txt");
-         begin
-            if Installed /= "" then
-               return Installed;
-            elsif Development /= "" then
-               return Development;
-            elsif Local /= "" then
-               return Local;
-            elsif Test /= "" then
-               return Test;
-            else
-               return "resources/messages/catalog.txt";
-            end if;
-         end;
-      end Catalog_Path;
-   end Host_Metadata;
+   package body Host_Metadata is separate;
 
    function Standard_Output_Is_Terminal return Boolean is
      (Host_Metadata.Is_Terminal (1));
