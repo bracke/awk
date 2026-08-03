@@ -121,11 +121,11 @@ usecase = "workflow command dispatcher"
 [[body]]
 path = "tests/src/awk_tests-context.adb"
 split_prefix = "tests/src/awk_tests-context"
-target_lines = 340
-max_lines = 460
+target_lines = 21
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 40000
-min_split_bodies = 0
+min_split_bodies = 3
 usecase = "in-memory context tests"
 
 [[body]]
