@@ -516,6 +516,16 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli-execution.adb", "function Build_Run_Result",
          "execution adapter must centralize awklib run-result conversion",
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-inputs-live.adb",
+         "Callback lifetime invariant: Context and Operands",
+         "live input unchecked callback access must document object lifetimes",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-execution.adb",
+         "Callback lifetime invariant: Inputs, Output, Redirs, and State",
+         "execution unchecked callback access must document object lifetimes",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli.ads",
          [U.To_Unbounded_String ("procedure Add_Argument"),

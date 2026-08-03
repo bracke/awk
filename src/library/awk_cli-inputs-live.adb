@@ -16,6 +16,9 @@ package body Awk_CLI.Inputs.Live is
       Context  : in out Invocation_Context;
       Operands : aliased Awk_CLI.Operands.Operand_Vectors.Vector) is
    begin
+      --  Callback lifetime invariant: Context and Operands are owned by
+      --  Awk_CLI.Invocation.Execute and outlive the synchronous awklib run
+      --  that receives State'Address.
       State.Context := Context'Unchecked_Access;
       State.Operands := Operands'Unchecked_Access;
       State.Operand_Index := 0;

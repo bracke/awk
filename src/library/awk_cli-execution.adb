@@ -162,6 +162,9 @@ package body Awk_CLI.Execution is
       Status       : I.Run_Status;
       State       : aliased Awk_CLI.Execution.Callbacks.Stream_State;
    begin
+      --  Callback lifetime invariant: Inputs, Output, Redirs, and State are
+      --  stack objects that remain alive until the synchronous awklib call
+      --  below returns; callback addresses must not escape that call.
       Awk_CLI.Execution.Callbacks.Initialize
         (State            => State,
          Inputs           => Inputs'Unchecked_Access,
