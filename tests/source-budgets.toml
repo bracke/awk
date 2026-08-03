@@ -91,7 +91,7 @@ usecase = "catalog validation policy"
 [[body]]
 path = "tests/src/awk_tests-localization.adb"
 split_prefix = "tests/src/awk_tests-localization"
-target_lines = 20
+target_lines = 21
 max_lines = 120
 min_headroom_lines = 40
 max_bytes = 50000
@@ -131,11 +131,11 @@ usecase = "in-memory context tests"
 [[body]]
 path = "tests/src/awk_tests-cli_options.adb"
 split_prefix = "tests/src/awk_tests-cli_options"
-target_lines = 339
-max_lines = 460
+target_lines = 21
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 40000
-min_split_bodies = 0
+min_split_bodies = 3
 usecase = "option parser tests"
 
 [[body]]
