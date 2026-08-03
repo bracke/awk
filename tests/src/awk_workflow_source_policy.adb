@@ -397,9 +397,14 @@ package body Awk_Workflow_Source_Policy is
             Quiet              => True);
          Public_Spec_Docs;
          Files.Require_Contains
-           ("../src/library/awk_cli-testing.ads", "package Awk_CLI.Testing",
-            "in-memory invocation harness must live in Awk_CLI.Testing",
+           ("src/awk_cli-testing.ads", "package Awk_CLI.Testing",
+            "in-memory invocation harness must live in the tests crate",
             Quiet => True);
+         Require
+           (Ada_Source.First_Source_File_Containing
+              ("../src/library",
+               "package Awk_CLI.Testing") = "",
+            "test harness child package must not live in production sources");
          Files.Require_Contains
            ("../src/library/awk_cli.ads", "type Invocation_Configuration is record",
             "invocation context must group process configuration state",

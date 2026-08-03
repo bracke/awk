@@ -17,4 +17,5 @@ not call interpreter APIs or emulate AWK behavior.
 
 Root `Awk_CLI` owns process initialization, context reset, and top-level
 execution. `Awk_CLI.Testing` owns deterministic in-memory context mutation and
-inspection for tests; production packages must not depend on it.
+inspection for tests and must live in the tests crate; production packages must
+not depend on it.

@@ -33,7 +33,7 @@ and test crate, but they are internal CLI infrastructure rather than a stable
 reusable library API. Compatibility commitments apply to the installed
 `awk` executable and documented command-line behavior. Root `Awk_CLI` exposes
 process initialization, context reset, and `Run`; deterministic in-memory test
-controls live in `Awk_CLI.Testing`.
+controls live in the tests-crate child package `Awk_CLI.Testing`.
 
 `Awk_CLI.Run` coordinates the top-level command flow: initialize localization,
 parse options, handle help/version short circuits, render diagnostics, and
@@ -58,7 +58,7 @@ The presentation layer passes destination terminal state to `terminal_styles`,
 so help on standard output and diagnostics on standard error can make
 independent automatic color decisions.
 
-The in-memory `Invocation_Context` is the primary test seam. `Awk_CLI.Testing`
-supplies arguments, files, standard input, environment entries, output
-failures, captured command output, and write inspection without duplicating
-production command-line or execution logic.
+The in-memory `Invocation_Context` is the primary test seam. The tests-crate
+child package `Awk_CLI.Testing` supplies arguments, files, standard input,
+environment entries, output failures, captured command output, and write
+inspection without duplicating production command-line or execution logic.
