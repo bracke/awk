@@ -23,6 +23,11 @@ Production adapter boundaries:
   execution for `command | getline`, native locale lookup, temporary-path
   selection, catalog path lookup, and environment interaction.
 
+The command-execution path is not an AWK fallback. `awklib` parses and evaluates
+`command | getline`; the CLI only supplies the host command runner requested by
+the awklib callback. No CLI package may inspect AWK source to discover command
+strings or invoke a shell when awklib did not request that callback.
+
 The `Awk_CLI` specs are documented because they are visible to the executable
 and test crate, but they are internal CLI infrastructure rather than a stable
 reusable library API. Compatibility commitments apply to the installed

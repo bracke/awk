@@ -130,6 +130,16 @@ package body Awk_Workflow_Docs is
          "platform docs must document the hostkit adapter boundary",
          Quiet => True);
       Files.Require_Contains
+        ("../docs/ai/package-contracts.md",
+         "`command | getline` is an awklib-owned runtime feature",
+         "package contracts must define command getline callback ownership",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/prohibited-designs.md",
+         "only permitted host shell use is the `command | getline` service",
+         "prohibited-design docs must distinguish command getline from fallbacks",
+         Quiet => True);
+      Files.Require_Contains
         ("../docs/localization.md", "awk.internal.localization_failed",
          "localization docs must document catalog-backed render fallback",
          Quiet => True);
@@ -197,6 +207,11 @@ package body Awk_Workflow_Docs is
       Files.Require_Contains
         ("../docs/architecture.md", "main input is callback-driven",
          "architecture docs must document memory-oriented host integration",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/architecture.md",
+         "The command-execution path is not an AWK fallback",
+         "architecture docs must define command getline callback ownership",
          Quiet => True);
       Files.Require_Contains
         ("../docs/architecture.md", "AWK record splitting",

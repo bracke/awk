@@ -276,6 +276,9 @@ package body Awk_CLI.Platform is
    end Close_Input;
 
    function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean is
+      --  This is the host service for awklib's command-getline callback. It is
+      --  deliberately isolated here so no CLI package shells out as an AWK
+      --  parser/runtime fallback.
       Args        : Hostkit.String_Vectors.Vector;
       Status      : Hostkit.Process.Process_Outcome;
       Ignored     : Integer := -1;

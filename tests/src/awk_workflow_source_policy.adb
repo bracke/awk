@@ -277,6 +277,16 @@ package body Awk_Workflow_Source_Policy is
             """/bin/sh""",
             Allowed_Files => []) = "",
          "shell executable selection must stay in hostkit");
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.ads",
+         "This is not a system-AWK fallback and must not parse AWK source.",
+         "platform command runner must document callback-only ownership",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-live_context_callbacks.adb",
+         "Only awklib reaches this callback after parsing/evaluating",
+         "live command callback must document awklib ownership",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          [U.To_Unbounded_String ("GNAT.Expect")],

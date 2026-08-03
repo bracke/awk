@@ -32,6 +32,8 @@ package body Awk_CLI.Live_Context_Callbacks is
       end loop;
 
       if Context.Use_Process then
+         --  Only awklib reaches this callback after parsing/evaluating
+         --  command-getline. The CLI does not inspect AWK source for commands.
          return Awk_CLI.Platform.Run_Command (Command, Output);
       end if;
 

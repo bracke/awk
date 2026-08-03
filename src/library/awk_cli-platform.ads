@@ -65,12 +65,13 @@ package Awk_CLI.Platform is
    --  Close Stream if it owns an open file handle.
    --  @param Stream Input stream to close.
 
-   --  @param Command Host command text provided by awklib.
+   --  @param Command Host command text requested by awklib.
    --  @param Output Captured command standard output when the command succeeds.
    --  @return True when command execution succeeds.
    function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean;
-   --  Run a host command for awklib command-getline integration.
-   --  @param Command Host command text provided by awklib.
+   --  Run a host command only for awklib command-getline callback integration.
+   --  This is not a system-AWK fallback and must not parse AWK source.
+   --  @param Command Host command text requested by awklib.
    --  @param Output Captured command standard output when the command succeeds.
    --  @return True when command execution succeeds.
 
