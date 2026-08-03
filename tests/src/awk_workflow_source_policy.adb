@@ -377,6 +377,21 @@ package body Awk_Workflow_Source_Policy is
           U.To_Unbounded_String ("""en""")],
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli.adb",
+         "Context.Config := (others => <>);",
+         "invocation configuration reset must use record defaults",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.adb",
+         "Context.IO := (others => <>);",
+         "invocation I/O reset must use record defaults",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.adb",
+         "Context.Last_Diagnostic := (others => <>);",
+         "diagnostic state reset must use record defaults",
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "while Remaining > 0 loop",
          "standard stream writes must retry partial writes",

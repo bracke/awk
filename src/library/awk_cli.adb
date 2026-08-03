@@ -11,27 +11,9 @@ package body Awk_CLI is
 
    procedure Clear (Context : in out Invocation_Context) is
    begin
-      Context.Config.Arguments.Clear;
-      Context.IO.Standard_In := U.Null_Unbounded_String;
-      Context.Config.Locale := U.To_Unbounded_String (Default_Locale);
-      Context.Config.Catalog_Path := U.To_Unbounded_String (Default_Catalog_Path);
-      Context.IO.Files.Clear;
-      Context.IO.Commands.Clear;
-      Context.IO.Environment.Clear;
-      Context.IO.Standard_Out := U.Null_Unbounded_String;
-      Context.IO.Standard_Err := U.Null_Unbounded_String;
-      Context.Last_Diagnostic.Set := False;
-      Context.Last_Diagnostic.Id := U.Null_Unbounded_String;
-      Context.Last_Diagnostic.Category := U.Null_Unbounded_String;
-      Context.Last_Diagnostic.Severity := U.Null_Unbounded_String;
-      Context.IO.Writes.Clear;
-      Context.Config.Use_Process := False;
-      Context.IO.Stdin_Fails := False;
-      Context.IO.Stdout_Fails := False;
-      Context.IO.Stderr_Fails := False;
-      Context.Config.Stdout_Terminal := False;
-      Context.Config.Stderr_Terminal := False;
-      Context.Config.No_Color := False;
+      Context.Config := (others => <>);
+      Context.IO := (others => <>);
+      Context.Last_Diagnostic := (others => <>);
    end Clear;
 
    procedure Initialize_From_Process (Context : in out Invocation_Context) is
