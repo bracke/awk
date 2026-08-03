@@ -421,6 +421,15 @@ package body Awk_Workflow_Source_Policy is
             "execution adapter must centralize awklib run-result conversion",
             Quiet => True);
          Files.Require_Contains
+           ("../src/library/awk_cli-execution.adb",
+            "Ada.Exceptions.Exception_Name",
+            "execution internal diagnostics should retain sanitized exception identity",
+            Quiet => True);
+         Ada_Source.Require_No_Code_Tokens
+           ("../src/library/awk_cli-execution.adb",
+            [U.To_Unbounded_String ("Exception_Information")],
+            Quiet => True);
+         Files.Require_Contains
            ("../src/library/awk_cli-inputs-live.adb",
             "Callback lifetime invariant: Context and Operands",
             "live input unchecked callback access must document object lifetimes",

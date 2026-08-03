@@ -1,6 +1,6 @@
+with Ada.Exceptions;
 with Awklib.Interpreter;
 with Awklib;
-
 with Awk_CLI.Execution.Callbacks;
 
 package body Awk_CLI.Execution is
@@ -214,14 +214,15 @@ package body Awk_CLI.Execution is
 
       return Build_Run_Result (Status, Message, State, Output, Exit_Code, Redirs);
    exception
-      when others =>
+      when Error : others =>
          return
            (Ok => False,
             Diagnostic =>
               Awk_CLI.Diagnostics.Make
                 ("awk.internal.unexpected_exception",
                  Awk_CLI.Diagnostics.Internal_Error,
-                 Awk_CLI.Diagnostics.Internal));
+                 Awk_CLI.Diagnostics.Internal,
+                 Detail => Ada.Exceptions.Exception_Name (Error)));
    end Execute_Core;
 
    function Execute
@@ -291,7 +292,6 @@ package body Awk_CLI.Execution is
    end Execute_Live_Input;
 
    function Interpreter_Version return String is (Awklib.Version);
-
    function Supports_Positional_Runtime_Assignments return Boolean is (True);
    function Supports_Redirection_Append_Mode return Boolean is (True);
    function Supports_Streaming_Execution return Boolean is (True);
