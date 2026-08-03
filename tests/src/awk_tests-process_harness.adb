@@ -1,5 +1,3 @@
-with GNAT.Expect;
-
 with Project_Tools.Processes;
 
 package body Awk_Tests.Process_Harness is
@@ -33,7 +31,7 @@ package body Awk_Tests.Process_Harness is
    is
    begin
       return
-        GNAT.Expect.Get_Command_Output
+        Project_Tools.Processes.Command_Output
           (Command    => Command,
            Arguments  => Arguments,
            Input      => Input,

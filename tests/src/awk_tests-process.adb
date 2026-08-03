@@ -4,45 +4,13 @@ with Ada.Strings.Unbounded;
 
 with Project_Tools.Files;
 with Awk_Tests.Process_Harness;
-with Project_Tools.Test_Fixtures;
+with Awk_Tests.Process_Support;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process is
    use AUnit.Assertions;
-   package Fixtures renames Project_Tools.Test_Fixtures;
    package U renames Ada.Strings.Unbounded;
-
-   LF : constant String := [1 => ASCII.LF];
-
-   function Awk_From_Repository_Root return String is
-   begin
-      if Project_Tools.Files.File_Exists ("../bin/awk.exe") then
-         return "./bin/awk.exe";
-      end if;
-
-      return "./bin/awk";
-   end Awk_From_Repository_Root;
-
-   function Awk_From_Tests_Directory return String is
-   begin
-      if Project_Tools.Files.File_Exists ("../bin/awk.exe") then
-         return "../bin/awk.exe";
-      end if;
-
-      return "../bin/awk";
-   end Awk_From_Tests_Directory;
-
-   function Process_Harness_Preserves_Empty_Arguments return Boolean is
-   begin
-      --  The process harness drops an empty string argument on the Windows
-      --  runner. The in-memory harness still tests empty direct programs.
-      return not Project_Tools.Files.File_Exists ("../bin/awk.exe");
-   end Process_Harness_Preserves_Empty_Arguments;
-
-   procedure Ensure_Filesystem_Fixture_Directory is
-   begin
-      Fixtures.Make_Directory ("../tests/fixtures/filesystem");
-   end Ensure_Filesystem_Fixture_Directory;
+   use Awk_Tests.Process_Support;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
       pragma Unreferenced (T);
@@ -771,10 +739,10 @@ package body Awk_Tests.Process is
 
       Assert (Status = 0, "process redirection exits successfully");
       Assert (U.To_String (Output) = "", "process redirected output not on stdout");
-      Assert (Fixtures.Read_Text_File ("../" & Target) = "saved", "process redirection file content");
-      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "old"),
+      Assert (Read_Text_File ("../" & Target) = "saved", "process redirection file content");
+      Assert (not Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "old"),
               "overwrite redirection replaces existing file content");
-      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Read_Text_File ("../" & Target), Character'Val (27) & "["),
               "color=always does not style redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -804,12 +772,12 @@ package body Awk_Tests.Process is
       Assert (Status = 0, "process append redirection exits successfully");
       Assert (U.To_String (Output) = "", "process append redirection not on stdout");
       Assert
-        (Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "existing") and then
-         Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), "first" & LF & "second"),
+        (Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "existing") and then
+         Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "first" & LF & "second"),
          "append redirection preserves existing content and write order");
-      Assert (Fixtures.Read_Text_File ("../" & Target) /= "first" & LF & "second",
+      Assert (Read_Text_File ("../" & Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
-      Assert (not Project_Tools.Text.Contains (Fixtures.Read_Text_File ("../" & Target), Character'Val (27) & "["),
+      Assert (not Project_Tools.Text.Contains (Read_Text_File ("../" & Target), Character'Val (27) & "["),
               "color=always does not style appended redirected output");
 
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);

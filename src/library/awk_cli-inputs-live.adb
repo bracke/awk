@@ -1,4 +1,4 @@
-with Awk_CLI.Context_IO;
+with Awk_CLI.Live_Context_Callbacks;
 with System.Address_To_Access_Conversions;
 
 package body Awk_CLI.Inputs.Live is
@@ -252,7 +252,8 @@ package body Awk_CLI.Inputs.Live is
       State : constant State_Access.Object_Pointer :=
         State_Access.To_Pointer (User_Data);
    begin
-      return Awk_CLI.Context_IO.Write_Standard_Output (State.Context.all, Content);
+      return
+        Awk_CLI.Live_Context_Callbacks.Write_Output (State.Context.all, Content);
    end Write_Output;
 
    function Write_Redirection
@@ -264,7 +265,9 @@ package body Awk_CLI.Inputs.Live is
       State : constant State_Access.Object_Pointer :=
         State_Access.To_Pointer (User_Data);
    begin
-      return Awk_CLI.Context_IO.Write_File (State.Context.all, Path, Content, Append);
+      return
+        Awk_CLI.Live_Context_Callbacks.Write_Redirection
+          (State.Context.all, Path, Content, Append);
    end Write_Redirection;
 
    function Read_Command
@@ -275,18 +278,8 @@ package body Awk_CLI.Inputs.Live is
       State : constant State_Access.Object_Pointer :=
         State_Access.To_Pointer (User_Data);
    begin
-      for Item of State.Context.Commands loop
-         if U.To_String (Item.Command) = Command then
-            Output := Item.Output;
-            return True;
-         end if;
-      end loop;
-
-      if State.Context.Use_Process then
-         return Awk_CLI.Platform.Run_Command (Command, Output);
-      end if;
-
-      Output := U.Null_Unbounded_String;
-      return False;
+      return
+        Awk_CLI.Live_Context_Callbacks.Read_Command
+          (State.Context.all, Command, Output);
    end Read_Command;
 end Awk_CLI.Inputs.Live;
