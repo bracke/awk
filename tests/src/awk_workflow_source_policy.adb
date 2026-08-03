@@ -332,6 +332,20 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli-inputs-live.adb",
          [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "while Remaining > 0 loop",
+         "standard stream writes must retry partial writes",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "Natural'Min (Remaining, Natural (Chunk_Size))",
+         "platform file writes must use bounded chunks",
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-platform.adb",
+         [U.To_Unbounded_String ("Stream_Element_Array (1 .. Content'Length)")],
+         Quiet => True);
       declare
          Unknown_Key : constant String := First_Unknown_Message_Key_Literal;
       begin

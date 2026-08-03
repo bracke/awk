@@ -361,23 +361,32 @@ package body Awk_CLI.Platform is
    function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
       File : SIO.File_Type;
       Mode : constant SIO.File_Mode := (if Append then SIO.Append_File else SIO.Out_File);
+      Position : Natural := Content'First;
    begin
       if Append and then Ada.Directories.Exists (Path) then
          SIO.Open (File, Mode, Path);
       else
          SIO.Create (File, SIO.Out_File, Path);
       end if;
-      declare
-         Buffer : Ada.Streams.Stream_Element_Array (1 .. Content'Length);
-      begin
-         for Index in Content'Range loop
-            Buffer (Ada.Streams.Stream_Element_Offset (Index - Content'First + 1)) :=
-              Ada.Streams.Stream_Element (Character'Pos (Content (Index)));
-         end loop;
-         if Content'Length > 0 then
-            SIO.Write (File, Buffer);
-         end if;
-      end;
+
+      while Position <= Content'Last loop
+         declare
+            Remaining : constant Natural := Content'Last - Position + 1;
+            Count     : constant Natural :=
+              Natural'Min (Remaining, Natural (Chunk_Size));
+            Last      : constant Ada.Streams.Stream_Element_Offset :=
+              Ada.Streams.Stream_Element_Offset (Count);
+            Buffer    : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
+         begin
+            for Offset in 0 .. Count - 1 loop
+               Buffer (Ada.Streams.Stream_Element_Offset (Offset + 1)) :=
+                 Ada.Streams.Stream_Element (Character'Pos (Content (Position + Offset)));
+            end loop;
+            SIO.Write (File, Buffer (1 .. Last));
+            Position := Position + Count;
+         end;
+      end loop;
+
       SIO.Close (File);
       return True;
    exception
@@ -403,11 +412,10 @@ package body Awk_CLI.Platform is
       use type Interfaces.C_Streams.size_t;
       use type System.Address;
 
-      Written : Interfaces.C_Streams.size_t := 0;
-      Length  : constant Interfaces.C_Streams.size_t :=
-        Interfaces.C_Streams.size_t (Content'Length);
       Handle  : constant Interfaces.C_Streams.int :=
         Interfaces.C_Streams.fileno (Stream);
+      Position  : Natural := Content'First;
+      Remaining : Natural := Content'Length;
    begin
       if Stream = Interfaces.C_Streams.NULL_Stream or else Handle < 0 then
          return False;
@@ -415,16 +423,26 @@ package body Awk_CLI.Platform is
 
       Interfaces.C_Streams.set_binary_mode (Handle);
 
-      if Content'Length > 0 then
-         Written :=
-           Interfaces.C_Streams.fwrite
-             (Content (Content'First)'Address,
-              1,
-              Length,
-              Stream);
-      end if;
+      while Remaining > 0 loop
+         declare
+            Written : constant Interfaces.C_Streams.size_t :=
+              Interfaces.C_Streams.fwrite
+                (Content (Position)'Address,
+                 1,
+                 Interfaces.C_Streams.size_t (Remaining),
+                 Stream);
+            Count : constant Natural := Natural (Written);
+         begin
+            if Count = 0 then
+               return False;
+            end if;
 
-      return Written = Length and then Interfaces.C_Streams.fflush (Stream) = 0;
+            Position := Position + Count;
+            Remaining := Remaining - Count;
+         end;
+      end loop;
+
+      return Interfaces.C_Streams.fflush (Stream) = 0;
    exception
       when Constraint_Error | Program_Error | Storage_Error =>
          return False;
