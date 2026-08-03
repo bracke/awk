@@ -106,6 +106,34 @@ package body Awk_CLI.Execution is
       return Result;
    end Build_Runtime_Operands;
 
+   function Build_Run_Result
+     (Status    : I.Run_Status;
+      Message   : U.Unbounded_String;
+      State     : Awk_CLI.Execution.Callbacks.Stream_State;
+      Output    : U.Unbounded_String;
+      Exit_Code : Integer;
+      Redirs    : Awk_CLI.Redirections.Redirection_Vectors.Vector)
+      return Execution_Result
+   is
+   begin
+      if Status = I.Run_Error then
+         return
+           (Ok => False,
+            Diagnostic =>
+              Awk_CLI.Diagnostics.Make
+                ("awk.interpreter.runtime_failed",
+                 Awk_CLI.Diagnostics.Error,
+                 Awk_CLI.Diagnostics.Interpreter,
+                 Detail => U.To_String (Message)));
+      elsif Awk_CLI.Execution.Callbacks.Failed (State) then
+         return (Ok => False, Diagnostic => Awk_CLI.Execution.Callbacks.Failure (State));
+      else
+         return
+           (Ok => True, Standard_Output => Output, Exit_Status => Exit_Code,
+            Redirections => Redirs);
+      end if;
+   end Build_Run_Result;
+
    function Execute_Core
      (Program_Source  : String;
       Options         : Awk_CLI.Options.Parsed_Options;
@@ -181,24 +209,7 @@ package body Awk_CLI.Execution is
             Read_Command   => Awk_CLI.Execution.Callbacks.Read_Command'Access);
       end if;
 
-      if Status = I.Run_Error then
-         return
-           (Ok => False,
-            Diagnostic =>
-              Awk_CLI.Diagnostics.Make
-                ("awk.interpreter.runtime_failed",
-                 Awk_CLI.Diagnostics.Error,
-                 Awk_CLI.Diagnostics.Interpreter,
-                 Detail => U.To_String (Message)));
-      end if;
-
-      if Awk_CLI.Execution.Callbacks.Failed (State) then
-         return (Ok => False, Diagnostic => Awk_CLI.Execution.Callbacks.Failure (State));
-      end if;
-
-      return
-        (Ok => True, Standard_Output => Output, Exit_Status => Exit_Code,
-         Redirections => Redirs);
+      return Build_Run_Result (Status, Message, State, Output, Exit_Code, Redirs);
    exception
       when others =>
          return
