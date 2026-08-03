@@ -57,8 +57,7 @@ package Awk_CLI.Options is
       end case;
    end record;
 
-   package String_Vectors is new Ada.Containers.Vectors
-     (Index_Type => Positive, Element_Type => U.Unbounded_String, "=" => U."=");
+   package String_Vectors renames Awk_CLI.String_Vectors;
 
    --  @param Arguments Raw process argument vector.
    --  @return Parsed options or a structured usage diagnostic.

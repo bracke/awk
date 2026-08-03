@@ -13,6 +13,11 @@ package Awk_CLI is
    type Invocation_Context is tagged limited private;
    --  Complete host invocation model used by the runner.
 
+   package String_Vectors is new Ada.Containers.Vectors
+     (Index_Type   => Positive,
+      Element_Type => Ada.Strings.Unbounded.Unbounded_String,
+      "="          => Ada.Strings.Unbounded."=");
+
    --  @param Context Invocation context to populate from the process.
    procedure Initialize_From_Process (Context : in out Invocation_Context);
 
@@ -55,8 +60,6 @@ private
 
    package File_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Virtual_File);
-   package String_Vectors is new Ada.Containers.Vectors
-     (Index_Type => Positive, Element_Type => U.Unbounded_String, "=" => U."=");
    package Env_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Env_Item);
    package Write_Vectors is new Ada.Containers.Vectors

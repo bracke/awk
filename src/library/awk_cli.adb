@@ -33,15 +33,6 @@ package body Awk_CLI is
    function Run (Context : in out Invocation_Context) return Exit_Code is
       Catalog : Awk_CLI.Localization.Catalog;
 
-      function Parsed_Arguments return Awk_CLI.Options.String_Vectors.Vector is
-         Result : Awk_CLI.Options.String_Vectors.Vector;
-      begin
-         for Argument of Context.Config.Arguments loop
-            Result.Append (Argument);
-         end loop;
-         return Result;
-      end Parsed_Arguments;
-
       procedure Record_Diagnostic (Item : D.Diagnostic) is
       begin
          Context.Last_Diagnostic.Set := True;
@@ -132,7 +123,7 @@ package body Awk_CLI is
       Awk_CLI.Localization.Initialize
         (Catalog, U.To_String (Context.Config.Catalog_Path), U.To_String (Context.Config.Locale));
 
-      return Execute_Parsed (Awk_CLI.Options.Parse (Parsed_Arguments));
+      return Execute_Parsed (Awk_CLI.Options.Parse (Context.Config.Arguments));
    exception
       when others =>
          return Emit_Internal_Diagnostic;

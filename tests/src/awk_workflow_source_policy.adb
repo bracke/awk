@@ -392,6 +392,15 @@ package body Awk_Workflow_Source_Policy is
          "diagnostic state reset must use record defaults",
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli-options.ads",
+         "package String_Vectors renames Awk_CLI.String_Vectors;",
+         "option parser must reuse the invocation argument vector type",
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli.adb",
+         [U.To_Unbounded_String ("Parsed_Arguments")],
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "while Remaining > 0 loop",
          "standard stream writes must retry partial writes",
