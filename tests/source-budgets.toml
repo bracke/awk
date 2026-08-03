@@ -61,7 +61,7 @@ usecase = "platform adapter parent body"
 [[body]]
 path = "tests/src/awk_tests-process_options.adb"
 split_prefix = "tests/src/awk_tests-process_options"
-target_lines = 402
+target_lines = 307
 max_lines = 500
 min_headroom_lines = 40
 max_bytes = 50000

@@ -35,6 +35,13 @@ package Awk_Tests.Process_Support is
       Input   : String := "") return Captured_Process;
    --  Run an arbitrary command with stderr merged into output.
 
+   function Run_Process
+     (Label   : String;
+      Dir     : String;
+      Program : String;
+      Args    : Awk_Tests.Process_Harness.Argument_List) return Captured_Process;
+   --  Run a process through the status harness and capture stdout.
+
    function Run_Awk
      (Label : String;
       Args  : Awk_Tests.Process_Harness.Argument_List) return Captured_Process;

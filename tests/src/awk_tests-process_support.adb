@@ -58,20 +58,34 @@ package body Awk_Tests.Process_Support is
          Output => U.To_Unbounded_String (Output));
    end Run_Command_Err_To_Out;
 
-   function Run_Awk
-     (Label : String;
-      Args  : Awk_Tests.Process_Harness.Argument_List) return Captured_Process
+   function Run_Process
+     (Label   : String;
+      Dir     : String;
+      Program : String;
+      Args    : Awk_Tests.Process_Harness.Argument_List) return Captured_Process
    is
       Output : Awk_Tests.Process_Harness.Output_Text;
       Status : constant Integer :=
         Awk_Tests.Process_Harness.Run_Status
           (Label   => Label,
-           Dir     => "..",
-           Program => Awk_From_Repository_Root,
+           Dir     => Dir,
+           Program => Program,
            Args    => Args,
            Output  => Output);
    begin
       return (Status => Status, Output => Output);
+   end Run_Process;
+
+   function Run_Awk
+     (Label : String;
+      Args  : Awk_Tests.Process_Harness.Argument_List) return Captured_Process
+   is
+   begin
+      return Run_Process
+        (Label   => Label,
+         Dir     => "..",
+         Program => Awk_From_Repository_Root,
+         Args    => Args);
    end Run_Awk;
 
    function Output_String (Result : Captured_Process) return String is
