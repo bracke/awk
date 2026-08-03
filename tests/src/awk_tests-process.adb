@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with Ada.Strings.Unbounded;
-
 with Awk_Tests.Process_Diagnostics;
 with Awk_Tests.Process_Harness;
 with Awk_Tests.Process_IO;
@@ -12,7 +10,6 @@ with Project_Tools.Text;
 
 package body Awk_Tests.Process is
    use AUnit.Assertions;
-   package U renames Ada.Strings.Unbounded;
    use Awk_Tests.Process_Support;
 
    overriding function Name (T : Case_Type) return AUnit.Message_String is
@@ -26,28 +23,24 @@ package body Awk_Tests.Process is
    is
       pragma Unreferenced (T);
       Env    : constant String := Awk_Tests.Process_Harness.Locate_Command ("env");
-      Output : Awk_Tests.Process_Harness.Output_Text;
       Args   : constant Awk_Tests.Process_Harness.Argument_List (1 .. 5) :=
         [new String'("AWK_PROCESS_ENV=visible"),
          new String'("AWK_PROCESS_EMPTY="),
          new String'(Awk_From_Repository_Root),
          new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
          new String'("unused=value")];
-      Status : Integer;
    begin
       Assert (Env /= "", "env executable is available for environment-bound process test");
-      Status :=
-        Awk_Tests.Process_Harness.Run_Status
-          (Label   => "awk process environment",
-           Dir     => "..",
-           Program => Env,
-           Args    => Args,
-           Output  => Output);
-      Assert (Status = 0, "process environment propagation exits successfully");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "visible" & LF),
-              "process environment reaches awklib ENVIRON");
-      Assert (Project_Tools.Text.Contains (U.To_String (Output), "empty=" & LF),
-              "empty process environment values are preserved");
+      declare
+         Result : constant Captured_Process :=
+           Run_Process ("awk process environment", "..", Env, Args);
+      begin
+         Assert (Result.Status = 0, "process environment propagation exits successfully");
+         Assert (Project_Tools.Text.Contains (Output_String (Result), "visible" & LF),
+                 "process environment reaches awklib ENVIRON");
+         Assert (Project_Tools.Text.Contains (Output_String (Result), "empty=" & LF),
+                 "empty process environment values are preserved");
+      end;
    end Test_Process_Environment_Propagation;
 
    overriding procedure Register_Tests (T : in out Case_Type) is
