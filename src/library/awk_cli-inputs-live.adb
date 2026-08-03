@@ -145,6 +145,60 @@ package body Awk_CLI.Inputs.Live is
       return Awk_CLI.Platform.Read_Success;
    end Read_Active_In_Memory;
 
+   procedure Close_Active_Input (State : in out Live_Input_State) is
+   begin
+      Awk_CLI.Platform.Close_Input (State.Process_Stream);
+      State.Active := False;
+      State.Active_Process := False;
+   end Close_Active_Input;
+
+   procedure Activate_Empty_Standard_Input (State : in out Live_Input_State) is
+   begin
+      State.Active := True;
+      State.Active_Process := False;
+      State.Active_Name := U.To_Unbounded_String ("-");
+      State.Active_Content := U.Null_Unbounded_String;
+      State.Active_Position := 1;
+   end Activate_Empty_Standard_Input;
+
+   function Activate_Operand
+     (State         : in out Live_Input_State;
+      Operand_Index : Positive) return Awk_CLI.Platform.Read_Status
+   is
+   begin
+      State.Operand_Index := Operand_Index;
+      if Operand_Index > Natural (State.Operands.Length) then
+         State.Implicit_Stdin_Used := True;
+         declare
+            Status : constant Awk_CLI.Platform.Read_Status :=
+              Activate_Standard_Input (State);
+         begin
+            State.Active_Name := U.Null_Unbounded_String;
+            return Status;
+         end;
+      end if;
+
+      declare
+         Item : constant Awk_CLI.Operands.Classified_Operand :=
+           State.Operands.Element (Operand_Index);
+      begin
+         case Item.Kind is
+            when Awk_CLI.Operands.Named_File =>
+               return Activate_Named_Input (State, U.To_String (Item.Text));
+            when Awk_CLI.Operands.Standard_Input =>
+               if State.Implicit_Stdin_Used then
+                  Activate_Empty_Standard_Input (State);
+                  return Awk_CLI.Platform.Read_Success;
+               else
+                  State.Implicit_Stdin_Used := True;
+                  return Activate_Standard_Input (State);
+               end if;
+            when Awk_CLI.Operands.Runtime_Assignment =>
+               return Awk_CLI.Platform.Read_Success;
+         end case;
+      end;
+   end Activate_Operand;
+
    function Read
      (User_Data    : System.Address;
       Operand_Index : Positive;
@@ -162,9 +216,7 @@ package body Awk_CLI.Inputs.Live is
 
       loop
          if State.Active and then State.Operand_Index /= Operand_Index then
-            Awk_CLI.Platform.Close_Input (State.Process_Stream);
-            State.Active := False;
-            State.Active_Process := False;
+            Close_Active_Input (State.all);
          end if;
 
          if not State.Active then
@@ -173,36 +225,7 @@ package body Awk_CLI.Inputs.Live is
                return Awk_CLI.Platform.Read_Success;
             end if;
 
-            State.Operand_Index := Operand_Index;
-            if Operand_Index > Natural (State.Operands.Length) then
-               State.Implicit_Stdin_Used := True;
-               Status := Activate_Standard_Input (State.all);
-               State.Active_Name := U.Null_Unbounded_String;
-            else
-               declare
-                  Item : constant Awk_CLI.Operands.Classified_Operand :=
-                    State.Operands.Element (Operand_Index);
-               begin
-                  case Item.Kind is
-                     when Awk_CLI.Operands.Named_File =>
-                        Status := Activate_Named_Input (State.all, U.To_String (Item.Text));
-                     when Awk_CLI.Operands.Standard_Input =>
-                        if State.Implicit_Stdin_Used then
-                           State.Active := True;
-                           State.Active_Process := False;
-                           State.Active_Name := U.To_Unbounded_String ("-");
-                           State.Active_Content := U.Null_Unbounded_String;
-                           State.Active_Position := 1;
-                           Status := Awk_CLI.Platform.Read_Success;
-                        else
-                           State.Implicit_Stdin_Used := True;
-                           Status := Activate_Standard_Input (State.all);
-                        end if;
-                     when Awk_CLI.Operands.Runtime_Assignment =>
-                        Status := Awk_CLI.Platform.Read_Success;
-                  end case;
-               end;
-            end if;
+            Status := Activate_Operand (State.all, Operand_Index);
             if Status /= Awk_CLI.Platform.Read_Success then
                Filename := State.Active_Name;
                End_Of_Input := True;
@@ -223,15 +246,11 @@ package body Awk_CLI.Inputs.Live is
                    (State.Process_Stream, Text, EOF);
                Filename := State.Active_Name;
                if Status /= Awk_CLI.Platform.Read_Success then
-                  Awk_CLI.Platform.Close_Input (State.Process_Stream);
-                  State.Active := False;
-                  State.Active_Process := False;
+                  Close_Active_Input (State.all);
                   End_Of_Input := True;
                   return Status;
                elsif EOF then
-                  Awk_CLI.Platform.Close_Input (State.Process_Stream);
-                  State.Active := False;
-                  State.Active_Process := False;
+                  Close_Active_Input (State.all);
                elsif U.Length (Text) > 0 then
                   return Awk_CLI.Platform.Read_Success;
                end if;

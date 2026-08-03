@@ -337,6 +337,16 @@ package body Awk_Workflow_Source_Policy is
          "in-memory live input chunking must avoid full-content copies",
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli-inputs-live.adb",
+         "procedure Close_Active_Input",
+         "live input state-machine close/reset logic must be centralized",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-inputs-live.adb",
+         "function Activate_Operand",
+         "live input operand activation must be centralized",
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-context_io.adb",
          "procedure Record_Write",
          "context redirection write recording must be centralized",
