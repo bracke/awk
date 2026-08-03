@@ -75,6 +75,15 @@ package body Awk_CLI is
             return Exit_Code (D.Internal_Exit);
       end Emit_Internal_Diagnostic;
 
+      function Emit_CLI_Standard_Output (Text : String) return Exit_Code is
+      begin
+         if Awk_CLI.Context_IO.Write_Standard_Output (Context, Text) then
+            return Exit_Code (D.Success_Exit);
+         else
+            return Exit_Code (D.IO_Exit);
+         end if;
+      end Emit_CLI_Standard_Output;
+
       function Execute_Parsed
         (Parsed : Awk_CLI.Options.Parse_Result) return Exit_Code
       is
@@ -87,22 +96,11 @@ package body Awk_CLI is
          Awk_CLI.Output.Set_Color (Parsed.Options.Color);
 
          if Parsed.Options.Help_Requested then
-            if Awk_CLI.Context_IO.Write_Standard_Output
-              (Context, Awk_CLI.Output.Help
-                 (Catalog, Context.Config.Stdout_Terminal, Context.Config.No_Color))
-            then
-               return Exit_Code (D.Success_Exit);
-            else
-               return Exit_Code (D.IO_Exit);
-            end if;
+            return Emit_CLI_Standard_Output
+              (Awk_CLI.Output.Help
+                 (Catalog, Context.Config.Stdout_Terminal, Context.Config.No_Color));
          elsif Parsed.Options.Version_Requested then
-            if Awk_CLI.Context_IO.Write_Standard_Output
-              (Context, Awk_CLI.Output.Version (Catalog))
-            then
-               return Exit_Code (D.Success_Exit);
-            else
-               return Exit_Code (D.IO_Exit);
-            end if;
+            return Emit_CLI_Standard_Output (Awk_CLI.Output.Version (Catalog));
          end if;
 
          declare

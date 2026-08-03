@@ -377,6 +377,11 @@ package body Awk_Workflow_Source_Policy is
          "process redirection must update virtual context only after host write succeeds",
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli.adb",
+         "function Emit_CLI_Standard_Output",
+         "top-level CLI stdout status handling must be centralized",
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-context_io.adb",
          "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
          "            Add_New_Virtual_File;",
