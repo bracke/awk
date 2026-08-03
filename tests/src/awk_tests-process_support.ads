@@ -22,4 +22,18 @@ package Awk_Tests.Process_Support is
    --  @return File content as text.
    function Read_Text_File (Path : String) return String;
    --  Read fixture text through project_tools.
+
+   function English_Text
+     (Key       : String;
+      Name      : String := "";
+      Value     : String := "";
+      Detail    : String := "") return String;
+   --  Render a message through the production localization adapter with the
+   --  English catalog locale.
+
+   function English_Hint (Hint_Key : String) return String;
+   --  Render a complete English diagnostic hint line.
+
+   function English_Error_Header (Primary : String) return String;
+   --  Render a complete English CLI error header line.
 end Awk_Tests.Process_Support;

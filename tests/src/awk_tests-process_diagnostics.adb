@@ -24,9 +24,16 @@ package body Awk_Tests.Process_Diagnostics is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "unknown option exits with usage status");
-         Assert (Project_Tools.Text.Contains (Output, "awk: error: unknown option: --bad-option"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Error_Header
+                      (English_Text
+                         ("awk.usage.unknown_option",
+                          "option",
+                          "--bad-option"))),
                  "unknown option reports the offending option");
-         Assert (Project_Tools.Text.Contains (Output, "hint: use --help for command-line syntax"),
+         Assert (Project_Tools.Text.Contains
+                   (Output, English_Hint ("awk.hint.use_help")),
                  "unknown option emits the usage hint");
          Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured usage diagnostic is unstyled");
@@ -57,7 +64,10 @@ package body Awk_Tests.Process_Diagnostics is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Project_Tools.Text.Contains (Output, "unknown option: --bad"),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Text
+                         ("awk.usage.unknown_option", "option", "--bad")),
                     Message & " includes localized diagnostic text");
             Assert ((Project_Tools.Text.Contains (Output, Escape & "[") = Styled),
                     Message & " follows diagnostic color policy");
@@ -93,7 +103,10 @@ package body Awk_Tests.Process_Diagnostics is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Project_Tools.Text.Contains (Output, "unknown option: --bad"),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Text
+                         ("awk.usage.unknown_option", "option", "--bad")),
                     Message & " includes localized diagnostic text");
             Assert ((Project_Tools.Text.Contains (Output, Escape & "[") = Styled),
                     Message & " follows final color option");
@@ -122,9 +135,11 @@ package body Awk_Tests.Process_Diagnostics is
               Err_To_Out => True);
       begin
          Assert (Status = 2, "no arguments exits with usage status");
-         Assert (Project_Tools.Text.Contains (Output, "missing AWK program"),
+         Assert (Project_Tools.Text.Contains
+                   (Output, English_Text ("awk.usage.missing_program")),
                  "no arguments reports missing program");
-         Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
+         Assert (Project_Tools.Text.Contains
+                   (Output, English_Hint ("awk.hint.use_help")),
                  "no arguments emits the usage hint");
          Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "no-argument diagnostic is not styled by default capture");
@@ -148,9 +163,13 @@ package body Awk_Tests.Process_Diagnostics is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Project_Tools.Text.Contains (Output, "invalid color mode: " & Value),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Text
+                         ("awk.usage.invalid_color_mode", "value", Value)),
                     Message & " reports the invalid color value");
-            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains
+                      (Output, English_Hint ("awk.hint.use_help")),
                     Message & " emits the usage hint");
          end;
       end Expect_Invalid;
@@ -178,9 +197,13 @@ package body Awk_Tests.Process_Diagnostics is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Option & " exits with usage status");
-            Assert (Project_Tools.Text.Contains (Output, "missing argument for " & Option),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Text
+                         ("awk.usage.missing_option_argument", "option", Option)),
                     Option & " explains the missing argument");
-            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains
+                      (Output, English_Hint ("awk.hint.use_help")),
                     Option & " emits the usage hint");
          end;
       end Expect_Missing;
@@ -213,9 +236,10 @@ package body Awk_Tests.Process_Diagnostics is
             Assert
               (Project_Tools.Text.Contains
                  (Output,
-                  "program file '-' is unsupported because standard input is reserved for AWK data"),
+                  English_Text ("awk.usage.program_file_stdin_unsupported")),
                Message & " explains why stdin program files are rejected");
-            Assert (Project_Tools.Text.Contains (Output, "hint: use -- before filenames that begin with '-'"),
+            Assert (Project_Tools.Text.Contains
+                      (Output, English_Hint ("awk.hint.option_terminator")),
                     Message & " emits the option-terminator hint");
          end;
       end Expect_Unsupported;
@@ -251,9 +275,18 @@ package body Awk_Tests.Process_Diagnostics is
          Assert
            (Project_Tools.Text.Contains
               (Output,
-               "cannot open program file: tests/fixtures/programs/no-such-program.awk"),
+               English_Text
+                 ("awk.program_file.open_failed",
+                  "path",
+                  "tests/fixtures/programs/no-such-program.awk")),
             "missing process program file reports the original path");
-         Assert (Project_Tools.Text.Contains (Output, "awk: error:"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Error_Header
+                      (English_Text
+                         ("awk.program_file.open_failed",
+                          "path",
+                          "tests/fixtures/programs/no-such-program.awk"))),
                  "missing process program file uses the CLI diagnostic wrapper");
          Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured program-file diagnostic is unstyled");
@@ -279,9 +312,18 @@ package body Awk_Tests.Process_Diagnostics is
          Assert
            (Project_Tools.Text.Contains
               (Output,
-               "cannot open input file: tests/fixtures/input/no-such-input.txt"),
+               English_Text
+                 ("awk.input_file.open_failed",
+                  "path",
+                  "tests/fixtures/input/no-such-input.txt")),
             "missing process input file reports the original path");
-         Assert (Project_Tools.Text.Contains (Output, "awk: error:"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Error_Header
+                      (English_Text
+                         ("awk.input_file.open_failed",
+                          "path",
+                          "tests/fixtures/input/no-such-input.txt"))),
                  "missing process input file uses the CLI diagnostic wrapper");
          Assert (not Project_Tools.Text.Contains (Output, Character'Val (27) & "["),
                  "default captured input-file diagnostic is unstyled");
@@ -308,9 +350,15 @@ package body Awk_Tests.Process_Diagnostics is
                  Err_To_Out => True);
          begin
             Assert (Status = 2, Message & " exits with usage status");
-            Assert (Project_Tools.Text.Contains (Output, "invalid assignment: 1bad=value"),
+            Assert (Project_Tools.Text.Contains
+                      (Output,
+                       English_Text
+                         ("awk.usage.invalid_assignment",
+                          "assignment",
+                          "1bad=value")),
                     Message & " explains the invalid assignment");
-            Assert (Project_Tools.Text.Contains (Output, "hint: use --help"),
+            Assert (Project_Tools.Text.Contains
+                      (Output, English_Hint ("awk.hint.use_help")),
                     Message & " emits the usage hint");
             Assert (not Project_Tools.Text.Contains (Output, "1" & LF),
                     Message & " does not execute the AWK program");
@@ -462,7 +510,10 @@ package body Awk_Tests.Process_Diagnostics is
               Err_To_Out => True);
       begin
          Assert (Status = 1, "process parse failure exits with interpreter status");
-         Assert (Project_Tools.Text.Contains (Output, "awk: error: AWK execution failed"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Error_Header
+                      (English_Text ("awk.interpreter.runtime_failed"))),
                  "parse failure reports localized interpreter context");
          Assert (Project_Tools.Text.Contains (Output, "expected '}'"),
                  "parse failure preserves interpreter detail");
@@ -486,7 +537,10 @@ package body Awk_Tests.Process_Diagnostics is
               Err_To_Out => True);
       begin
          Assert (Status = 1, "process runtime failure exits with interpreter status");
-         Assert (Project_Tools.Text.Contains (Output, "awk: error: AWK execution failed"),
+         Assert (Project_Tools.Text.Contains
+                   (Output,
+                    English_Error_Header
+                      (English_Text ("awk.interpreter.runtime_failed"))),
                  "runtime failure reports localized interpreter context");
          Assert (Project_Tools.Text.Contains (Output, "division by zero"),
                  "runtime failure preserves interpreter detail");
