@@ -96,88 +96,50 @@ package body Awk_CLI.Platform is
          return Awk_CLI.Environment.Normalize (Result);
    end Process_Environment;
 
+   package File_IO is
+      function Read_File
+        (Path    : String;
+         Content : out U.Unbounded_String) return Read_Status;
+
+      function Write_File
+        (Path    : String;
+         Content : String;
+         Append  : Boolean) return Boolean;
+   end File_IO;
+
+   package body File_IO is separate;
+
+   package Input_Streams is
+      function Open_File
+        (Path   : String;
+         Stream : in out Input_Stream) return Read_Status;
+
+      function Open_Standard_Input
+        (Stream : in out Input_Stream) return Read_Status;
+
+      function Read_Chunk
+        (Stream      : in out Input_Stream;
+         Content     : out U.Unbounded_String;
+         End_Of_File : out Boolean) return Read_Status;
+
+      procedure Close (Stream : in out Input_Stream);
+   end Input_Streams;
+
+   package body Input_Streams is separate;
+
    function Read_File (Path : String; Content : out U.Unbounded_String) return Read_Status is
-      File   : SIO.File_Type;
-      Opened : Boolean := False;
-
    begin
-      Content := U.Null_Unbounded_String;
-      if not Ada.Directories.Exists (Path) then
-         return Open_Failed;
-      end if;
-      SIO.Open (File, SIO.In_File, Path);
-      Opened := True;
-
-      while not SIO.End_Of_File (File) loop
-         declare
-            Buffer : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
-            Last   : Ada.Streams.Stream_Element_Offset;
-         begin
-            SIO.Read (File, Buffer, Last);
-            U.Append (Content, Byte_IO.To_String (Buffer, Last));
-         end;
-      end loop;
-
-      SIO.Close (File);
-      return Read_Success;
-   exception
-      when Ada.IO_Exceptions.Name_Error
-         | Ada.IO_Exceptions.Use_Error
-         | Ada.IO_Exceptions.Device_Error
-         | Ada.IO_Exceptions.End_Error
-         | Ada.IO_Exceptions.Data_Error
-         | Ada.IO_Exceptions.Status_Error
-         | Ada.IO_Exceptions.Mode_Error
-         | Ada.Directories.Name_Error
-         | Ada.Directories.Use_Error
-         | Constraint_Error
-         | Storage_Error =>
-         if SIO.Is_Open (File) then
-            SIO.Close (File);
-         end if;
-         Content := U.Null_Unbounded_String;
-         return (if Opened then Read_Failed else Open_Failed);
+      return File_IO.Read_File (Path, Content);
    end Read_File;
 
    function Open_Input_File (Path : String; Stream : in out Input_Stream) return Read_Status is
    begin
-      Close_Input (Stream);
-      if not Ada.Directories.Exists (Path) then
-         return Open_Failed;
-      end if;
-      SIO.Open (Stream.File, SIO.In_File, Path);
-      Stream.Opened := True;
-      Stream.Is_Stdin := False;
-      Stream.Stdin_Done := False;
-      return Read_Success;
-   exception
-      when Ada.IO_Exceptions.Name_Error
-         | Ada.IO_Exceptions.Use_Error
-         | Ada.IO_Exceptions.Device_Error
-         | Ada.IO_Exceptions.Status_Error
-         | Ada.Directories.Name_Error
-         | Ada.Directories.Use_Error =>
-         Close_Input (Stream);
-         return Open_Failed;
+      return Input_Streams.Open_File (Path, Stream);
    end Open_Input_File;
 
    function Open_Standard_Input (Stream : in out Input_Stream) return Read_Status is
-      use type System.Address;
-
-      Handle : constant Interfaces.C_Streams.int :=
-        Interfaces.C_Streams.fileno (Interfaces.C_Streams.stdin);
    begin
-      Close_Input (Stream);
-      if Interfaces.C_Streams.stdin = Interfaces.C_Streams.NULL_Stream
-        or else Handle < 0
-      then
-         return Open_Failed;
-      end if;
-      Interfaces.C_Streams.set_binary_mode (Handle);
-      Stream.Opened := True;
-      Stream.Is_Stdin := True;
-      Stream.Stdin_Done := False;
-      return Read_Success;
+      return Input_Streams.Open_Standard_Input (Stream);
    end Open_Standard_Input;
 
    function Read_Input_Chunk
@@ -186,94 +148,18 @@ package body Awk_CLI.Platform is
       End_Of_File : out Boolean) return Read_Status
    is
    begin
-      Content := U.Null_Unbounded_String;
-      End_Of_File := False;
-
-      if not Stream.Opened then
-         End_Of_File := True;
-         return Read_Failed;
-      end if;
-
-      if Stream.Is_Stdin then
-         if Stream.Stdin_Done then
-            Stream.Stdin_Done := True;
-            End_Of_File := True;
-            return Read_Success;
-         end if;
-
-         declare
-            use type Interfaces.C_Streams.size_t;
-
-            Text : String (1 .. Natural (Byte_IO.Chunk_Size));
-            Read : constant Interfaces.C_Streams.size_t :=
-              Interfaces.C_Streams.fread
-                (Text (Text'First)'Address,
-                 1,
-                 Interfaces.C_Streams.size_t (Text'Length),
-                 Interfaces.C_Streams.stdin);
-         begin
-            if Read = 0 then
-               Stream.Stdin_Done := True;
-               End_Of_File := True;
-               if Interfaces.C_Streams.ferror (Interfaces.C_Streams.stdin) /= 0 then
-                  return Read_Failed;
-               end if;
-               return Read_Success;
-            end if;
-
-            Content := U.To_Unbounded_String (Text (1 .. Natural (Read)));
-            return Read_Success;
-         end;
-      end if;
-
-      if SIO.End_Of_File (Stream.File) then
-         End_Of_File := True;
-         return Read_Success;
-      end if;
-
-      declare
-         Buffer : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
-         Last   : Ada.Streams.Stream_Element_Offset;
-      begin
-         SIO.Read (Stream.File, Buffer, Last);
-         if Last < Buffer'First then
-            End_Of_File := True;
-            return Read_Success;
-         end if;
-
-         Content := U.To_Unbounded_String (Byte_IO.To_String (Buffer, Last));
-      end;
-
-      End_Of_File := False;
-      return Read_Success;
-   exception
-      when Ada.IO_Exceptions.Use_Error
-         | Ada.IO_Exceptions.Device_Error
-         | Ada.IO_Exceptions.End_Error
-         | Ada.IO_Exceptions.Data_Error
-         | Ada.IO_Exceptions.Status_Error
-         | Ada.IO_Exceptions.Mode_Error
-         | Constraint_Error
-         | Storage_Error =>
-         Content := U.Null_Unbounded_String;
-         End_Of_File := True;
-         return Read_Failed;
+      return Input_Streams.Read_Chunk (Stream, Content, End_Of_File);
    end Read_Input_Chunk;
 
    procedure Close_Input (Stream : in out Input_Stream) is
    begin
-      if Stream.Opened and then not Stream.Is_Stdin and then SIO.Is_Open (Stream.File) then
-         SIO.Close (Stream.File);
-      end if;
-      Stream.Opened := False;
-      Stream.Is_Stdin := False;
-      Stream.Stdin_Done := False;
-   exception
-      when Ada.IO_Exceptions.Use_Error | Ada.IO_Exceptions.Status_Error =>
-         Stream.Opened := False;
-         Stream.Is_Stdin := False;
-         Stream.Stdin_Done := False;
+      Input_Streams.Close (Stream);
    end Close_Input;
+
+   function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
+   begin
+      return File_IO.Write_File (Path, Content, Append);
+   end Write_File;
 
    package Command_Execution is
       function Run_Command
@@ -373,53 +259,6 @@ package body Awk_CLI.Platform is
    begin
       return Command_Execution.Run_Command (Command, Output);
    end Run_Command;
-
-   function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
-      File : SIO.File_Type;
-      Mode : constant SIO.File_Mode := (if Append then SIO.Append_File else SIO.Out_File);
-      Position : Natural := Content'First;
-   begin
-      if Append and then Ada.Directories.Exists (Path) then
-         SIO.Open (File, Mode, Path);
-      else
-         SIO.Create (File, SIO.Out_File, Path);
-      end if;
-
-      while Position <= Content'Last loop
-         declare
-            Remaining : constant Natural := Content'Last - Position + 1;
-            Count     : constant Natural :=
-              Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size));
-            Last      : constant Ada.Streams.Stream_Element_Offset :=
-              Ada.Streams.Stream_Element_Offset (Count);
-            Buffer    : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
-         begin
-            for Offset in 0 .. Count - 1 loop
-               Buffer (Ada.Streams.Stream_Element_Offset (Offset + 1)) :=
-                 Ada.Streams.Stream_Element (Character'Pos (Content (Position + Offset)));
-            end loop;
-            SIO.Write (File, Buffer (1 .. Last));
-            Position := Position + Count;
-         end;
-      end loop;
-
-      SIO.Close (File);
-      return True;
-   exception
-      when Ada.IO_Exceptions.Name_Error
-         | Ada.IO_Exceptions.Use_Error
-         | Ada.IO_Exceptions.Device_Error
-         | Ada.IO_Exceptions.Status_Error
-         | Ada.IO_Exceptions.Mode_Error
-         | Ada.Directories.Name_Error
-         | Ada.Directories.Use_Error
-         | Constraint_Error
-         | Storage_Error =>
-         if SIO.Is_Open (File) then
-            SIO.Close (File);
-         end if;
-         return False;
-   end Write_File;
 
    package Standard_Streams is
       function Write_Output (Content : String) return Boolean;

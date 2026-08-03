@@ -395,6 +395,16 @@ package body Awk_Workflow_Source_Policy is
             Quiet => True);
          Files.Require_Contains
            ("../src/library/awk_cli-platform.adb",
+            "package body File_IO is separate;",
+            "platform whole-file I/O helpers must be split into a focused subunit",
+            Quiet => True);
+         Files.Require_Contains
+           ("../src/library/awk_cli-platform.adb",
+            "package body Input_Streams is separate;",
+            "platform input stream helpers must be split into a focused subunit",
+            Quiet => True);
+         Files.Require_Contains
+           ("../src/library/awk_cli-platform.adb",
             "package Standard_Streams is",
             "platform standard-stream write helpers must be grouped",
             Quiet => True);
@@ -414,12 +424,12 @@ package body Awk_Workflow_Source_Policy is
             "command-getline cleanup must be centralized",
             Quiet => True);
          Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
+           ("../src/library/awk_cli-platform-file_io.adb",
             "Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size))",
             "platform file writes must use bounded chunks",
             Quiet => True);
          Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-platform.adb",
+           ("../src/library/awk_cli-platform-file_io.adb",
             [U.To_Unbounded_String ("Stream_Element_Array (1 .. Content'Length)")],
             Quiet => True);
       end Platform_Policy;
