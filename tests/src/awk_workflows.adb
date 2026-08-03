@@ -1,35 +1,26 @@
 with Ada.Command_Line;
-with Ada.Directories;
 with Ada.Exceptions;
-with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
 with GNAT.OS_Lib;
 
-with Awk_Conformance_Cases;
-with Awk_CLI.Diagnostics;
 with Awk_Workflow_Catalogs;
+with Awk_Workflow_Conformance;
 with Awk_Workflow_Docs;
+with Awk_Workflow_Drift;
+with Awk_Workflow_Install;
 with Awk_Workflow_Metadata;
 with Awk_Workflow_Packaging;
 with Awk_Workflow_Source_Policy;
 with Project_Tools.Alire;
 with Project_Tools.Files;
-with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
-with Project_Tools.Test_Fixtures;
-with Project_Tools.Text;
 with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
-   package D renames Awk_CLI.Diagnostics;
-   package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
-   package Fixtures renames Project_Tools.Test_Fixtures;
-   package Text renames Project_Tools.Text;
    package Tree_Checks renames Project_Tools.Tree_Checks;
-   package U renames Ada.Strings.Unbounded;
 
    Root : constant String := "..";
    No_Arguments : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
@@ -38,18 +29,6 @@ procedure Awk_Workflows is
    begin
       Ada.Text_IO.Put_Line (Message);
    end Put_Info;
-
-   procedure Fail (Message : String) is
-   begin
-      Project_Tools.Release_Checks.Fail (Message);
-   end Fail;
-
-   procedure Require (Condition : Boolean; Message : String) is
-   begin
-      if not Condition then
-         Fail (Message);
-      end if;
-   end Require;
 
    procedure Build is
    begin
@@ -81,188 +60,6 @@ procedure Awk_Workflows is
         ("awk", Root, Quiet => True);
    end Require_Clean_Repository;
 
-
-
-
-
-   procedure Conformance is
-      procedure Require_Case (Index : Positive) is
-         Id        : constant String := Awk_Conformance_Cases.Id (Index);
-         Case_File : constant String := Awk_Conformance_Cases.Case_File (Index);
-         Expected  : constant String := Awk_Conformance_Cases.Expected_File (Index);
-      begin
-         Require
-           (Files.Has_Line
-              ("conformance/manifest/cases.txt",
-               Awk_Conformance_Cases.Manifest_Line (Index)),
-            "conformance manifest missing case: " & Id);
-         Files.Require_File
-           ("conformance/" & Case_File,
-            "conformance case file missing: " & Case_File);
-         Files.Require_File
-           ("conformance/" & Expected,
-            "conformance expected file missing: " & Expected);
-         Require (Project_Tools.Release_Checks.File_Length ("conformance/" & Case_File) > 0,
-                  "conformance case file is empty: " & Case_File);
-         Require (Project_Tools.Release_Checks.File_Length ("conformance/" & Expected) > 0,
-                  "conformance expected file is empty: " & Expected);
-      end Require_Case;
-   begin
-      Files.Require_File
-        ("conformance/manifest/cases.txt",
-         "conformance manifest is missing or empty");
-      Require
-        (Project_Tools.Release_Checks.File_Length ("conformance/manifest/cases.txt") > 0,
-         "conformance manifest is missing or empty");
-      for Index in 1 .. Awk_Conformance_Cases.Case_Count loop
-         Require_Case (Index);
-      end loop;
-      Put_Info ("conformance checks passed");
-   end Conformance;
-
-   procedure Exit_Status_Drift is
-      Docs      : constant String := Fixtures.Read_Text_File ("../docs/diagnostics.md");
-      Reference : constant String := Fixtures.Read_Text_File ("../docs/command-line-reference.md");
-      Allowed   : U.Unbounded_String;
-
-      function Image (Value : D.Exit_Code) return String is
-         Raw : constant String := D.Exit_Code'Image (Value);
-      begin
-         if Raw'Length > 0 and then Raw (Raw'First) = ' ' then
-            return Raw (Raw'First + 1 .. Raw'Last);
-         else
-            return Raw;
-         end if;
-      end Image;
-
-      procedure Require_Exit (Name : String; Status : D.Exit_Code) is
-         Value : constant String := Image (Status);
-      begin
-         U.Append (Allowed, " " & Value & " ");
-         Require
-           (Text.Contains (Docs, "| `" & Value & "` |"),
-            "exit status " & Value & " from " & Name & " is not documented");
-         Require
-           (Text.Contains (Reference, "`" & Value & "`"),
-            "exit status " & Value & " from " & Name
-            & " is missing from the command-line reference");
-      end Require_Exit;
-
-      From : Positive := Docs'First;
-   begin
-      Require_Exit ("Success_Exit", D.Success_Exit);
-      Require_Exit ("Interpreter_Exit", D.Interpreter_Exit);
-      Require_Exit ("Usage_Exit", D.Usage_Exit);
-      Require_Exit ("IO_Exit", D.IO_Exit);
-      Require_Exit ("Internal_Exit", D.Internal_Exit);
-
-      while From <= Docs'Last loop
-         declare
-            Mark : constant Natural := Text.Index_From (Docs, "| `", From);
-            Stop : Natural;
-         begin
-            exit when Mark = 0;
-            Stop := Mark + 3;
-            while Stop <= Docs'Last and then Docs (Stop) in '0' .. '9' loop
-               Stop := Stop + 1;
-            end loop;
-            if Stop > Mark + 3
-              and then Stop <= Docs'Last
-              and then Docs (Stop) = '`'
-            then
-               declare
-                  Value : constant String := Docs (Mark + 3 .. Stop - 1);
-               begin
-                  Require
-                    (Text.Contains (U.To_String (Allowed), " " & Value & " "),
-                     "exit status " & Value & " is documented but not defined");
-               end;
-            end if;
-            From := Mark + 3;
-         end;
-      end loop;
-      Put_Info ("exit status drift checks passed");
-   end Exit_Status_Drift;
-
-   procedure Option_Drift is
-      procedure Require_Option (Spelling : String) is
-      begin
-         Files.Require_Contains
-           ("../docs/command-line-reference.md", Spelling,
-            "command-line reference missing accepted option: " & Spelling,
-            Quiet => True);
-         Files.Require_Contains
-           ("../resources/messages/catalog.txt", Spelling,
-            "help catalog missing accepted option: " & Spelling,
-            Quiet => True);
-      end Require_Option;
-   begin
-      Require_Option ("-F");
-      Require_Option ("-v");
-      Require_Option ("-f");
-      Require_Option ("--color");
-      Require_Option ("--help");
-      Require_Option ("--version");
-      Require_Option ("--");
-      Files.Require_Contains
-        ("../docs/command-line-reference.md", "--color=auto|always|never",
-         "color modes must stay documented in reference and help catalog",
-         Quiet => True);
-      Files.Require_Contains
-        ("../resources/messages/catalog.txt", "--color=auto|always|never",
-         "color modes must stay documented in reference and help catalog",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/quickstart.md", "awk '{ print $1 }'",
-         "quickstart must document direct, -F, and -f invocation examples",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/quickstart.md", "awk -F:",
-         "quickstart must document direct, -F, and -f invocation examples",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/quickstart.md", "awk -f script.awk",
-         "quickstart must document direct, -F, and -f invocation examples",
-         Quiet => True);
-      Put_Info ("option drift checks passed");
-   end Option_Drift;
-
-
-
-   procedure Install_Boundary is
-      Prefix : constant String := Files.Join (Files.Temp_Dir, "awk-install-boundary");
-      Run_Dir : constant String := Files.Join (Files.Temp_Dir, "awk-install-run-cwd");
-      Output : Proc.Unbounded_String;
-      Install_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("-n"),
-         new String'("install"),
-         new String'("--prefix=" & Prefix)];
-      Version_Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("--version")];
-   begin
-      Proc.Require_Command ("alr", "alr executable not found", Quiet => True);
-      Files.Delete_Tree (Prefix);
-      Files.Delete_Tree (Run_Dir);
-      Ada.Directories.Create_Path (Run_Dir);
-
-      declare
-         Alr : constant String := Proc.Locate_Command ("alr");
-      begin
-         Proc.Run ("alr install", Root, Alr, Install_Args, Quiet => True);
-      end;
-
-      Files.Require_File (Prefix & "/bin/awk", "installed awk executable missing");
-      Proc.Run
-        ("installed awk --version", Run_Dir, Prefix & "/bin/awk", Version_Args,
-         Output, Quiet => True);
-      Require (Text.Contains (U.To_String (Output), "awk 0.1.0"),
-               "installed awk version output is unexpected");
-
-      Files.Delete_Tree (Prefix);
-      Files.Delete_Tree (Run_Dir);
-      Put_Info ("install boundary checks passed");
-   end Install_Boundary;
-
    procedure Build_Output_Policy is
    begin
       Tree_Checks.Require_No_Nonempty_Stderr ("../obj", Quiet => True);
@@ -275,9 +72,9 @@ procedure Awk_Workflows is
       Awk_Workflow_Metadata.Run;
       Awk_Workflow_Docs.Run;
       Awk_Workflow_Catalogs.Run;
-      Conformance;
-      Exit_Status_Drift;
-      Option_Drift;
+      Awk_Workflow_Conformance.Run;
+      Awk_Workflow_Drift.Exit_Statuses;
+      Awk_Workflow_Drift.Options;
       Awk_Workflow_Source_Policy.Package_Manifest_Policy;
       Awk_Workflow_Source_Policy.Run;
    end Core_Quality_Gates;
@@ -287,7 +84,7 @@ procedure Awk_Workflows is
       Build;
       Test;
       Core_Quality_Gates;
-      Install_Boundary;
+      Awk_Workflow_Install.Boundary;
       Build_Output_Policy;
    end Verify;
 
@@ -301,14 +98,14 @@ procedure Awk_Workflows is
       Put_Info ("cleaned build outputs");
    end Clean;
 
-
    procedure Usage is
    begin
       Ada.Text_IO.Put_Line
         ("usage: awk_workflows build|test|verify|docs|clean|package|release");
    end Usage;
 
-   Command : constant String := (if CLI.Argument_Count = 0 then "verify" else CLI.Argument (1));
+   Command : constant String :=
+     (if CLI.Argument_Count = 0 then "verify" else CLI.Argument (1));
 begin
    if Command = "build" then
       Build;
@@ -330,7 +127,7 @@ begin
       Release_Build;
       Run_AUnit;
       Core_Quality_Gates;
-      Install_Boundary;
+      Awk_Workflow_Install.Boundary;
       Awk_Workflow_Packaging.Run (Release_Mode => True);
       Build_Output_Policy;
    elsif Command = "--help" or else Command = "-h" then

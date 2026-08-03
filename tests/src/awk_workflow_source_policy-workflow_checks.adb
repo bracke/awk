@@ -92,8 +92,20 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_workflows.adb", "Run_AUnit;",
          "workflow AUnit execution must be reusable across build modes", Quiet => False);
       Files.Require_Contains
-        ("src/awk_workflows.adb", "with Awk_CLI.Diagnostics",
+        ("src/awk_workflow_drift.adb", "with Awk_CLI.Diagnostics",
          "exit status drift checks must use compiled diagnostic constants",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "Awk_Workflow_Drift.Exit_Statuses;",
+         "workflow main must delegate exit-status drift checks",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "Awk_Workflow_Conformance.Run;",
+         "workflow main must delegate conformance checks",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflows.adb", "Awk_Workflow_Install.Boundary;",
+         "workflow main must delegate install boundary checks",
          Quiet => False);
       Ada_Source.Require_No_Code_Tokens
         ("src/awk_workflows.adb",
