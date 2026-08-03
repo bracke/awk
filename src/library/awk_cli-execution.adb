@@ -6,6 +6,7 @@ package body Awk_CLI.Execution is
    package I renames Awklib.Interpreter;
    use type I.Run_Status;
    use type I.Runtime_Operand_Kind;
+   use type Awk_CLI.Platform.Read_Status;
 
    function Pair (Name, Value : String) return I.Var_Assignment is
      (Name  => U.To_Unbounded_String (Name),
@@ -15,6 +16,10 @@ package body Awk_CLI.Execution is
    type Output_Access is access all U.Unbounded_String;
    type Redirection_Vector_Access is access all Awk_CLI.Redirections.Redirection_Vectors.Vector;
 
+   --  awklib's streaming callbacks carry one opaque address. The objects
+   --  referenced here are aliased locals in Execute_Core and remain alive until
+   --  the synchronous awklib run returns. Do not store these addresses outside
+   --  the dynamic extent of that call.
    type Stream_State is record
       Inputs      : Input_Vector_Access;
       Live_Input  : Live_Input_Reader := null;
@@ -30,6 +35,136 @@ package body Awk_CLI.Execution is
    end record;
 
    package Stream_State_Access is new System.Address_To_Access_Conversions (Stream_State);
+
+   function Is_Standard_Input_Name (Filename : U.Unbounded_String) return Boolean is
+      Value : constant String := U.To_String (Filename);
+   begin
+      return Value = "-" or else Value = "";
+   end Is_Standard_Input_Name;
+
+   function Make_Input_Failure
+     (Status   : Awk_CLI.Platform.Read_Status;
+      Filename : U.Unbounded_String) return Awk_CLI.Diagnostics.Diagnostic
+   is
+   begin
+      if Is_Standard_Input_Name (Filename) then
+         return
+           Awk_CLI.Diagnostics.Make
+             ("awk.standard_input.read_failed",
+              Awk_CLI.Diagnostics.Error,
+              Awk_CLI.Diagnostics.Input);
+      elsif Status = Awk_CLI.Platform.Open_Failed then
+         return
+           Awk_CLI.Diagnostics.Make
+             ("awk.input_file.open_failed",
+              Awk_CLI.Diagnostics.Error,
+              Awk_CLI.Diagnostics.Input,
+              Name => "path",
+              Value => U.To_String (Filename));
+      else
+         return
+           Awk_CLI.Diagnostics.Make
+             ("awk.input_file.read_failed",
+              Awk_CLI.Diagnostics.Error,
+              Awk_CLI.Diagnostics.Input,
+              Name => "path",
+              Value => U.To_String (Filename));
+      end if;
+   end Make_Input_Failure;
+
+   function Build_Assignments
+     (Options : Awk_CLI.Options.Parsed_Options) return I.Assignment_Vectors.Vector
+   is
+      Result : I.Assignment_Vectors.Vector;
+   begin
+      if Options.Has_Field_Separator then
+         Result.Append (Pair ("FS", U.To_String (Options.Field_Separator)));
+      end if;
+
+      for Item of Options.Initial_Assignments loop
+         Result.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Value)));
+      end loop;
+
+      return Result;
+   end Build_Assignments;
+
+   function Build_Environment
+     (Environment : Awk_CLI.Environment.Entry_Vectors.Vector)
+      return I.Assignment_Vectors.Vector
+   is
+      Result : I.Assignment_Vectors.Vector;
+   begin
+      for Item of Environment loop
+         Result.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Value)));
+      end loop;
+      return Result;
+   end Build_Environment;
+
+   function Build_Auxiliary_Files
+     (Inputs          : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Auxiliary_Files : Awk_CLI.Inputs.Input_File_Vectors.Vector;
+      Live_Input      : Live_Input_Reader) return I.Assignment_Vectors.Vector
+   is
+      Source : constant Awk_CLI.Inputs.Input_File_Vectors.Vector :=
+        (if Live_Input = null then Inputs else Auxiliary_Files);
+      Result : I.Assignment_Vectors.Vector;
+   begin
+      for Item of Source loop
+         if U.To_String (Item.Name) /= "-" and then U.To_String (Item.Name) /= "" then
+            Result.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Content)));
+         end if;
+      end loop;
+      return Result;
+   end Build_Auxiliary_Files;
+
+   function Build_Arguments
+     (Operands : Awk_CLI.Operands.Operand_Vectors.Vector) return I.String_Vectors.Vector
+   is
+      Result : I.String_Vectors.Vector;
+   begin
+      for Item of Operands loop
+         Result.Append (Item.Text);
+      end loop;
+      return Result;
+   end Build_Arguments;
+
+   function Build_Runtime_Operands
+     (Operands : Awk_CLI.Operands.Operand_Vectors.Vector) return I.Runtime_Operand_Vectors.Vector
+   is
+      Result    : I.Runtime_Operand_Vectors.Vector;
+      Has_Input : Boolean := False;
+   begin
+      for Item of Operands loop
+         case Item.Kind is
+            when Awk_CLI.Operands.Named_File | Awk_CLI.Operands.Standard_Input =>
+               Has_Input := True;
+               Result.Append
+                 (I.Runtime_Operand'
+                    (Kind  => I.Input_Operand,
+                     Text  => Item.Text,
+                     Name  => U.Null_Unbounded_String,
+                     Value => U.Null_Unbounded_String));
+            when Awk_CLI.Operands.Runtime_Assignment =>
+               Result.Append
+                 (I.Runtime_Operand'
+                    (Kind  => I.Assignment_Operand,
+                     Text  => Item.Text,
+                     Name  => Item.Name,
+                     Value => Item.Value));
+         end case;
+      end loop;
+
+      if not Has_Input then
+         Result.Append
+           (I.Runtime_Operand'
+              (Kind  => I.Input_Operand,
+               Text  => U.Null_Unbounded_String,
+               Name  => U.Null_Unbounded_String,
+               Value => U.Null_Unbounded_String));
+      end if;
+
+      return Result;
+   end Build_Runtime_Operands;
 
    procedure Read_Text
      (User_Data    : System.Address;
@@ -83,43 +218,9 @@ package body Awk_CLI.Execution is
       case Status is
          when Awk_CLI.Platform.Read_Success =>
             null;
-         when Awk_CLI.Platform.Open_Failed =>
+         when Awk_CLI.Platform.Open_Failed | Awk_CLI.Platform.Read_Failed =>
             State.Failed := True;
-            if U.To_String (Filename) = "-" or else U.To_String (Filename) = "" then
-               State.Failure :=
-                 Awk_CLI.Diagnostics.Make
-                   ("awk.standard_input.read_failed",
-                    Awk_CLI.Diagnostics.Error,
-                    Awk_CLI.Diagnostics.Input);
-            else
-               State.Failure :=
-                 Awk_CLI.Diagnostics.Make
-                   ("awk.input_file.open_failed",
-                    Awk_CLI.Diagnostics.Error,
-                    Awk_CLI.Diagnostics.Input,
-                    Name => "path",
-                    Value => U.To_String (Filename));
-            end if;
-            Filename := U.Null_Unbounded_String;
-            Text := U.Null_Unbounded_String;
-            End_Of_Input := True;
-         when Awk_CLI.Platform.Read_Failed =>
-            State.Failed := True;
-            if U.To_String (Filename) = "-" or else U.To_String (Filename) = "" then
-               State.Failure :=
-                 Awk_CLI.Diagnostics.Make
-                   ("awk.standard_input.read_failed",
-                    Awk_CLI.Diagnostics.Error,
-                    Awk_CLI.Diagnostics.Input);
-            else
-               State.Failure :=
-                 Awk_CLI.Diagnostics.Make
-                   ("awk.input_file.read_failed",
-                    Awk_CLI.Diagnostics.Error,
-                    Awk_CLI.Diagnostics.Input,
-                    Name => "path",
-                    Value => U.To_String (Filename));
-            end if;
+            State.Failure := Make_Input_Failure (Status, Filename);
             Filename := U.Null_Unbounded_String;
             Text := U.Null_Unbounded_String;
             End_Of_Input := True;
@@ -230,10 +331,11 @@ package body Awk_CLI.Execution is
         Awk_CLI.Inputs.Input_File_Vectors.Empty_Vector)
       return Execution_Result
    is
-      Assignments  : I.Assignment_Vectors.Vector;
-      Env          : I.Assignment_Vectors.Vector;
-      Aux_Files    : I.Assignment_Vectors.Vector;
-      Arguments    : I.String_Vectors.Vector;
+      Assignments  : constant I.Assignment_Vectors.Vector := Build_Assignments (Options);
+      Env          : constant I.Assignment_Vectors.Vector := Build_Environment (Environment);
+      Aux_Files    : constant I.Assignment_Vectors.Vector :=
+        Build_Auxiliary_Files (Inputs, Auxiliary_Files, Live_Input);
+      Arguments    : constant I.String_Vectors.Vector := Build_Arguments (Operands);
       Runtime_Operands : I.Runtime_Operand_Vectors.Vector;
       Output       : aliased U.Unbounded_String;
       Message      : U.Unbounded_String;
@@ -257,54 +359,6 @@ package body Awk_CLI.Execution is
               Awk_CLI.Diagnostics.Internal),
          Input_Index => 0);
    begin
-      if Options.Has_Field_Separator then
-         Assignments.Append (Pair ("FS", U.To_String (Options.Field_Separator)));
-      end if;
-
-      for Item of Options.Initial_Assignments loop
-         Assignments.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Value)));
-      end loop;
-
-      for Item of Environment loop
-         Env.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Value)));
-      end loop;
-
-      if Live_Input = null then
-         for Item of Inputs loop
-            if U.To_String (Item.Name) /= "-" and then U.To_String (Item.Name) /= "" then
-               Aux_Files.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Content)));
-            end if;
-         end loop;
-      else
-         for Item of Auxiliary_Files loop
-            if U.To_String (Item.Name) /= "-" and then U.To_String (Item.Name) /= "" then
-               Aux_Files.Append (Pair (U.To_String (Item.Name), U.To_String (Item.Content)));
-            end if;
-         end loop;
-      end if;
-
-      for Item of Operands loop
-         Arguments.Append (Item.Text);
-         if Live_Input /= null then
-            case Item.Kind is
-               when Awk_CLI.Operands.Named_File | Awk_CLI.Operands.Standard_Input =>
-                  Runtime_Operands.Append
-                    (I.Runtime_Operand'
-                       (Kind => I.Input_Operand,
-                        Text => Item.Text,
-                        Name => U.Null_Unbounded_String,
-                        Value => U.Null_Unbounded_String));
-               when Awk_CLI.Operands.Runtime_Assignment =>
-                  Runtime_Operands.Append
-                    (I.Runtime_Operand'
-                       (Kind => I.Assignment_Operand,
-                        Text => Item.Text,
-                        Name => Item.Name,
-                        Value => Item.Value));
-            end case;
-         end if;
-      end loop;
-
       if Live_Input = null then
          I.Run_Text_Streaming
            (Program_Source => Program_Source,
@@ -322,23 +376,7 @@ package body Awk_CLI.Execution is
             Arguments      => Arguments,
             Read_Command   => Read_Command'Access);
       else
-         declare
-            Has_Input : Boolean := False;
-         begin
-            for Item of Runtime_Operands loop
-               if Item.Kind = I.Input_Operand then
-                  Has_Input := True;
-               end if;
-            end loop;
-            if not Has_Input then
-               Runtime_Operands.Append
-                 (I.Runtime_Operand'
-                    (Kind => I.Input_Operand,
-                     Text => U.Null_Unbounded_String,
-                     Name => U.Null_Unbounded_String,
-                     Value => U.Null_Unbounded_String));
-            end if;
-         end;
+         Runtime_Operands := Build_Runtime_Operands (Operands);
 
          I.Run_Text_Streaming_With_Operands
            (Program_Source => Program_Source,
