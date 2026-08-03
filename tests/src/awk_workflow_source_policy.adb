@@ -350,7 +350,7 @@ package body Awk_Workflow_Source_Policy is
         ("src/awk_tests-compatibility.adb", "with Project_Tools.Test_Fixtures",
          "fixture file reads must use project_tools directly", Quiet => True);
       Files.Require_Contains
-        ("src/awk_workflows.adb", "--release",
+        ("src/awk_workflows.adb", "Release_Mode => True",
          "release workflow must use Alire release builds", Quiet => True);
       Files.Require_Contains
         ("src/awk_workflows.adb", "Require_Clean_Repository;",

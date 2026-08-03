@@ -6,26 +6,24 @@ with Ada.Text_IO;
 with GNAT.OS_Lib;
 
 with Awk_Workflow_Catalogs;
+with Awk_Workflow_Docs;
+with Awk_Workflow_Metadata;
 with Awk_Workflow_Packaging;
 with Awk_Workflow_Source_Policy;
 with Project_Tools.Alire;
-with Project_Tools.Alire_Manifests.Validation;
 with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
 with Project_Tools.Test_Fixtures;
 with Project_Tools.Text;
-with Project_Tools.TOML;
 with Project_Tools.Tree_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
-   package Manifests renames Project_Tools.Alire_Manifests.Validation;
    package Proc renames Project_Tools.Processes;
    package Files renames Project_Tools.Files;
    package Fixtures renames Project_Tools.Test_Fixtures;
    package Text renames Project_Tools.Text;
-   package TOML renames Project_Tools.TOML;
    package Tree_Checks renames Project_Tools.Tree_Checks;
    package U renames Ada.Strings.Unbounded;
 
@@ -68,501 +66,7 @@ procedure Awk_Workflows is
         ("awk", Root, Quiet => True);
    end Require_Clean_Repository;
 
-   procedure Docs is
-      Required_Docs : constant Files.Path_List :=
-        [U.To_Unbounded_String ("../README.md"),
-         U.To_Unbounded_String ("../CHANGELOG.md"),
-         U.To_Unbounded_String ("../CONTRIBUTING.md"),
-         U.To_Unbounded_String ("../SECURITY.md"),
-         U.To_Unbounded_String ("../LICENSE"),
-         U.To_Unbounded_String ("../docs/quickstart.md"),
-         U.To_Unbounded_String ("../docs/command-line-reference.md"),
-         U.To_Unbounded_String ("../docs/compatibility.md"),
-         U.To_Unbounded_String ("../docs/architecture.md"),
-         U.To_Unbounded_String ("../docs/diagnostics.md"),
-         U.To_Unbounded_String ("../docs/localization.md"),
-         U.To_Unbounded_String ("../docs/localization-reference.md"),
-         U.To_Unbounded_String ("../docs/testing.md"),
-         U.To_Unbounded_String ("../docs/building.md"),
-         U.To_Unbounded_String ("../docs/releasing.md"),
-         U.To_Unbounded_String ("../docs/dependency-policy.md"),
-         U.To_Unbounded_String ("../docs/final-acceptance.md"),
-         U.To_Unbounded_String ("../docs/ai/project-map.md"),
-         U.To_Unbounded_String ("../docs/ai/package-contracts.md"),
-         U.To_Unbounded_String ("../docs/ai/invariants.md"),
-         U.To_Unbounded_String ("../docs/ai/workflows.md"),
-         U.To_Unbounded_String ("../docs/ai/prohibited-designs.md"),
-         U.To_Unbounded_String ("../docs/ai/traceability.md")];
-      Stale_Docs : constant String :=
-        Project_Tools.Release_Checks.Stale_Doc_Scaffolding ("..");
-   begin
-      Files.Require_Files (Required_Docs, "missing required documentation");
-      Require
-        (Stale_Docs = "",
-         "documentation contains stale scaffolding language: " & Stale_Docs);
-      Files.Require_Contains
-        ("../README.md", "does not claim complete POSIX conformance",
-         "README must not claim full POSIX conformance", Quiet => True);
-      Files.Require_Contains
-        ("../README.md", "./bin/awk_tests_main",
-         "README must document the current AUnit executable", Quiet => True);
-      Files.Require_Contains
-        ("../README.md", "--color=auto|always|never",
-         "README must document color policy", Quiet => True);
-      Files.Require_Contains
-        ("../README.md", "Windows",
-         "README must include Windows quoting guidance", Quiet => True);
-      Files.Require_Contains
-        ("../LICENSE", "MIT License",
-         "LICENSE must contain MIT license text", Quiet => True);
-      Files.Require_Contains
-        ("../docs/command-line-reference.md", "-f program-file",
-         "command-line reference must document program-file invocation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/command-line-reference.md", "Runtime assignment operands",
-         "command-line reference must document runtime assignment operands",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/command-line-reference.md",
-         "Supports_Positional_Runtime_Assignments = True",
-         "command-line reference must document positional assignment capability",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "Awk_CLI.Execution",
-         "architecture docs must document execution adapter isolation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "Invocation_Context",
-         "architecture docs must document testable invocation context",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md",
-         "No current entries are classified as unsupported",
-         "compatibility docs must state the active limitation position",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md", "AWK-COMPAT-GETLINE-002",
-         "compatibility docs must include reviewed compatibility IDs",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md", "Test reference",
-         "compatibility docs must include test references", Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md", "Status",
-         "compatibility docs must include status names", Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md", "Source",
-         "compatibility docs must include limitation source", Quiet => True);
-      Files.Require_Contains
-        ("../docs/diagnostics.md", "destination-aware terminal detection",
-         "diagnostics docs must document destination-aware terminal styling",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/diagnostics.md", "open failures from read failures",
-         "diagnostics docs must document open/read failure distinction",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md",
-         "only production package that directly depends on" & ASCII.LF &
-         "  `hostkit`",
-         "platform docs must document the hostkit adapter boundary",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md", "Platform-access dependency",
-         "platform docs must document the hostkit adapter boundary",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/package-contracts.md",
-         "Only `Awk_CLI.Platform` may call `hostkit`",
-         "platform docs must document the hostkit adapter boundary",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "awk.internal.localization_failed",
-         "localization docs must document catalog-backed render fallback",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "last-resort containment",
-         "localization docs must document catalog-backed render fallback",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "English fallback help and diagnostic",
-         "localization docs must document help and diagnostic fallback checks",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "localized CLI text",
-         "localization docs must document help and diagnostic fallback checks",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "Localization Reference",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "POSIX `awk` utility text",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "GNU awk",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "BWK awk",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "BusyBox awk",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "Reference run record",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "/usr/bin/mawk -W help",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "/usr/bin/busybox awk --help",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "Reference comparison checklist",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization-reference.md", "Machine-checked reference cues",
-         "localization docs must require comparison with other AWK reference text",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/localization.md", "supported European state-language locale set",
-         "localization docs must document supported European locale catalog validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md",
-         "every supported European" & ASCII.LF & "state-language locale",
-         "localization docs must document supported European locale catalog validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "main input is callback-driven",
-         "architecture docs must document memory-oriented host integration",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "AWK record splitting",
-         "architecture docs must document awklib text streaming callbacks",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "Supports_Redirection_Append_Mode = True",
-         "architecture docs must document append redirection capability",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md", "Supports_Streaming_Execution = True",
-         "architecture docs must document streaming capability", Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "structured diagnostic",
-         "testing docs must mention structured diagnostic assertions",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "conformance manifest",
-         "testing docs must mention conformance manifest validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "Alire install-boundary",
-         "testing docs must mention install-boundary validation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "checks local Alire workspace pins",
-         "testing docs must mention workspace pin validation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "parsed Ada `with` clauses",
-         "testing docs must mention parsed Ada source-policy validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md", "FNV-1a-64",
-         "testing docs must mention release checksum validation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/building.md", "install boundary",
-         "building docs must mention install boundary verification",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/building.md", "generated release packages",
-         "building docs must mention generated release package cleanup",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/building.md", "local Alire workspace pins",
-         "building docs must mention workspace pin verification", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "--release --profiles=*=release",
-         "release docs must document release-profile builds", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "clean git working tree",
-         "release docs must document clean-tree enforcement", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "local Alire workspace pins",
-         "release docs must mention workspace pin verification", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "FNV-1a-64",
-         "release docs must document manifest checksum algorithm", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "dependency policy",
-         "release docs must document packaged audit documentation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "traceability matrix",
-         "release docs must document packaged audit documentation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/final-acceptance.md", "<!-- generated:awk-acceptance -->",
-         "final acceptance and traceability docs must describe release gates",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/final-acceptance.md", "Normative acceptance gates",
-         "final acceptance and traceability docs must describe release gates",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md", "| 49 | Definition of done |",
-         "final acceptance and traceability docs must describe release gates",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md",
-         "`terminal_styles = ""=0.1.0-dev""` and `hostkit = ""=0.1.0-dev""`",
-         "release traceability docs must mention current dev dependency constraints",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md",
-         "`terminal_styles = ""=0.1.0-dev""` and" & ASCII.LF &
-         "`hostkit = ""=0.1.0-dev""`",
-         "release traceability docs must mention current dev dependency constraints",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "temporary prefix",
-         "release docs must document temporary install-prefix validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md", "workspace release model",
-         "dependency policy must document workspace release model", Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md",
-         "No direct dependency may use an unrestricted wildcard",
-         "dependency policy must reject wildcard release constraints",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md", "Publish readiness is a separate gate",
-         "dependency policy must document publish readiness separation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md", "parsed" & ASCII.LF & "Ada `with` clauses",
-         "AI workflow docs must mention parsed Ada source-policy validation",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md",
-         "expected local" & ASCII.LF & "Alire workspace pins",
-         "AI workflow docs must mention workspace pin validation", Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md",
-         "production source while allowing the diagnostic" & ASCII.LF &
-         "sanitizer to recognize ESC",
-         "workflow docs must describe production-wide ANSI source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md",
-         "no handwritten ANSI code tokens in production source",
-         "workflow docs must describe production-wide ANSI source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md", "diagnostic ESC recognition for escaping",
-         "workflow docs must describe production-wide ANSI source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md",
-         "command-line access stays in the main" & ASCII.LF &
-         "containment boundary or platform adapter",
-         "workflow docs must describe process-boundary source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md",
-         "command-line access confined to main containment" & ASCII.LF &
-         "or the platform adapter",
-         "workflow docs must describe process-boundary source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/testing.md",
-         "rejects direct `GNAT.OS_Lib`," & ASCII.LF &
-         "`GNAT.Expect`, and `/bin/sh` production use in favor of `hostkit`",
-         "workflow docs must describe process-boundary source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/workflows.md",
-         "direct `GNAT.OS_Lib`, `GNAT.Expect`, and `/bin/sh`" & ASCII.LF &
-         "production use rejected in favor of `hostkit`",
-         "workflow docs must describe process-boundary source policy",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/architecture.md",
-         "only production package that directly depends on" & ASCII.LF &
-         "  `hostkit`",
-         "architecture docs must describe hostkit platform boundary",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/package-contracts.md",
-         "Only `Awk_CLI.Platform` may call `hostkit`.",
-         "architecture docs must describe hostkit platform boundary",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md", "| 1 | Project identity |",
-         "traceability docs must map project identity", Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md", "| 13 | Execution adapter |",
-         "traceability docs must map execution adapter", Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md", "| 39 | Tooling requirements |",
-         "traceability docs must map tooling requirements", Quiet => True);
-      Files.Require_Contains
-        ("../docs/ai/traceability.md", "| 49 | Definition of done |",
-         "traceability docs must map definition of done", Quiet => True);
-      Put_Info ("documentation checks passed");
-   end Docs;
 
-   procedure Metadata is
-      Root_Alire  : constant String := Fixtures.Read_Text_File ("../alire.toml");
-      Tests_Alire : constant String := Fixtures.Read_Text_File ("alire.toml");
-      Root_Version : constant String :=
-        TOML.String_Value_After (Root_Alire, "version =", Root_Alire'First);
-      Tests_Version : constant String :=
-        TOML.String_Value_After (Tests_Alire, "version =", Tests_Alire'First);
-      Awklib_Constraint : constant String :=
-        TOML.String_Value_After (Root_Alire, "awklib =", Root_Alire'First);
-
-      function Constraint_Version (Constraint : String) return String is
-      begin
-         if Constraint'Length > 0
-           and then (Constraint (Constraint'First) = '~'
-                     or else Constraint (Constraint'First) = '=')
-         then
-            return Constraint (Constraint'First + 1 .. Constraint'Last);
-         else
-            return Constraint;
-         end if;
-      end Constraint_Version;
-
-      Awklib_Version : constant String := Constraint_Version (Awklib_Constraint);
-   begin
-      Require (TOML.String_Value_After (Root_Alire, "name =", Root_Alire'First) = "awk",
-               "root crate name must be awk");
-      Require (Root_Version /= "", "root crate version must be declared");
-      Require (Tests_Version = Root_Version,
-               "tests crate version must match root crate version");
-      Require (Awklib_Version /= "", "awklib dependency version must be declared");
-      Files.Require_Contains
-        ("../config/awk_config.ads",
-         "Crate_Version : constant String := """ & Root_Version & """",
-         "generated Ada config must match root crate version", Quiet => True);
-      Files.Require_Contains
-        ("../config/awk_config.gpr",
-         "Crate_Version := """ & Root_Version & """",
-         "generated GPR config must match root crate version", Quiet => True);
-      Files.Require_Contains
-        ("../docs/releasing.md", "dist/awk-" & Root_Version,
-         "release docs must document the current package directory",
-         Quiet => True);
-      Files.Require_Contains
-        ("../src/library/awk_cli-compatibility.adb",
-         "resolved awklib " & Awklib_Version & " behavior",
-         "compatibility registry must document the current awklib version",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/compatibility.md",
-         "resolved awklib " & Awklib_Version & " behavior",
-         "compatibility docs must document the current awklib version",
-         Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "executables = [""awk""]",
-         "root crate must install executable awk", Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "project-files = [""awk.gpr""]",
-         "root crate must use awk.gpr", Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "awklib = ",
-         "root crate must depend on awklib", Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "terminal_styles = ",
-         "root crate must depend on terminal_styles", Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "messages = ",
-         "root crate must depend on messages", Quiet => True);
-      Files.Require_Contains
-        ("../alire.toml", "hostkit = ",
-         "root crate must depend on hostkit", Quiet => True);
-      Require (not Text.Contains (Root_Alire, "awklib = ""*"""),
-               "root awklib dependency must not use wildcard constraint");
-      Require (not Text.Contains (Root_Alire, "terminal_styles = ""*"""),
-               "root terminal_styles dependency must not use wildcard constraint");
-      Require (not Text.Contains (Root_Alire, "messages = ""*"""),
-               "root messages dependency must not use wildcard constraint");
-      Require (not Text.Contains (Root_Alire, "hostkit = ""*"""),
-               "root hostkit dependency must not use wildcard constraint");
-      Files.Require_Contains
-        ("../docs/dependency-policy.md", "terminal_styles = ""=0.1.0-dev""",
-         "dependency policy must document the current terminal_styles dev constraint",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md", "hostkit = ""=0.1.0-dev""",
-         "dependency policy must document the current hostkit dev constraint",
-         Quiet => True);
-      Files.Require_Contains
-        ("../docs/dependency-policy.md",
-         "| `messages` | `~0.1.0` | `../../messages` |",
-         "dependency policy must document the tests messages dependency",
-         Quiet => True);
-      Require (TOML.String_Value_After (Tests_Alire, "name =", Tests_Alire'First) = "awk_tests",
-               "tests crate name must be awk_tests");
-      Files.Require_Contains
-        ("alire.toml", "executables = [""awk_tests_main"", ""awk_workflows""]",
-         "tests crate must expose the test and workflow executables",
-         Quiet => True);
-      Files.Require_Contains
-        ("alire.toml", "awk = ",
-         "tests crate must depend on awk", Quiet => True);
-      Files.Require_Contains
-        ("alire.toml", "aunit = ",
-         "tests crate must depend on AUnit", Quiet => True);
-      Files.Require_Contains
-        ("alire.toml", "project_tools = ",
-         "tests crate must depend on project_tools", Quiet => True);
-      Files.Require_Contains
-        ("alire.toml", "messages = ",
-         "tests crate must depend on messages for catalog consistency checks",
-         Quiet => True);
-      Files.Require_Contains
-        ("alire.toml", "awk = { path = "".."" }",
-         "tests crate must pin awk relatively", Quiet => True);
-      Manifests.Require_Workspace_Pin ("../alire.toml", "awklib", "../awklib", Quiet => True);
-      Manifests.Require_Workspace_Pin
-        ("../alire.toml", "terminal_styles", "../terminal_styles", Quiet => True);
-      Manifests.Require_Workspace_Pin ("../alire.toml", "messages", "../messages", Quiet => True);
-      Manifests.Require_Workspace_Pin ("../alire.toml", "hostkit", "../hostkit", Quiet => True);
-      Manifests.Require_Workspace_Pin ("alire.toml", "awk", "..", Quiet => True);
-      Manifests.Require_Workspace_Pin
-        ("alire.toml", "project_tools", "../../project_tools", Quiet => True);
-      Manifests.Require_Workspace_Pin
-        ("alire.toml", "messages", "../../messages", Quiet => True);
-      Files.Require_Contains
-        ("../awk.gpr", "-gnat2022",
-         "root project must compile with Ada 2022", Quiet => True);
-      Files.Require_Contains
-        ("awk_tests.gpr", "-gnat2022",
-         "tests project must compile with Ada 2022", Quiet => True);
-      Files.Require_Contains
-        ("../awk.gpr", "for Main use (""awk.adb"")",
-         "root project main must be awk.adb", Quiet => True);
-      Files.Require_Contains
-        ("awk_tests.gpr", "awk_workflows.adb",
-         "tests project must build workflow executable", Quiet => True);
-      Files.Require_Contains
-        ("awk_tests.gpr", "awk_tests_main.adb",
-         "tests project must build AUnit executable", Quiet => True);
-      Require (TOML.String_Value_After (Root_Alire, "licenses =", Root_Alire'First) = "MIT",
-               "root crate must declare MIT license");
-      Require (TOML.String_Value_After (Tests_Alire, "licenses =", Tests_Alire'First) = "MIT",
-               "tests crate must declare MIT license");
-      Put_Info ("metadata checks passed");
-   end Metadata;
 
 
 
@@ -784,8 +288,8 @@ procedure Awk_Workflows is
    begin
       Build;
       Test;
-      Metadata;
-      Docs;
+      Awk_Workflow_Metadata.Run;
+      Awk_Workflow_Docs.Run;
       Awk_Workflow_Catalogs.Run;
       Conformance;
       Exit_Status_Drift;
@@ -824,7 +328,7 @@ begin
    elsif Command = "verify" then
       Verify;
    elsif Command = "docs" then
-      Docs;
+      Awk_Workflow_Docs.Run;
    elsif Command = "clean" then
       Clean;
    elsif Command = "package" then
@@ -836,8 +340,8 @@ begin
       Project_Tools.Alire.Run_Build (Directory => ".", Release_Mode => True);
       Project_Tools.Release_Checks.Run
         ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
-      Metadata;
-      Docs;
+      Awk_Workflow_Metadata.Run;
+      Awk_Workflow_Docs.Run;
       Awk_Workflow_Catalogs.Run;
       Conformance;
       Awk_Workflow_Source_Policy.Run;
