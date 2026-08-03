@@ -31,11 +31,11 @@ usecase = "process diagnostic usage integration tests"
 [[body]]
 path = "tests/src/awk_tests-process_io.adb"
 split_prefix = "tests/src/awk_tests-process_io"
-target_lines = 363
-max_lines = 560
+target_lines = 11
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 50000
-min_split_bodies = 0
+min_split_bodies = 2
 usecase = "process I/O integration tests"
 
 [[body]]
