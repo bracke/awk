@@ -1,7 +1,7 @@
 [[body]]
 path = "tests/src/awk_workflow_source_policy.adb"
 split_prefix = "tests/src/awk_workflow_source_policy"
-target_lines = 661
+target_lines = 685
 max_lines = 760
 min_headroom_lines = 50
 max_bytes = 60000

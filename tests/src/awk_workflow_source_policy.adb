@@ -590,6 +590,30 @@ package body Awk_Workflow_Source_Policy is
            ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
             "process fixture file reads must use project_tools directly", Quiet => True);
          Files.Require_Contains
+           ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Run_Status",
+            "raw process status execution must be centralized in process support",
+            Quiet => True);
+         Require
+           (Ada_Source.First_Source_File_Containing
+              ("src",
+               "Project_Tools.Processes.Run_Status",
+               Allowed_Files =>
+                 [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
+                  U.To_Unbounded_String ("src/awk_workflow_source_policy.adb")]) = "",
+            "raw process status execution must stay in process support");
+         Files.Require_Contains
+           ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Command_Output",
+            "raw process output capture must be centralized in process support",
+            Quiet => True);
+         Require
+           (Ada_Source.First_Source_File_Containing
+              ("src",
+               "Project_Tools.Processes.Command_Output",
+               Allowed_Files =>
+                 [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
+                  U.To_Unbounded_String ("src/awk_workflow_source_policy.adb")]) = "",
+            "raw process output capture must stay in process support");
+         Files.Require_Contains
            ("src/awk_tests-localization.adb", "with Project_Tools.Test_Fixtures",
             "fixture file reads must use project_tools directly", Quiet => True);
          Files.Require_Contains
