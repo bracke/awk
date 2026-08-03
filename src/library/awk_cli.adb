@@ -14,7 +14,7 @@ package body Awk_CLI is
       Context.Config.Arguments.Clear;
       Context.IO.Standard_In := U.Null_Unbounded_String;
       Context.Config.Locale := U.To_Unbounded_String ("en");
-      Context.Config.Catalog_Path := U.To_Unbounded_String ("resources/messages/catalog.txt");
+      Context.Config.Catalog_Path := U.To_Unbounded_String (Default_Catalog_Path);
       Context.IO.Files.Clear;
       Context.IO.Commands.Clear;
       Context.IO.Environment.Clear;

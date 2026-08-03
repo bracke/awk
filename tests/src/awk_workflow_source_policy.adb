@@ -362,6 +362,15 @@ package body Awk_Workflow_Source_Policy is
          [U.To_Unbounded_String ("Read_Standard_Input")],
          Quiet => True);
       Files.Require_Contains
+        ("../src/library/awk_cli.ads",
+         "Default_Catalog_Path : constant String",
+         "default catalog path must be centralized in the invocation context spec",
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli.adb",
+         [U.To_Unbounded_String ("""resources/messages/catalog.txt""")],
+         Quiet => True);
+      Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "while Remaining > 0 loop",
          "standard stream writes must retry partial writes",
