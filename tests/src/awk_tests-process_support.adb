@@ -7,6 +7,44 @@ with Awk_CLI.Localization;
 package body Awk_Tests.Process_Support is
    package Fixtures renames Project_Tools.Test_Fixtures;
 
+   function Argument (Value : String) return U.Unbounded_String is
+     (U.To_Unbounded_String (Value));
+
+   function No_Arguments return Process_Arguments is
+      Result : Process_Arguments;
+   begin
+      return Result;
+   end No_Arguments;
+
+   function Arguments
+     (Items : Argument_Items) return Process_Arguments
+   is
+      Result : Process_Arguments;
+   begin
+      for Item of Items loop
+         Result.Append (Item);
+      end loop;
+      return Result;
+   end Arguments;
+
+   function To_OS_Arguments
+     (Args : Process_Arguments) return GNAT.OS_Lib.Argument_List
+   is
+      Result : GNAT.OS_Lib.Argument_List (1 .. Natural (Args.Length));
+   begin
+      for Index in 1 .. Natural (Args.Length) loop
+         Result (Index) := new String'(U.To_String (Args.Element (Index)));
+      end loop;
+      return Result;
+   end To_OS_Arguments;
+
+   procedure Free_OS_Arguments (Args : in out GNAT.OS_Lib.Argument_List) is
+   begin
+      for Item of Args loop
+         GNAT.OS_Lib.Free (Item);
+      end loop;
+   end Free_OS_Arguments;
+
    function Awk_From_Repository_Root return String is
    begin
       if Project_Tools.Files.File_Exists ("../bin/awk.exe") then
@@ -38,6 +76,22 @@ package body Awk_Tests.Process_Support is
    is
    begin
       return Run_Command_Err_To_Out (Awk_From_Tests_Directory, Args, Input);
+   end Run_Awk_Err_To_Out;
+
+   function Run_Awk_Err_To_Out
+     (Args  : Process_Arguments;
+      Input : String := "") return Captured_Process
+   is
+      OS_Args : GNAT.OS_Lib.Argument_List := To_OS_Arguments (Args);
+      Result  : Captured_Process;
+   begin
+      Result := Run_Awk_Err_To_Out (OS_Args, Input);
+      Free_OS_Arguments (OS_Args);
+      return Result;
+   exception
+      when others =>
+         Free_OS_Arguments (OS_Args);
+         raise;
    end Run_Awk_Err_To_Out;
 
    function Run_Command_Err_To_Out
@@ -78,6 +132,24 @@ package body Awk_Tests.Process_Support is
       return (Status => Status, Output => Output);
    end Run_Process;
 
+   function Run_Process
+     (Label   : String;
+      Dir     : String;
+      Program : String;
+      Args    : Process_Arguments) return Captured_Process
+   is
+      OS_Args : GNAT.OS_Lib.Argument_List := To_OS_Arguments (Args);
+      Result  : Captured_Process;
+   begin
+      Result := Run_Process (Label, Dir, Program, OS_Args);
+      Free_OS_Arguments (OS_Args);
+      return Result;
+   exception
+      when others =>
+         Free_OS_Arguments (OS_Args);
+         raise;
+   end Run_Process;
+
    function Run_Awk
      (Label : String;
       Args  : GNAT.OS_Lib.Argument_List) return Captured_Process
@@ -88,6 +160,22 @@ package body Awk_Tests.Process_Support is
          Dir     => "..",
          Program => Awk_From_Repository_Root,
          Args    => Args);
+   end Run_Awk;
+
+   function Run_Awk
+     (Label : String;
+      Args  : Process_Arguments) return Captured_Process
+   is
+      OS_Args : GNAT.OS_Lib.Argument_List := To_OS_Arguments (Args);
+      Result  : Captured_Process;
+   begin
+      Result := Run_Awk (Label, OS_Args);
+      Free_OS_Arguments (OS_Args);
+      return Result;
+   exception
+      when others =>
+         Free_OS_Arguments (OS_Args);
+         raise;
    end Run_Awk;
 
    function Output_String (Result : Captured_Process) return String is

@@ -60,6 +60,19 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Command_Output",
          "raw process output capture must be centralized in process support",
          Quiet => False);
+      Files.Require_Contains
+        ("src/awk_tests-process_support.ads", "subtype Process_Arguments",
+         "process tests must expose a support-level argument vector",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_tests-process_support.adb", "function To_OS_Arguments",
+         "GNAT process argument conversion must be centralized in process support",
+         Quiet => False);
+      Ada_Source.Require_No_Code_Tokens
+        ("src/awk_tests-process_options.adb",
+         [U.To_Unbounded_String ("with GNAT.OS_Lib"),
+          U.To_Unbounded_String ("GNAT.OS_Lib.Argument_List")],
+         Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
