@@ -22,6 +22,10 @@ Production adapter boundaries:
   `hostkit`. It isolates process arguments, streams, files, host shell command
   execution for `command | getline`, native locale lookup, temporary-path
   selection, catalog path lookup, and process environment enumeration.
+  `Awk_CLI.Platform` also contains the remaining local byte-buffer and exact
+  standard-stream helpers until `hostkit` exposes an equivalent public API with
+  byte preservation, partial-write handling, binary-mode support, and explicit
+  flush failure reporting.
 
 The command-execution path is not an AWK fallback. `awklib` parses and evaluates
 `command | getline`; the CLI only supplies the host command runner requested by

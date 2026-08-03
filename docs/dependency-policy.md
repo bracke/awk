@@ -13,6 +13,21 @@ Current direct dependency policy:
 | `messages` | `~0.1.0` | `../messages` | Localization dependency; catalog behavior is tested in this crate. |
 | `hostkit` | `=0.1.0-dev` | `../hostkit` | Platform-access dependency; shell, native locale, and host temporary-directory behavior stay behind `Awk_CLI.Platform`. |
 
+## Hostkit Stream Helpers
+
+`Awk_CLI.Platform` uses `hostkit` for platform-specific host services. The
+small local `Byte_IO` helper and standard-stream write loop remain in `awk`
+because `hostkit` does not currently expose a public exact standard-stream
+write helper or stream-to-string helper that matches this executable's needs.
+Hostkit stream helper boundary: local exact stream helpers remain in
+`Awk_CLI.Platform` until `hostkit` exposes matching public APIs.
+
+These helpers may move to `hostkit` when a reusable API preserves exact bytes,
+handles partial writes, supports binary standard streams, flushes failures
+deterministically, and does not style, localize, or otherwise transform AWK
+output. Until then they are host-integration glue only, not AWK language or
+runtime logic.
+
 The tests crate pins only workspace tooling dependencies:
 
 | Crate | Constraint | Workspace pin | Release note |

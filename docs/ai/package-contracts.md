@@ -3,6 +3,10 @@
 Only `Awk_CLI.Execution` may call `awklib`. Only `Awk_CLI.Localization` may call `messages`. Only `Awk_CLI.Output` may call `terminal_styles`. Only `Awk_CLI.Platform` may call `hostkit`.
 Only `Awk_CLI.Platform` may enumerate process-global environment variables;
 `Awk_CLI.Environment` owns only normalized ENVIRON data representation.
+Local byte-buffer and exact standard-stream helpers are allowed only inside
+`Awk_CLI.Platform` as host-integration glue while `hostkit` lacks a public API
+with matching byte-preservation, partial-write, binary-stream, and flush-failure
+semantics.
 
 `command | getline` is an awklib-owned runtime feature. The CLI may provide the
 host command-execution service only through the awklib callback path:
