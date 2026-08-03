@@ -357,6 +357,10 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli-inputs-live.adb",
          [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],
          Quiet => True);
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src",
+         [U.To_Unbounded_String ("Read_Standard_Input")],
+         Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
          "while Remaining > 0 loop",

@@ -18,9 +18,6 @@ package Awk_CLI.Platform is
    --  @return Normalized process environment entries.
    function Process_Environment return Awk_CLI.Environment.Entry_Vectors.Vector;
 
-   --  @return Complete standard-input text.
-   function Read_Standard_Input return U.Unbounded_String;
-
    --  @param Path Host file path to read.
    --  @param Content Complete file text when reading succeeds.
    --  @return Read status distinguishing success, open failure, and read failure.

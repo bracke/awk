@@ -88,32 +88,6 @@ package body Awk_CLI.Platform is
          return Awk_CLI.Environment.Normalize (Result);
    end Process_Environment;
 
-   function Read_Standard_Input return U.Unbounded_String is
-      Result : U.Unbounded_String;
-      Stream : Input_Stream;
-      Chunk  : U.Unbounded_String;
-      EOF    : Boolean := False;
-   begin
-      if Open_Standard_Input (Stream) /= Read_Success then
-         return U.Null_Unbounded_String;
-      end if;
-
-      while not EOF loop
-         if Read_Input_Chunk (Stream, Chunk, EOF) /= Read_Success then
-            Close_Input (Stream);
-            return U.Null_Unbounded_String;
-         end if;
-         U.Append (Result, Chunk);
-      end loop;
-
-      Close_Input (Stream);
-      return Result;
-   exception
-      when Constraint_Error | Program_Error | Storage_Error =>
-         Close_Input (Stream);
-         return U.Null_Unbounded_String;
-   end Read_Standard_Input;
-
    function Read_File (Path : String; Content : out U.Unbounded_String) return Read_Status is
       File   : SIO.File_Type;
       Opened : Boolean := False;
