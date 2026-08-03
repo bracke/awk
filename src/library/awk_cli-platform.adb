@@ -70,6 +70,24 @@ package body Awk_CLI.Platform is
       return Result;
    end Process_Arguments;
 
+   function Process_Environment return Awk_CLI.Environment.Entry_Vectors.Vector is
+      Result : Awk_CLI.Environment.Entry_Vectors.Vector;
+
+      procedure Add (Name, Value : String) is
+      begin
+         Result.Append
+           (Awk_CLI.Environment.Env_Entry'
+              (Name  => U.To_Unbounded_String (Name),
+               Value => U.To_Unbounded_String (Value)));
+      end Add;
+   begin
+      Ada.Environment_Variables.Iterate (Add'Access);
+      return Awk_CLI.Environment.Normalize (Result);
+   exception
+      when Constraint_Error | Program_Error | Storage_Error =>
+         return Awk_CLI.Environment.Normalize (Result);
+   end Process_Environment;
+
    function Read_Standard_Input return U.Unbounded_String is
       Result : U.Unbounded_String;
       Stream : Input_Stream;

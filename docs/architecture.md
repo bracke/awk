@@ -21,7 +21,7 @@ Production adapter boundaries:
 - `Awk_CLI.Platform` is the only production package that directly depends on
   `hostkit`. It isolates process arguments, streams, files, host shell command
   execution for `command | getline`, native locale lookup, temporary-path
-  selection, catalog path lookup, and environment interaction.
+  selection, catalog path lookup, and process environment enumeration.
 
 The command-execution path is not an AWK fallback. `awklib` parses and evaluates
 `command | getline`; the CLI only supplies the host command runner requested by
@@ -34,7 +34,8 @@ reusable library API. Compatibility commitments apply to the installed
 `awk` executable and documented command-line behavior.
 
 `Awk_CLI.Run` coordinates a complete invocation through explicit result paths:
-parse options, resolve program source, classify operands, collect environment,
+parse options, resolve program source, classify operands, collect environment
+through the platform adapter,
 execute `awklib` once, forward standard output, materialize live redirection
 writes, and render controlled diagnostics on failure.
 

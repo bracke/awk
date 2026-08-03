@@ -1,5 +1,6 @@
 with Ada.Streams.Stream_IO;
 with Ada.Strings.Unbounded;
+with Awk_CLI.Environment;
 with Awk_CLI.Options;
 
 package Awk_CLI.Platform is
@@ -15,6 +16,11 @@ package Awk_CLI.Platform is
    function Process_Arguments return Awk_CLI.Options.String_Vectors.Vector;
    --  Return raw process arguments excluding executable name.
    --  @return Raw process arguments excluding executable name.
+
+   --  @return Normalized process environment entries.
+   function Process_Environment return Awk_CLI.Environment.Entry_Vectors.Vector;
+   --  Return environment entries visible through the Ada runtime for ENVIRON.
+   --  @return Normalized process environment entries.
 
    --  @return Complete standard-input text.
    function Read_Standard_Input return U.Unbounded_String;

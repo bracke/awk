@@ -267,6 +267,13 @@ package body Awk_Workflow_Source_Policy is
               [U.To_Unbounded_String ("../src/main/awk.adb"),
                U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
          "process command-line access must stay in main containment or platform adapter");
+      Require
+        (Ada_Source.First_Source_File_Containing
+           ("../src",
+            "Ada.Environment_Variables",
+            Allowed_Files =>
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+         "process environment access must stay in platform adapter");
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
          [U.To_Unbounded_String ("GNAT.OS_Lib")],

@@ -1,4 +1,3 @@
-with Ada.Environment_Variables;
 package body Awk_CLI.Environment is
    use type U.Unbounded_String;
 
@@ -29,21 +28,4 @@ package body Awk_CLI.Environment is
       end loop;
       return Result;
    end Normalize;
-
-   function Collect return Entry_Vectors.Vector is
-      Result : Entry_Vectors.Vector;
-
-      procedure Add (Name, Value : String) is
-      begin
-         Result.Append
-           (Env_Entry'(Name => U.To_Unbounded_String (Name),
-                       Value => U.To_Unbounded_String (Value)));
-      end Add;
-   begin
-      Ada.Environment_Variables.Iterate (Add'Access);
-      return Normalize (Result);
-   exception
-      when Constraint_Error | Program_Error | Storage_Error =>
-         return Normalize (Result);
-   end Collect;
 end Awk_CLI.Environment;

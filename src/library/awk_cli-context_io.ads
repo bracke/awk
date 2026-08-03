@@ -74,7 +74,7 @@ package Awk_CLI.Context_IO is
    function Current_Environment
      (Context : Invocation_Context) return Awk_CLI.Environment.Entry_Vectors.Vector;
    --  Return the explicit test environment from Context or collect the process
-   --  environment for process-backed invocations.
+   --  environment through the platform adapter for process-backed invocations.
    --  @param Context Invocation context to inspect.
    --  @return Normalized environment entries for interpreter execution.
 end Awk_CLI.Context_IO;

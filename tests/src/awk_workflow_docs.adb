@@ -121,6 +121,10 @@ package body Awk_Workflow_Docs is
          "platform docs must document the hostkit adapter boundary",
          Quiet => True);
       Files.Require_Contains
+        ("../docs/architecture.md", "process environment enumeration",
+         "platform docs must document process environment enumeration boundary",
+         Quiet => True);
+      Files.Require_Contains
         ("../docs/dependency-policy.md", "Platform-access dependency",
          "platform docs must document the hostkit adapter boundary",
          Quiet => True);
@@ -370,6 +374,11 @@ package body Awk_Workflow_Docs is
         ("../docs/ai/package-contracts.md",
          "Only `Awk_CLI.Platform` may call `hostkit`.",
          "architecture docs must describe hostkit platform boundary",
+         Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/package-contracts.md",
+         "Only `Awk_CLI.Platform` may enumerate process-global environment variables",
+         "architecture docs must describe process environment boundary",
          Quiet => True);
       Files.Require_Contains
         ("../docs/ai/traceability.md", "| 1 | Project identity |",

@@ -151,7 +151,7 @@ package body Awk_CLI.Context_IO is
       Result : Awk_CLI.Environment.Entry_Vectors.Vector;
    begin
       if Context.Use_Process and then Context.Environment.Is_Empty then
-         return Awk_CLI.Environment.Collect;
+         return Awk_CLI.Platform.Process_Environment;
       end if;
 
       for Item of Context.Environment loop
