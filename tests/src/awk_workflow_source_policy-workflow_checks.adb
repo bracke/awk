@@ -70,8 +70,15 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
                  ("src/awk_workflow_source_policy-workflow_checks.adb")]) = "",
          "raw process output capture must stay in process support");
       Files.Require_Contains
-        ("src/awk_tests-localization.adb", "with Project_Tools.Test_Fixtures",
-         "fixture file reads must use project_tools directly", Quiet => True);
+        ("src/awk_tests-localization-catalog_cases.adb",
+         "with Project_Tools.Test_Fixtures",
+         "catalog fixture file reads must use project_tools directly",
+         Quiet => True);
+      Files.Require_Contains
+        ("src/awk_tests-localization-rendering_cases.adb",
+         "with Project_Tools.Test_Fixtures",
+         "localization rendering fixture file reads must use project_tools directly",
+         Quiet => True);
       Files.Require_Contains
         ("src/awk_tests-compatibility.adb", "with Project_Tools.Test_Fixtures",
          "fixture file reads must use project_tools directly", Quiet => True);
