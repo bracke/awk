@@ -7,10 +7,12 @@ with Project_Tools.Ada_Source;
 with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
 with Project_Tools.Release_Checks;
+with Project_Tools.Source_Budgets;
 
 package body Awk_Workflow_Source_Policy is
    package Ada_Source renames Project_Tools.Ada_Source;
    package Files renames Project_Tools.Files;
+   package Source_Budgets renames Project_Tools.Source_Budgets;
    package U renames Ada.Strings.Unbounded;
 
    procedure Put_Info (Message : String) is
@@ -70,6 +72,9 @@ package body Awk_Workflow_Source_Policy is
       Require_Packaged ("docs/compatibility.md");
       Require_Packaged ("docs/final-acceptance.md");
       Require_Packaged ("LICENSE");
+      Files.Require_File
+        ("source-budgets.toml",
+         "source budget manifest missing", Quiet => True);
       Files.Require_Contains
         ("../docs/releasing.md", "message catalogs",
          "release/testing docs must describe packaged resources", Quiet => True);
@@ -522,6 +527,41 @@ package body Awk_Workflow_Source_Policy is
             Quiet => True);
       end Project_Structure_Policy;
 
+      procedure Source_Budget_Policy is
+         Errors : Natural := 0;
+      begin
+         Source_Budgets.Check_Structural_Baseline
+           (Errors          => Errors,
+            Root            => "..",
+            Manifest_Path   => "tests/source-budgets.toml",
+            Minimum_Entries => 14,
+            Purpose         => "awk source budget",
+            Section         => "body",
+            Quiet           => True);
+         Source_Budgets.Check_Large_Source_Budget_Coverage
+           (Errors        => Errors,
+            Root          => "..",
+            Source_Dir    => "src/library",
+            Minimum_Lines => 300,
+            Manifests     =>
+              [Source_Budgets.Coverage_Manifest_Entry
+                 ("tests/source-budgets.toml", "body")],
+            Purpose       => "production large-source budget coverage",
+            Quiet         => True);
+         Source_Budgets.Check_Large_Source_Budget_Coverage
+           (Errors        => Errors,
+            Root          => "..",
+            Source_Dir    => "tests/src",
+            Minimum_Lines => 300,
+            Manifests     =>
+              [Source_Budgets.Coverage_Manifest_Entry
+                 ("tests/source-budgets.toml", "body")],
+            Purpose       => "test large-source budget coverage",
+            Quiet         => True);
+
+         Require (Errors = 0, "source budget checks failed");
+      end Source_Budget_Policy;
+
       procedure Workflow_Policy is
          Workflow_Script : constant String :=
            Files.First_File_Name_Containing
@@ -614,6 +654,7 @@ package body Awk_Workflow_Source_Policy is
       Platform_Policy;
       Catalog_Key_Policy;
       Project_Structure_Policy;
+      Source_Budget_Policy;
       Workflow_Policy;
       Put_Info ("source policy checks passed");
    end Run;

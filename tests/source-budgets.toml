@@ -1,0 +1,139 @@
+[[body]]
+path = "tests/src/awk_workflow_source_policy.adb"
+split_prefix = "tests/src/awk_workflow_source_policy"
+target_lines = 661
+max_lines = 760
+min_headroom_lines = 50
+max_bytes = 60000
+min_split_bodies = 0
+usecase = "source policy workflow gate"
+
+[[body]]
+path = "tests/src/awk_tests-process_diagnostics.adb"
+split_prefix = "tests/src/awk_tests-process_diagnostics"
+target_lines = 601
+max_lines = 750
+min_headroom_lines = 50
+max_bytes = 60000
+min_split_bodies = 0
+usecase = "process diagnostic integration tests"
+
+[[body]]
+path = "tests/src/awk_tests-process_io.adb"
+split_prefix = "tests/src/awk_tests-process_io"
+target_lines = 441
+max_lines = 560
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 0
+usecase = "process I/O integration tests"
+
+[[body]]
+path = "tests/src/awk_tests-process_language.adb"
+split_prefix = "tests/src/awk_tests-process_language"
+target_lines = 424
+max_lines = 540
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 0
+usecase = "process language integration tests"
+
+[[body]]
+path = "tests/src/awk_workflow_docs.adb"
+split_prefix = "tests/src/awk_workflow_docs"
+target_lines = 414
+max_lines = 540
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 0
+usecase = "documentation workflow gate"
+
+[[body]]
+path = "src/library/awk_cli-platform.adb"
+split_prefix = "src/library/awk_cli-platform"
+target_lines = 412
+max_lines = 540
+min_headroom_lines = 40
+max_bytes = 30000
+min_split_bodies = 2
+usecase = "platform adapter parent body"
+
+[[body]]
+path = "tests/src/awk_tests-process_options.adb"
+split_prefix = "tests/src/awk_tests-process_options"
+target_lines = 375
+max_lines = 500
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 0
+usecase = "process option integration tests"
+
+[[body]]
+path = "tests/src/awk_catalog_policy.adb"
+split_prefix = "tests/src/awk_catalog_policy"
+target_lines = 369
+max_lines = 500
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 0
+usecase = "catalog validation policy"
+
+[[body]]
+path = "tests/src/awk_tests-localization.adb"
+split_prefix = "tests/src/awk_tests-localization"
+target_lines = 360
+max_lines = 480
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 0
+usecase = "localization test suite"
+
+[[body]]
+path = "tests/src/awk_workflows.adb"
+split_prefix = "tests/src/awk_workflows"
+target_lines = 355
+max_lines = 480
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 0
+usecase = "workflow command dispatcher"
+
+[[body]]
+path = "tests/src/awk_tests-context.adb"
+split_prefix = "tests/src/awk_tests-context"
+target_lines = 340
+max_lines = 460
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 0
+usecase = "in-memory context tests"
+
+[[body]]
+path = "tests/src/awk_tests-cli_options.adb"
+split_prefix = "tests/src/awk_tests-cli_options"
+target_lines = 339
+max_lines = 460
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 0
+usecase = "option parser tests"
+
+[[body]]
+path = "tests/src/awk_workflow_catalogs.adb"
+split_prefix = "tests/src/awk_workflow_catalogs"
+target_lines = 317
+max_lines = 440
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 0
+usecase = "catalog workflow gate"
+
+[[body]]
+path = "src/library/awk_cli-inputs-live.adb"
+split_prefix = "src/library/awk_cli-inputs-live"
+target_lines = 306
+max_lines = 420
+min_headroom_lines = 40
+max_bytes = 25000
+min_split_bodies = 0
+usecase = "live input adapter state machine"
