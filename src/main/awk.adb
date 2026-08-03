@@ -27,8 +27,9 @@ exception
                Awk_CLI.Diagnostics.Make
                  ("awk.internal.unexpected_exception",
                   Awk_CLI.Diagnostics.Internal_Error,
-                  Awk_CLI.Diagnostics.Internal),
-               Awk_CLI.Platform.Standard_Error_Is_Terminal));
+	                  Awk_CLI.Diagnostics.Internal),
+	               Awk_CLI.Platform.Standard_Error_Is_Terminal,
+	               Awk_CLI.Platform.No_Color_Active));
       exception
          when others =>
             null;

@@ -1,8 +1,9 @@
+with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
+with Ada.IO_Exceptions;
 with Ada.Strings.Fixed;
-with Ada.Text_IO;
 with Interfaces.C_Streams;
 with System;
 with Hostkit;
@@ -16,10 +17,31 @@ package body Awk_CLI.Platform is
    use type Ada.Streams.Stream_Element_Offset;
 
    Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
-   Command_Capture_Count : Natural := 0;
 
    function Image (Value : Natural) return String is
      (Ada.Strings.Fixed.Trim (Natural'Image (Value), Ada.Strings.Left));
+
+   function Time_Image return String is
+      Raw : constant String := Duration'Image (Ada.Calendar.Seconds (Ada.Calendar.Clock));
+      Result : String := Raw;
+   begin
+      for C of Result loop
+         if C = ' ' or else C = '.' then
+            C := '-';
+         end if;
+      end loop;
+      return Result;
+   end Time_Image;
+
+   function Hash_Image (Text : String) return String is
+      type Hash_Value is mod 2 ** 32;
+      Value : Hash_Value := 2166136261;
+   begin
+      for C of Text loop
+         Value := (Value xor Character'Pos (C)) * 16777619;
+      end loop;
+      return Image (Natural (Value mod Hash_Value (Natural'Last)));
+   end Hash_Image;
 
    function Join (Directory, Name : String) return String is
      (Ada.Directories.Compose (Containing_Directory => Directory, Name => Name));
@@ -30,9 +52,43 @@ package body Awk_CLI.Platform is
          Ada.Directories.Delete_File (Path);
       end if;
    exception
-      when others =>
+      when Ada.Directories.Name_Error | Ada.Directories.Use_Error =>
          null;
    end Delete_If_Present;
+
+   procedure Delete_Tree_If_Present (Path : String) is
+   begin
+      if Path /= "" and then Ada.Directories.Exists (Path) then
+         Ada.Directories.Delete_Tree (Path);
+      end if;
+   exception
+      when Ada.Directories.Name_Error | Ada.Directories.Use_Error =>
+         null;
+   end Delete_Tree_If_Present;
+
+   function Create_Command_Temp_Dir (Command : String) return String is
+      Base : constant String := Hostkit.Fs.Temp_Directory;
+   begin
+      for Attempt in 1 .. 1000 loop
+         declare
+            Candidate : constant String :=
+              Join
+                (Base,
+                 "awk-command-getline-"
+                 & Time_Image & "-"
+                 & Hash_Image (Command) & "-"
+                 & Image (Attempt));
+         begin
+            Ada.Directories.Create_Directory (Candidate);
+            return Candidate;
+         exception
+            when Ada.Directories.Use_Error | Ada.Directories.Name_Error =>
+               null;
+         end;
+      end loop;
+
+      return "";
+   end Create_Command_Temp_Dir;
 
    function Process_Arguments return Awk_CLI.Options.String_Vectors.Vector is
       Result : Awk_CLI.Options.String_Vectors.Vector;
@@ -45,16 +101,27 @@ package body Awk_CLI.Platform is
 
    function Read_Standard_Input return U.Unbounded_String is
       Result : U.Unbounded_String;
+      Stream : Input_Stream;
+      Chunk  : U.Unbounded_String;
+      EOF    : Boolean := False;
    begin
-      while not Ada.Text_IO.End_Of_File loop
-         U.Append (Result, Ada.Text_IO.Get_Line);
-         if not Ada.Text_IO.End_Of_File then
-            U.Append (Result, ASCII.LF);
+      if Open_Standard_Input (Stream) /= Read_Success then
+         return U.Null_Unbounded_String;
+      end if;
+
+      while not EOF loop
+         if Read_Input_Chunk (Stream, Chunk, EOF) /= Read_Success then
+            Close_Input (Stream);
+            return U.Null_Unbounded_String;
          end if;
+         U.Append (Result, Chunk);
       end loop;
+
+      Close_Input (Stream);
       return Result;
    exception
-      when others =>
+      when Constraint_Error | Program_Error | Storage_Error =>
+         Close_Input (Stream);
          return U.Null_Unbounded_String;
    end Read_Standard_Input;
 
@@ -86,7 +153,17 @@ package body Awk_CLI.Platform is
       SIO.Close (File);
       return Read_Success;
    exception
-      when others =>
+      when Ada.IO_Exceptions.Name_Error
+         | Ada.IO_Exceptions.Use_Error
+         | Ada.IO_Exceptions.Device_Error
+         | Ada.IO_Exceptions.End_Error
+         | Ada.IO_Exceptions.Data_Error
+         | Ada.IO_Exceptions.Status_Error
+         | Ada.IO_Exceptions.Mode_Error
+         | Ada.Directories.Name_Error
+         | Ada.Directories.Use_Error
+         | Constraint_Error
+         | Storage_Error =>
          if SIO.Is_Open (File) then
             SIO.Close (File);
          end if;
@@ -106,14 +183,29 @@ package body Awk_CLI.Platform is
       Stream.Stdin_Done := False;
       return Read_Success;
    exception
-      when others =>
+      when Ada.IO_Exceptions.Name_Error
+         | Ada.IO_Exceptions.Use_Error
+         | Ada.IO_Exceptions.Device_Error
+         | Ada.IO_Exceptions.Status_Error
+         | Ada.Directories.Name_Error
+         | Ada.Directories.Use_Error =>
          Close_Input (Stream);
          return Open_Failed;
    end Open_Input_File;
 
    function Open_Standard_Input (Stream : in out Input_Stream) return Read_Status is
+      use type System.Address;
+
+      Handle : constant Interfaces.C_Streams.int :=
+        Interfaces.C_Streams.fileno (Interfaces.C_Streams.stdin);
    begin
       Close_Input (Stream);
+      if Interfaces.C_Streams.stdin = Interfaces.C_Streams.NULL_Stream
+        or else Handle < 0
+      then
+         return Open_Failed;
+      end if;
+      Interfaces.C_Streams.set_binary_mode (Handle);
       Stream.Opened := True;
       Stream.Is_Stdin := True;
       Stream.Stdin_Done := False;
@@ -135,17 +227,35 @@ package body Awk_CLI.Platform is
       end if;
 
       if Stream.Is_Stdin then
-         if Stream.Stdin_Done or else Ada.Text_IO.End_Of_File then
+         if Stream.Stdin_Done then
             Stream.Stdin_Done := True;
             End_Of_File := True;
             return Read_Success;
          end if;
 
-         U.Append (Content, Ada.Text_IO.Get_Line);
-         if not Ada.Text_IO.End_Of_File then
-            U.Append (Content, ASCII.LF);
-         end if;
-         return Read_Success;
+         declare
+            use type Interfaces.C_Streams.size_t;
+
+            Text : String (1 .. Natural (Chunk_Size));
+            Read : constant Interfaces.C_Streams.size_t :=
+              Interfaces.C_Streams.fread
+                (Text (Text'First)'Address,
+                 1,
+                 Interfaces.C_Streams.size_t (Text'Length),
+                 Interfaces.C_Streams.stdin);
+         begin
+            if Read = 0 then
+               Stream.Stdin_Done := True;
+               End_Of_File := True;
+               if Interfaces.C_Streams.ferror (Interfaces.C_Streams.stdin) /= 0 then
+                  return Read_Failed;
+               end if;
+               return Read_Success;
+            end if;
+
+            Content := U.To_Unbounded_String (Text (1 .. Natural (Read)));
+            return Read_Success;
+         end;
       end if;
 
       if SIO.End_Of_File (Stream.File) then
@@ -180,7 +290,14 @@ package body Awk_CLI.Platform is
       End_Of_File := False;
       return Read_Success;
    exception
-      when others =>
+      when Ada.IO_Exceptions.Use_Error
+         | Ada.IO_Exceptions.Device_Error
+         | Ada.IO_Exceptions.End_Error
+         | Ada.IO_Exceptions.Data_Error
+         | Ada.IO_Exceptions.Status_Error
+         | Ada.IO_Exceptions.Mode_Error
+         | Constraint_Error
+         | Storage_Error =>
          Content := U.Null_Unbounded_String;
          End_Of_File := True;
          return Read_Failed;
@@ -195,7 +312,7 @@ package body Awk_CLI.Platform is
       Stream.Is_Stdin := False;
       Stream.Stdin_Done := False;
    exception
-      when others =>
+      when Ada.IO_Exceptions.Use_Error | Ada.IO_Exceptions.Status_Error =>
          Stream.Opened := False;
          Stream.Is_Stdin := False;
          Stream.Stdin_Done := False;
@@ -205,16 +322,14 @@ package body Awk_CLI.Platform is
       Args        : Hostkit.String_Vectors.Vector;
       Status      : Hostkit.Process.Process_Outcome;
       Ignored     : Integer := -1;
-      Temp        : constant String := Hostkit.Fs.Temp_Directory;
-      Prefix      : constant String := "awk-command-getline-" & Image (Command_Capture_Count + 1);
-      Stdin_Path  : constant String := Join (Temp, Prefix & ".in");
-      Stdout_Path : constant String := Join (Temp, Prefix & ".out");
-      Stderr_Path : constant String := Join (Temp, Prefix & ".err");
+      Temp_Dir    : constant String := Create_Command_Temp_Dir (Command);
+      Stdin_Path  : constant String := Join (Temp_Dir, "stdin");
+      Stdout_Path : constant String := Join (Temp_Dir, "stdout");
+      Stderr_Path : constant String := Join (Temp_Dir, "stderr");
    begin
       Output := U.Null_Unbounded_String;
-      Command_Capture_Count := Command_Capture_Count + 1;
 
-      if Hostkit.Shell.Executable = "" then
+      if Temp_Dir = "" or else Hostkit.Shell.Executable = "" then
          return False;
       end if;
 
@@ -240,6 +355,7 @@ package body Awk_CLI.Platform is
          Delete_If_Present (Stdin_Path);
          Delete_If_Present (Stdout_Path);
          Delete_If_Present (Stderr_Path);
+         Delete_Tree_If_Present (Temp_Dir);
          Ignored := Status.Exit_Status;
          return Ignored >= 0;
       end if;
@@ -247,13 +363,16 @@ package body Awk_CLI.Platform is
       Delete_If_Present (Stdin_Path);
       Delete_If_Present (Stdout_Path);
       Delete_If_Present (Stderr_Path);
+      Delete_Tree_If_Present (Temp_Dir);
       return False;
    exception
-      when others =>
+      when Ada.Directories.Name_Error | Ada.Directories.Use_Error
+         | Constraint_Error | Program_Error | Storage_Error =>
          Output := U.Null_Unbounded_String;
          Delete_If_Present (Stdin_Path);
          Delete_If_Present (Stdout_Path);
          Delete_If_Present (Stderr_Path);
+         Delete_Tree_If_Present (Temp_Dir);
          return False;
    end Run_Command;
 
@@ -280,7 +399,15 @@ package body Awk_CLI.Platform is
       SIO.Close (File);
       return True;
    exception
-      when others =>
+      when Ada.IO_Exceptions.Name_Error
+         | Ada.IO_Exceptions.Use_Error
+         | Ada.IO_Exceptions.Device_Error
+         | Ada.IO_Exceptions.Status_Error
+         | Ada.IO_Exceptions.Mode_Error
+         | Ada.Directories.Name_Error
+         | Ada.Directories.Use_Error
+         | Constraint_Error
+         | Storage_Error =>
          if SIO.Is_Open (File) then
             SIO.Close (File);
          end if;
@@ -317,31 +444,25 @@ package body Awk_CLI.Platform is
 
       return Written = Length and then Interfaces.C_Streams.fflush (Stream) = 0;
    exception
-      when others =>
+      when Constraint_Error | Program_Error | Storage_Error =>
          return False;
    end Write_Standard_Stream;
 
    function Write_Standard_Output (Content : String) return Boolean is
    begin
       return Write_Standard_Stream (Interfaces.C_Streams.stdout, Content);
-   exception
-      when others =>
-         return False;
    end Write_Standard_Output;
 
    function Write_Standard_Error (Content : String) return Boolean is
    begin
       return Write_Standard_Stream (Interfaces.C_Streams.stderr, Content);
-   exception
-      when others =>
-         return False;
    end Write_Standard_Error;
 
    function Is_Terminal (File_Descriptor : Interfaces.C_Streams.int) return Boolean is
    begin
       return Interfaces.C_Streams.isatty (File_Descriptor) = 1;
    exception
-      when others =>
+      when Constraint_Error | Program_Error =>
          return False;
    end Is_Terminal;
 
@@ -350,6 +471,14 @@ package body Awk_CLI.Platform is
 
    function Standard_Error_Is_Terminal return Boolean is
      (Is_Terminal (2));
+
+   function No_Color_Active return Boolean is
+   begin
+      return Ada.Environment_Variables.Exists ("NO_COLOR");
+   exception
+      when Constraint_Error | Program_Error =>
+         return False;
+   end No_Color_Active;
 
    function Locale return String is
       Native : constant String := Hostkit.Host.Native_Locale;
@@ -364,7 +493,7 @@ package body Awk_CLI.Platform is
          return "en";
       end if;
    exception
-      when others =>
+      when Constraint_Error | Program_Error =>
          return "en";
    end Locale;
 

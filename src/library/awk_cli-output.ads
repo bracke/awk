@@ -15,13 +15,16 @@ package Awk_CLI.Output is
 
    --  @param Catalog Initialized catalog runtime.
    --  @param Destination_Is_Terminal Whether the help destination is a terminal.
+   --  @param No_Color_Active Whether automatic color is disabled by host policy.
    --  @return Localized help text.
    function Help
      (Catalog : Awk_CLI.Localization.Catalog;
-      Destination_Is_Terminal : Boolean) return String;
+      Destination_Is_Terminal : Boolean;
+      No_Color_Active        : Boolean := False) return String;
    --  Return localized help text for the destination styling policy.
    --  @param Catalog Initialized catalog runtime.
    --  @param Destination_Is_Terminal Whether the help destination is a terminal.
+   --  @param No_Color_Active Whether automatic color is disabled by host policy.
    --  @return Localized help text.
 
    --  @param Catalog Initialized catalog runtime.
@@ -34,14 +37,17 @@ package Awk_CLI.Output is
    --  @param Catalog Initialized catalog runtime.
    --  @param Item Structured diagnostic to render.
    --  @param Destination_Is_Terminal Whether the diagnostic destination is a terminal.
+   --  @param No_Color_Active Whether automatic color is disabled by host policy.
    --  @return Localized diagnostic text.
    function Diagnostic_Text
      (Catalog : Awk_CLI.Localization.Catalog;
       Item    : Awk_CLI.Diagnostics.Diagnostic;
-      Destination_Is_Terminal : Boolean) return String;
+      Destination_Is_Terminal : Boolean;
+      No_Color_Active        : Boolean := False) return String;
    --  Render one structured diagnostic with localized text and safe escaping.
    --  @param Catalog Initialized catalog runtime.
    --  @param Item Structured diagnostic to render.
    --  @param Destination_Is_Terminal Whether the diagnostic destination is a terminal.
+   --  @param No_Color_Active Whether automatic color is disabled by host policy.
    --  @return Localized diagnostic text.
 end Awk_CLI.Output;

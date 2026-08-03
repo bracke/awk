@@ -109,6 +109,11 @@ package Awk_CLI.Platform is
    --  Return whether standard error is an interactive terminal.
    --  @return True when standard error is an interactive terminal.
 
+   --  @return True when host policy disables color output.
+   function No_Color_Active return Boolean;
+   --  Return whether NO_COLOR or equivalent host policy disables color output.
+   --  @return True when host policy disables color output.
+
    --  @return Host locale name for CLI-owned text.
    function Locale return String;
    --  Return the host locale name used for CLI-owned text.

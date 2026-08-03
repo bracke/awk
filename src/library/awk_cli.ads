@@ -132,6 +132,13 @@ package Awk_CLI is
    --  @param Context Invocation context to update.
    --  @param Enabled Whether standard error should be treated as a terminal.
 
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether NO_COLOR or equivalent host policy is active.
+   procedure Set_No_Color (Context : in out Invocation_Context; Enabled : Boolean);
+   --  Set whether automatic color should be suppressed for this invocation.
+   --  @param Context Invocation context to update.
+   --  @param Enabled Whether NO_COLOR or equivalent host policy is active.
+
    --  @param Context Invocation context to execute.
    --  @return Stable process exit code.
    function Run (Context : in out Invocation_Context) return Exit_Code;
@@ -274,5 +281,6 @@ private
       Stderr_Fails : Boolean := False;
       Stdout_Terminal : Boolean := False;
       Stderr_Terminal : Boolean := False;
+      No_Color         : Boolean := False;
    end record;
 end Awk_CLI;

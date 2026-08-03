@@ -43,7 +43,7 @@ package body Awk_CLI.Environment is
       Ada.Environment_Variables.Iterate (Add'Access);
       return Normalize (Result);
    exception
-      when others =>
+      when Constraint_Error | Program_Error | Storage_Error =>
          return Normalize (Result);
    end Collect;
 end Awk_CLI.Environment;

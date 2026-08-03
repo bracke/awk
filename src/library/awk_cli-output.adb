@@ -1,5 +1,4 @@
 with Awk_Config;
-with Ada.Environment_Variables;
 with Ada.Strings.Unbounded;
 with Awk_CLI.Execution;
 with Terminal_Styles;
@@ -33,7 +32,8 @@ package body Awk_CLI.Output is
    function Styled
      (Text : String;
       Role : Terminal_Styles.Style_Role;
-      Destination_Is_Terminal : Boolean) return String
+      Destination_Is_Terminal : Boolean;
+      No_Color_Active        : Boolean) return String
    is
       Policy : constant Terminal_Styles.Color_Policy :=
         Terminal_Styles.Current_Color_Policy;
@@ -46,9 +46,7 @@ package body Awk_CLI.Output is
             return Terminal_Styles.Decorate (Text, Role);
 
          when Terminal_Styles.Color_Auto =>
-            if (not Destination_Is_Terminal)
-              or else Ada.Environment_Variables.Exists ("NO_COLOR")
-            then
+            if (not Destination_Is_Terminal) or else No_Color_Active then
                return Text;
             end if;
 
@@ -68,13 +66,14 @@ package body Awk_CLI.Output is
 
    function Help
      (Catalog : L.Catalog;
-      Destination_Is_Terminal : Boolean) return String
+      Destination_Is_Terminal : Boolean;
+      No_Color_Active        : Boolean := False) return String
    is
       LF : constant String := [1 => ASCII.LF];
    begin
       return
         Styled (L.Text (Catalog, "awk.help.title"), Terminal_Styles.Role_Header,
-                Destination_Is_Terminal) & LF &
+                Destination_Is_Terminal, No_Color_Active) & LF &
         L.Text (Catalog, "awk.help.summary") & LF & LF &
         L.Text (Catalog, "awk.help.usage.direct_program") & LF &
         L.Text (Catalog, "awk.help.usage.program_files") & LF & LF &
@@ -89,7 +88,7 @@ package body Awk_CLI.Output is
         L.Text (Catalog, "awk.help.stdin") & LF &
         L.Text (Catalog, "awk.help.exit_statuses") & LF & LF &
         Styled (L.Text (Catalog, "awk.help.compatibility.heading"), Terminal_Styles.Role_Header,
-                Destination_Is_Terminal) & LF &
+                Destination_Is_Terminal, No_Color_Active) & LF &
         L.Text (Catalog, "awk.help.compatibility.awklib_limitations") & LF;
    end Help;
 
@@ -116,7 +115,8 @@ package body Awk_CLI.Output is
    function Diagnostic_Text
      (Catalog : L.Catalog;
       Item    : D.Diagnostic;
-      Destination_Is_Terminal : Boolean) return String
+      Destination_Is_Terminal : Boolean;
+      No_Color_Active        : Boolean := False) return String
    is
       LF     : constant String := [1 => ASCII.LF];
       Label  : constant String := L.Label (Catalog, Item.Severity);
@@ -130,7 +130,8 @@ package body Awk_CLI.Output is
                  Label,
                  L.Primary (Catalog, Item)),
               Terminal_Styles.Role_Error,
-              Destination_Is_Terminal));
+              Destination_Is_Terminal,
+              No_Color_Active));
    begin
       if Ada.Strings.Unbounded.Length (Item.Source_Name) > 0
         and then Item.Line > 0

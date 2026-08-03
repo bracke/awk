@@ -1189,7 +1189,7 @@ package body Awk_Tests.Process is
         GNAT.Expect.Get_Command_Output
           (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
-           Input     => "one two" & LF & "three four" & LF,
+           Input     => "one two" & LF & "three four",
            Status    => Status'Access);
    begin
       Assert (Status = 0, "explicit stdin data exits successfully");
@@ -1208,7 +1208,7 @@ package body Awk_Tests.Process is
         GNAT.Expect.Get_Command_Output
           (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
-           Input     => "red blue" & LF & "green yellow" & LF,
+           Input     => "red blue" & LF & "green yellow",
            Status    => Status'Access);
    begin
       Assert (Status = 0, "implicit stdin data exits successfully");
@@ -1229,7 +1229,7 @@ package body Awk_Tests.Process is
         GNAT.Expect.Get_Command_Output
           (Command    => Awk_From_Tests_Directory,
            Arguments => Args,
-           Input     => "alpha" & LF & "beta" & LF,
+           Input     => "alpha" & LF & "beta",
            Status    => Status'Access);
    begin
       Assert (Status = 0, "repeated stdin operands exit successfully");
