@@ -3,12 +3,14 @@ with AUnit.Assertions;
 with Ada.Strings.Unbounded;
 
 with Awk_CLI;
+with Awk_CLI.Testing;
 with Awk_CLI.Execution;
 with Awk_CLI.Redirections;
 with Project_Tools.Text;
 
 package body Awk_Tests.Redirections is
    use AUnit.Assertions;
+   package Harness renames Awk_CLI.Testing;
    package U renames Ada.Strings.Unbounded;
 
    LF : constant String := [1 => ASCII.LF];
@@ -119,14 +121,14 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""saved"" > ""out.txt"" }");
+      Harness.Add_Argument (Context, "BEGIN { print ""saved"" > ""out.txt"" }");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "redirection run succeeds");
-      Assert (Awk_CLI.Written_File_Count (Context) = 1, "one redirected file written");
-      Assert (Awk_CLI.Written_File_Name (Context, 1) = "out.txt", "redirection target");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF, "redirection content");
-      Assert (not Awk_CLI.Written_File_Append (Context, 1), "overwrite redirection is recorded");
-      Assert (Awk_CLI.Standard_Output (Context) = "", "redirected output not sent to stdout");
+      Assert (Harness.Written_File_Count (Context) = 1, "one redirected file written");
+      Assert (Harness.Written_File_Name (Context, 1) = "out.txt", "redirection target");
+      Assert (Harness.Written_File_Content (Context, 1) = "saved" & LF, "redirection content");
+      Assert (not Harness.Written_File_Append (Context, 1), "overwrite redirection is recorded");
+      Assert (Harness.Standard_Output (Context) = "", "redirected output not sent to stdout");
    end Test_Context_Redirection;
 
    procedure Test_Context_Multiple_Redirections
@@ -136,26 +138,26 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { print ""a1"" > ""a.txt""; print ""b1"" > ""b.txt""; print ""a2"" > ""a.txt"" }");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "multiple redirections succeed");
-      Assert (Awk_CLI.Written_File_Count (Context) = 3,
+      Assert (Harness.Written_File_Count (Context) = 3,
               "awklib exposes live redirected writes");
-      Assert (Awk_CLI.Written_File_Name (Context, 1) = "a.txt",
+      Assert (Harness.Written_File_Name (Context, 1) = "a.txt",
               "first redirection target is materialized first");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "a1" & LF,
+      Assert (Harness.Written_File_Content (Context, 1) = "a1" & LF,
               "first same-target write is exact");
-      Assert (Awk_CLI.Written_File_Name (Context, 2) = "b.txt",
+      Assert (Harness.Written_File_Name (Context, 2) = "b.txt",
               "second redirection target is materialized second");
-      Assert (Awk_CLI.Written_File_Content (Context, 2) = "b1" & LF,
+      Assert (Harness.Written_File_Content (Context, 2) = "b1" & LF,
               "second target content is exact");
-      Assert (Awk_CLI.Written_File_Name (Context, 3) = "a.txt",
+      Assert (Harness.Written_File_Name (Context, 3) = "a.txt",
               "third write returns to first target");
-      Assert (Awk_CLI.Written_File_Content (Context, 3) = "a2" & LF,
+      Assert (Harness.Written_File_Content (Context, 3) = "a2" & LF,
               "third write content is exact");
-      Assert (Awk_CLI.Written_File_Append (Context, 3),
+      Assert (Harness.Written_File_Append (Context, 3),
               "later writes to an open target append");
    end Test_Context_Multiple_Redirections;
 
@@ -164,18 +166,18 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""saved"" >> ""out.txt"" }");
-      Awk_CLI.Add_File (Context, "out.txt", "old" & LF);
+      Harness.Add_Argument (Context, "BEGIN { print ""saved"" >> ""out.txt"" }");
+      Harness.Add_File (Context, "out.txt", "old" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "append redirection run succeeds");
-      Assert (Awk_CLI.Written_File_Count (Context) = 1, "one captured write recorded");
-      Assert (Awk_CLI.Written_File_Name (Context, 1) = "out.txt", "redirection target");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF, "write content");
+      Assert (Harness.Written_File_Count (Context) = 1, "one captured write recorded");
+      Assert (Harness.Written_File_Name (Context, 1) = "out.txt", "redirection target");
+      Assert (Harness.Written_File_Content (Context, 1) = "saved" & LF, "write content");
       Assert (Awk_CLI.Execution.Supports_Redirection_Append_Mode,
               "execution adapter exposes append-mode capability");
-      Assert (Awk_CLI.Written_File_Append (Context, 1),
+      Assert (Harness.Written_File_Append (Context, 1),
               "awklib streaming redirection exposes append intent");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "saved" & LF,
+      Assert (Harness.Written_File_Content (Context, 1) = "saved" & LF,
               "append write content is exact");
    end Test_Context_Append_Redirection;
 
@@ -184,12 +186,12 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" > ""out.txt"" }");
-      Awk_CLI.Add_File (Context, "out.txt", "", Readable => True, Writable => False);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "BEGIN { print ""x"" > ""out.txt"" }");
+      Harness.Add_File (Context, "out.txt", "", Readable => True, Writable => False);
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "redirection write failure is host I/O");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot write output file"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "cannot write output file"),
               "redirection diagnostic is rendered");
    end Test_Context_Redirection_Failure;
 
@@ -200,23 +202,23 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { print ""ok"" > ""first.txt""; print ""blocked"" > ""second.txt""; print ""stdout"" }");
-      Awk_CLI.Add_File (Context, "second.txt", "", Readable => True, Writable => False);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_File (Context, "second.txt", "", Readable => True, Writable => False);
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "later redirection write failure is fatal");
-      Assert (Awk_CLI.Written_File_Count (Context) = 1,
+      Assert (Harness.Written_File_Count (Context) = 1,
               "successful prior redirection write is recorded");
-      Assert (Awk_CLI.Written_File_Name (Context, 1) = "first.txt",
+      Assert (Harness.Written_File_Name (Context, 1) = "first.txt",
               "prior redirection target is retained");
-      Assert (Awk_CLI.Written_File_Content (Context, 1) = "ok" & LF,
+      Assert (Harness.Written_File_Content (Context, 1) = "ok" & LF,
               "prior redirection content is exact");
-      Assert (Awk_CLI.Standard_Output (Context) = "",
+      Assert (Harness.Standard_Output (Context) = "",
               "stdout is not emitted after required redirection failure");
       Assert
-        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.output_file.write_failed",
+        (Harness.Last_Diagnostic_Message_Id (Context) = "awk.output_file.write_failed",
          "structured diagnostic identifies later redirection write failure");
    end Test_Context_Redirection_Fails_After_Partial_Materialization;
 
@@ -225,16 +227,16 @@ package body Awk_Tests.Redirections is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" > ""out.txt"" }");
-      Awk_CLI.Add_File
+      Harness.Add_Argument (Context, "BEGIN { print ""x"" > ""out.txt"" }");
+      Harness.Add_File
         (Context, "out.txt", "", Readable => True, Writable => True, Openable => False);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "redirection open failure is host I/O");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "cannot open output file"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "cannot open output file"),
               "redirection open diagnostic is rendered");
       Assert
-        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.output_file.open_failed",
+        (Harness.Last_Diagnostic_Message_Id (Context) = "awk.output_file.open_failed",
          "structured diagnostic identifies output open failure");
    end Test_Context_Redirection_Open_Failure;
 

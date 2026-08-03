@@ -8,10 +8,12 @@ with Project_Tools.Text;
 
 with Awk_Catalog_Policy;
 with Awk_CLI;
+with Awk_CLI.Testing;
 with Awk_CLI.Localization;
 
 package body Awk_Tests.Localization is
    use AUnit.Assertions;
+   package Harness renames Awk_CLI.Testing;
    package Fixtures renames Project_Tools.Test_Fixtures;
 
    LF : constant String := [1 => ASCII.LF];
@@ -92,12 +94,12 @@ package body Awk_Tests.Localization is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Locale (Context, "da");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "Danish usage error status");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "ukendt tilvalg"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "ukendt tilvalg"),
               "Danish diagnostic is selected");
    end Test_Localized_Diagnostics;
 
@@ -106,12 +108,12 @@ package body Awk_Tests.Localization is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "fr_FR.UTF-8");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Locale (Context, "fr_FR.UTF-8");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "French usage error status");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "option inconnue"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "option inconnue"),
               "French diagnostic is selected through locale fallback");
    end Test_European_Locale_Diagnostics;
 
@@ -153,24 +155,24 @@ package body Awk_Tests.Localization is
             Prefix  : constant String :=
               Before_Option (Catalog_Value (Locale & ".awk.usage.unknown_option"));
          begin
-            Awk_CLI.Add_Argument (Context, "--bad");
-            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-            Awk_CLI.Set_Locale (Context, Locale);
+            Harness.Add_Argument (Context, "--bad");
+            Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Harness.Set_Locale (Context, Locale);
             Status := Awk_CLI.Run (Context);
             Assert (Status = 2, Locale & " usage diagnostic status");
             Assert
-              (Prefix = "" or else Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Prefix),
+              (Prefix = "" or else Project_Tools.Text.Contains (Harness.Standard_Error (Context), Prefix),
                Locale & " diagnostic renders localized catalog prefix");
-            Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "--bad"),
+            Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "--bad"),
                     Locale & " diagnostic interpolates option argument");
             Assert
-              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "awk.usage.unknown_option"),
+              (not Project_Tools.Text.Contains (Harness.Standard_Error (Context), "awk.usage.unknown_option"),
                Locale & " diagnostic does not expose raw message key");
             Assert
-              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "localization_failed"),
+              (not Project_Tools.Text.Contains (Harness.Standard_Error (Context), "localization_failed"),
                Locale & " diagnostic does not use localization failure fallback");
             Assert
-              (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Escape),
+              (not Project_Tools.Text.Contains (Harness.Standard_Error (Context), Escape),
                Locale & " diagnostic emits no raw escape character");
          end;
       end loop;
@@ -193,16 +195,16 @@ package body Awk_Tests.Localization is
             Context : Awk_CLI.Invocation_Context;
             Status  : Awk_CLI.Exit_Code;
          begin
-            Awk_CLI.Add_Argument (Context, "--color=never");
-            Awk_CLI.Add_Argument (Context, "--help");
-            Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-            Awk_CLI.Set_Locale (Context, Locale);
+            Harness.Add_Argument (Context, "--color=never");
+            Harness.Add_Argument (Context, "--help");
+            Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+            Harness.Set_Locale (Context, Locale);
             Status := Awk_CLI.Run (Context);
             declare
-               Output : constant String := Awk_CLI.Standard_Output (Context);
+               Output : constant String := Harness.Standard_Output (Context);
             begin
                Assert (Status = 0, Locale & " help status");
-               Assert (Awk_CLI.Standard_Error (Context) = "",
+               Assert (Harness.Standard_Error (Context) = "",
                        Locale & " help writes no standard error");
                Require_Token (Output, Locale, "awk");
                Require_Token (Output, Locale, "-F");
@@ -230,12 +232,12 @@ package body Awk_Tests.Localization is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "zz_ZZ.UTF-8");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Locale (Context, "zz_ZZ.UTF-8");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "unsupported locale usage status");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "unknown option"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "unknown option"),
               "unsupported locale falls back to catalog default");
    end Test_Unsupported_Locale_Fallback;
 
@@ -299,12 +301,12 @@ package body Awk_Tests.Localization is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""not localized"" }");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
+      Harness.Add_Argument (Context, "BEGIN { print ""not localized"" }");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Locale (Context, "da");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "localized context execution succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "not localized" & LF,
+      Assert (Harness.Standard_Output (Context) = "not localized" & LF,
               "AWK output is not localized");
    end Test_Awk_Output_Unchanged_By_Locale;
 
@@ -313,16 +315,16 @@ package body Awk_Tests.Localization is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--version");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
-      Awk_CLI.Set_Locale (Context, "da");
+      Harness.Add_Argument (Context, "--version");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Locale (Context, "da");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "localized version succeeds");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), "awk 0.1.0"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Output (Context), "awk 0.1.0"),
               "program version is catalog-rendered");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), "awklib 0.1.0"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Output (Context), "awklib 0.1.0"),
               "interpreter version is catalog-rendered");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Output (Context), "licens MIT"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Output (Context), "licens MIT"),
               "license label follows selected locale");
    end Test_Version_Uses_Localized_Labels;
 

@@ -1,10 +1,12 @@
 with AUnit.Assertions;
 
 with Awk_CLI;
+with Awk_CLI.Testing;
 with Awk_CLI.Execution;
 
 package body Awk_Tests.Context is
    use AUnit.Assertions;
+   package Harness renames Awk_CLI.Testing;
 
    LF : constant String := [1 => ASCII.LF];
    use type Awk_CLI.Exit_Code;
@@ -20,14 +22,14 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "{ print $2 }");
-      Awk_CLI.Set_Standard_Input (Context, "one two" & LF & "three four" & LF);
+      Harness.Add_Argument (Context, "{ print $2 }");
+      Harness.Set_Standard_Input (Context, "one two" & LF & "three four" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "direct run succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "two" & LF & "four" & LF,
+      Assert (Harness.Standard_Output (Context) = "two" & LF & "four" & LF,
               "stdout is captured exactly");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "no diagnostics");
-      Assert (not Awk_CLI.Has_Diagnostic (Context), "success has no structured diagnostic");
+      Assert (Harness.Standard_Error (Context) = "", "no diagnostics");
+      Assert (not Harness.Has_Diagnostic (Context), "success has no structured diagnostic");
    end Test_Context_Direct_Run;
 
    procedure Test_Context_File_Run (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -35,14 +37,14 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "-f");
-      Awk_CLI.Add_Argument (Context, "prog.awk");
-      Awk_CLI.Add_Argument (Context, "input.txt");
-      Awk_CLI.Add_File (Context, "prog.awk", "{ print FILENAME, FNR, $1 }");
-      Awk_CLI.Add_File (Context, "input.txt", "alpha beta" & LF);
+      Harness.Add_Argument (Context, "-f");
+      Harness.Add_Argument (Context, "prog.awk");
+      Harness.Add_Argument (Context, "input.txt");
+      Harness.Add_File (Context, "prog.awk", "{ print FILENAME, FNR, $1 }");
+      Harness.Add_File (Context, "input.txt", "alpha beta" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "file-backed run succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "input.txt 1 alpha" & LF,
+      Assert (Harness.Standard_Output (Context) = "input.txt 1 alpha" & LF,
               "virtual file input reaches awklib");
    end Test_Context_File_Run;
 
@@ -51,17 +53,17 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" }");
-      Awk_CLI.Fail_Standard_Output (Context, True);
+      Harness.Add_Argument (Context, "BEGIN { print ""x"" }");
+      Harness.Fail_Standard_Output (Context, True);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "stdout failure is host I/O");
-      Assert (Awk_CLI.Standard_Output (Context) = "",
+      Assert (Harness.Standard_Output (Context) = "",
               "failed stdout is not reported as written output");
-      Assert (Awk_CLI.Has_Diagnostic (Context), "stdout failure records a structured diagnostic");
+      Assert (Harness.Has_Diagnostic (Context), "stdout failure records a structured diagnostic");
       Assert
-        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.standard_output.write_failed",
+        (Harness.Last_Diagnostic_Message_Id (Context) = "awk.standard_output.write_failed",
          "structured diagnostic identifies stdout write failure");
-      Assert (Awk_CLI.Last_Diagnostic_Category (Context) = "OUTPUT",
+      Assert (Harness.Last_Diagnostic_Category (Context) = "OUTPUT",
               "stdout write failure diagnostic is output-category");
    end Test_Context_Output_Failure;
 
@@ -72,38 +74,38 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "first run records a usage diagnostic");
-      Assert (Awk_CLI.Has_Diagnostic (Context), "first run has structured diagnostic");
-      Assert (Awk_CLI.Standard_Error (Context)'Length > 0, "first run writes stderr");
+      Assert (Harness.Has_Diagnostic (Context), "first run has structured diagnostic");
+      Assert (Harness.Standard_Error (Context)'Length > 0, "first run writes stderr");
 
       Awk_CLI.Clear (Context);
-      Assert (Awk_CLI.Standard_Output (Context) = "", "clear resets stdout buffer");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "clear resets stderr buffer");
-      Assert (not Awk_CLI.Has_Diagnostic (Context), "clear resets diagnostic state");
-      Assert (Awk_CLI.Written_File_Count (Context) = 0, "clear resets redirected writes");
+      Assert (Harness.Standard_Output (Context) = "", "clear resets stdout buffer");
+      Assert (Harness.Standard_Error (Context) = "", "clear resets stderr buffer");
+      Assert (not Harness.Has_Diagnostic (Context), "clear resets diagnostic state");
+      Assert (Harness.Written_File_Count (Context) = 0, "clear resets redirected writes");
 
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ENVIRON[""LEAK""] }");
-      Awk_CLI.Add_Environment (Context, "LEAK", "second");
+      Harness.Add_Argument (Context, "BEGIN { print ENVIRON[""LEAK""] }");
+      Harness.Add_Environment (Context, "LEAK", "second");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "second run succeeds after clear");
-      Assert (Awk_CLI.Standard_Output (Context) = "second" & LF,
+      Assert (Harness.Standard_Output (Context) = "second" & LF,
               "second run uses only post-clear runtime state");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "second run has no old stderr");
+      Assert (Harness.Standard_Error (Context) = "", "second run has no old stderr");
 
       Awk_CLI.Clear (Context);
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""x"" }");
-      Awk_CLI.Fail_Standard_Output (Context, True);
+      Harness.Add_Argument (Context, "BEGIN { print ""x"" }");
+      Harness.Fail_Standard_Output (Context, True);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "stdout failure can be enabled after clear");
 
       Awk_CLI.Clear (Context);
-      Awk_CLI.Add_Argument (Context, "BEGIN { print ""ok"" }");
+      Harness.Add_Argument (Context, "BEGIN { print ""ok"" }");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "clear resets stdout failure flag");
-      Assert (Awk_CLI.Standard_Output (Context) = "ok" & LF,
+      Assert (Harness.Standard_Output (Context) = "ok" & LF,
               "stdout works after clear resets failure flag");
    end Test_Context_Clear_Resets_Runtime_State;
 
@@ -112,15 +114,15 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Fail_Standard_Error (Context, True);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Fail_Standard_Error (Context, True);
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 3, "diagnostic stderr failure is host I/O");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "failed stderr is not reported as written");
-      Assert (Awk_CLI.Has_Diagnostic (Context), "stderr failure preserves original diagnostic");
+      Assert (Harness.Standard_Error (Context) = "", "failed stderr is not reported as written");
+      Assert (Harness.Has_Diagnostic (Context), "stderr failure preserves original diagnostic");
       Assert
-        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
+        (Harness.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
          "stderr write failure does not replace the original diagnostic ID");
    end Test_Context_Stderr_Failure;
 
@@ -131,17 +133,17 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--help");
-      Awk_CLI.Add_Argument (Context, "-f");
-      Awk_CLI.Add_Argument (Context, "missing.awk");
-      Awk_CLI.Add_Argument (Context, "missing-input.txt");
-      Awk_CLI.Fail_Standard_Input (Context, True);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "--help");
+      Harness.Add_Argument (Context, "-f");
+      Harness.Add_Argument (Context, "missing.awk");
+      Harness.Add_Argument (Context, "missing-input.txt");
+      Harness.Fail_Standard_Input (Context, True);
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "help ignores runtime state and exits successfully");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "help emits no diagnostic");
-      Assert (not Awk_CLI.Has_Diagnostic (Context), "help records no diagnostic");
-      Assert (Awk_CLI.Standard_Output (Context)'Length > 0, "help text is emitted");
+      Assert (Harness.Standard_Error (Context) = "", "help emits no diagnostic");
+      Assert (not Harness.Has_Diagnostic (Context), "help records no diagnostic");
+      Assert (Harness.Standard_Output (Context)'Length > 0, "help text is emitted");
    end Test_Context_Help_Short_Circuits_Runtime_State;
 
    procedure Test_Context_Version_Short_Circuits_Runtime_State
@@ -151,17 +153,17 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--version");
-      Awk_CLI.Add_Argument (Context, "-f");
-      Awk_CLI.Add_Argument (Context, "missing.awk");
-      Awk_CLI.Add_Argument (Context, "missing-input.txt");
-      Awk_CLI.Fail_Standard_Input (Context, True);
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "--version");
+      Harness.Add_Argument (Context, "-f");
+      Harness.Add_Argument (Context, "missing.awk");
+      Harness.Add_Argument (Context, "missing-input.txt");
+      Harness.Fail_Standard_Input (Context, True);
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "version ignores runtime state and exits successfully");
-      Assert (Awk_CLI.Standard_Error (Context) = "", "version emits no diagnostic");
-      Assert (not Awk_CLI.Has_Diagnostic (Context), "version records no diagnostic");
-      Assert (Awk_CLI.Standard_Output (Context) = "awk 0.1.0" & LF &
+      Assert (Harness.Standard_Error (Context) = "", "version emits no diagnostic");
+      Assert (not Harness.Has_Diagnostic (Context), "version records no diagnostic");
+      Assert (Harness.Standard_Output (Context) = "awk 0.1.0" & LF &
                                            "awklib 0.1.0" & LF &
                                            "license MIT" & LF,
               "version text is emitted exactly");
@@ -174,25 +176,25 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { print ENVIRON[""AWK_TEST_ENV""]; print length(""abcd"") } " &
          "/^[a-z]+ [0-9]+$/ { print $1, $2 + 3, substr($1, 2, 2) }");
-      Awk_CLI.Add_Environment (Context, "AWK_TEST_ENV", "visible");
-      Awk_CLI.Set_Standard_Input (Context, "abc 4" & LF & "NOPE" & LF);
+      Harness.Add_Environment (Context, "AWK_TEST_ENV", "visible");
+      Harness.Set_Standard_Input (Context, "abc 4" & LF & "NOPE" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "expression integration succeeds");
       Assert
-        (Awk_CLI.Standard_Output (Context) =
+        (Harness.Standard_Output (Context) =
          "visible" & LF & "4" & LF & "abc 7 bc" & LF,
          "ENVIRON, regex pattern, arithmetic, and builtins pass through awklib");
 
       Awk_CLI.Clear (Context);
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context, "BEGIN { s = ""aa""; sub(/a|aa/, ""X"", s); print s }");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "leftmost-longest regex integration succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "X" & LF,
+      Assert (Harness.Standard_Output (Context) = "X" & LF,
               "regex replacement uses awklib leftmost-longest selection");
    end Test_Context_Expressions_Regex_And_Builtins;
 
@@ -203,13 +205,13 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context, "BEGIN { getline line < ""aux.txt""; print line }");
-      Awk_CLI.Add_Argument (Context, "aux.txt");
-      Awk_CLI.Add_File (Context, "aux.txt", "from aux" & LF);
+      Harness.Add_Argument (Context, "aux.txt");
+      Harness.Add_File (Context, "aux.txt", "from aux" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "auxiliary getline integration succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "from aux" & LF,
+      Assert (Harness.Standard_Output (Context) = "from aux" & LF,
               "getline < file uses files registered through the execution adapter");
    end Test_Context_Auxiliary_Getline_File;
 
@@ -220,16 +222,16 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { getline line; print FILENAME, FNR, NR, line }"
          & " { print ""main"", FNR, NR, $0 }");
-      Awk_CLI.Add_Argument (Context, "-");
-      Awk_CLI.Set_Standard_Input (Context, "first" & LF & "second" & LF);
+      Harness.Add_Argument (Context, "-");
+      Harness.Set_Standard_Input (Context, "first" & LF & "second" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "main-input getline from BEGIN succeeds");
       Assert
-        (Awk_CLI.Standard_Output (Context) =
+        (Harness.Standard_Output (Context) =
          "- 1 1 first" & LF & "main 2 2 second" & LF,
          "BEGIN getline shares the CLI main-input cursor");
    end Test_Context_Main_Getline_From_Begin;
@@ -241,13 +243,13 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { ""printf x"" | getline value; print value }");
-      Awk_CLI.Add_Command_Output (Context, "printf x", "x");
+      Harness.Add_Command_Output (Context, "printf x", "x");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "command getline succeeds");
-      Assert (Awk_CLI.Standard_Output (Context) = "x" & LF,
+      Assert (Harness.Standard_Output (Context) = "x" & LF,
               "command getline uses awklib command callback output");
    end Test_Context_Command_Getline;
 
@@ -256,18 +258,18 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { print ARGC; print ARGV[0]; print ARGV[1]; print ARGV[2]; print ARGV[3] }");
-      Awk_CLI.Add_Argument (Context, "input.txt");
-      Awk_CLI.Add_Argument (Context, "name=value");
-      Awk_CLI.Add_Argument (Context, "-");
-      Awk_CLI.Add_File (Context, "input.txt", "ignored" & LF);
-      Awk_CLI.Set_Standard_Input (Context, "stdin" & LF);
+      Harness.Add_Argument (Context, "input.txt");
+      Harness.Add_Argument (Context, "name=value");
+      Harness.Add_Argument (Context, "-");
+      Harness.Add_File (Context, "input.txt", "ignored" & LF);
+      Harness.Set_Standard_Input (Context, "stdin" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "ARGV/ARGC run succeeds");
       Assert
-        (Awk_CLI.Standard_Output (Context) =
+        (Harness.Standard_Output (Context) =
            "4" & LF & "awk" & LF & "input.txt" & LF & "name=value" & LF & "-" & LF,
          "ARGV preserves operand spelling and order");
    end Test_Context_Argv_Argc;
@@ -279,22 +281,22 @@ package body Awk_Tests.Context is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context,
          "BEGIN { print ""begin"", X } " &
          "{ print FILENAME, FNR, X, $0 } " &
          "END { print ""end"", X }");
-      Awk_CLI.Add_Argument (Context, "first.txt");
-      Awk_CLI.Add_Argument (Context, "X=42");
-      Awk_CLI.Add_Argument (Context, "first.txt");
-      Awk_CLI.Add_Argument (Context, "X=99");
-      Awk_CLI.Add_File (Context, "first.txt", "one" & LF);
+      Harness.Add_Argument (Context, "first.txt");
+      Harness.Add_Argument (Context, "X=42");
+      Harness.Add_Argument (Context, "first.txt");
+      Harness.Add_Argument (Context, "X=99");
+      Harness.Add_File (Context, "first.txt", "one" & LF);
       Status := Awk_CLI.Run (Context);
       Assert (Status = 0, "runtime assignment run succeeds");
       Assert (Awk_CLI.Execution.Supports_Positional_Runtime_Assignments,
               "execution adapter exposes positional assignment support");
       Assert
-        (Awk_CLI.Standard_Output (Context) =
+        (Harness.Standard_Output (Context) =
          "begin " & LF &
          "first.txt 1  one" & LF &
          "first.txt 1 42 one" & LF &

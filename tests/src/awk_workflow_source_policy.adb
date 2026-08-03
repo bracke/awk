@@ -389,6 +389,19 @@ package body Awk_Workflow_Source_Policy is
          Quiet              => True);
       Public_Spec_Docs;
       Files.Require_Contains
+        ("../src/library/awk_cli-testing.ads", "package Awk_CLI.Testing",
+         "in-memory invocation harness must live in Awk_CLI.Testing",
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli.ads",
+         [U.To_Unbounded_String ("procedure Add_Argument"),
+          U.To_Unbounded_String ("procedure Set_Standard_Input"),
+          U.To_Unbounded_String ("procedure Add_File"),
+          U.To_Unbounded_String ("procedure Add_Environment"),
+          U.To_Unbounded_String ("function Standard_Output"),
+          U.To_Unbounded_String ("function Written_File_Count")],
+         Quiet => True);
+      Files.Require_Contains
         ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
          "process fixture file reads must use project_tools directly", Quiet => True);
       Files.Require_Contains

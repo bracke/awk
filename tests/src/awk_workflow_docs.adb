@@ -93,6 +93,10 @@ package body Awk_Workflow_Docs is
          "architecture docs must document testable invocation context",
          Quiet => True);
       Files.Require_Contains
+        ("../docs/architecture.md", "Awk_CLI.Testing",
+         "architecture docs must document in-memory context controls",
+         Quiet => True);
+      Files.Require_Contains
         ("../docs/compatibility.md",
          "No current entries are classified as unsupported",
          "compatibility docs must state the active limitation position",
@@ -393,6 +397,12 @@ package body Awk_Workflow_Docs is
       Files.Require_Contains
         ("../docs/ai/project-map.md", "Awk_CLI.Invocation",
          "project map must mention parsed invocation executor", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/project-map.md", "Awk_CLI.Testing",
+         "project map must mention in-memory context controls", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/package-contracts.md", "Awk_CLI.Testing",
+         "package contracts must mention testing context boundary", Quiet => True);
       Files.Require_Contains
         ("../docs/ai/traceability.md", "| 39 | Tooling requirements |",
          "traceability docs must map tooling requirements", Quiet => True);

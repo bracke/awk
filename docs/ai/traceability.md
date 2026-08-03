@@ -27,13 +27,13 @@ resolved `awklib` behavior, and the release workflow.
 | 18 | Diagnostic model | `src/library/awk_cli-diagnostics.*`, diagnostic rendering tests, `docs/diagnostics.md` |
 | 19 | Exit status registry | `Awk_CLI.Diagnostics` exit constants, diagnostic status tests, process failure tests |
 | 20 | Exception policy | `src/main/awk.adb`, adapter exception containment, internal diagnostic status tests |
-| 21 | Host abstraction and testability | `Awk_CLI.Invocation_Context`, context tests, process adapter tests |
+| 21 | Host abstraction and testability | `Awk_CLI.Invocation_Context`, `Awk_CLI.Testing`, context tests, process adapter tests |
 | 22 | Platform adapter | `src/library/awk_cli-platform.*`, adapter isolation docs and source-policy checks |
 | 23 | Internal package responsibilities | package specs under `src/library`, `docs/ai/package-contracts.md`, source-policy checks |
 | 24 | Help output | `Awk_CLI.Output.Help`, message catalogs, process help tests |
 | 25 | Version output | `Awk_CLI.Output.Version`, `config/awk_config.ads`, process version tests |
 | 26 | Test crate | `tests/alire.toml`, `tests/awk_tests.gpr`, `tests/src/awk_tests-suite.adb` |
-| 27 | In-memory test harness | `Awk_CLI.Invocation_Context`, `tests/src/awk_tests-context.adb`, support helpers |
+| 27 | In-memory test harness | `Awk_CLI.Invocation_Context`, `Awk_CLI.Testing`, `tests/src/awk_tests-context.adb`, support helpers |
 | 28 | Option parser tests | `tests/src/awk_tests-cli_options.adb`, usage process tests |
 | 29 | Program source tests | `tests/src/awk_tests-program_sources.adb`, program fixture files |
 | 30 | Operand tests | `tests/src/awk_tests-operands.adb`, input ordering tests |

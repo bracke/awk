@@ -1,6 +1,7 @@
 with AUnit.Assertions;
 
 with Awk_CLI;
+with Awk_CLI.Testing;
 with Awk_CLI.Diagnostics;
 with Awk_CLI.Localization;
 with Awk_CLI.Output;
@@ -8,6 +9,7 @@ with Project_Tools.Text;
 
 package body Awk_Tests.Diagnostics is
    use AUnit.Assertions;
+   package Harness renames Awk_CLI.Testing;
 
    LF : constant String := [1 => ASCII.LF];
    use type Awk_CLI.Exit_Code;
@@ -23,19 +25,19 @@ package body Awk_Tests.Diagnostics is
       Context : Awk_CLI.Invocation_Context;
       Status  : Awk_CLI.Exit_Code;
    begin
-      Awk_CLI.Add_Argument (Context, "--bad");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Add_Argument (Context, "--bad");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "usage error status");
-      Assert (Awk_CLI.Standard_Output (Context) = "", "usage error does not write stdout");
-      Assert (Awk_CLI.Standard_Error (Context)'Length > 0, "diagnostic is captured");
-      Assert (Awk_CLI.Has_Diagnostic (Context), "structured diagnostic is captured");
+      Assert (Harness.Standard_Output (Context) = "", "usage error does not write stdout");
+      Assert (Harness.Standard_Error (Context)'Length > 0, "diagnostic is captured");
+      Assert (Harness.Has_Diagnostic (Context), "structured diagnostic is captured");
       Assert
-        (Awk_CLI.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
+        (Harness.Last_Diagnostic_Message_Id (Context) = "awk.usage.unknown_option",
          "structured diagnostic message ID is retained");
-      Assert (Awk_CLI.Last_Diagnostic_Category (Context) = "USAGE",
+      Assert (Harness.Last_Diagnostic_Category (Context) = "USAGE",
               "structured diagnostic category is retained");
-      Assert (Awk_CLI.Last_Diagnostic_Severity (Context) = "ERROR",
+      Assert (Harness.Last_Diagnostic_Severity (Context) = "ERROR",
               "structured diagnostic severity is retained");
    end Test_Context_Diagnostics;
 
@@ -45,16 +47,16 @@ package body Awk_Tests.Diagnostics is
       Status  : Awk_CLI.Exit_Code;
       Escape  : constant String := [1 => Character'Val (27)];
    begin
-      Awk_CLI.Add_Argument
+      Harness.Add_Argument
         (Context, "--bad" & LF & "awk: error: forged" & Escape & "[2J");
-      Awk_CLI.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
+      Harness.Set_Catalog_Path (Context, "../resources/messages/catalog.txt");
       Status := Awk_CLI.Run (Context);
       Assert (Status = 2, "hostile option remains a usage error");
-      Assert (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), LF & "awk: error: forged"),
+      Assert (not Project_Tools.Text.Contains (Harness.Standard_Error (Context), LF & "awk: error: forged"),
               "embedded newline cannot forge a diagnostic line");
-      Assert (not Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), Escape),
+      Assert (not Project_Tools.Text.Contains (Harness.Standard_Error (Context), Escape),
               "escape character is not emitted in diagnostics");
-      Assert (Project_Tools.Text.Contains (Awk_CLI.Standard_Error (Context), "\nawk: error: forged\e[2J"),
+      Assert (Project_Tools.Text.Contains (Harness.Standard_Error (Context), "\nawk: error: forged\e[2J"),
               "unsafe characters are rendered visibly");
    end Test_Context_Diagnostic_Sanitizing;
 
