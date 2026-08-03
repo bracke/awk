@@ -26,6 +26,7 @@ package Awk_CLI is
 private
    package U renames Ada.Strings.Unbounded;
 
+   Default_Locale : constant String := "en";
    Default_Catalog_Path : constant String := "resources/messages/catalog.txt";
 
    type Virtual_File is record
@@ -65,7 +66,7 @@ private
 
    type Invocation_Configuration is record
       Arguments       : String_Vectors.Vector;
-      Locale          : U.Unbounded_String := U.To_Unbounded_String ("en");
+      Locale          : U.Unbounded_String := U.To_Unbounded_String (Default_Locale);
       Catalog_Path    : U.Unbounded_String :=
         U.To_Unbounded_String (Default_Catalog_Path);
       Use_Process     : Boolean := False;

@@ -366,9 +366,15 @@ package body Awk_Workflow_Source_Policy is
          "Default_Catalog_Path : constant String",
          "default catalog path must be centralized in the invocation context spec",
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.ads",
+         "Default_Locale : constant String",
+         "default locale must be centralized in the invocation context spec",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli.adb",
-         [U.To_Unbounded_String ("""resources/messages/catalog.txt""")],
+         [U.To_Unbounded_String ("""resources/messages/catalog.txt"""),
+          U.To_Unbounded_String ("""en""")],
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
