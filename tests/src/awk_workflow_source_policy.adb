@@ -417,6 +417,16 @@ package body Awk_Workflow_Source_Policy is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
+         "type Command_Run_Files is record",
+         "command-getline temp-file state must be grouped",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "procedure Cleanup_Command_Run_Files",
+         "command-getline cleanup must be centralized",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
          "Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size))",
          "platform file writes must use bounded chunks",
          Quiet => True);
