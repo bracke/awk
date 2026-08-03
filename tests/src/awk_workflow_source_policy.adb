@@ -454,7 +454,7 @@ package body Awk_Workflow_Source_Policy is
            (Errors          => Errors,
             Root            => "..",
             Manifest_Path   => "tests/source-budgets.toml",
-            Minimum_Entries => 14,
+            Minimum_Entries => 15,
             Purpose         => "awk source budget",
             Section         => "body",
             Quiet           => True);
