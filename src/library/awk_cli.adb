@@ -60,12 +60,17 @@ package body Awk_CLI is
          return Result;
       end Parsed_Arguments;
 
-      function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
+      procedure Record_Diagnostic (Item : D.Diagnostic) is
       begin
          Context.Last_Diagnostic.Set := True;
          Context.Last_Diagnostic.Id := Item.Message_Id;
          Context.Last_Diagnostic.Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
          Context.Last_Diagnostic.Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
+      end Record_Diagnostic;
+
+      function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
+      begin
+         Record_Diagnostic (Item);
          if not Awk_CLI.Context_IO.Write_Standard_Error
            (Context,
             Awk_CLI.Output.Diagnostic_Text
@@ -83,10 +88,7 @@ package body Awk_CLI is
               D.Internal_Error,
               D.Internal);
       begin
-         Context.Last_Diagnostic.Set := True;
-         Context.Last_Diagnostic.Id := Item.Message_Id;
-         Context.Last_Diagnostic.Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
-         Context.Last_Diagnostic.Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
+         Record_Diagnostic (Item);
          if not Awk_CLI.Context_IO.Write_Standard_Error
            (Context,
             Awk_CLI.Output.Diagnostic_Text

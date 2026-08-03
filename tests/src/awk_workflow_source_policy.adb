@@ -404,6 +404,10 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli.ads", "type Diagnostic_State is record",
          "invocation context must group diagnostic state",
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.adb", "procedure Record_Diagnostic",
+         "top-level runner must centralize diagnostic state recording",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli.ads",
          [U.To_Unbounded_String ("procedure Add_Argument"),
