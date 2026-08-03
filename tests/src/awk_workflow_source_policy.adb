@@ -336,6 +336,23 @@ package body Awk_Workflow_Source_Policy is
          "U.Slice (State.Active_Content",
          "in-memory live input chunking must avoid full-content copies",
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-context_io.adb",
+         "procedure Record_Write",
+         "context redirection write recording must be centralized",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-context_io.adb",
+         "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
+         "                     Update_Virtual_File (Position);",
+         "process redirection must update virtual context only after host write succeeds",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-context_io.adb",
+         "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
+         "            Add_New_Virtual_File;",
+         "new process redirection target must be recorded only after host write succeeds",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli-inputs-live.adb",
          [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],

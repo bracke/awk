@@ -70,6 +70,52 @@ package body Awk_CLI.Context_IO is
       Content : String;
       Append  : Boolean) return Awk_CLI.Redirections.Write_Status
    is
+      procedure Record_Write is
+      begin
+         Context.IO.Writes.Append
+           (Write_Operation'
+              (Path    => U.To_Unbounded_String (Path),
+               Content => U.To_Unbounded_String (Content),
+               Append  => Append));
+      end Record_Write;
+
+      procedure Add_New_Virtual_File is
+      begin
+         Context.IO.Files.Append
+           (Virtual_File'
+              (Path     => U.To_Unbounded_String (Path),
+               Content  => U.To_Unbounded_String (Content),
+               Readable => True,
+               Writable => True,
+               Openable => True));
+         Record_Write;
+      end Add_New_Virtual_File;
+
+      procedure Update_Virtual_File (Position : Positive) is
+      begin
+         if Append then
+            Context.IO.Files.Replace_Element
+              (Position,
+               Virtual_File'
+                 (Path     => Context.IO.Files.Element (Position).Path,
+                  Content  => Context.IO.Files.Element (Position).Content
+                    & U.To_Unbounded_String (Content),
+                  Readable => Context.IO.Files.Element (Position).Readable,
+                  Writable => Context.IO.Files.Element (Position).Writable,
+                  Openable => Context.IO.Files.Element (Position).Openable));
+         else
+            Context.IO.Files.Replace_Element
+              (Position,
+               Virtual_File'
+                 (Path     => Context.IO.Files.Element (Position).Path,
+                  Content  => U.To_Unbounded_String (Content),
+                  Readable => Context.IO.Files.Element (Position).Readable,
+                  Writable => Context.IO.Files.Element (Position).Writable,
+                  Openable => Context.IO.Files.Element (Position).Openable));
+         end if;
+
+         Record_Write;
+      end Update_Virtual_File;
    begin
       if not Context.IO.Files.Is_Empty then
          for Position in Context.IO.Files.First_Index .. Context.IO.Files.Last_Index loop
@@ -81,67 +127,31 @@ package body Awk_CLI.Context_IO is
                   return Awk_CLI.Redirections.Write_Failed;
                end if;
 
-               if Append then
-                  Context.IO.Files.Replace_Element
-                    (Position,
-                     Virtual_File'
-                       (Path     => Context.IO.Files.Element (Position).Path,
-                        Content  => Context.IO.Files.Element (Position).Content
-                          & U.To_Unbounded_String (Content),
-                        Readable => Context.IO.Files.Element (Position).Readable,
-                        Writable => Context.IO.Files.Element (Position).Writable,
-                        Openable => Context.IO.Files.Element (Position).Openable));
-               else
-                  Context.IO.Files.Replace_Element
-                    (Position,
-                     Virtual_File'
-                       (Path     => Context.IO.Files.Element (Position).Path,
-                        Content  => U.To_Unbounded_String (Content),
-                        Readable => Context.IO.Files.Element (Position).Readable,
-                        Writable => Context.IO.Files.Element (Position).Writable,
-                        Openable => Context.IO.Files.Element (Position).Openable));
-               end if;
-
-               Context.IO.Writes.Append
-                 (Write_Operation'
-                    (Path    => U.To_Unbounded_String (Path),
-                     Content => U.To_Unbounded_String (Content),
-                     Append  => Append));
-
                if Context.Config.Use_Process then
                   if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+                     Update_Virtual_File (Position);
                      return Awk_CLI.Redirections.Write_Success;
                   else
                      return Awk_CLI.Redirections.Write_Failed;
                   end if;
                end if;
 
+               Update_Virtual_File (Position);
                return Awk_CLI.Redirections.Write_Success;
             end if;
          end loop;
       end if;
 
-      Context.IO.Files.Append
-        (Virtual_File'
-           (Path     => U.To_Unbounded_String (Path),
-            Content  => U.To_Unbounded_String (Content),
-            Readable => True,
-            Writable => True,
-            Openable => True));
-      Context.IO.Writes.Append
-        (Write_Operation'
-           (Path    => U.To_Unbounded_String (Path),
-            Content => U.To_Unbounded_String (Content),
-            Append  => Append));
-
       if Context.Config.Use_Process then
          if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+            Add_New_Virtual_File;
             return Awk_CLI.Redirections.Write_Success;
          else
             return Awk_CLI.Redirections.Write_Failed;
          end if;
       end if;
 
+      Add_New_Virtual_File;
       return Awk_CLI.Redirections.Write_Success;
    end Write_File;
 
