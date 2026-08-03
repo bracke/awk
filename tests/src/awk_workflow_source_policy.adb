@@ -3,6 +3,8 @@ with Ada.Text_IO;
 
 with Awk_Workflow_Message_Key_Policy;
 with Awk_Workflow_Packaging;
+with Awk_Workflow_Source_Policy.Platform_Checks;
+with Awk_Workflow_Source_Policy.Workflow_Checks;
 with Project_Tools.Ada_Source;
 with Project_Tools.AUnit_Checks;
 with Project_Tools.Files;
@@ -352,98 +354,6 @@ package body Awk_Workflow_Source_Policy is
             Quiet => True);
       end Runtime_State_Policy;
 
-      procedure Platform_Policy is
-      begin
-         Ada_Source.Require_No_Code_Tokens_In_Tree
-           ("../src",
-            [U.To_Unbounded_String ("GNAT.OS_Lib")],
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               """/bin/sh""",
-               Allowed_Files => []) = "",
-            "shell executable selection must stay in hostkit");
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.ads",
-            "This is not a system-AWK fallback and must not parse AWK source.",
-            "platform command runner must document callback-only ownership",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-live_context_callbacks.adb",
-            "Only awklib reaches this callback after parsing/evaluating",
-            "live command callback must document awklib ownership",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens_In_Tree
-           ("../src",
-            [U.To_Unbounded_String ("GNAT.Expect")],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "while Remaining > 0 loop",
-            "standard stream writes must retry partial writes",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package Byte_IO is",
-            "platform byte-buffer helpers must be grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package Host_Metadata is",
-            "platform host metadata helpers must be grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package Command_Execution is",
-            "platform command execution helpers must be grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package body File_IO is separate;",
-            "platform whole-file I/O helpers must be split into a focused subunit",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package body Input_Streams is separate;",
-            "platform input stream helpers must be split into a focused subunit",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package body Command_Execution is separate;",
-            "platform command execution helpers must be split into a focused subunit",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "package Standard_Streams is",
-            "platform standard-stream write helpers must be grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
-            "function Environment_Value_Or_Empty",
-            "platform locale lookup must centralize environment value reads",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform-command_execution.adb",
-            "type Command_Run_Files is record",
-            "command-getline temp-file state must be grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform-command_execution.adb",
-            "procedure Cleanup_Command_Run_Files",
-            "command-getline cleanup must be centralized",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform-file_io.adb",
-            "Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size))",
-            "platform file writes must use bounded chunks",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-platform-file_io.adb",
-            [U.To_Unbounded_String ("Stream_Element_Array (1 .. Content'Length)")],
-            Quiet => True);
-      end Platform_Policy;
-
       procedure Catalog_Key_Policy is
       begin
          Awk_Workflow_Message_Key_Policy.Require_Production_Key_Literals;
@@ -462,8 +372,13 @@ package body Awk_Workflow_Source_Policy is
             "source policy runtime-state checks must stay grouped",
             Quiet => True);
          Files.Require_Contains
-           ("src/awk_workflow_source_policy.adb",
-            "procedure Workflow_Policy",
+           ("src/awk_workflow_source_policy-platform_checks.adb",
+            "procedure Run",
+            "source policy platform checks must stay grouped",
+            Quiet => True);
+         Files.Require_Contains
+           ("src/awk_workflow_source_policy-workflow_checks.adb",
+            "procedure Run",
             "source policy workflow checks must stay grouped",
             Quiet => True);
          Project_Tools.AUnit_Checks.Require_Registered_Test_Packages
@@ -567,124 +482,16 @@ package body Awk_Workflow_Source_Policy is
          Require (Errors = 0, "source budget checks failed");
       end Source_Budget_Policy;
 
-      procedure Workflow_Policy is
-         Workflow_Script : constant String :=
-           Files.First_File_Name_Containing
-             ("..",
-              Name_Tokens =>
-                [U.To_Unbounded_String (".sh"),
-                 U.To_Unbounded_String (".py"),
-                 U.To_Unbounded_String (".ps1"),
-                 U.To_Unbounded_String ("Makefile"),
-                 U.To_Unbounded_String (".js")],
-              Skip_Entries =>
-                [U.To_Unbounded_String (".git"),
-                 U.To_Unbounded_String ("alire"),
-                 U.To_Unbounded_String ("obj"),
-                 U.To_Unbounded_String ("bin"),
-                 U.To_Unbounded_String ("dist"),
-                 U.To_Unbounded_String ("config")]);
-      begin
-         Ada_Source.Require_No_Code_Tokens_In_Tree
-           ("../src",
-            ([U.To_Unbounded_String ("gawk"),
-              U.To_Unbounded_String ("mawk"),
-              U.To_Unbounded_String ("nawk")]),
-            Quiet => True);
-         Files.Require_Contains
-           ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
-            "process fixture file reads must use project_tools directly", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Run_Status",
-            "raw process status execution must be centralized in process support",
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("src",
-               "Project_Tools.Processes.Run_Status",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-                  U.To_Unbounded_String ("src/awk_workflow_source_policy.adb")]) = "",
-            "raw process status execution must stay in process support");
-         Files.Require_Contains
-           ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Command_Output",
-            "raw process output capture must be centralized in process support",
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("src",
-               "Project_Tools.Processes.Command_Output",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-                  U.To_Unbounded_String ("src/awk_workflow_source_policy.adb")]) = "",
-            "raw process output capture must stay in process support");
-         Files.Require_Contains
-           ("src/awk_tests-localization.adb", "with Project_Tools.Test_Fixtures",
-            "fixture file reads must use project_tools directly", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_tests-compatibility.adb", "with Project_Tools.Test_Fixtures",
-            "fixture file reads must use project_tools directly", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb", "Release_Mode => True",
-            "release workflow must use Alire release builds", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb", "procedure Core_Quality_Gates",
-            "shared workflow quality gates must be centralized", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb", "Run_AUnit;",
-            "workflow AUnit execution must be reusable across build modes", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb", "with Awk_CLI.Diagnostics",
-            "exit status drift checks must use compiled diagnostic constants",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("src/awk_workflows.adb",
-            [U.To_Unbounded_String ("Exit_Constant_Value")],
-            Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb", "Require_Clean_Repository;",
-            "release workflow must check git status", Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflows.adb",
-            "when Program_Error =>" & ASCII.LF &
-            "      CLI.Set_Exit_Status (CLI.Failure);",
-            "workflow Program_Error containment must fail the process",
-            Quiet => True);
-         Require
-           (not Files.File_Contains
-              ("src/awk_workflows.adb",
-               "when Program_Error =>" & ASCII.LF & "      null;"),
-            "workflow Program_Error containment must not silently succeed");
-         Files.Require_File
-           ("../.github/workflows/ci.yml",
-            "CI workflow must be present", Quiet => True);
-         Files.Require_Contains
-           ("../.github/workflows/ci.yml", "./bin/awk_workflows release",
-            "CI workflow must delegate release gates to Ada tooling",
-            Quiet => True);
-         Files.Require_Contains
-           ("../.github/workflows/ci.yml",
-            "os: [ubuntu-latest, macos-15-intel, windows-latest]",
-            "CI workflow must include native Linux, macOS, and Windows build/test coverage",
-            Quiet => True);
-         Require
-           (not Files.File_Contains ("src/awk_workflows.adb", "release"") then" & ASCII.LF &
-                                                "      Verify;"),
-            "release workflow must not reuse development verify gate");
-         Require
-           (Workflow_Script = "",
-            "workflow logic must not use shell or scripting files: " & Workflow_Script);
-      end Workflow_Policy;
    begin
       Dependency_Boundaries;
       Process_Global_Access;
       Presentation_Policy;
       Runtime_State_Policy;
-      Platform_Policy;
+      Awk_Workflow_Source_Policy.Platform_Checks.Run;
       Catalog_Key_Policy;
       Project_Structure_Policy;
       Source_Budget_Policy;
-      Workflow_Policy;
+      Awk_Workflow_Source_Policy.Workflow_Checks.Run;
       Put_Info ("source policy checks passed");
    end Run;
 end Awk_Workflow_Source_Policy;
