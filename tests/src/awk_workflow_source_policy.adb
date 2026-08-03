@@ -410,6 +410,11 @@ package body Awk_Workflow_Source_Policy is
             Quiet => True);
          Files.Require_Contains
            ("../src/library/awk_cli-platform.adb",
+            "package body Command_Execution is separate;",
+            "platform command execution helpers must be split into a focused subunit",
+            Quiet => True);
+         Files.Require_Contains
+           ("../src/library/awk_cli-platform.adb",
             "package Standard_Streams is",
             "platform standard-stream write helpers must be grouped",
             Quiet => True);
@@ -419,12 +424,12 @@ package body Awk_Workflow_Source_Policy is
             "platform locale lookup must centralize environment value reads",
             Quiet => True);
          Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
+           ("../src/library/awk_cli-platform-command_execution.adb",
             "type Command_Run_Files is record",
             "command-getline temp-file state must be grouped",
             Quiet => True);
          Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb",
+           ("../src/library/awk_cli-platform-command_execution.adb",
             "procedure Cleanup_Command_Run_Files",
             "command-getline cleanup must be centralized",
             Quiet => True);

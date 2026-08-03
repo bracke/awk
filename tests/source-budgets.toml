@@ -1,7 +1,7 @@
 [[body]]
 path = "tests/src/awk_workflow_source_policy.adb"
 split_prefix = "tests/src/awk_workflow_source_policy"
-target_lines = 685
+target_lines = 690
 max_lines = 760
 min_headroom_lines = 50
 max_bytes = 60000
@@ -51,11 +51,11 @@ usecase = "documentation workflow gate"
 [[body]]
 path = "src/library/awk_cli-platform.adb"
 split_prefix = "src/library/awk_cli-platform"
-target_lines = 407
+target_lines = 326
 max_lines = 540
 min_headroom_lines = 40
 max_bytes = 30000
-min_split_bodies = 2
+min_split_bodies = 3
 usecase = "platform adapter parent body"
 
 [[body]]
