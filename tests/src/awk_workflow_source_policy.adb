@@ -451,6 +451,16 @@ package body Awk_Workflow_Source_Policy is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
+         "package Command_Execution is",
+         "platform command execution helpers must be grouped",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "package Standard_Streams is",
+         "platform standard-stream write helpers must be grouped",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
          "function Environment_Value_Or_Empty",
          "platform locale lookup must centralize environment value reads",
          Quiet => True);
