@@ -1,6 +1,4 @@
 package body Awk_CLI.Context_IO is
-   use type U.Unbounded_String;
-
    function Read_File
      (Context : Invocation_Context;
       Path    : String;
@@ -92,28 +90,15 @@ package body Awk_CLI.Context_IO is
       end Add_New_Virtual_File;
 
       procedure Update_Virtual_File (Position : Positive) is
+         File : Virtual_File := Context.IO.Files.Element (Position);
       begin
          if Append then
-            Context.IO.Files.Replace_Element
-              (Position,
-               Virtual_File'
-                 (Path     => Context.IO.Files.Element (Position).Path,
-                  Content  => Context.IO.Files.Element (Position).Content
-                    & U.To_Unbounded_String (Content),
-                  Readable => Context.IO.Files.Element (Position).Readable,
-                  Writable => Context.IO.Files.Element (Position).Writable,
-                  Openable => Context.IO.Files.Element (Position).Openable));
+            U.Append (File.Content, Content);
          else
-            Context.IO.Files.Replace_Element
-              (Position,
-               Virtual_File'
-                 (Path     => Context.IO.Files.Element (Position).Path,
-                  Content  => U.To_Unbounded_String (Content),
-                  Readable => Context.IO.Files.Element (Position).Readable,
-                  Writable => Context.IO.Files.Element (Position).Writable,
-                  Openable => Context.IO.Files.Element (Position).Openable));
+            File.Content := U.To_Unbounded_String (Content);
          end if;
 
+         Context.IO.Files.Replace_Element (Position, File);
          Record_Write;
       end Update_Virtual_File;
    begin
