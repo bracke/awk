@@ -13,33 +13,41 @@ with Hostkit.Shell;
 package body Awk_CLI.Platform is
    use type Ada.Streams.Stream_Element_Offset;
 
-   Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
+   package Byte_IO is
+      Chunk_Size : constant Ada.Streams.Stream_Element_Offset := 8192;
+
+      function To_String
+        (Buffer : Ada.Streams.Stream_Element_Array;
+         Last   : Ada.Streams.Stream_Element_Offset) return String;
+   end Byte_IO;
+
+   package body Byte_IO is
+      function To_String
+        (Buffer : Ada.Streams.Stream_Element_Array;
+         Last   : Ada.Streams.Stream_Element_Offset) return String
+      is
+      begin
+         if Last < Buffer'First then
+            return "";
+         end if;
+
+         declare
+            Text : String (1 .. Natural (Last - Buffer'First + 1));
+         begin
+            for Index in Text'Range loop
+               Text (Index) :=
+                 Character'Val
+                   (Buffer
+                      (Buffer'First
+                       + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
+            end loop;
+            return Text;
+         end;
+      end To_String;
+   end Byte_IO;
 
    function Join (Directory, Name : String) return String is
      (Ada.Directories.Compose (Containing_Directory => Directory, Name => Name));
-
-   function Text_From_Buffer
-     (Buffer : Ada.Streams.Stream_Element_Array;
-      Last   : Ada.Streams.Stream_Element_Offset) return String
-   is
-   begin
-      if Last < Buffer'First then
-         return "";
-      end if;
-
-      declare
-         Text : String (1 .. Natural (Last - Buffer'First + 1));
-      begin
-         for Index in Text'Range loop
-            Text (Index) :=
-              Character'Val
-                (Buffer
-                   (Buffer'First
-                    + Ada.Streams.Stream_Element_Offset (Index - Text'First)));
-         end loop;
-         return Text;
-      end;
-   end Text_From_Buffer;
 
    procedure Delete_If_Present (Path : String) is
    begin
@@ -102,11 +110,11 @@ package body Awk_CLI.Platform is
 
       while not SIO.End_Of_File (File) loop
          declare
-            Buffer : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
+            Buffer : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
             Last   : Ada.Streams.Stream_Element_Offset;
          begin
             SIO.Read (File, Buffer, Last);
-            U.Append (Content, Text_From_Buffer (Buffer, Last));
+            U.Append (Content, Byte_IO.To_String (Buffer, Last));
          end;
       end loop;
 
@@ -196,7 +204,7 @@ package body Awk_CLI.Platform is
          declare
             use type Interfaces.C_Streams.size_t;
 
-            Text : String (1 .. Natural (Chunk_Size));
+            Text : String (1 .. Natural (Byte_IO.Chunk_Size));
             Read : constant Interfaces.C_Streams.size_t :=
               Interfaces.C_Streams.fread
                 (Text (Text'First)'Address,
@@ -224,7 +232,7 @@ package body Awk_CLI.Platform is
       end if;
 
       declare
-         Buffer : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
+         Buffer : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
          Last   : Ada.Streams.Stream_Element_Offset;
       begin
          SIO.Read (Stream.File, Buffer, Last);
@@ -233,7 +241,7 @@ package body Awk_CLI.Platform is
             return Read_Success;
          end if;
 
-         Content := U.To_Unbounded_String (Text_From_Buffer (Buffer, Last));
+         Content := U.To_Unbounded_String (Byte_IO.To_String (Buffer, Last));
       end;
 
       End_Of_File := False;
@@ -347,10 +355,10 @@ package body Awk_CLI.Platform is
          declare
             Remaining : constant Natural := Content'Last - Position + 1;
             Count     : constant Natural :=
-              Natural'Min (Remaining, Natural (Chunk_Size));
+              Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size));
             Last      : constant Ada.Streams.Stream_Element_Offset :=
               Ada.Streams.Stream_Element_Offset (Count);
-            Buffer    : Ada.Streams.Stream_Element_Array (1 .. Chunk_Size);
+            Buffer    : Ada.Streams.Stream_Element_Array (1 .. Byte_IO.Chunk_Size);
          begin
             for Offset in 0 .. Count - 1 loop
                Buffer (Ada.Streams.Stream_Element_Offset (Offset + 1)) :=

@@ -407,7 +407,12 @@ package body Awk_Workflow_Source_Policy is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-platform.adb",
-         "Natural'Min (Remaining, Natural (Chunk_Size))",
+         "package Byte_IO is",
+         "platform byte-buffer helpers must be grouped",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-platform.adb",
+         "Natural'Min (Remaining, Natural (Byte_IO.Chunk_Size))",
          "platform file writes must use bounded chunks",
          Quiet => True);
       Ada_Source.Require_No_Code_Tokens
