@@ -127,9 +127,10 @@ package body Awk_CLI.Inputs.Live is
          declare
             Last : constant Natural :=
               Natural'Min (Content_Length, State.Active_Position + Chunk_Size - 1);
-            Content : constant String := U.To_String (State.Active_Content);
          begin
-            Text := U.To_Unbounded_String (Content (State.Active_Position .. Last));
+            Text :=
+              U.To_Unbounded_String
+                (U.Slice (State.Active_Content, State.Active_Position, Last));
             State.Active_Position := Last + 1;
             if State.Active_Position > Content_Length then
                State.Active := False;

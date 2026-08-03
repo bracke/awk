@@ -316,6 +316,15 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli-programs.adb",
          [U.To_Unbounded_String ("""command line""")],
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli-inputs-live.adb",
+         "U.Slice (State.Active_Content",
+         "in-memory live input chunking must avoid full-content copies",
+         Quiet => True);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-inputs-live.adb",
+         [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],
+         Quiet => True);
       declare
          Unknown_Key : constant String := First_Unknown_Message_Key_Literal;
       begin
