@@ -300,6 +300,16 @@ package body Awk_Workflow_Source_Policy is
            ("../src/library/awk_cli-output.adb",
             [U.To_Unbounded_String ("""awk: """)],
             Quiet => True);
+         Files.Require_Contains
+           ("../src/library/awk_cli-output.adb",
+            "Help_Lines : constant array",
+            "help rendering must use a structured line registry",
+            Quiet => True);
+         Files.Require_Contains
+           ("../src/library/awk_cli-output.adb",
+            "procedure Append_Help_Line",
+            "help rendering must be centralized around registry items",
+            Quiet => True);
          Ada_Source.Require_No_Code_Tokens
            ("../src/library/awk_cli-programs.adb",
             [U.To_Unbounded_String ("""command line""")],
