@@ -120,6 +120,28 @@ package body Awk_CLI.Context_IO is
          Context.IO.Files.Replace_Element (Position, File);
          Record_Write;
       end Update_Virtual_File;
+
+      function Write_Existing_Process_File
+        (Position : Positive) return Awk_CLI.Redirections.Write_Status
+      is
+      begin
+         if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+            Update_Virtual_File (Position);
+            return Awk_CLI.Redirections.Write_Success;
+         else
+            return Awk_CLI.Redirections.Write_Failed;
+         end if;
+      end Write_Existing_Process_File;
+
+      function Write_New_Process_File return Awk_CLI.Redirections.Write_Status is
+      begin
+         if Awk_CLI.Platform.Write_File (Path, Content, Append) then
+            Add_New_Virtual_File;
+            return Awk_CLI.Redirections.Write_Success;
+         else
+            return Awk_CLI.Redirections.Write_Failed;
+         end if;
+      end Write_New_Process_File;
    begin
       if not Context.IO.Files.Is_Empty then
          for Position in Context.IO.Files.First_Index .. Context.IO.Files.Last_Index loop
@@ -135,12 +157,7 @@ package body Awk_CLI.Context_IO is
                   end if;
 
                   if Context.Config.Use_Process then
-                     if Awk_CLI.Platform.Write_File (Path, Content, Append) then
-                        Update_Virtual_File (Position);
-                        return Awk_CLI.Redirections.Write_Success;
-                     else
-                        return Awk_CLI.Redirections.Write_Failed;
-                     end if;
+                     return Write_Existing_Process_File (Position);
                   end if;
 
                   Update_Virtual_File (Position);
@@ -151,12 +168,7 @@ package body Awk_CLI.Context_IO is
       end if;
 
       if Context.Config.Use_Process then
-         if Awk_CLI.Platform.Write_File (Path, Content, Append) then
-            Add_New_Virtual_File;
-            return Awk_CLI.Redirections.Write_Success;
-         else
-            return Awk_CLI.Redirections.Write_Failed;
-         end if;
+         return Write_New_Process_File;
       end if;
 
       Add_New_Virtual_File;

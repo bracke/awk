@@ -286,24 +286,18 @@ package body Awk_Workflow_Source_Policy is
             Quiet => True);
          Files.Require_Contains
            ("../src/library/awk_cli-context_io.adb",
-            "if Awk_CLI.Platform.Write_File (Path, Content, Append) then",
-            "process redirection must attempt the host write before updating virtual context",
+            "function Write_Existing_Process_File",
+            "existing process redirection writes must be isolated in a named helper",
             Quiet => True);
          Files.Require_Contains
            ("../src/library/awk_cli-context_io.adb",
-            "Update_Virtual_File (Position);",
-            "process redirection must update virtual context only after host write succeeds",
+            "function Write_New_Process_File",
+            "new process redirection writes must be isolated in a named helper",
             Quiet => True);
          Files.Require_Contains
            ("../src/library/awk_cli.adb",
             "function Emit_CLI_Standard_Output",
             "top-level CLI stdout status handling must be centralized",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-context_io.adb",
-            "if Awk_CLI.Platform.Write_File (Path, Content, Append) then" & ASCII.LF &
-            "            Add_New_Virtual_File;",
-            "new process redirection target must be recorded only after host write succeeds",
             Quiet => True);
          Ada_Source.Require_No_Code_Tokens
            ("../src/library/awk_cli-inputs-live.adb",
