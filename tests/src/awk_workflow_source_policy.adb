@@ -392,6 +392,18 @@ package body Awk_Workflow_Source_Policy is
         ("../src/library/awk_cli-testing.ads", "package Awk_CLI.Testing",
          "in-memory invocation harness must live in Awk_CLI.Testing",
          Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.ads", "type Invocation_Configuration is record",
+         "invocation context must group process configuration state",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.ads", "type Virtual_IO_State is record",
+         "invocation context must group in-memory I/O state",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.ads", "type Diagnostic_State is record",
+         "invocation context must group diagnostic state",
+         Quiet => True);
       Ada_Source.Require_No_Code_Tokens
         ("../src/library/awk_cli.ads",
          [U.To_Unbounded_String ("procedure Add_Argument"),

@@ -61,27 +61,40 @@ private
    package Command_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => Command_Output);
 
-   type Invocation_Context is tagged limited record
-      Arguments    : String_Vectors.Vector;
+   type Invocation_Configuration is record
+      Arguments       : String_Vectors.Vector;
+      Locale          : U.Unbounded_String := U.To_Unbounded_String ("en");
+      Catalog_Path    : U.Unbounded_String :=
+        U.To_Unbounded_String ("resources/messages/catalog.txt");
+      Use_Process     : Boolean := False;
+      Stdout_Terminal : Boolean := False;
+      Stderr_Terminal : Boolean := False;
+      No_Color        : Boolean := False;
+   end record;
+
+   type Virtual_IO_State is record
       Standard_In  : U.Unbounded_String;
-      Locale       : U.Unbounded_String := U.To_Unbounded_String ("en");
-      Catalog_Path : U.Unbounded_String := U.To_Unbounded_String ("resources/messages/catalog.txt");
       Files        : File_Vectors.Vector;
       Commands     : Command_Vectors.Vector;
       Environment  : Env_Vectors.Vector;
       Standard_Out : U.Unbounded_String;
       Standard_Err : U.Unbounded_String;
-      Diagnostic_Set : Boolean := False;
-      Diagnostic_Id       : U.Unbounded_String;
-      Diagnostic_Category : U.Unbounded_String;
-      Diagnostic_Severity : U.Unbounded_String;
       Writes       : Write_Vectors.Vector;
-      Use_Process  : Boolean := False;
       Stdin_Fails  : Boolean := False;
       Stdout_Fails : Boolean := False;
       Stderr_Fails : Boolean := False;
-      Stdout_Terminal : Boolean := False;
-      Stderr_Terminal : Boolean := False;
-      No_Color         : Boolean := False;
+   end record;
+
+   type Diagnostic_State is record
+      Set      : Boolean := False;
+      Id       : U.Unbounded_String;
+      Category : U.Unbounded_String;
+      Severity : U.Unbounded_String;
+   end record;
+
+   type Invocation_Context is tagged limited record
+      Config          : Invocation_Configuration;
+      IO              : Virtual_IO_State;
+      Last_Diagnostic : Diagnostic_State;
    end record;
 end Awk_CLI;

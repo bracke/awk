@@ -11,41 +11,41 @@ package body Awk_CLI is
 
    procedure Clear (Context : in out Invocation_Context) is
    begin
-      Context.Arguments.Clear;
-      Context.Standard_In := U.Null_Unbounded_String;
-      Context.Locale := U.To_Unbounded_String ("en");
-      Context.Catalog_Path := U.To_Unbounded_String ("resources/messages/catalog.txt");
-      Context.Files.Clear;
-      Context.Commands.Clear;
-      Context.Environment.Clear;
-      Context.Standard_Out := U.Null_Unbounded_String;
-      Context.Standard_Err := U.Null_Unbounded_String;
-      Context.Diagnostic_Set := False;
-      Context.Diagnostic_Id := U.Null_Unbounded_String;
-      Context.Diagnostic_Category := U.Null_Unbounded_String;
-      Context.Diagnostic_Severity := U.Null_Unbounded_String;
-      Context.Writes.Clear;
-      Context.Use_Process := False;
-      Context.Stdin_Fails := False;
-      Context.Stdout_Fails := False;
-      Context.Stderr_Fails := False;
-      Context.Stdout_Terminal := False;
-      Context.Stderr_Terminal := False;
-      Context.No_Color := False;
+      Context.Config.Arguments.Clear;
+      Context.IO.Standard_In := U.Null_Unbounded_String;
+      Context.Config.Locale := U.To_Unbounded_String ("en");
+      Context.Config.Catalog_Path := U.To_Unbounded_String ("resources/messages/catalog.txt");
+      Context.IO.Files.Clear;
+      Context.IO.Commands.Clear;
+      Context.IO.Environment.Clear;
+      Context.IO.Standard_Out := U.Null_Unbounded_String;
+      Context.IO.Standard_Err := U.Null_Unbounded_String;
+      Context.Last_Diagnostic.Set := False;
+      Context.Last_Diagnostic.Id := U.Null_Unbounded_String;
+      Context.Last_Diagnostic.Category := U.Null_Unbounded_String;
+      Context.Last_Diagnostic.Severity := U.Null_Unbounded_String;
+      Context.IO.Writes.Clear;
+      Context.Config.Use_Process := False;
+      Context.IO.Stdin_Fails := False;
+      Context.IO.Stdout_Fails := False;
+      Context.IO.Stderr_Fails := False;
+      Context.Config.Stdout_Terminal := False;
+      Context.Config.Stderr_Terminal := False;
+      Context.Config.No_Color := False;
    end Clear;
 
    procedure Initialize_From_Process (Context : in out Invocation_Context) is
    begin
       Clear (Context);
       for Argument of Awk_CLI.Platform.Process_Arguments loop
-         Context.Arguments.Append (Argument);
+         Context.Config.Arguments.Append (Argument);
       end loop;
-      Context.Locale := U.To_Unbounded_String (Awk_CLI.Platform.Locale);
-      Context.Catalog_Path := U.To_Unbounded_String (Awk_CLI.Platform.Catalog_Path);
-      Context.Use_Process := True;
-      Context.Stdout_Terminal := Awk_CLI.Platform.Standard_Output_Is_Terminal;
-      Context.Stderr_Terminal := Awk_CLI.Platform.Standard_Error_Is_Terminal;
-      Context.No_Color := Awk_CLI.Platform.No_Color_Active;
+      Context.Config.Locale := U.To_Unbounded_String (Awk_CLI.Platform.Locale);
+      Context.Config.Catalog_Path := U.To_Unbounded_String (Awk_CLI.Platform.Catalog_Path);
+      Context.Config.Use_Process := True;
+      Context.Config.Stdout_Terminal := Awk_CLI.Platform.Standard_Output_Is_Terminal;
+      Context.Config.Stderr_Terminal := Awk_CLI.Platform.Standard_Error_Is_Terminal;
+      Context.Config.No_Color := Awk_CLI.Platform.No_Color_Active;
    end Initialize_From_Process;
 
    function Run (Context : in out Invocation_Context) return Exit_Code is
@@ -54,7 +54,7 @@ package body Awk_CLI is
       function Parsed_Arguments return Awk_CLI.Options.String_Vectors.Vector is
          Result : Awk_CLI.Options.String_Vectors.Vector;
       begin
-         for Argument of Context.Arguments loop
+         for Argument of Context.Config.Arguments loop
             Result.Append (Argument);
          end loop;
          return Result;
@@ -62,14 +62,14 @@ package body Awk_CLI is
 
       function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
       begin
-         Context.Diagnostic_Set := True;
-         Context.Diagnostic_Id := Item.Message_Id;
-         Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
-         Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
+         Context.Last_Diagnostic.Set := True;
+         Context.Last_Diagnostic.Id := Item.Message_Id;
+         Context.Last_Diagnostic.Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
+         Context.Last_Diagnostic.Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
          if not Awk_CLI.Context_IO.Write_Standard_Error
            (Context,
             Awk_CLI.Output.Diagnostic_Text
-              (Catalog, Item, Context.Stderr_Terminal, Context.No_Color))
+              (Catalog, Item, Context.Config.Stderr_Terminal, Context.Config.No_Color))
          then
             return Exit_Code (D.IO_Exit);
          end if;
@@ -83,14 +83,14 @@ package body Awk_CLI is
               D.Internal_Error,
               D.Internal);
       begin
-         Context.Diagnostic_Set := True;
-         Context.Diagnostic_Id := Item.Message_Id;
-         Context.Diagnostic_Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
-         Context.Diagnostic_Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
+         Context.Last_Diagnostic.Set := True;
+         Context.Last_Diagnostic.Id := Item.Message_Id;
+         Context.Last_Diagnostic.Category := U.To_Unbounded_String (D.Diagnostic_Category'Image (Item.Category));
+         Context.Last_Diagnostic.Severity := U.To_Unbounded_String (D.Diagnostic_Severity'Image (Item.Severity));
          if not Awk_CLI.Context_IO.Write_Standard_Error
            (Context,
             Awk_CLI.Output.Diagnostic_Text
-              (Catalog, Item, Context.Stderr_Terminal, Context.No_Color))
+              (Catalog, Item, Context.Config.Stderr_Terminal, Context.Config.No_Color))
          then
             return Exit_Code (D.Internal_Exit);
          end if;
@@ -114,7 +114,7 @@ package body Awk_CLI is
          if Parsed.Options.Help_Requested then
             if Awk_CLI.Context_IO.Write_Standard_Output
               (Context, Awk_CLI.Output.Help
-                 (Catalog, Context.Stdout_Terminal, Context.No_Color))
+                 (Catalog, Context.Config.Stdout_Terminal, Context.Config.No_Color))
             then
                return Exit_Code (D.Success_Exit);
             else
@@ -146,7 +146,7 @@ package body Awk_CLI is
       end Execute_Parsed;
    begin
       Awk_CLI.Localization.Initialize
-        (Catalog, U.To_String (Context.Catalog_Path), U.To_String (Context.Locale));
+        (Catalog, U.To_String (Context.Config.Catalog_Path), U.To_String (Context.Config.Locale));
 
       return Execute_Parsed (Awk_CLI.Options.Parse (Parsed_Arguments));
    exception

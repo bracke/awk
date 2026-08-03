@@ -7,7 +7,7 @@ package body Awk_CLI.Context_IO is
       Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
    is
    begin
-      for File of Context.Files loop
+      for File of Context.IO.Files loop
          if U.To_String (File.Path) = Path then
             if not File.Openable then
                Content := U.Null_Unbounded_String;
@@ -22,7 +22,7 @@ package body Awk_CLI.Context_IO is
          end if;
       end loop;
 
-      if Context.Use_Process then
+      if Context.Config.Use_Process then
          return Awk_CLI.Platform.Read_File (Path, Content);
       end if;
 
@@ -35,12 +35,12 @@ package body Awk_CLI.Context_IO is
       Content : String) return Boolean
    is
    begin
-      if Context.Stdout_Fails then
+      if Context.IO.Stdout_Fails then
          return False;
       end if;
 
-      U.Append (Context.Standard_Out, Content);
-      if Context.Use_Process then
+      U.Append (Context.IO.Standard_Out, Content);
+      if Context.Config.Use_Process then
          return Awk_CLI.Platform.Write_Standard_Output (Content);
       end if;
 
@@ -52,12 +52,12 @@ package body Awk_CLI.Context_IO is
       Content : String) return Boolean
    is
    begin
-      if Context.Stderr_Fails then
+      if Context.IO.Stderr_Fails then
          return False;
       end if;
 
-      U.Append (Context.Standard_Err, Content);
-      if Context.Use_Process then
+      U.Append (Context.IO.Standard_Err, Content);
+      if Context.Config.Use_Process then
          return Awk_CLI.Platform.Write_Standard_Error (Content);
       end if;
 
@@ -71,44 +71,44 @@ package body Awk_CLI.Context_IO is
       Append  : Boolean) return Awk_CLI.Redirections.Write_Status
    is
    begin
-      if not Context.Files.Is_Empty then
-         for Position in Context.Files.First_Index .. Context.Files.Last_Index loop
-            if U.To_String (Context.Files.Element (Position).Path) = Path then
-               if not Context.Files.Element (Position).Openable then
+      if not Context.IO.Files.Is_Empty then
+         for Position in Context.IO.Files.First_Index .. Context.IO.Files.Last_Index loop
+            if U.To_String (Context.IO.Files.Element (Position).Path) = Path then
+               if not Context.IO.Files.Element (Position).Openable then
                   return Awk_CLI.Redirections.Open_Failed;
                end if;
-               if not Context.Files.Element (Position).Writable then
+               if not Context.IO.Files.Element (Position).Writable then
                   return Awk_CLI.Redirections.Write_Failed;
                end if;
 
                if Append then
-                  Context.Files.Replace_Element
+                  Context.IO.Files.Replace_Element
                     (Position,
                      Virtual_File'
-                       (Path     => Context.Files.Element (Position).Path,
-                        Content  => Context.Files.Element (Position).Content
+                       (Path     => Context.IO.Files.Element (Position).Path,
+                        Content  => Context.IO.Files.Element (Position).Content
                           & U.To_Unbounded_String (Content),
-                        Readable => Context.Files.Element (Position).Readable,
-                        Writable => Context.Files.Element (Position).Writable,
-                        Openable => Context.Files.Element (Position).Openable));
+                        Readable => Context.IO.Files.Element (Position).Readable,
+                        Writable => Context.IO.Files.Element (Position).Writable,
+                        Openable => Context.IO.Files.Element (Position).Openable));
                else
-                  Context.Files.Replace_Element
+                  Context.IO.Files.Replace_Element
                     (Position,
                      Virtual_File'
-                       (Path     => Context.Files.Element (Position).Path,
+                       (Path     => Context.IO.Files.Element (Position).Path,
                         Content  => U.To_Unbounded_String (Content),
-                        Readable => Context.Files.Element (Position).Readable,
-                        Writable => Context.Files.Element (Position).Writable,
-                        Openable => Context.Files.Element (Position).Openable));
+                        Readable => Context.IO.Files.Element (Position).Readable,
+                        Writable => Context.IO.Files.Element (Position).Writable,
+                        Openable => Context.IO.Files.Element (Position).Openable));
                end if;
 
-               Context.Writes.Append
+               Context.IO.Writes.Append
                  (Write_Operation'
                     (Path    => U.To_Unbounded_String (Path),
                      Content => U.To_Unbounded_String (Content),
                      Append  => Append));
 
-               if Context.Use_Process then
+               if Context.Config.Use_Process then
                   if Awk_CLI.Platform.Write_File (Path, Content, Append) then
                      return Awk_CLI.Redirections.Write_Success;
                   else
@@ -121,20 +121,20 @@ package body Awk_CLI.Context_IO is
          end loop;
       end if;
 
-      Context.Files.Append
+      Context.IO.Files.Append
         (Virtual_File'
            (Path     => U.To_Unbounded_String (Path),
             Content  => U.To_Unbounded_String (Content),
             Readable => True,
             Writable => True,
             Openable => True));
-      Context.Writes.Append
+      Context.IO.Writes.Append
         (Write_Operation'
            (Path    => U.To_Unbounded_String (Path),
             Content => U.To_Unbounded_String (Content),
             Append  => Append));
 
-      if Context.Use_Process then
+      if Context.Config.Use_Process then
          if Awk_CLI.Platform.Write_File (Path, Content, Append) then
             return Awk_CLI.Redirections.Write_Success;
          else
@@ -150,11 +150,11 @@ package body Awk_CLI.Context_IO is
    is
       Result : Awk_CLI.Environment.Entry_Vectors.Vector;
    begin
-      if Context.Use_Process and then Context.Environment.Is_Empty then
+      if Context.Config.Use_Process and then Context.IO.Environment.Is_Empty then
          return Awk_CLI.Platform.Process_Environment;
       end if;
 
-      for Item of Context.Environment loop
+      for Item of Context.IO.Environment loop
          Result.Append
            (Awk_CLI.Environment.Env_Entry'
               (Name => Item.Name, Value => Item.Value));

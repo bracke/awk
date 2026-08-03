@@ -24,14 +24,14 @@ package body Awk_CLI.Live_Context_Callbacks is
       Output  : out U.Unbounded_String) return Boolean
    is
    begin
-      for Item of Context.Commands loop
+      for Item of Context.IO.Commands loop
          if U.To_String (Item.Command) = Command then
             Output := Item.Output;
             return True;
          end if;
       end loop;
 
-      if Context.Use_Process then
+      if Context.Config.Use_Process then
          --  Only awklib reaches this callback after parsing/evaluating
          --  command-getline. The CLI does not inspect AWK source for commands.
          return Awk_CLI.Platform.Run_Command (Command, Output);

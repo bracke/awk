@@ -37,11 +37,11 @@ package body Awk_CLI.Inputs.Live is
    is
       Result : Input_File_Vectors.Vector;
    begin
-      if Context.Use_Process then
+      if Context.Config.Use_Process then
          return Result;
       end if;
 
-      for File of Context.Files loop
+      for File of Context.IO.Files loop
          if File.Openable and then File.Readable then
             Result.Append (Input_File'(Name => File.Path, Content => File.Content));
          end if;
@@ -59,14 +59,14 @@ package body Awk_CLI.Inputs.Live is
       State.Active_Content := U.Null_Unbounded_String;
       State.Active_Position := 1;
 
-      if State.Context.Stdin_Fails then
+      if State.Context.IO.Stdin_Fails then
          State.Active := False;
          return Awk_CLI.Platform.Read_Failed;
-      elsif State.Context.Use_Process then
+      elsif State.Context.Config.Use_Process then
          State.Active_Process := True;
          return Awk_CLI.Platform.Open_Standard_Input (State.Process_Stream);
       else
-         State.Active_Content := State.Context.Standard_In;
+         State.Active_Content := State.Context.IO.Standard_In;
          return Awk_CLI.Platform.Read_Success;
       end if;
    end Activate_Standard_Input;
@@ -82,7 +82,7 @@ package body Awk_CLI.Inputs.Live is
       State.Active_Content := U.Null_Unbounded_String;
       State.Active_Position := 1;
 
-      for File of State.Context.Files loop
+      for File of State.Context.IO.Files loop
          if U.To_String (File.Path) = Path then
             if not File.Openable then
                State.Active := False;
@@ -97,7 +97,7 @@ package body Awk_CLI.Inputs.Live is
          end if;
       end loop;
 
-      if State.Context.Use_Process then
+      if State.Context.Config.Use_Process then
          State.Active_Process := True;
          return Awk_CLI.Platform.Open_Input_File (Path, State.Process_Stream);
       end if;
