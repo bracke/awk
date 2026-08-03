@@ -27,7 +27,4 @@ package Awk_CLI.Operands is
    --  @return Classified operands preserving spelling, order, and indexes.
    function Classify
      (Operands : Awk_CLI.Options.Operand_Vectors.Vector) return Operand_Vectors.Vector;
-   --  Classify operands while preserving spelling, order, and original indexes.
-   --  @param Operands Raw post-program operands.
-   --  @return Classified operands preserving spelling, order, and indexes.
 end Awk_CLI.Operands;

@@ -1,14 +1,10 @@
 with Awk_CLI.Context_IO;
 with Awk_CLI.Diagnostics;
-with Awk_CLI.Execution;
-with Awk_CLI.Inputs;
-with Awk_CLI.Inputs.Live;
+with Awk_CLI.Invocation;
 with Awk_CLI.Localization;
-with Awk_CLI.Operands;
 with Awk_CLI.Options;
 with Awk_CLI.Output;
 with Awk_CLI.Platform;
-with Awk_CLI.Programs;
 
 package body Awk_CLI is
    package D renames Awk_CLI.Diagnostics;
@@ -182,11 +178,6 @@ package body Awk_CLI is
          return Result;
       end Parsed_Arguments;
 
-      function Read_Context_File
-        (Path : String;
-         Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status
-      is (Awk_CLI.Context_IO.Read_File (Context, Path, Content));
-
       function Emit_Diagnostic (Item : D.Diagnostic) return Exit_Code is
       begin
          Context.Diagnostic_Set := True;
@@ -258,47 +249,14 @@ package body Awk_CLI is
          end if;
 
          declare
-            Source_Result : constant Awk_CLI.Programs.Resolve_Result :=
-              Awk_CLI.Programs.Resolve (Parsed.Options, Read_Context_File'Access);
+            Result : constant Awk_CLI.Invocation.Invocation_Result :=
+              Awk_CLI.Invocation.Execute (Context, Parsed.Options);
          begin
-            if not Source_Result.Ok then
-               return Emit_Diagnostic (Source_Result.Diagnostic);
+            if Result.Ok then
+               return Result.Exit_Status;
+            else
+               return Emit_Diagnostic (Result.Diagnostic);
             end if;
-
-            declare
-               Classified : aliased constant Awk_CLI.Operands.Operand_Vectors.Vector :=
-                 Awk_CLI.Operands.Classify (Source_Result.Source.Operands);
-            begin
-               declare
-                  Input_State : aliased Awk_CLI.Inputs.Live.Live_Input_State;
-               begin
-                  Awk_CLI.Inputs.Live.Initialize (Input_State, Context, Classified);
-                  declare
-                     Exec_Result : constant Awk_CLI.Execution.Execution_Result :=
-                       Awk_CLI.Execution.Execute_Live_Input
-                         (U.To_String (Source_Result.Source.Text),
-                          Parsed.Options, Classified,
-                          Awk_CLI.Context_IO.Current_Environment (Context),
-                          Awk_CLI.Inputs.Live.Read'Access,
-                          Awk_CLI.Inputs.Live.Write_Output'Access,
-                          Awk_CLI.Inputs.Live.Write_Redirection'Access,
-                          Read_Command => Awk_CLI.Inputs.Live.Read_Command'Access,
-                          User_Data => Input_State'Address,
-                          Auxiliary_Files => Awk_CLI.Inputs.Live.Auxiliary_Files (Context));
-                  begin
-                     Awk_CLI.Inputs.Live.Close (Input_State);
-                     if not Exec_Result.Ok then
-                        return Emit_Diagnostic (Exec_Result.Diagnostic);
-                     end if;
-
-                     if Exec_Result.Exit_Status < 0 or else Exec_Result.Exit_Status > 255 then
-                        return Exit_Code (D.Interpreter_Exit);
-                     else
-                        return Exit_Code (Exec_Result.Exit_Status);
-                     end if;
-                  end;
-               end;
-            end;
          end;
       exception
          when others =>

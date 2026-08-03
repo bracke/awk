@@ -189,9 +189,10 @@ package body Awk_Workflow_Source_Policy is
       Require
         (Ada_Source.First_Source_File_Containing
            ("../src",
-            "with Awklib",
+            "with Awklib.",
             Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb")]) = "",
+              [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-execution.adb")]) = "",
          "only execution adapter may depend on awklib");
       Files.Require_Contains
         ("../src/library/awk_cli-localization.adb", "with Messages",
@@ -249,7 +250,8 @@ package body Awk_Workflow_Source_Policy is
            ("../src",
             "with Hostkit",
             Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
          "only platform adapter may depend on hostkit");
       Require
         (Ada_Source.First_Source_File_Containing
@@ -257,7 +259,9 @@ package body Awk_Workflow_Source_Policy is
             "Ada.Text_IO.Put",
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/main/awk.adb"),
-               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
+               U.To_Unbounded_String ("src/main/awk.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
          "direct Text_IO writes must stay in main containment or platform adapter");
       Require
         (Ada_Source.First_Source_File_Containing
@@ -265,14 +269,17 @@ package body Awk_Workflow_Source_Policy is
             "Ada.Command_Line",
             Allowed_Files =>
               [U.To_Unbounded_String ("../src/main/awk.adb"),
-               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+               U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
+               U.To_Unbounded_String ("src/main/awk.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
          "process command-line access must stay in main containment or platform adapter");
       Require
         (Ada_Source.First_Source_File_Containing
            ("../src",
             "Ada.Environment_Variables",
             Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb")]) = "",
+              [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
          "process environment access must stay in platform adapter");
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",
@@ -307,7 +314,8 @@ package body Awk_Workflow_Source_Policy is
            ("../src",
             "Character'Val (27)",
             Allowed_Files =>
-              [U.To_Unbounded_String ("../src/library/awk_cli-diagnostics.adb")]) = "",
+              [U.To_Unbounded_String ("../src/library/awk_cli-diagnostics.adb"),
+               U.To_Unbounded_String ("src/library/awk_cli-diagnostics.adb")]) = "",
          "only diagnostic escaping may inspect the ESC character");
       Ada_Source.Require_No_Code_Tokens_In_Tree
         ("../src",

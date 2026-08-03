@@ -19,7 +19,7 @@ resolved `awklib` behavior, and the release workflow.
 | 10 | Memory and streaming model | `docs/architecture.md`, `Awk_CLI.Execution.Supports_Streaming_Execution`, streaming adapter tests |
 | 11 | Environment, ARGV, and ARGC | `src/library/awk_cli-environment.*`, execution adapter, context and process environment/ARGV tests |
 | 12 | Auxiliary input and getline | `Awk_CLI.Execution.Execute_Live_Input`, command and auxiliary getline tests, compatibility registry |
-| 13 | Execution adapter | `src/library/awk_cli-execution.*`, adapter isolation workflow checks, `tests/src/awk_tests-execution.adb` |
+| 13 | Execution adapter | `src/library/awk_cli-invocation.*`, `src/library/awk_cli-execution.*`, adapter isolation workflow checks, `tests/src/awk_tests-execution.adb` |
 | 14 | Standard output | `Awk_CLI.Execution` live output callbacks, `Awk_CLI.Platform.Write_Standard_Output`, output/styling tests |
 | 15 | Output redirection | `src/library/awk_cli-redirections.*`, live redirection callbacks, redirection unit and process tests |
 | 16 | Localization | `src/library/awk_cli-localization.*`, `resources/messages`, catalog policy and localization tests |

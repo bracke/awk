@@ -46,8 +46,4 @@ package Awk_CLI.Programs is
       Read_File : not null access function
         (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Resolve_Result;
-   --  Resolve the program source and remaining operands from parsed options.
-   --  @param Options Parsed command-line options and operands.
-   --  @param Read_File Host program-file reader callback.
-   --  @return Resolved program source or a structured diagnostic.
 end Awk_CLI.Programs;

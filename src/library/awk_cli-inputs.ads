@@ -41,10 +41,4 @@ package Awk_CLI.Inputs is
       Read_File : not null access function
         (Path : String; Content : out U.Unbounded_String) return Awk_CLI.Platform.Read_Status)
       return Load_Result;
-   --  Load explicit input operands and implicit standard input into
-   --  interpreter-ready file records.
-   --  @param Operands Classified input and assignment operands.
-   --  @param Stdin Complete standard-input text.
-   --  @param Read_File Host file reader callback.
-   --  @return Loaded input files or a structured diagnostic.
 end Awk_CLI.Inputs;

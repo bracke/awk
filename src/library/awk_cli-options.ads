@@ -63,23 +63,13 @@ package Awk_CLI.Options is
    --  @param Arguments Raw process argument vector.
    --  @return Parsed options or a structured usage diagnostic.
    function Parse (Arguments : String_Vectors.Vector) return Parse_Result;
-   --  Parse raw process arguments into options, program files, and operands.
-   --  @param Arguments Raw process argument vector.
-   --  @return Parsed options or a structured usage diagnostic.
 
    --  @param Text Candidate assignment text.
    --  @return True when Text matches the CLI assignment-name grammar.
    function Is_Assignment_Text (Text : String) return Boolean;
-   --  Return whether Text matches the CLI assignment-name grammar.
-   --  @param Text Candidate assignment text.
-   --  @return True when Text matches the CLI assignment-name grammar.
 
    --  @param Text Assignment text containing '='.
    --  @param Name Name before the first '='.
    --  @param Value Complete value after the first '='.
    procedure Split_Assignment (Text : String; Name, Value : out U.Unbounded_String);
-   --  Split Text at the first '=' while preserving the complete value suffix.
-   --  @param Text Assignment text containing '='.
-   --  @param Name Name before the first '='.
-   --  @param Value Complete value after the first '='.
 end Awk_CLI.Options;

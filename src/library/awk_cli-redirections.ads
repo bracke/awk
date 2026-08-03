@@ -41,8 +41,4 @@ package Awk_CLI.Redirections is
       Write_File : not null access function
         (Path : String; Content : String; Append : Boolean) return Write_Status)
       return Materialize_Result;
-   --  Write captured redirections in order and stop on the first host failure.
-   --  @param Outputs Captured redirected outputs from awklib.
-   --  @param Write_File Host file writer callback.
-   --  @return Success or the first structured output diagnostic.
 end Awk_CLI.Redirections;

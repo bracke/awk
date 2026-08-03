@@ -34,7 +34,6 @@ private package Awk_CLI.Execution.Callbacks is
       Live_Redirection : Live_Redirection_Writer;
       Live_Command     : Live_Command_Reader;
       Live_User_Data   : System.Address);
-   --  Initialize callback state for one synchronous interpreter call.
 
    --  @param User_Data Address of Stream_State.
    --  @param Filename AWK-visible input filename.
@@ -45,7 +44,6 @@ private package Awk_CLI.Execution.Callbacks is
       Filename     : out U.Unbounded_String;
       Text         : out U.Unbounded_String;
       End_Of_Input : out Boolean);
-   --  Read one memory-backed input chunk.
 
    --  @param User_Data Address of Stream_State.
    --  @param Operand_Index Runtime operand index requested by awklib.
@@ -58,12 +56,10 @@ private package Awk_CLI.Execution.Callbacks is
       Filename      : out U.Unbounded_String;
       Text          : out U.Unbounded_String;
       End_Of_Input  : out Boolean);
-   --  Read one live-input chunk selected by Operand_Index.
 
    --  @param User_Data Address of Stream_State.
    --  @param Text Exact AWK standard output.
    procedure Write_Output (User_Data : System.Address; Text : String);
-   --  Capture or forward exact AWK standard output.
 
    --  @param User_Data Address of Stream_State.
    --  @param Name AWK redirection target.
@@ -76,7 +72,6 @@ private package Awk_CLI.Execution.Callbacks is
       Text      : String;
       Append    : Boolean;
       Truncate  : Boolean);
-   --  Capture or forward exact AWK redirected output.
 
    --  @param User_Data Address of Stream_State.
    --  @param Command Host command text requested by awklib.
@@ -87,18 +82,15 @@ private package Awk_CLI.Execution.Callbacks is
       Command   : String;
       Text      : out U.Unbounded_String;
       Available : out Boolean);
-   --  Read optional host command output.
 
    --  @param State Callback state to inspect.
    --  @return True when any callback reported a failure.
    function Failed (State : Stream_State) return Boolean;
-   --  Return whether the callback state recorded a failure.
 
    --  @param State Callback state to inspect.
    --  @return Structured diagnostic for the recorded failure.
    function Failure (State : Stream_State) return Awk_CLI.Diagnostics.Diagnostic
      with Pre => Failed (State);
-   --  Return the structured failure diagnostic.
 
 private
    type Input_Vector_Access is access constant Awk_CLI.Inputs.Input_File_Vectors.Vector;

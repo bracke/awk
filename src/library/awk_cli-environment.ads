@@ -17,8 +17,4 @@ package Awk_CLI.Environment is
    --  @param Entries Raw environment entries.
    --  @return Normalized environment entries.
    function Normalize (Entries : Entry_Vectors.Vector) return Entry_Vectors.Vector;
-   --  Drop empty names and collapse duplicates while preserving first position
-   --  and final value.
-   --  @param Entries Raw environment entries.
-   --  @return Normalized environment entries.
 end Awk_CLI.Environment;

@@ -16,7 +16,6 @@ private package Awk_CLI.Live_Context_Callbacks is
    function Write_Output
      (Context : in out Invocation_Context;
       Content : String) return Boolean;
-   --  Forward exact AWK standard output through the context I/O adapter.
 
    --  @param Context Invocation context to write through.
    --  @param Path AWK redirection target path.
@@ -28,7 +27,6 @@ private package Awk_CLI.Live_Context_Callbacks is
       Path    : String;
       Content : String;
       Append  : Boolean) return Awk_CLI.Redirections.Write_Status;
-   --  Forward exact redirected output through the context I/O adapter.
 
    --  @param Context Invocation context containing deterministic commands.
    --  @param Command Host command text requested by awklib.
@@ -38,5 +36,4 @@ private package Awk_CLI.Live_Context_Callbacks is
      (Context : in out Invocation_Context;
       Command : String;
       Output  : out U.Unbounded_String) return Boolean;
-   --  Resolve deterministic or host command output for command getline.
 end Awk_CLI.Live_Context_Callbacks;

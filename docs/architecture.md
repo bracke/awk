@@ -33,11 +33,12 @@ and test crate, but they are internal CLI infrastructure rather than a stable
 reusable library API. Compatibility commitments apply to the installed
 `awk` executable and documented command-line behavior.
 
-`Awk_CLI.Run` coordinates a complete invocation through explicit result paths:
-parse options, resolve program source, classify operands, collect environment
-through the platform adapter,
-execute `awklib` once, forward standard output, materialize live redirection
-writes, and render controlled diagnostics on failure.
+`Awk_CLI.Run` coordinates the top-level command flow: initialize localization,
+parse options, handle help/version short circuits, render diagnostics, and
+return stable exit statuses. `Awk_CLI.Invocation` owns ordinary parsed AWK
+program runs: resolve program source, classify operands, collect environment
+through the platform adapter, execute `awklib` once, forward standard output,
+and materialize live redirection writes.
 
 V1 remains partly memory-oriented for program source, in-memory test fixtures,
 auxiliary `getline < file` fixtures, and in-memory command-output fixtures. The

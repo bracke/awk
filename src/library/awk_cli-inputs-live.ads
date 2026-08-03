@@ -19,23 +19,14 @@ package Awk_CLI.Inputs.Live is
      (State    : out Live_Input_State;
       Context  : in out Invocation_Context;
       Operands : aliased Awk_CLI.Operands.Operand_Vectors.Vector);
-   --  Initialize live callback state for one execution.
-   --  @param State Live callback state to initialize.
-   --  @param Context Invocation context used by callbacks.
-   --  @param Operands Classified operands exposed to awklib.
 
    --  @param State Live callback state to close.
    procedure Close (State : in out Live_Input_State);
-   --  Close any active host input stream in State.
-   --  @param State Live callback state to close.
 
    --  @param Context Invocation context containing virtual auxiliary files.
    --  @return Auxiliary files available to awklib.
    function Auxiliary_Files
      (Context : Invocation_Context) return Input_File_Vectors.Vector;
-   --  Return readable virtual files for auxiliary getline integration.
-   --  @param Context Invocation context containing virtual auxiliary files.
-   --  @return Auxiliary files available to awklib.
 
    --  @param User_Data Address of Live_Input_State.
    --  @param Operand_Index Runtime operand index requested by awklib.
@@ -49,13 +40,6 @@ package Awk_CLI.Inputs.Live is
       Filename     : out U.Unbounded_String;
       Text         : out U.Unbounded_String;
       End_Of_Input : out Boolean) return Awk_CLI.Platform.Read_Status;
-   --  Read one chunk from the live input source selected by Operand_Index.
-   --  @param User_Data Address of Live_Input_State.
-   --  @param Operand_Index Runtime operand index requested by awklib.
-   --  @param Filename Current AWK-visible filename.
-   --  @param Text Chunk read for this call.
-   --  @param End_Of_Input Whether this input operand is at EOF.
-   --  @return Host read status for this callback.
 
    --  @param User_Data Address of Live_Input_State.
    --  @param Content Exact AWK standard output chunk.
@@ -63,10 +47,6 @@ package Awk_CLI.Inputs.Live is
    function Write_Output
      (User_Data : System.Address;
       Content   : String) return Boolean;
-   --  Forward exact AWK standard output through the context I/O adapter.
-   --  @param User_Data Address of Live_Input_State.
-   --  @param Content Exact AWK standard output chunk.
-   --  @return True when output was accepted.
 
    --  @param User_Data Address of Live_Input_State.
    --  @param Path AWK redirection target path.
@@ -78,12 +58,6 @@ package Awk_CLI.Inputs.Live is
       Path      : String;
       Content   : String;
       Append    : Boolean) return Awk_CLI.Redirections.Write_Status;
-   --  Forward one live redirected-output write through the context I/O adapter.
-   --  @param User_Data Address of Live_Input_State.
-   --  @param Path AWK redirection target path.
-   --  @param Content Exact redirected output chunk.
-   --  @param Append Whether append semantics are requested.
-   --  @return Host redirection write status.
 
    --  @param User_Data Address of Live_Input_State.
    --  @param Command Host command text requested by awklib.
@@ -93,11 +67,6 @@ package Awk_CLI.Inputs.Live is
      (User_Data : System.Address;
       Command   : String;
       Output    : out U.Unbounded_String) return Boolean;
-   --  Read deterministic or host command output for command getline.
-   --  @param User_Data Address of Live_Input_State.
-   --  @param Command Host command text requested by awklib.
-   --  @param Output Captured command output.
-   --  @return True when command output is available.
 
 private
    type Context_Access is access all Invocation_Context;

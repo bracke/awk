@@ -85,6 +85,10 @@ package body Awk_Workflow_Docs is
          "architecture docs must document execution adapter isolation",
          Quiet => True);
       Files.Require_Contains
+        ("../docs/architecture.md", "Awk_CLI.Invocation",
+         "architecture docs must document parsed invocation executor",
+         Quiet => True);
+      Files.Require_Contains
         ("../docs/architecture.md", "Invocation_Context",
          "architecture docs must document testable invocation context",
          Quiet => True);
@@ -386,6 +390,9 @@ package body Awk_Workflow_Docs is
       Files.Require_Contains
         ("../docs/ai/traceability.md", "| 13 | Execution adapter |",
          "traceability docs must map execution adapter", Quiet => True);
+      Files.Require_Contains
+        ("../docs/ai/project-map.md", "Awk_CLI.Invocation",
+         "project map must mention parsed invocation executor", Quiet => True);
       Files.Require_Contains
         ("../docs/ai/traceability.md", "| 39 | Tooling requirements |",
          "traceability docs must map tooling requirements", Quiet => True);
