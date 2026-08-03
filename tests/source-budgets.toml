@@ -51,11 +51,11 @@ usecase = "process language integration tests"
 [[body]]
 path = "tests/src/awk_workflow_docs.adb"
 split_prefix = "tests/src/awk_workflow_docs"
-target_lines = 414
-max_lines = 540
+target_lines = 18
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 50000
-min_split_bodies = 0
+min_split_bodies = 2
 usecase = "documentation workflow gate"
 
 [[body]]
