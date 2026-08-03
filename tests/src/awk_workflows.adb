@@ -1,4 +1,5 @@
 with Ada.Command_Line;
+with Ada.Directories;
 with Ada.Exceptions;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
@@ -240,6 +241,7 @@ procedure Awk_Workflows is
 
    procedure Install_Boundary is
       Prefix : constant String := Files.Join (Files.Temp_Dir, "awk-install-boundary");
+      Run_Dir : constant String := Files.Join (Files.Temp_Dir, "awk-install-run-cwd");
       Output : Proc.Unbounded_String;
       Install_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
         [new String'("-n"),
@@ -250,6 +252,8 @@ procedure Awk_Workflows is
    begin
       Proc.Require_Command ("alr", "alr executable not found", Quiet => True);
       Files.Delete_Tree (Prefix);
+      Files.Delete_Tree (Run_Dir);
+      Ada.Directories.Create_Path (Run_Dir);
 
       declare
          Alr : constant String := Proc.Locate_Command ("alr");
@@ -259,12 +263,13 @@ procedure Awk_Workflows is
 
       Files.Require_File (Prefix & "/bin/awk", "installed awk executable missing");
       Proc.Run
-        ("installed awk --version", Root, Prefix & "/bin/awk", Version_Args,
+        ("installed awk --version", Run_Dir, Prefix & "/bin/awk", Version_Args,
          Output, Quiet => True);
       Require (Text.Contains (U.To_String (Output), "awk 0.1.0"),
                "installed awk version output is unexpected");
 
       Files.Delete_Tree (Prefix);
+      Files.Delete_Tree (Run_Dir);
       Put_Info ("install boundary checks passed");
    end Install_Boundary;
 
