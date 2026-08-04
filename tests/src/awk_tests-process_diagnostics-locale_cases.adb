@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Support;
 with Project_Tools.Processes;
 with Project_Tools.Text;
@@ -15,10 +13,11 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
    is
       pragma Unreferenced (T);
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("LC_ALL=da"),
-         new String'(Awk_From_Tests_Directory),
-         new String'("--bad")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("LC_ALL=da"),
+            Argument (Awk_From_Tests_Directory),
+            Argument ("--bad")]);
    begin
       Assert (Env /= "", "env executable is available for locale-bound process test");
       declare
@@ -41,10 +40,11 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
       Doubled : constant String :=
         Character'Val (16#C3#) & Character'Val (16#83#)
         & Character'Val (16#C2#);
-      Args    : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("LC_ALL=el"),
-         new String'(Awk_From_Tests_Directory),
-         new String'("--bad")];
+      Args    : constant Process_Arguments :=
+        Arguments
+          ([Argument ("LC_ALL=el"),
+            Argument (Awk_From_Tests_Directory),
+            Argument ("--bad")]);
    begin
       Assert (Env /= "", "env executable is available for UTF-8 locale process test");
       declare
@@ -64,10 +64,11 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
    is
       pragma Unreferenced (T);
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("LC_ALL=zz_ZZ.UTF-8"),
-         new String'(Awk_From_Tests_Directory),
-         new String'("--bad")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("LC_ALL=zz_ZZ.UTF-8"),
+            Argument (Awk_From_Tests_Directory),
+            Argument ("--bad")]);
    begin
       Assert (Env /= "", "env executable is available for unsupported-locale process test");
       declare
@@ -90,8 +91,9 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
    is
       pragma Unreferenced (T);
       Escape : constant String := [1 => Character'Val (27)];
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("--bad" & LF & "awk: error: forged" & Escape & "[2J")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("--bad" & LF & "awk: error: forged" & Escape & "[2J")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -111,8 +113,8 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
 
    procedure Test_Process_Parse_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("BEGIN {")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("BEGIN {")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -133,8 +135,8 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases is
 
    procedure Test_Process_Runtime_Failure (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("BEGIN { print 1 / 0 }")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("BEGIN { print 1 / 0 }")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);

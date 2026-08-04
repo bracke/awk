@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Support;
 with Project_Tools.Text;
 
@@ -11,8 +9,8 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
 
    procedure Test_Process_Usage_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("--bad-option")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("--bad-option")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -46,8 +44,8 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
          Styled       : Boolean;
          Message      : String)
       is
-         Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-           [new String'(Color_Option), new String'("--bad")];
+         Args : constant Process_Arguments :=
+           Arguments ([Argument (Color_Option), Argument ("--bad")]);
       begin
          declare
             Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -80,8 +78,9 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
          Styled       : Boolean;
          Message      : String)
       is
-         Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-           [new String'(First_Color), new String'(Second_Color), new String'("--bad")];
+         Args : constant Process_Arguments :=
+           Arguments
+             ([Argument (First_Color), Argument (Second_Color), Argument ("--bad")]);
       begin
          declare
             Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -108,7 +107,7 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
+      Args : constant Process_Arguments := No_Arguments;
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -129,9 +128,9 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
    procedure Test_Process_Invalid_Color_Status (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
 
-      procedure Expect_Invalid (Argument, Value, Message : String) is
-         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-           [new String'(Argument)];
+      procedure Expect_Invalid (Option_Text, Value, Message : String) is
+         Args : constant Process_Arguments :=
+           Arguments ([Argument (Option_Text)]);
       begin
          declare
             Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -159,8 +158,8 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
       pragma Unreferenced (T);
 
       procedure Expect_Missing (Option : String) is
-         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-           [new String'(Option)];
+         Args : constant Process_Arguments :=
+           Arguments ([Argument (Option)]);
       begin
          declare
             Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -189,7 +188,7 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
       pragma Unreferenced (T);
 
       procedure Expect_Invalid
-        (Args    : GNAT.OS_Lib.Argument_List;
+        (Args    : Process_Arguments;
          Message : String)
       is
       begin
@@ -214,13 +213,15 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.Option_Cases is
       end Expect_Invalid;
    begin
       declare
-         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-           [new String'("-v"),
-            new String'("1bad=value"),
-            new String'("BEGIN { print 1 }")];
-         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-           [new String'("-v1bad=value"),
-            new String'("BEGIN { print 1 }")];
+         Separate_Args : constant Process_Arguments :=
+           Arguments
+             ([Argument ("-v"),
+               Argument ("1bad=value"),
+               Argument ("BEGIN { print 1 }")]);
+         Attached : constant Process_Arguments :=
+           Arguments
+             ([Argument ("-v1bad=value"),
+               Argument ("BEGIN { print 1 }")]);
       begin
          Expect_Invalid (Separate_Args, "separate invalid -v");
          Expect_Invalid (Attached, "attached invalid -v");

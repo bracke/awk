@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Support;
 with Project_Tools.Text;
 
@@ -15,7 +13,7 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.File_Cases is
       pragma Unreferenced (T);
 
       procedure Expect_Unsupported
-        (Args    : GNAT.OS_Lib.Argument_List;
+        (Args    : Process_Arguments;
          Message : String)
       is
       begin
@@ -36,11 +34,10 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.File_Cases is
       end Expect_Unsupported;
    begin
       declare
-         Separate_Args : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-           [new String'("-f"),
-            new String'("-")];
-         Attached : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-           [new String'("-f-")];
+         Separate_Args : constant Process_Arguments :=
+           Arguments ([Argument ("-f"), Argument ("-")]);
+         Attached : constant Process_Arguments :=
+           Arguments ([Argument ("-f-")]);
       begin
          Expect_Unsupported (Separate_Args, "separate -f -");
          Expect_Unsupported (Attached, "attached -f-");
@@ -49,9 +46,10 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.File_Cases is
 
    procedure Test_Process_Missing_Program_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("-f"),
-         new String'("tests/fixtures/programs/no-such-program.awk")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("-f"),
+            Argument ("tests/fixtures/programs/no-such-program.awk")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);
@@ -81,9 +79,10 @@ package body Awk_Tests.Process_Diagnostics.Usage_Cases.File_Cases is
 
    procedure Test_Process_Missing_Input_File (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print }"),
-         new String'("tests/fixtures/input/no-such-input.txt")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("{ print }"),
+            Argument ("tests/fixtures/input/no-such-input.txt")]);
    begin
       declare
          Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);

@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Support;
 with Project_Tools.Files;
 with Project_Tools.Text;
@@ -12,9 +10,10 @@ package body Awk_Tests.Process_IO.Input_Cases is
 
    procedure Test_Process_Direct_File_Input (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print $2 }"),
-         new String'("tests/fixtures/input/basic.txt")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("{ print $2 }"),
+            Argument ("tests/fixtures/input/basic.txt")]);
       Result : constant Captured_Process := Run_Awk ("awk direct file input", Args);
    begin
       Assert (Result.Status = 0, "process direct file input exits successfully");
@@ -27,10 +26,11 @@ package body Awk_Tests.Process_IO.Input_Cases is
    is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/-dash-input.txt";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("--"),
-         new String'("{ print FILENAME "":"" $1 }"),
-         new String'(Target)];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("--"),
+            Argument ("{ print FILENAME "":"" $1 }"),
+            Argument (Target)]);
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Write_Raw_File ("../" & Target, "dash data" & LF);
@@ -50,9 +50,10 @@ package body Awk_Tests.Process_IO.Input_Cases is
    is
       pragma Unreferenced (T);
       Target : constant String := "--version";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print FILENAME "":"" $1 }"),
-         new String'(Target)];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("{ print FILENAME "":"" $1 }"),
+            Argument (Target)]);
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "operand-file" & LF);
@@ -73,9 +74,10 @@ package body Awk_Tests.Process_IO.Input_Cases is
    is
       pragma Unreferenced (T);
       Target : constant String := "-F";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print FILENAME "":"" $1 }"),
-         new String'(Target)];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("{ print FILENAME "":"" $1 }"),
+            Argument (Target)]);
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "short-option-file" & LF);
@@ -96,13 +98,14 @@ package body Awk_Tests.Process_IO.Input_Cases is
 
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 6) :=
-        [new String'("-f"),
-         new String'("tests/fixtures/programs/begin.awk"),
-         new String'("-ftests/fixtures/programs/print-first.awk"),
-         new String'("tests/fixtures/input/basic.txt"),
-         new String'("tests/fixtures/input/second.txt"),
-         new String'("name=value")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("-f"),
+            Argument ("tests/fixtures/programs/begin.awk"),
+            Argument ("-ftests/fixtures/programs/print-first.awk"),
+            Argument ("tests/fixtures/input/basic.txt"),
+            Argument ("tests/fixtures/input/second.txt"),
+            Argument ("name=value")]);
       Result : constant Captured_Process := Run_Awk ("awk process -f", Args);
    begin
       Assert (Result.Status = 0, "process -f exits successfully");
@@ -118,12 +121,13 @@ package body Awk_Tests.Process_IO.Input_Cases is
    is
       pragma Unreferenced (T);
       Target : constant String := "-vX=late";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
-        [new String'("-f"),
-         new String'("tests/fixtures/programs/print-first.awk"),
-         new String'("tests/fixtures/input/basic.txt"),
-         new String'(Target),
-         new String'("tests/fixtures/input/second.txt")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("-f"),
+            Argument ("tests/fixtures/programs/print-first.awk"),
+            Argument ("tests/fixtures/input/basic.txt"),
+            Argument (Target),
+            Argument ("tests/fixtures/input/second.txt")]);
    begin
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
       Project_Tools.Files.Write_Raw_File ("../" & Target, "late-option-file" & LF);
@@ -146,9 +150,8 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print }"),
-         new String'("-")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("{ print }"), Argument ("-")]);
       Result : constant Captured_Process := Run_Awk ("awk process explicit stdin eof", Args);
    begin
       Assert (Result.Status = 0, "explicit stdin operand accepts EOF");
@@ -159,9 +162,8 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("{ print NR "":"" $2 }"),
-         new String'("-")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("{ print NR "":"" $2 }"), Argument ("-")]);
       Result : constant Captured_Process :=
         Run_Awk_Err_To_Out (Args, "one two" & LF & "three four");
       Output : constant String := Output_String (Result);
@@ -175,8 +177,8 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("{ print NR "":"" $1 }")];
+      Args   : constant Process_Arguments :=
+        Arguments ([Argument ("{ print NR "":"" $1 }")]);
       Result : constant Captured_Process :=
         Run_Awk_Err_To_Out (Args, "red blue" & LF & "green yellow");
       Output : constant String := Output_String (Result);
@@ -190,10 +192,11 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("{ print NR "":"" $0 }"),
-         new String'("-"),
-         new String'("-")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("{ print NR "":"" $0 }"),
+            Argument ("-"),
+            Argument ("-")]);
       Result : constant Captured_Process :=
         Run_Awk_Err_To_Out (Args, "alpha" & LF & "beta");
       Output : constant String := Output_String (Result);
@@ -207,10 +210,11 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("BEGIN { print ARGC; print ARGV[1]; print ARGV[2] }"),
-         new String'("name=value"),
-         new String'("tests/fixtures/input/basic.txt")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("BEGIN { print ARGC; print ARGV[1]; print ARGV[2] }"),
+            Argument ("name=value"),
+            Argument ("tests/fixtures/input/basic.txt")]);
       Result : constant Captured_Process := Run_Awk ("awk process runtime assignment argv", Args);
    begin
       Assert (Result.Status = 0, "process runtime assignment ARGV exits successfully");
@@ -225,14 +229,15 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
-        [new String'
-           ("BEGIN { print ""begin"", X }"
-            & " { print FILENAME, FNR, X, $0 } END { print ""end"", X }"),
-         new String'("tests/fixtures/input/basic.txt"),
-         new String'("X=42"),
-         new String'("tests/fixtures/input/second.txt"),
-         new String'("X=99")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument
+              ("BEGIN { print ""begin"", X }"
+               & " { print FILENAME, FNR, X, $0 } END { print ""end"", X }"),
+            Argument ("tests/fixtures/input/basic.txt"),
+            Argument ("X=42"),
+            Argument ("tests/fixtures/input/second.txt"),
+            Argument ("X=99")]);
       Result : constant Captured_Process :=
         Run_Awk ("awk process runtime assignment positions", Args);
    begin

@@ -2,6 +2,8 @@ with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Test_Fixtures;
 
+with GNAT.OS_Lib;
+
 with Awk_CLI.Localization;
 
 package body Awk_Tests.Process_Support is
@@ -70,6 +72,11 @@ package body Awk_Tests.Process_Support is
       return not Project_Tools.Files.File_Exists ("../bin/awk.exe");
    end Project_Tools_Preserves_Empty_Arguments;
 
+   function Run_Command_Err_To_Out
+     (Command : String;
+      Args    : GNAT.OS_Lib.Argument_List;
+      Input   : String := "") return Captured_Process;
+
    function Run_Awk_Err_To_Out
      (Args  : GNAT.OS_Lib.Argument_List;
       Input : String := "") return Captured_Process
@@ -111,6 +118,23 @@ package body Awk_Tests.Process_Support is
       return
         (Status => Status,
          Output => U.To_Unbounded_String (Output));
+   end Run_Command_Err_To_Out;
+
+   function Run_Command_Err_To_Out
+     (Command : String;
+      Args    : Process_Arguments;
+      Input   : String := "") return Captured_Process
+   is
+      OS_Args : GNAT.OS_Lib.Argument_List := To_OS_Arguments (Args);
+      Result  : Captured_Process;
+   begin
+      Result := Run_Command_Err_To_Out (Command, OS_Args, Input);
+      Free_OS_Arguments (OS_Args);
+      return Result;
+   exception
+      when others =>
+         Free_OS_Arguments (OS_Args);
+         raise;
    end Run_Command_Err_To_Out;
 
    function Run_Process

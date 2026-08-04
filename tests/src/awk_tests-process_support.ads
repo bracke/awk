@@ -1,6 +1,5 @@
 with Ada.Strings.Unbounded;
 with Awk_CLI;
-with GNAT.OS_Lib;
 
 package Awk_Tests.Process_Support is
    --  Shared helpers for process-level AUnit suites.
@@ -40,18 +39,13 @@ package Awk_Tests.Process_Support is
    --  Build a process argument vector without exposing GNAT.OS_Lib arrays.
 
    function Run_Awk_Err_To_Out
-     (Args  : GNAT.OS_Lib.Argument_List;
-      Input : String := "") return Captured_Process;
-   --  Run the built awk executable from tests/ with stderr merged into output.
-
-   function Run_Awk_Err_To_Out
      (Args  : Process_Arguments;
       Input : String := "") return Captured_Process;
    --  Run the built awk executable from tests/ with stderr merged into output.
 
    function Run_Command_Err_To_Out
      (Command : String;
-      Args    : GNAT.OS_Lib.Argument_List;
+      Args    : Process_Arguments;
       Input   : String := "") return Captured_Process;
    --  Run an arbitrary command with stderr merged into output.
 
@@ -59,20 +53,8 @@ package Awk_Tests.Process_Support is
      (Label   : String;
       Dir     : String;
       Program : String;
-      Args    : GNAT.OS_Lib.Argument_List) return Captured_Process;
-   --  Run a process through the status harness and capture stdout.
-
-   function Run_Process
-     (Label   : String;
-      Dir     : String;
-      Program : String;
       Args    : Process_Arguments) return Captured_Process;
    --  Run a process through the status harness and capture stdout.
-
-   function Run_Awk
-     (Label : String;
-      Args  : GNAT.OS_Lib.Argument_List) return Captured_Process;
-   --  Run the built awk executable from the repository root and capture stdout.
 
    function Run_Awk
      (Label : String;

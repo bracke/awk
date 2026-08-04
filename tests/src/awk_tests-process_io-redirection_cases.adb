@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Support;
 with Project_Tools.Files;
 with Project_Tools.Text;
@@ -13,9 +11,10 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("--color=always"),
-         new String'("BEGIN { print ""saved"" > """ & Target & """ }")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("--color=always"),
+            Argument ("BEGIN { print ""saved"" > """ & Target & """ }")]);
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -41,10 +40,12 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
    procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
       Target : constant String := "tests/fixtures/filesystem/process_append.txt";
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 2) :=
-        [new String'("--color=always"),
-         new String'("BEGIN { print ""first"" >> """ & Target
-                     & """; print ""second"" >> """ & Target & """ }")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("--color=always"),
+            Argument
+              ("BEGIN { print ""first"" >> """ & Target
+               & """; print ""second"" >> """ & Target & """ }")]);
    begin
       Ensure_Filesystem_Fixture_Directory;
       Project_Tools.Files.Delete_File_If_Present ("../" & Target);
@@ -77,9 +78,11 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
       Target : constant String := "tests/fixtures/filesystem";
 
       procedure Expect_Failure (Operator, Message : String) is
-         Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-           [new String'
-              ("BEGIN { print ""x"" " & Operator & " """ & Target & """; print ""after"" }")];
+         Args : constant Process_Arguments :=
+           Arguments
+             ([Argument
+                 ("BEGIN { print ""x"" " & Operator
+                  & " """ & Target & """; print ""after"" }")]);
       begin
          declare
             Result : constant Captured_Process := Run_Awk_Err_To_Out (Args);

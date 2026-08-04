@@ -1,7 +1,5 @@
 with AUnit.Assertions;
 
-with GNAT.OS_Lib;
-
 with Awk_Tests.Process_Diagnostics;
 with Awk_Tests.Process_IO;
 with Awk_Tests.Process_Language;
@@ -25,12 +23,15 @@ package body Awk_Tests.Process is
    is
       pragma Unreferenced (T);
       Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
-      Args   : constant GNAT.OS_Lib.Argument_List (1 .. 5) :=
-        [new String'("AWK_PROCESS_ENV=visible"),
-         new String'("AWK_PROCESS_EMPTY="),
-         new String'(Awk_From_Repository_Root),
-         new String'("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
-         new String'("unused=value")];
+      Args   : constant Process_Arguments :=
+        Arguments
+          ([Argument ("AWK_PROCESS_ENV=visible"),
+            Argument ("AWK_PROCESS_EMPTY="),
+            Argument (Awk_From_Repository_Root),
+            Argument
+              ("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; "
+               & "print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
+            Argument ("unused=value")]);
    begin
       Assert (Env /= "", "env executable is available for environment-bound process test");
       declare
