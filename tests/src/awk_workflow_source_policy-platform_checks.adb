@@ -112,6 +112,11 @@ package body Awk_Workflow_Source_Policy.Platform_Checks is
          "function Environment_Value_Or_Empty",
          "platform locale lookup must centralize environment value reads",
          Quiet => False);
+      Ada_Source.Require_No_Code_Tokens
+        ("../src/library/awk_cli-platform.adb",
+         [U.To_Unbounded_String
+            ("when Constraint_Error | Program_Error | Storage_Error =>")],
+         Quiet => False);
       Files.Require_Contains
         ("../src/library/awk_cli-platform-command_execution.adb",
          "type Command_Run_Files is record",
