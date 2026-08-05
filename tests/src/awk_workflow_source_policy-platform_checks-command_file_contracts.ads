@@ -1,0 +1,3 @@
+package Awk_Workflow_Source_Policy.Platform_Checks.Command_File_Contracts is
+   procedure Run;
+end Awk_Workflow_Source_Policy.Platform_Checks.Command_File_Contracts;
