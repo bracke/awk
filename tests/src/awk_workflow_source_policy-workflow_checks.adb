@@ -134,7 +134,7 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
          "catalog fixture file reads must use project_tools directly",
          Quiet => False);
       Files.Require_Contains
-        ("src/awk_tests-localization-rendering_cases.adb",
+        ("src/awk_tests-localization-rendering_cases-diagnostic_cases.adb",
          "with Project_Tools.Test_Fixtures",
          "localization rendering fixture file reads must use project_tools directly",
          Quiet => False);

@@ -131,11 +131,11 @@ usecase = "localization test suite"
 [[body]]
 path = "tests/src/awk_tests-localization-rendering_cases.adb"
 split_prefix = "tests/src/awk_tests-localization-rendering_cases"
-target_lines = 300
-max_lines = 420
+target_lines = 15
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 50000
-min_split_bodies = 0
+min_split_bodies = 3
 usecase = "localization rendering tests"
 
 [[body]]
