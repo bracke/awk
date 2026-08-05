@@ -41,8 +41,8 @@ usecase = "process I/O integration tests"
 [[body]]
 path = "tests/src/awk_tests-process_language.adb"
 split_prefix = "tests/src/awk_tests-process_language"
-target_lines = 352
-max_lines = 540
+target_lines = 93
+max_lines = 180
 min_headroom_lines = 40
 max_bytes = 50000
 min_split_bodies = 0

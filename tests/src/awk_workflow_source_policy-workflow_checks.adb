@@ -98,7 +98,7 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_tests-process_language.adb",
          [U.To_Unbounded_String ("Write_Raw_File"),
           U.To_Unbounded_String ("Delete_File_If_Present"),
-          U.To_Unbounded_String ("tests/fixtures/input/regex_numbers.txt")],
+          U.To_Unbounded_String ("Project_Tools.Files")],
          Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing

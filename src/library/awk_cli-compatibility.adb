@@ -26,7 +26,7 @@ package body Awk_CLI.Compatibility is
        Description    => S ("regular-expression integration follows resolved awklib behavior"),
        Source         => Source_Awklib_0_1,
        Documentation  => Doc_Compatibility,
-       Test_Reference => S ("awk process : process regex arithmetic builtins")),
+       Test_Reference => S ("awk process : process filter expression smoke")),
 
       (Id             => S ("AWK-COMPAT-GETLINE-001"),
        Area           => Getline,
@@ -58,7 +58,7 @@ package body Awk_CLI.Compatibility is
        Description    => S ("printf %c field-width behavior follows resolved awklib"),
        Source         => Source_Awklib_0_1,
        Documentation  => Doc_Compatibility,
-       Test_Reference => S ("awk process : process printf formatting")),
+       Test_Reference => S ("awklib suite : Test_Printf_Flags")),
 
       (Id             => S ("AWK-COMPAT-ASSIGNMENT-001"),
        Area           => Command_Line,
