@@ -229,6 +229,16 @@ min_split_bodies = 2
 usecase = "input loading and in-memory context tests"
 
 [[body]]
+path = "tests/src/awk_tests-inputs-context_cases.adb"
+split_prefix = "tests/src/awk_tests-inputs-context_cases"
+target_lines = 10
+max_lines = 120
+min_headroom_lines = 40
+max_bytes = 40000
+min_split_bodies = 2
+usecase = "in-memory input context cases"
+
+[[body]]
 path = "tests/src/awk_tests-redirections.adb"
 split_prefix = "tests/src/awk_tests-redirections"
 target_lines = 21
