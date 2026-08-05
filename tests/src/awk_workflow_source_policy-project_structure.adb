@@ -129,7 +129,7 @@ package body Awk_Workflow_Source_Policy.Project_Structure is
          [U.To_Unbounded_String ("Exception_Information")],
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-initialize.adb",
          "Callback lifetime invariant: Context and Operands",
          "live input unchecked callback access must document object lifetimes",
          Quiet => True);
