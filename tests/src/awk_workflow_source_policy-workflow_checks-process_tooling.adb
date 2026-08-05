@@ -19,7 +19,7 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks.Process_Tooling is
    procedure Run is
    begin
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Capture",
+        ("src/awk_tests-process_support-processes.adb", "Project_Tools.Processes.Capture",
          "process execution must use project_tools managed capture helpers",
          Quiet => False);
       Require
@@ -31,7 +31,8 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks.Process_Tooling is
                  ("src/awk_workflow_source_policy-workflow_checks-process_tooling.adb")]) = "",
          "raw process status execution must stay in workflow tooling");
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Capture_Command",
+        ("src/awk_tests-process_support-processes.adb",
+         "Project_Tools.Processes.Capture_Command",
          "stderr-merged process capture must use project_tools managed capture helpers",
          Quiet => False);
       Files.Require_Contains

@@ -299,6 +299,16 @@ min_split_bodies = 6
 usecase = "documentation core policy checks"
 
 [[body]]
+path = "tests/src/awk_tests-process_support.adb"
+split_prefix = "tests/src/awk_tests-process_support"
+target_lines = 107
+max_lines = 170
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 5
+usecase = "process test support facade"
+
+[[body]]
 path = "tests/src/awk_workflow_catalogs.adb"
 split_prefix = "tests/src/awk_workflow_catalogs"
 target_lines = 28

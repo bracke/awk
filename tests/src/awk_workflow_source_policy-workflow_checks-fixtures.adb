@@ -11,7 +11,8 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks.Fixtures is
    procedure Run is
    begin
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
+        ("src/awk_tests-process_support-fixture_files.adb",
+         "with Project_Tools.Test_Fixtures",
          "process fixture file reads must use project_tools directly", Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-process_support.ads", "function Fresh_Process_Temp_Dir",
