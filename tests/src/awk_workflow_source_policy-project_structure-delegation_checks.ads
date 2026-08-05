@@ -1,0 +1,3 @@
+package Awk_Workflow_Source_Policy.Project_Structure.Delegation_Checks is
+   procedure Run;
+end Awk_Workflow_Source_Policy.Project_Structure.Delegation_Checks;

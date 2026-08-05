@@ -9,6 +9,16 @@ min_split_bodies = 7
 usecase = "source policy workflow gate"
 
 [[body]]
+path = "tests/src/awk_workflow_source_policy-project_structure.adb"
+split_prefix = "tests/src/awk_workflow_source_policy-project_structure"
+target_lines = 15
+max_lines = 120
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 4
+usecase = "project structure source policy checks"
+
+[[body]]
 path = "tests/src/awk_workflow_source_policy-workflow_checks.adb"
 split_prefix = "tests/src/awk_workflow_source_policy-workflow_checks"
 target_lines = 18

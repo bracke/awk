@@ -1,0 +1,3 @@
+package Awk_Workflow_Source_Policy.Project_Structure.Context_Contracts is
+   procedure Run;
+end Awk_Workflow_Source_Policy.Project_Structure.Context_Contracts;
