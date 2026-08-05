@@ -109,6 +109,16 @@ min_split_bodies = 2
 usecase = "CLI presentation adapter"
 
 [[body]]
+path = "src/library/awk_cli-options.adb"
+split_prefix = "src/library/awk_cli-options"
+target_lines = 21
+max_lines = 120
+min_headroom_lines = 40
+max_bytes = 25000
+min_split_bodies = 3
+usecase = "command-line option parser"
+
+[[body]]
 path = "tests/src/awk_tests-process_options.adb"
 split_prefix = "tests/src/awk_tests-process_options"
 target_lines = 10
