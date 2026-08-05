@@ -389,6 +389,16 @@ min_split_bodies = 0
 usecase = "catalog workflow gate"
 
 [[body]]
+path = "tests/src/awk_workflow_packaging.adb"
+split_prefix = "tests/src/awk_workflow_packaging"
+target_lines = 114
+max_lines = 190
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 1
+usecase = "release package assembly gate"
+
+[[body]]
 path = "src/library/awk_cli-inputs-live.adb"
 split_prefix = "src/library/awk_cli-inputs-live"
 target_lines = 43
