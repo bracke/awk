@@ -291,11 +291,11 @@ usecase = "metadata workflow checks"
 [[body]]
 path = "tests/src/awk_workflow_docs-core_checks.adb"
 split_prefix = "tests/src/awk_workflow_docs-core_checks"
-target_lines = 234
-max_lines = 320
+target_lines = 62
+max_lines = 130
 min_headroom_lines = 40
 max_bytes = 60000
-min_split_bodies = 0
+min_split_bodies = 6
 usecase = "documentation core policy checks"
 
 [[body]]
