@@ -38,6 +38,10 @@ reusable library API. Compatibility commitments apply to the installed
 `awk` executable and documented command-line behavior. Root `Awk_CLI` exposes
 process initialization, context reset, and `Run`; deterministic in-memory test
 controls live in the tests-crate child package `Awk_CLI.Testing`.
+Internal context storage for virtual files, captured writes, deterministic
+command output, and recorded diagnostic metadata is isolated in
+`Awk_CLI_Context_State` so the root `Awk_CLI` spec remains focused on the
+runner surface.
 
 `Awk_CLI.Run` coordinates the top-level command flow: initialize localization,
 parse options, handle help/version short circuits, render diagnostics, and

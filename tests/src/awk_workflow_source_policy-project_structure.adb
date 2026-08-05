@@ -100,12 +100,16 @@ package body Awk_Workflow_Source_Policy.Project_Structure is
          "invocation context must group process configuration state",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli.ads", "type Virtual_IO_State is record",
-         "invocation context must group in-memory I/O state",
+        ("../src/library/awk_cli_context_state.ads", "type Virtual_IO_State is record",
+         "invocation context virtual I/O state must live in internal state storage",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli.ads", "type Diagnostic_State is record",
-         "invocation context must group diagnostic state",
+        ("../src/library/awk_cli_context_state.ads", "type Diagnostic_State is record",
+         "invocation context diagnostic state must live in internal state storage",
+         Quiet => True);
+      Files.Require_Contains
+        ("../src/library/awk_cli.ads", "IO              : State.Virtual_IO_State;",
+         "root context must depend on internal state storage by type only",
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli.adb", "procedure Record_Diagnostic",

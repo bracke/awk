@@ -1,4 +1,6 @@
 package body Awk_CLI.Context_IO is
+   package Context_State renames Awk_CLI_Context_State;
+
    function Read_Virtual_File
      (Context : Invocation_Context;
       Path    : String;
@@ -90,7 +92,7 @@ package body Awk_CLI.Context_IO is
       procedure Record_Write is
       begin
          Context.IO.Writes.Append
-           (Write_Operation'
+           (Context_State.Write_Operation'
               (Path    => U.To_Unbounded_String (Path),
                Content => U.To_Unbounded_String (Content),
                Append  => Append));
@@ -99,7 +101,7 @@ package body Awk_CLI.Context_IO is
       procedure Add_New_Virtual_File is
       begin
          Context.IO.Files.Append
-           (Virtual_File'
+           (Context_State.Virtual_File'
               (Path     => U.To_Unbounded_String (Path),
                Content  => U.To_Unbounded_String (Content),
                Readable => True,
@@ -109,7 +111,7 @@ package body Awk_CLI.Context_IO is
       end Add_New_Virtual_File;
 
       procedure Update_Virtual_File (Position : Positive) is
-         File : Virtual_File := Context.IO.Files.Element (Position);
+         File : Context_State.Virtual_File := Context.IO.Files.Element (Position);
       begin
          if Append then
             U.Append (File.Content, Content);
@@ -146,7 +148,8 @@ package body Awk_CLI.Context_IO is
       if not Context.IO.Files.Is_Empty then
          for Position in Context.IO.Files.First_Index .. Context.IO.Files.Last_Index loop
             declare
-               File : constant Virtual_File := Context.IO.Files.Element (Position);
+               File : constant Context_State.Virtual_File :=
+                 Context.IO.Files.Element (Position);
             begin
                if U.To_String (File.Path) = Path then
                   if not File.Openable then

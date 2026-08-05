@@ -42,7 +42,7 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
          Quiet => True);
       Files.Require_Contains
         ("../src/library/awk_cli-context_io.adb",
-         "File : constant Virtual_File := Context.IO.Files.Element (Position);",
+         "File : constant Context_State.Virtual_File :=",
          "context redirection lookup must use a local virtual-file record",
          Quiet => True);
       Files.Require_Contains

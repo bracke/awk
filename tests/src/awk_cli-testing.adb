@@ -1,4 +1,6 @@
 package body Awk_CLI.Testing is
+   package Context_State renames Awk_CLI_Context_State;
+
    procedure Add_Argument (Context : in out Invocation_Context; Value : String) is
    begin
       Context.Config.Arguments.Append (U.To_Unbounded_String (Value));
@@ -28,7 +30,7 @@ package body Awk_CLI.Testing is
       Openable : Boolean := True) is
    begin
       Context.IO.Files.Append
-        (Virtual_File'
+        (Context_State.Virtual_File'
            (Path     => U.To_Unbounded_String (Path),
             Content  => U.To_Unbounded_String (Content),
             Readable => Readable,
@@ -42,7 +44,7 @@ package body Awk_CLI.Testing is
       Output  : String) is
    begin
       Context.IO.Commands.Append
-        (Command_Output'
+        (Context_State.Command_Output'
            (Command => U.To_Unbounded_String (Command),
             Output  => U.To_Unbounded_String (Output)));
    end Add_Command_Output;
@@ -53,8 +55,8 @@ package body Awk_CLI.Testing is
       Value   : String) is
    begin
       Context.IO.Environment.Append
-        (Env_Item'(Name => U.To_Unbounded_String (Name),
-                   Value => U.To_Unbounded_String (Value)));
+        (Context_State.Env_Item'(Name => U.To_Unbounded_String (Name),
+                                 Value => U.To_Unbounded_String (Value)));
    end Add_Environment;
 
    procedure Fail_Standard_Output (Context : in out Invocation_Context; Enabled : Boolean) is
