@@ -261,11 +261,11 @@ usecase = "execution adapter tests"
 [[body]]
 path = "tests/src/awk_tests-diagnostics.adb"
 split_prefix = "tests/src/awk_tests-diagnostics"
-target_lines = 166
-max_lines = 250
+target_lines = 31
+max_lines = 120
 min_headroom_lines = 40
 max_bytes = 50000
-min_split_bodies = 0
+min_split_bodies = 3
 usecase = "diagnostic model tests"
 
 [[body]]
