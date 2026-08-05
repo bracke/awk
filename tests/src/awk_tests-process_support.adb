@@ -1,3 +1,5 @@
+with Ada.Directories;
+
 with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Test_Fixtures;
@@ -64,6 +66,19 @@ package body Awk_Tests.Process_Support is
 
       return "../bin/awk";
    end Awk_From_Tests_Directory;
+
+   function Repository_Path (Relative_Path : String) return String is
+   begin
+      return Ada.Directories.Full_Name ("../" & Relative_Path);
+   end Repository_Path;
+
+   function Absolute_Awk_Path return String is
+   begin
+      return Ada.Directories.Full_Name
+        (if Project_Tools.Files.File_Exists ("../bin/awk.exe")
+         then "../bin/awk.exe"
+         else "../bin/awk");
+   end Absolute_Awk_Path;
 
    function Project_Tools_Preserves_Empty_Arguments return Boolean is
    begin
@@ -202,16 +217,37 @@ package body Awk_Tests.Process_Support is
          raise;
    end Run_Awk;
 
+   function Run_Awk_In_Directory
+     (Label : String;
+      Dir   : String;
+      Args  : Process_Arguments) return Captured_Process
+   is
+   begin
+      return Run_Process
+        (Label   => Label,
+         Dir     => Dir,
+         Program => Absolute_Awk_Path,
+         Args    => Args);
+   end Run_Awk_In_Directory;
+
    function Output_String (Result : Captured_Process) return String is
      (U.To_String (Result.Output));
 
-   procedure Ensure_Filesystem_Fixture_Directory is
+   function Fresh_Process_Temp_Dir (Name : String) return String is
+     (Fixtures.Fresh_Temp_Dir ("awk_process_" & Name));
+
+   procedure Cleanup_Process_Temp_Dir (Path : String) is
    begin
-      Fixtures.Make_Directory ("../tests/fixtures/filesystem");
-   end Ensure_Filesystem_Fixture_Directory;
+      Fixtures.Cleanup (Path);
+   end Cleanup_Process_Temp_Dir;
 
    function Read_Text_File (Path : String) return String is
      (Fixtures.Read_Text_File (Path));
+
+   procedure Write_Text_File (Path : String; Content : String) is
+   begin
+      Fixtures.Write_Text_File (Path, Content);
+   end Write_Text_File;
 
    function Locale_Text
      (Key       : String;

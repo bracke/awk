@@ -25,15 +25,15 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Target : constant String := "tests/fixtures/filesystem/-dash-input.txt";
+      Temp   : constant String := Fresh_Process_Temp_Dir ("dash_filename");
+      Target : constant String := Project_Tools.Files.Join (Temp, "-dash-input.txt");
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("--"),
             Argument ("{ print FILENAME "":"" $1 }"),
             Argument (Target)]);
    begin
-      Ensure_Filesystem_Fixture_Directory;
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "dash data" & LF);
+      Write_Text_File (Target, "dash data" & LF);
       declare
          Result : constant Captured_Process := Run_Awk ("awk process dash filename", Args);
       begin
@@ -42,48 +42,48 @@ package body Awk_Tests.Process_IO.Input_Cases is
            (Project_Tools.Text.Contains (Output_String (Result), Target & ":dash"),
             "dash-leading filename is treated as an operand");
       end;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Dash_Filename_After_Terminator;
 
    procedure Test_Process_Option_Looking_File_After_Program
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
+      Temp   : constant String := Fresh_Process_Temp_Dir ("long_option_file");
       Target : constant String := "--version";
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("{ print FILENAME "":"" $1 }"),
             Argument (Target)]);
    begin
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "operand-file" & LF);
+      Write_Text_File (Project_Tools.Files.Join (Temp, Target), "operand-file" & LF);
       declare
          Result : constant Captured_Process :=
-           Run_Awk ("awk option-looking file after program", Args);
+           Run_Awk_In_Directory ("awk option-looking file after program", Temp, Args);
       begin
          Assert (Result.Status = 0, "option-looking filename after program exits successfully");
          Assert
            (Project_Tools.Text.Contains (Output_String (Result), Target & ":operand-file" & LF),
             "post-program --version is read as an input file");
       end;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Option_Looking_File_After_Program;
 
    procedure Test_Process_Short_Option_Looking_File_After_Program
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
+      Temp   : constant String := Fresh_Process_Temp_Dir ("short_option_file");
       Target : constant String := "-F";
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("{ print FILENAME "":"" $1 }"),
             Argument (Target)]);
    begin
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "short-option-file" & LF);
+      Write_Text_File (Project_Tools.Files.Join (Temp, Target), "short-option-file" & LF);
       declare
          Result : constant Captured_Process :=
-           Run_Awk ("awk short option-looking file after program", Args);
+           Run_Awk_In_Directory ("awk short option-looking file after program", Temp, Args);
       begin
          Assert
            (Result.Status = 0,
@@ -93,7 +93,7 @@ package body Awk_Tests.Process_IO.Input_Cases is
               (Output_String (Result), Target & ":short-option-file" & LF),
             "post-program -F is read as an input file");
       end;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Short_Option_Looking_File_After_Program;
 
    procedure Test_Process_Program_Files (T : in out AUnit.Test_Cases.Test_Case'Class) is
@@ -120,20 +120,20 @@ package body Awk_Tests.Process_IO.Input_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
+      Temp   : constant String := Fresh_Process_Temp_Dir ("late_option_operand");
       Target : constant String := "-vX=late";
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("-f"),
-            Argument ("tests/fixtures/programs/print-first.awk"),
-            Argument ("tests/fixtures/input/basic.txt"),
+            Argument (Repository_Path ("tests/fixtures/programs/print-first.awk")),
+            Argument (Repository_Path ("tests/fixtures/input/basic.txt")),
             Argument (Target),
-            Argument ("tests/fixtures/input/second.txt")]);
+            Argument (Repository_Path ("tests/fixtures/input/second.txt"))]);
    begin
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "late-option-file" & LF);
+      Write_Text_File (Project_Tools.Files.Join (Temp, Target), "late-option-file" & LF);
       declare
          Result : constant Captured_Process :=
-           Run_Awk ("awk process file-mode late option operand", Args);
+           Run_Awk_In_Directory ("awk process file-mode late option operand", Temp, Args);
       begin
          Assert (Result.Status = 0, "file-mode late option-looking operand exits successfully");
          Assert (Project_Tools.Text.Contains (Output_String (Result), "one" & LF & "three"),
@@ -143,7 +143,7 @@ package body Awk_Tests.Process_IO.Input_Cases is
          Assert (Project_Tools.Text.Contains (Output_String (Result), "five" & LF),
                  "input after late runtime assignment is processed");
       end;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Option_Looking_Operand_After_File_Mode_Input;
 
    procedure Test_Process_Explicit_Stdin_Eof

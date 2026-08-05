@@ -10,15 +10,14 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
 
    procedure Test_Process_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Target : constant String := "tests/fixtures/filesystem/process_redir.txt";
+      Temp   : constant String := Fresh_Process_Temp_Dir ("redir");
+      Target : constant String := Project_Tools.Files.Join (Temp, "process_redir.txt");
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("--color=always"),
             Argument ("BEGIN { print ""saved"" > """ & Target & """ }")]);
    begin
-      Ensure_Filesystem_Fixture_Directory;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "old" & LF & "content" & LF);
+      Write_Text_File (Target, "old" & LF & "content" & LF);
 
       declare
          Result : constant Captured_Process := Run_Awk ("awk process redirection", Args);
@@ -27,19 +26,20 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
          Assert (Output_String (Result) = "", "process redirected output not on stdout");
       end;
 
-      Assert (Read_Text_File ("../" & Target) = "saved", "process redirection file content");
-      Assert (not Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "old"),
+      Assert (Read_Text_File (Target) = "saved", "process redirection file content");
+      Assert (not Project_Tools.Text.Contains (Read_Text_File (Target), "old"),
               "overwrite redirection replaces existing file content");
       Assert (not Project_Tools.Text.Contains
-                (Read_Text_File ("../" & Target), Character'Val (27) & "["),
+                (Read_Text_File (Target), Character'Val (27) & "["),
               "color=always does not style redirected output");
 
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Redirection;
 
    procedure Test_Process_Append_Redirection (T : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (T);
-      Target : constant String := "tests/fixtures/filesystem/process_append.txt";
+      Temp   : constant String := Fresh_Process_Temp_Dir ("append");
+      Target : constant String := Project_Tools.Files.Join (Temp, "process_append.txt");
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument ("--color=always"),
@@ -47,9 +47,7 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
               ("BEGIN { print ""first"" >> """ & Target
                & """; print ""second"" >> """ & Target & """ }")]);
    begin
-      Ensure_Filesystem_Fixture_Directory;
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
-      Project_Tools.Files.Write_Raw_File ("../" & Target, "existing" & LF);
+      Write_Text_File (Target, "existing" & LF);
 
       declare
          Result : constant Captured_Process := Run_Awk ("awk process append redirection", Args);
@@ -59,23 +57,24 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
       end;
 
       Assert
-        (Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "existing") and then
-         Project_Tools.Text.Contains (Read_Text_File ("../" & Target), "first" & LF & "second"),
+        (Project_Tools.Text.Contains (Read_Text_File (Target), "existing") and then
+         Project_Tools.Text.Contains (Read_Text_File (Target), "first" & LF & "second"),
          "append redirection preserves existing content and write order");
-      Assert (Read_Text_File ("../" & Target) /= "first" & LF & "second",
+      Assert (Read_Text_File (Target) /= "first" & LF & "second",
               "append redirection does not replace existing file content");
       Assert (not Project_Tools.Text.Contains
-                (Read_Text_File ("../" & Target), Character'Val (27) & "["),
+                (Read_Text_File (Target), Character'Val (27) & "["),
               "color=always does not style appended redirected output");
 
-      Project_Tools.Files.Delete_File_If_Present ("../" & Target);
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Append_Redirection;
 
    procedure Test_Process_Redirection_Target_Directory_Failure
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Target : constant String := "tests/fixtures/filesystem";
+      Temp   : constant String := Fresh_Process_Temp_Dir ("redir_directory_failure");
+      Target : constant String := Temp;
 
       procedure Expect_Failure (Operator, Message : String) is
          Args : constant Process_Arguments :=
@@ -102,9 +101,9 @@ package body Awk_Tests.Process_IO.Redirection_Cases is
          end;
       end Expect_Failure;
    begin
-      Ensure_Filesystem_Fixture_Directory;
       Expect_Failure (">", "overwrite redirection to directory");
       Expect_Failure (">>", "append redirection to directory");
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Redirection_Target_Directory_Failure;
 
    procedure Register (T : in out AUnit.Test_Cases.Test_Case'Class) is

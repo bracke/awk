@@ -30,14 +30,16 @@ package body Awk_Tests.Process_Language is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
+      Temp   : constant String := Fresh_Process_Temp_Dir ("regex_numbers");
+      Target : constant String := Project_Tools.Files.Join (Temp, "regex_numbers.txt");
       Args   : constant Process_Arguments :=
         Arguments
           ([Argument
               ("/^[a-z]+ [0-9]+$/ { print $1, $2 + 3, substr($1, 2, 2), length($1) }"),
-            Argument ("tests/fixtures/input/regex_numbers.txt")]);
+            Argument (Target)]);
    begin
-      Project_Tools.Files.Write_Raw_File
-        ("../tests/fixtures/input/regex_numbers.txt",
+      Write_Text_File
+        (Target,
          "alpha 7" & LF &
          "skip me" & LF &
          "beta 11" & LF);
@@ -53,7 +55,7 @@ package body Awk_Tests.Process_Language is
          Assert (not Project_Tools.Text.Contains (Output_String (Result), "skip"),
                  "non-matching process input is not emitted");
       end;
-      Project_Tools.Files.Delete_File_If_Present ("../tests/fixtures/input/regex_numbers.txt");
+      Cleanup_Process_Temp_Dir (Temp);
    end Test_Process_Regex_Arithmetic_And_Builtins;
 
    procedure Test_Process_Printf_Formatting

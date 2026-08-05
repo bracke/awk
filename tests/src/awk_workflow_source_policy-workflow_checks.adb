@@ -73,6 +73,34 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_tests-process_support.adb", "function To_OS_Arguments",
          "GNAT process argument conversion must be centralized in process support",
          Quiet => False);
+      Files.Require_Contains
+        ("src/awk_tests-process_support.ads", "function Fresh_Process_Temp_Dir",
+         "process tests must expose isolated temporary directories",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_tests-process_support.ads", "procedure Write_Text_File",
+         "process tests must write temporary fixtures through process support",
+         Quiet => False);
+      Ada_Source.Require_No_Code_Tokens
+        ("src/awk_tests-process_io-input_cases.adb",
+         [U.To_Unbounded_String ("Write_Raw_File"),
+          U.To_Unbounded_String ("Delete_File_If_Present"),
+          U.To_Unbounded_String ("Ensure_Filesystem_Fixture_Directory"),
+          U.To_Unbounded_String ("tests/fixtures/filesystem")],
+         Quiet => False);
+      Ada_Source.Require_No_Code_Tokens
+        ("src/awk_tests-process_io-redirection_cases.adb",
+         [U.To_Unbounded_String ("Write_Raw_File"),
+          U.To_Unbounded_String ("Delete_File_If_Present"),
+          U.To_Unbounded_String ("Ensure_Filesystem_Fixture_Directory"),
+          U.To_Unbounded_String ("tests/fixtures/filesystem")],
+         Quiet => False);
+      Ada_Source.Require_No_Code_Tokens
+        ("src/awk_tests-process_language.adb",
+         [U.To_Unbounded_String ("Write_Raw_File"),
+          U.To_Unbounded_String ("Delete_File_If_Present"),
+          U.To_Unbounded_String ("tests/fixtures/input/regex_numbers.txt")],
+         Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",

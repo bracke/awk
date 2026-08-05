@@ -15,6 +15,9 @@ package Awk_Tests.Process_Support is
    function Awk_From_Tests_Directory return String;
    --  Return the built awk executable path relative to tests/.
 
+   function Repository_Path (Relative_Path : String) return String;
+   --  Return an absolute path for a repository-relative file.
+
    --  @return True when project_tools process execution preserves empty arguments.
    function Project_Tools_Preserves_Empty_Arguments return Boolean;
    --  Return whether process tests can rely on empty command-line arguments.
@@ -61,16 +64,28 @@ package Awk_Tests.Process_Support is
       Args  : Process_Arguments) return Captured_Process;
    --  Run the built awk executable from the repository root and capture stdout.
 
+   function Run_Awk_In_Directory
+     (Label : String;
+      Dir   : String;
+      Args  : Process_Arguments) return Captured_Process;
+   --  Run the built awk executable from Dir and capture stdout.
+
    function Output_String (Result : Captured_Process) return String;
    --  Return captured process output as a String.
 
-   procedure Ensure_Filesystem_Fixture_Directory;
-   --  Ensure the filesystem fixture directory exists.
+   function Fresh_Process_Temp_Dir (Name : String) return String;
+   --  Return an isolated temporary directory for a process test.
+
+   procedure Cleanup_Process_Temp_Dir (Path : String);
+   --  Remove a temporary process test directory.
 
    --  @param Path File path to read.
    --  @return File content as text.
    function Read_Text_File (Path : String) return String;
    --  Read fixture text through project_tools.
+
+   procedure Write_Text_File (Path : String; Content : String);
+   --  Write fixture text through project_tools.
 
    function Locale_Text
      (Key       : String;
