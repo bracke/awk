@@ -1,5 +1,5 @@
 with Ada.Strings.Unbounded;
-with Awk_CLI;
+with Project_Tools.Processes;
 
 package Awk_Tests.Process_Support is
    --  Shared helpers for process-level AUnit suites.
@@ -27,7 +27,7 @@ package Awk_Tests.Process_Support is
       Output : U.Unbounded_String;
    end record;
 
-   subtype Process_Arguments is Awk_CLI.String_Vectors.Vector;
+   subtype Process_Arguments is Project_Tools.Processes.Argument_Vectors.Vector;
 
    function Argument (Value : String) return U.Unbounded_String;
    --  Convert a string literal into a process argument item.

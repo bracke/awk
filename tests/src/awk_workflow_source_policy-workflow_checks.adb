@@ -44,21 +44,20 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_tests-process_support.adb", "with Project_Tools.Test_Fixtures",
          "process fixture file reads must use project_tools directly", Quiet => False);
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Run_Status",
-         "raw process status execution must be centralized in process support",
+        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Capture",
+         "process execution must use project_tools managed capture helpers",
          Quiet => False);
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
             "Project_Tools.Processes.Run_Status",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-               U.To_Unbounded_String
+              [U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks.adb")]) = "",
-         "raw process status execution must stay in process support");
+         "raw process status execution must stay in workflow tooling");
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Command_Output",
-         "raw process output capture must be centralized in process support",
+        ("src/awk_tests-process_support.adb", "Project_Tools.Processes.Capture_Command",
+         "stderr-merged process capture must use project_tools managed capture helpers",
          Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-process_support.ads", "subtype Process_Arguments",
@@ -70,8 +69,8 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
           U.To_Unbounded_String ("GNAT.OS_Lib.Argument_List")],
          Quiet => False);
       Files.Require_Contains
-        ("src/awk_tests-process_support.adb", "function To_OS_Arguments",
-         "GNAT process argument conversion must be centralized in process support",
+        ("src/awk_tests-process_support.ads", "Project_Tools.Processes.Argument_Vectors.Vector",
+         "GNAT process argument conversion must be centralized in project_tools",
          Quiet => False);
       Files.Require_Contains
         ("src/awk_tests-process_support.ads", "function Fresh_Process_Temp_Dir",
@@ -106,32 +105,29 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
            ("src",
             "with GNAT.OS_Lib",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-               U.To_Unbounded_String ("src/awk_workflows.adb"),
+              [U.To_Unbounded_String ("src/awk_workflows.adb"),
                U.To_Unbounded_String ("src/awk_workflow_install.adb"),
                U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks.adb")]) = "",
-         "raw GNAT process access must stay in process support or workflow tooling");
+         "raw GNAT process access must stay in workflow tooling");
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
             "GNAT.OS_Lib.Argument_List",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-               U.To_Unbounded_String ("src/awk_workflows.adb"),
+              [U.To_Unbounded_String ("src/awk_workflows.adb"),
                U.To_Unbounded_String ("src/awk_workflow_install.adb"),
                U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks.adb")]) = "",
-         "raw GNAT argument lists must stay in process support or workflow tooling");
+         "raw GNAT argument lists must stay in workflow tooling");
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
             "Project_Tools.Processes.Command_Output",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_tests-process_support.adb"),
-               U.To_Unbounded_String
+              [U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks.adb")]) = "",
-         "raw process output capture must stay in process support");
+         "raw process output capture must stay in project_tools");
       Files.Require_Contains
         ("src/awk_tests-localization-catalog_cases.adb",
          "with Project_Tools.Test_Fixtures",
