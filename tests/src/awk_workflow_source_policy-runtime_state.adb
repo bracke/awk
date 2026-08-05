@@ -26,12 +26,12 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
          "live input operand activation must be centralized",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-context_io.adb",
+        ("../src/library/awk_cli-context_io-write_file.adb",
          "procedure Record_Write",
          "context redirection write recording must be centralized",
          Quiet => True);
-      Ada_Source.Require_No_Code_Tokens
-        ("../src/library/awk_cli-context_io.adb",
+      Ada_Source.Require_No_Code_Tokens_In_Tree
+        ("../src/library",
          [U.To_Unbounded_String ("Context.IO.Files.Element (Position).Openable"),
           U.To_Unbounded_String ("Context.IO.Files.Element (Position).Writable")],
          Quiet => True);
@@ -41,17 +41,17 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
          "live input must reuse centralized virtual-file read rules",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-context_io.adb",
+        ("../src/library/awk_cli-context_io-write_file.adb",
          "File : constant Context_State.Virtual_File :=",
          "context redirection lookup must use a local virtual-file record",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-context_io.adb",
+        ("../src/library/awk_cli-context_io-write_file.adb",
          "function Write_Existing_Process_File",
          "existing process redirection writes must be isolated in a named helper",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-context_io.adb",
+        ("../src/library/awk_cli-context_io-write_file.adb",
          "function Write_New_Process_File",
          "new process redirection writes must be isolated in a named helper",
          Quiet => True);

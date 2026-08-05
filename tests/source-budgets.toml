@@ -129,6 +129,16 @@ min_split_bodies = 3
 usecase = "command-line option parser"
 
 [[body]]
+path = "src/library/awk_cli-context_io.adb"
+split_prefix = "src/library/awk_cli-context_io"
+target_lines = 32
+max_lines = 120
+min_headroom_lines = 40
+max_bytes = 25000
+min_split_bodies = 6
+usecase = "invocation context I/O adapter"
+
+[[body]]
 path = "tests/src/awk_tests-process_options.adb"
 split_prefix = "tests/src/awk_tests-process_options"
 target_lines = 10
