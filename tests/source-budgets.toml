@@ -151,9 +151,9 @@ usecase = "catalog workflow gate"
 [[body]]
 path = "src/library/awk_cli-inputs-live.adb"
 split_prefix = "src/library/awk_cli-inputs-live"
-target_lines = 306
-max_lines = 420
+target_lines = 140
+max_lines = 220
 min_headroom_lines = 40
 max_bytes = 25000
-min_split_bodies = 0
+min_split_bodies = 2
 usecase = "live input adapter state machine"

@@ -11,17 +11,17 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
    procedure Run is
    begin
       Files.Require_Contains
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-reading.adb",
          "U.Slice (State.Active_Content",
          "in-memory live input chunking must avoid full-content copies",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-activation.adb",
          "procedure Close_Active_Input",
          "live input state-machine close/reset logic must be centralized",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-activation.adb",
          "function Activate_Operand",
          "live input operand activation must be centralized",
          Quiet => True);
@@ -36,7 +36,7 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
           U.To_Unbounded_String ("Context.IO.Files.Element (Position).Writable")],
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-activation.adb",
          "Awk_CLI.Context_IO.Read_Virtual_File",
          "live input must reuse centralized virtual-file read rules",
          Quiet => True);
@@ -61,7 +61,7 @@ package body Awk_Workflow_Source_Policy.Runtime_State is
          "top-level CLI stdout status handling must be centralized",
          Quiet => True);
       Ada_Source.Require_No_Code_Tokens
-        ("../src/library/awk_cli-inputs-live.adb",
+        ("../src/library/awk_cli-inputs-live-reading.adb",
          [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],
          Quiet => True);
       Ada_Source.Require_No_Code_Tokens_In_Tree
