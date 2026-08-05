@@ -41,12 +41,12 @@ package body Awk_Workflow_Source_Policy.Presentation is
          [U.To_Unbounded_String ("""awk: """)],
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-output.adb",
+        ("../src/library/awk_cli-output-help.adb",
          "Help_Lines : constant array",
          "help rendering must use a structured line registry",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-output.adb",
+        ("../src/library/awk_cli-output-help.adb",
          "procedure Append_Help_Line",
          "help rendering must be centralized around registry items",
          Quiet => True);
