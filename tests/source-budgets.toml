@@ -141,8 +141,8 @@ usecase = "option parser tests"
 [[body]]
 path = "tests/src/awk_workflow_catalogs.adb"
 split_prefix = "tests/src/awk_workflow_catalogs"
-target_lines = 317
-max_lines = 440
+target_lines = 28
+max_lines = 160
 min_headroom_lines = 40
 max_bytes = 40000
 min_split_bodies = 0

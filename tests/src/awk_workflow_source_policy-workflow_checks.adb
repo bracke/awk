@@ -155,6 +155,26 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks is
         ("src/awk_workflows.adb", "Run_AUnit;",
          "workflow AUnit execution must be reusable across build modes", Quiet => False);
       Files.Require_Contains
+        ("src/awk_workflow_catalogs.adb",
+         "Awk_Workflow_Catalogs.Completeness.Run",
+         "catalog workflow must delegate completeness checks",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflow_catalogs.adb",
+         "Awk_Workflow_Catalogs.Consistency.Run",
+         "catalog workflow must delegate consistency checks",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflow_catalogs.adb",
+         "Awk_Workflow_Catalogs.Fallbacks.Run",
+         "catalog workflow must delegate fallback checks",
+         Quiet => False);
+      Files.Require_Contains
+        ("src/awk_workflow_catalogs.adb",
+         "Awk_Workflow_Catalogs.Reference_Cues.Run",
+         "catalog workflow must delegate reference-cue checks",
+         Quiet => False);
+      Files.Require_Contains
         ("src/awk_workflow_drift.adb", "with Awk_CLI.Diagnostics",
          "exit status drift checks must use compiled diagnostic constants",
          Quiet => False);
