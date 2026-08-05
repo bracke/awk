@@ -127,39 +127,29 @@ package body Awk_CLI.Platform is
 
    package body Input_Streams is separate;
 
-   function Read_File (Path : String; Content : out U.Unbounded_String) return Read_Status is
-   begin
-      return File_IO.Read_File (Path, Content);
-   end Read_File;
+   function Read_File
+     (Path    : String;
+      Content : out U.Unbounded_String) return Read_Status is separate;
 
-   function Open_Input_File (Path : String; Stream : in out Input_Stream) return Read_Status is
-   begin
-      return Input_Streams.Open_File (Path, Stream);
-   end Open_Input_File;
+   function Open_Input_File
+     (Path   : String;
+      Stream : in out Input_Stream) return Read_Status is separate;
 
-   function Open_Standard_Input (Stream : in out Input_Stream) return Read_Status is
-   begin
-      return Input_Streams.Open_Standard_Input (Stream);
-   end Open_Standard_Input;
+   function Open_Standard_Input
+     (Stream : in out Input_Stream) return Read_Status is separate;
 
    function Read_Input_Chunk
-     (Stream : in out Input_Stream;
-      Content : out U.Unbounded_String;
+     (Stream      : in out Input_Stream;
+      Content     : out U.Unbounded_String;
       End_Of_File : out Boolean) return Read_Status
-   is
-   begin
-      return Input_Streams.Read_Chunk (Stream, Content, End_Of_File);
-   end Read_Input_Chunk;
+   is separate;
 
-   procedure Close_Input (Stream : in out Input_Stream) is
-   begin
-      Input_Streams.Close (Stream);
-   end Close_Input;
+   procedure Close_Input (Stream : in out Input_Stream) is separate;
 
-   function Write_File (Path : String; Content : String; Append : Boolean) return Boolean is
-   begin
-      return File_IO.Write_File (Path, Content, Append);
-   end Write_File;
+   function Write_File
+     (Path    : String;
+      Content : String;
+      Append  : Boolean) return Boolean is separate;
 
    package Command_Execution is
       function Run_Command
@@ -169,10 +159,9 @@ package body Awk_CLI.Platform is
 
    package body Command_Execution is separate;
 
-   function Run_Command (Command : String; Output : out U.Unbounded_String) return Boolean is
-   begin
-      return Command_Execution.Run_Command (Command, Output);
-   end Run_Command;
+   function Run_Command
+     (Command : String;
+      Output  : out U.Unbounded_String) return Boolean is separate;
 
    package Standard_Streams is
       function Write_Output (Content : String) return Boolean;
@@ -181,15 +170,9 @@ package body Awk_CLI.Platform is
 
    package body Standard_Streams is separate;
 
-   function Write_Standard_Output (Content : String) return Boolean is
-   begin
-      return Standard_Streams.Write_Output (Content);
-   end Write_Standard_Output;
+   function Write_Standard_Output (Content : String) return Boolean is separate;
 
-   function Write_Standard_Error (Content : String) return Boolean is
-   begin
-      return Standard_Streams.Write_Error (Content);
-   end Write_Standard_Error;
+   function Write_Standard_Error (Content : String) return Boolean is separate;
 
    function Environment_Value_Or_Empty (Name : String) return String is
    begin
@@ -220,18 +203,13 @@ package body Awk_CLI.Platform is
 
    package body Host_Metadata is separate;
 
-   function Standard_Output_Is_Terminal return Boolean is
-     (Host_Metadata.Is_Terminal (1));
+   function Standard_Output_Is_Terminal return Boolean is separate;
 
-   function Standard_Error_Is_Terminal return Boolean is
-     (Host_Metadata.Is_Terminal (2));
+   function Standard_Error_Is_Terminal return Boolean is separate;
 
-   function No_Color_Active return Boolean is
-     (Host_Metadata.No_Color_Active);
+   function No_Color_Active return Boolean is separate;
 
-   function Locale return String is
-     (Host_Metadata.Locale);
+   function Locale return String is separate;
 
-   function Catalog_Path return String is
-     (Host_Metadata.Catalog_Path);
+   function Catalog_Path return String is separate;
 end Awk_CLI.Platform;

@@ -91,11 +91,11 @@ usecase = "documentation workflow gate"
 [[body]]
 path = "src/library/awk_cli-platform.adb"
 split_prefix = "src/library/awk_cli-platform"
-target_lines = 237
-max_lines = 540
+target_lines = 215
+max_lines = 280
 min_headroom_lines = 40
 max_bytes = 30000
-min_split_bodies = 3
+min_split_bodies = 19
 usecase = "platform adapter parent body"
 
 [[body]]
