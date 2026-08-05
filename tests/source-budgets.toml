@@ -99,6 +99,16 @@ min_split_bodies = 2
 usecase = "awklib execution adapter parent body"
 
 [[body]]
+path = "src/library/awk_cli-execution-callbacks.adb"
+split_prefix = "src/library/awk_cli-execution-callbacks"
+target_lines = 99
+max_lines = 150
+min_headroom_lines = 40
+max_bytes = 25000
+min_split_bodies = 6
+usecase = "awklib streaming callback state"
+
+[[body]]
 path = "src/library/awk_cli-output.adb"
 split_prefix = "src/library/awk_cli-output"
 target_lines = 77
