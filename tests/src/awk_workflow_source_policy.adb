@@ -1,21 +1,19 @@
-with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
-with Awk_Workflow_Message_Key_Policy;
 with Awk_Workflow_Packaging;
+with Awk_Workflow_Source_Policy.Dependency_Boundaries;
 with Awk_Workflow_Source_Policy.Platform_Checks;
+with Awk_Workflow_Source_Policy.Presentation;
+with Awk_Workflow_Source_Policy.Project_Structure;
+with Awk_Workflow_Source_Policy.Runtime_State;
+with Awk_Workflow_Source_Policy.Source_Budget_Checks;
 with Awk_Workflow_Source_Policy.Workflow_Checks;
-with Project_Tools.Ada_Source;
-with Project_Tools.AUnit_Checks;
+with Awk_Workflow_Message_Key_Policy;
 with Project_Tools.Files;
 with Project_Tools.Release_Checks;
-with Project_Tools.Source_Budgets;
 
 package body Awk_Workflow_Source_Policy is
-   package Ada_Source renames Project_Tools.Ada_Source;
    package Files renames Project_Tools.Files;
-   package Source_Budgets renames Project_Tools.Source_Budgets;
-   package U renames Ada.Strings.Unbounded;
 
    procedure Put_Info (Message : String) is
    begin
@@ -28,16 +26,6 @@ package body Awk_Workflow_Source_Policy is
          Project_Tools.Release_Checks.Fail (Message);
       end if;
    end Require;
-
-   procedure Public_Spec_Docs is
-      Specs : constant Files.Path_List := Files.List_Tree ("../src/library", "*.ads");
-   begin
-      for Path of Specs loop
-         Ada_Source.Require_Public_GNATdoc_Tags
-           (Spec_Path => U.To_String (Path));
-      end loop;
-      Put_Info ("public spec documentation checks passed");
-   end Public_Spec_Docs;
 
    procedure Package_Manifest_Policy is
       function Package_Includes (Path : String) return Boolean is
@@ -68,6 +56,7 @@ package body Awk_Workflow_Source_Policy is
             end if;
          end;
       end loop;
+
       Require_Packaged ("resources/messages/catalog.txt");
       Require_Packaged ("resources/messages/en/catalog.txt");
       Require_Packaged ("resources/messages/da/catalog.txt");
@@ -90,423 +79,21 @@ package body Awk_Workflow_Source_Policy is
    end Package_Manifest_Policy;
 
    procedure Run is
-      procedure Dependency_Boundaries is
-         Unexpected : U.Unbounded_String;
-      begin
-         Files.Require_Contains
-           ("../src/library/awk_cli-execution.adb", "with Awklib",
-            "execution adapter must bridge to awklib", Quiet => True);
-         Ada_Source.Require_Only_Allowed_With_Clauses
-           ("../src/library/awk_cli-execution.adb",
-            "Awklib",
-            [U.To_Unbounded_String ("Awklib"),
-             U.To_Unbounded_String ("Awklib.Interpreter")],
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "with Awklib.",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/library/awk_cli-execution.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-execution.adb")]) = "",
-            "only execution adapter may depend on awklib");
-
-         Files.Require_Contains
-           ("../src/library/awk_cli-localization.adb", "with Messages",
-            "localization adapter must bridge to messages", Quiet => True);
-         Ada_Source.Require_Only_Allowed_With_Clauses
-           ("../src/library/awk_cli-localization.ads",
-            "Messages",
-            [U.To_Unbounded_String ("Messages.Runtime")],
-            Quiet => True);
-         Ada_Source.Require_Only_Allowed_With_Clauses
-           ("../src/library/awk_cli-localization.adb",
-            "Messages",
-            [U.To_Unbounded_String ("Messages.Arguments"),
-             U.To_Unbounded_String ("Messages.Result")],
-            Quiet => True);
-         Unexpected :=
-           U.To_Unbounded_String
-             (Ada_Source.First_Source_File_Containing
-                ("../src",
-                 "with Messages",
-                 Allowed_Files =>
-                   [U.To_Unbounded_String ("../src/library/awk_cli-localization.adb"),
-                    U.To_Unbounded_String ("../src/library/awk_cli-localization.ads")]));
-         Require
-           (U.To_String (Unexpected) = "",
-            "only localization adapter may depend on messages: " & U.To_String (Unexpected));
-
-         Files.Require_Contains
-           ("../src/library/awk_cli-output.adb", "with Terminal_Styles",
-            "presentation layer must bridge to terminal_styles", Quiet => True);
-         Ada_Source.Require_Only_Allowed_With_Clauses
-           ("../src/library/awk_cli-output.adb",
-            "Terminal_Styles",
-            [U.To_Unbounded_String ("Terminal_Styles")],
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "with Terminal_Styles",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/library/awk_cli-output.adb")]) = "",
-            "only presentation layer may depend on terminal_styles");
-
-         Files.Require_Contains
-           ("../src/library/awk_cli-platform.adb", "with Hostkit",
-            "platform adapter must bridge to hostkit", Quiet => True);
-         Ada_Source.Require_Only_Allowed_With_Clauses
-           ("../src/library/awk_cli-platform.adb",
-            "Hostkit",
-            [U.To_Unbounded_String ("Hostkit"),
-             U.To_Unbounded_String ("Hostkit.Fs"),
-             U.To_Unbounded_String ("Hostkit.Host"),
-             U.To_Unbounded_String ("Hostkit.Process"),
-             U.To_Unbounded_String ("Hostkit.Shell")],
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "with Hostkit",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
-            "only platform adapter may depend on hostkit");
-      end Dependency_Boundaries;
-
-      procedure Process_Global_Access is
-      begin
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "Ada.Text_IO.Put",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/main/awk.adb"),
-                  U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
-                  U.To_Unbounded_String ("src/main/awk.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
-            "direct Text_IO writes must stay in main containment or platform adapter");
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "Ada.Command_Line",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/main/awk.adb"),
-                  U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
-                  U.To_Unbounded_String ("src/main/awk.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
-            "process command-line access must stay in main containment or platform adapter");
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "Ada.Environment_Variables",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/library/awk_cli-platform.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-platform.adb")]) = "",
-            "process environment access must stay in platform adapter");
-      end Process_Global_Access;
-
-      procedure Presentation_Policy is
-      begin
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-output.adb",
-            [U.To_Unbounded_String ("Character'Val (27)")],
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src",
-               "Character'Val (27)",
-               Allowed_Files =>
-                 [U.To_Unbounded_String ("../src/library/awk_cli-diagnostics.adb"),
-                  U.To_Unbounded_String ("src/library/awk_cli-diagnostics.adb")]) = "",
-            "only diagnostic escaping may inspect the ESC character");
-         Ada_Source.Require_No_Code_Tokens_In_Tree
-           ("../src",
-            [U.To_Unbounded_String ("Character'Val(27)"),
-             U.To_Unbounded_String ("ASCII.ESC"),
-             U.To_Unbounded_String ("Ada.Characters.Latin_1.ESC")],
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-output.adb",
-            [U.To_Unbounded_String ("""awk: """)],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-output.adb",
-            "Help_Lines : constant array",
-            "help rendering must use a structured line registry",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-output.adb",
-            "procedure Append_Help_Line",
-            "help rendering must be centralized around registry items",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-programs.adb",
-            [U.To_Unbounded_String ("""command line""")],
-            Quiet => True);
-      end Presentation_Policy;
-
-      procedure Runtime_State_Policy is
-      begin
-         Files.Require_Contains
-           ("../src/library/awk_cli-inputs-live.adb",
-            "U.Slice (State.Active_Content",
-            "in-memory live input chunking must avoid full-content copies",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-inputs-live.adb",
-            "procedure Close_Active_Input",
-            "live input state-machine close/reset logic must be centralized",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-inputs-live.adb",
-            "function Activate_Operand",
-            "live input operand activation must be centralized",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-context_io.adb",
-            "procedure Record_Write",
-            "context redirection write recording must be centralized",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-context_io.adb",
-            [U.To_Unbounded_String ("Context.IO.Files.Element (Position).Openable"),
-             U.To_Unbounded_String ("Context.IO.Files.Element (Position).Writable")],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-inputs-live.adb",
-            "Awk_CLI.Context_IO.Read_Virtual_File",
-            "live input must reuse centralized virtual-file read rules",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-context_io.adb",
-            "File : constant Virtual_File := Context.IO.Files.Element (Position);",
-            "context redirection lookup must use a local virtual-file record",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-context_io.adb",
-            "function Write_Existing_Process_File",
-            "existing process redirection writes must be isolated in a named helper",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-context_io.adb",
-            "function Write_New_Process_File",
-            "new process redirection writes must be isolated in a named helper",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.adb",
-            "function Emit_CLI_Standard_Output",
-            "top-level CLI stdout status handling must be centralized",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-inputs-live.adb",
-            [U.To_Unbounded_String ("U.To_String (State.Active_Content)")],
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens_In_Tree
-           ("../src",
-            [U.To_Unbounded_String ("Read_Standard_Input")],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.ads",
-            "Default_Catalog_Path : constant String",
-            "default catalog path must be centralized in the invocation context spec",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.ads",
-            "Default_Locale : constant String",
-            "default locale must be centralized in the invocation context spec",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli.adb",
-            [U.To_Unbounded_String ("""resources/messages/catalog.txt"""),
-             U.To_Unbounded_String ("""en""")],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.adb",
-            "Context.Config := (others => <>);",
-            "invocation configuration reset must use record defaults",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.adb",
-            "Context.IO := (others => <>);",
-            "invocation I/O reset must use record defaults",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.adb",
-            "Context.Last_Diagnostic := (others => <>);",
-            "diagnostic state reset must use record defaults",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-options.ads",
-            "package String_Vectors renames Awk_CLI.String_Vectors;",
-            "option parser must reuse the invocation argument vector type",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli.adb",
-            [U.To_Unbounded_String ("Parsed_Arguments")],
-            Quiet => True);
-      end Runtime_State_Policy;
-
-      procedure Catalog_Key_Policy is
-      begin
-         Awk_Workflow_Message_Key_Policy.Require_Production_Key_Literals;
-      end Catalog_Key_Policy;
-
-      procedure Project_Structure_Policy is
-      begin
-         Files.Require_Contains
-           ("src/awk_workflow_source_policy.adb",
-            "procedure Dependency_Boundaries",
-            "source policy dependency-boundary checks must stay grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflow_source_policy.adb",
-            "procedure Runtime_State_Policy",
-            "source policy runtime-state checks must stay grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflow_source_policy-platform_checks.adb",
-            "procedure Run",
-            "source policy platform checks must stay grouped",
-            Quiet => True);
-         Files.Require_Contains
-           ("src/awk_workflow_source_policy-workflow_checks.adb",
-            "procedure Run",
-            "source policy workflow checks must stay grouped",
-            Quiet => True);
-         Project_Tools.AUnit_Checks.Require_Registered_Test_Packages
-           (Test_Dir             => "src",
-            Spec_Pattern         => "awk_tests-*.ads",
-            Suite_Path           => "src/awk_tests-suite.adb",
-            Documentation_Path     => "../docs/testing.md",
-            Documented_Stem_Prefix => "`",
-            Suite_Add_Prefix     => "Result.Add_Test (new ",
-            Suite_Add_Suffix     => ".Case_Type)",
-            Section_Marker       => "type Case_Type is new AUnit.Test_Cases.Test_Case",
-            Quiet                => True);
-         Project_Tools.Release_Checks.Require_GPR_Main_Inventory
-           (Project_File       => "../awk.gpr",
-            Documentation_File => "../README.md",
-            Source_Directory   => "../src/main",
-            Quiet              => True);
-         Project_Tools.Release_Checks.Require_GPR_Main_Inventory
-           (Project_File       => "awk_tests.gpr",
-            Documentation_File => "../docs/testing.md",
-            Source_Directory   => "src",
-            Quiet              => True);
-         Public_Spec_Docs;
-         Files.Require_Contains
-           ("src/awk_cli-testing.ads", "package Awk_CLI.Testing",
-            "in-memory invocation harness must live in the tests crate",
-            Quiet => True);
-         Require
-           (Ada_Source.First_Source_File_Containing
-              ("../src/library",
-               "package Awk_CLI.Testing") = "",
-            "test harness child package must not live in production sources");
-         Files.Require_Contains
-           ("../src/library/awk_cli.ads", "type Invocation_Configuration is record",
-            "invocation context must group process configuration state",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.ads", "type Virtual_IO_State is record",
-            "invocation context must group in-memory I/O state",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.ads", "type Diagnostic_State is record",
-            "invocation context must group diagnostic state",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli.adb", "procedure Record_Diagnostic",
-            "top-level runner must centralize diagnostic state recording",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-execution.adb", "function Build_Run_Result",
-            "execution adapter must centralize awklib run-result conversion",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-execution.adb",
-            "Ada.Exceptions.Exception_Name",
-            "execution internal diagnostics should retain sanitized exception identity",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli-execution.adb",
-            [U.To_Unbounded_String ("Exception_Information")],
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-inputs-live.adb",
-            "Callback lifetime invariant: Context and Operands",
-            "live input unchecked callback access must document object lifetimes",
-            Quiet => True);
-         Files.Require_Contains
-           ("../src/library/awk_cli-execution.adb",
-            "Callback lifetime invariant: Inputs, Output, Redirs, and State",
-            "execution unchecked callback access must document object lifetimes",
-            Quiet => True);
-         Ada_Source.Require_No_Code_Tokens
-           ("../src/library/awk_cli.ads",
-            [U.To_Unbounded_String ("procedure Add_Argument"),
-             U.To_Unbounded_String ("procedure Set_Standard_Input"),
-             U.To_Unbounded_String ("procedure Add_File"),
-             U.To_Unbounded_String ("procedure Add_Environment"),
-             U.To_Unbounded_String ("function Standard_Output"),
-             U.To_Unbounded_String ("function Written_File_Count")],
-            Quiet => True);
-      end Project_Structure_Policy;
-
-      procedure Source_Budget_Policy is
-         Errors : Natural := 0;
-      begin
-         Source_Budgets.Check_Structural_Baseline
-           (Errors          => Errors,
-            Root            => "..",
-            Manifest_Path   => "tests/source-budgets.toml",
-            Minimum_Entries => 16,
-            Purpose         => "awk source budget",
-            Section         => "body",
-            Quiet           => False);
-         Source_Budgets.Check_Large_Source_Budget_Coverage
-           (Errors        => Errors,
-            Root          => "..",
-            Source_Dir    => "src/library",
-            Minimum_Lines => 300,
-            Manifests     =>
-              [Source_Budgets.Coverage_Manifest_Entry
-                 ("tests/source-budgets.toml", "body")],
-            Purpose       => "production large-source budget coverage",
-            Quiet         => False);
-         Source_Budgets.Check_Large_Source_Budget_Coverage
-           (Errors        => Errors,
-            Root          => "..",
-            Source_Dir    => "tests/src",
-            Minimum_Lines => 300,
-            Manifests     =>
-              [Source_Budgets.Coverage_Manifest_Entry
-                 ("tests/source-budgets.toml", "body")],
-            Purpose       => "test large-source budget coverage",
-            Quiet         => False);
-
-         Require (Errors = 0, "source budget checks failed");
-      end Source_Budget_Policy;
-
    begin
       Put_Info ("source policy: dependency boundaries");
-      Dependency_Boundaries;
-      Put_Info ("source policy: process-global access");
-      Process_Global_Access;
+      Awk_Workflow_Source_Policy.Dependency_Boundaries.Run;
       Put_Info ("source policy: presentation");
-      Presentation_Policy;
+      Awk_Workflow_Source_Policy.Presentation.Run;
       Put_Info ("source policy: runtime state");
-      Runtime_State_Policy;
+      Awk_Workflow_Source_Policy.Runtime_State.Run;
       Put_Info ("source policy: platform checks");
       Awk_Workflow_Source_Policy.Platform_Checks.Run;
       Put_Info ("source policy: catalog keys");
-      Catalog_Key_Policy;
+      Awk_Workflow_Message_Key_Policy.Require_Production_Key_Literals;
       Put_Info ("source policy: project structure");
-      Project_Structure_Policy;
+      Awk_Workflow_Source_Policy.Project_Structure.Run;
       Put_Info ("source policy: source budgets");
-      Source_Budget_Policy;
+      Awk_Workflow_Source_Policy.Source_Budget_Checks.Run;
       Put_Info ("source policy: workflow checks");
       Awk_Workflow_Source_Policy.Workflow_Checks.Run;
       Put_Info ("source policy checks passed");
