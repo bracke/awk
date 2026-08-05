@@ -69,6 +69,16 @@ min_split_bodies = 3
 usecase = "platform adapter parent body"
 
 [[body]]
+path = "src/library/awk_cli-execution.adb"
+split_prefix = "src/library/awk_cli-execution"
+target_lines = 124
+max_lines = 190
+min_headroom_lines = 40
+max_bytes = 25000
+min_split_bodies = 2
+usecase = "awklib execution adapter parent body"
+
+[[body]]
 path = "tests/src/awk_tests-process_options.adb"
 split_prefix = "tests/src/awk_tests-process_options"
 target_lines = 10

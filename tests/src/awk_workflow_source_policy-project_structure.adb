@@ -116,11 +116,11 @@ package body Awk_Workflow_Source_Policy.Project_Structure is
          "top-level runner must centralize diagnostic state recording",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-execution.adb", "function Build_Run_Result",
+        ("../src/library/awk_cli-execution-runner.adb", "function Build_Run_Result",
          "execution adapter must centralize awklib run-result conversion",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-execution.adb",
+        ("../src/library/awk_cli-execution-runner.adb",
          "Ada.Exceptions.Exception_Name",
          "execution internal diagnostics should retain sanitized exception identity",
          Quiet => True);
@@ -134,7 +134,7 @@ package body Awk_Workflow_Source_Policy.Project_Structure is
          "live input unchecked callback access must document object lifetimes",
          Quiet => True);
       Files.Require_Contains
-        ("../src/library/awk_cli-execution.adb",
+        ("../src/library/awk_cli-execution-runner.adb",
          "Callback lifetime invariant: Inputs, Output, Redirs, and State",
          "execution unchecked callback access must document object lifetimes",
          Quiet => True);
