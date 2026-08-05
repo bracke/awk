@@ -2,8 +2,6 @@ with Ada.Directories;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
-with GNAT.OS_Lib;
-
 with Project_Tools.Files;
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
@@ -33,12 +31,13 @@ package body Awk_Workflow_Install is
       Prefix : constant String := Files.Join (Files.Temp_Dir, "awk-install-boundary");
       Run_Dir : constant String := Files.Join (Files.Temp_Dir, "awk-install-run-cwd");
       Output : Proc.Unbounded_String;
-      Install_Args : constant GNAT.OS_Lib.Argument_List (1 .. 3) :=
-        [new String'("-n"),
-         new String'("install"),
-         new String'("--prefix=" & Prefix)];
-      Version_Args : constant GNAT.OS_Lib.Argument_List (1 .. 1) :=
-        [new String'("--version")];
+      Install_Args : constant Proc.Argument_Vectors.Vector :=
+        Proc.Arguments
+          ([Proc.Argument ("-n"),
+            Proc.Argument ("install"),
+            Proc.Argument ("--prefix=" & Prefix)]);
+      Version_Args : constant Proc.Argument_Vectors.Vector :=
+        Proc.Arguments ([Proc.Argument ("--version")]);
    begin
       Proc.Require_Command ("alr", "alr executable not found", Quiet => True);
       Files.Delete_Tree (Prefix);

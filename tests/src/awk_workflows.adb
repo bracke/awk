@@ -2,8 +2,6 @@ with Ada.Command_Line;
 with Ada.Exceptions;
 with Ada.Text_IO;
 
-with GNAT.OS_Lib;
-
 with Awk_Workflow_Build_Output;
 with Awk_Workflow_Catalogs;
 with Awk_Workflow_Conformance;
@@ -15,14 +13,15 @@ with Awk_Workflow_Packaging;
 with Awk_Workflow_Source_Policy;
 with Project_Tools.Alire;
 with Project_Tools.Files;
+with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
 
 procedure Awk_Workflows is
    package CLI renames Ada.Command_Line;
    package Files renames Project_Tools.Files;
+   package Proc renames Project_Tools.Processes;
 
    Root : constant String := "..";
-   No_Arguments : constant GNAT.OS_Lib.Argument_List (1 .. 0) := [];
 
    procedure Put_Info (Message : String) is
    begin
@@ -43,8 +42,9 @@ procedure Awk_Workflows is
 
    procedure Run_AUnit is
    begin
-      Project_Tools.Release_Checks.Run
-        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main", No_Arguments);
+      Proc.Run
+        ("./bin/awk_tests_main", ".", "./bin/awk_tests_main",
+         Proc.No_Arguments);
    end Run_AUnit;
 
    procedure Test is

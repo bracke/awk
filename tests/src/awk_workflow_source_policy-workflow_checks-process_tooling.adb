@@ -53,21 +53,17 @@ package body Awk_Workflow_Source_Policy.Workflow_Checks.Process_Tooling is
            ("src",
             "with GNAT.OS_Lib",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_workflows.adb"),
-               U.To_Unbounded_String ("src/awk_workflow_install.adb"),
-               U.To_Unbounded_String
+              [U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks-process_tooling.adb")]) = "",
-         "raw GNAT process access must stay in workflow tooling");
+         "raw GNAT process access must stay inside the source-policy guard");
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
             "GNAT.OS_Lib.Argument_List",
             Allowed_Files =>
-              [U.To_Unbounded_String ("src/awk_workflows.adb"),
-               U.To_Unbounded_String ("src/awk_workflow_install.adb"),
-               U.To_Unbounded_String
+              [U.To_Unbounded_String
                  ("src/awk_workflow_source_policy-workflow_checks-process_tooling.adb")]) = "",
-         "raw GNAT argument lists must stay in workflow tooling");
+         "raw GNAT argument lists must stay inside the source-policy guard");
       Require
         (Ada_Source.First_Source_File_Containing
            ("src",
