@@ -1,7 +1,6 @@
 with AUnit.Assertions;
 
 with Awk_Tests.Process_Support;
-with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process_Diagnostics.Locale_Cases.Rendering_Cases.Locale_Selection_Cases is
@@ -12,16 +11,13 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases.Rendering_Cases.Locale_S
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant Process_Arguments :=
-        Arguments
-          ([Argument ("LC_ALL=da"),
-            Argument (Awk_From_Tests_Directory),
-            Argument ("--bad")]);
+        Arguments ([Argument ("--bad")]);
    begin
-      Assert (Env /= "", "env executable is available for locale-bound process test");
       declare
-         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Result : constant Captured_Process :=
+           Run_Awk_With_Environment
+             ("awk Danish diagnostic", [Argument ("LC_ALL=da")], Args, Err_To_Out => True);
          Output : constant String := Output_String (Result);
       begin
          Assert (Result.Status = 2, "Danish process diagnostic exits with usage status");
@@ -36,19 +32,16 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases.Rendering_Cases.Locale_S
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env     : constant String := Project_Tools.Processes.Locate_Command ("env");
       Doubled : constant String :=
         Character'Val (16#C3#) & Character'Val (16#83#)
         & Character'Val (16#C2#);
       Args    : constant Process_Arguments :=
-        Arguments
-          ([Argument ("LC_ALL=el"),
-            Argument (Awk_From_Tests_Directory),
-            Argument ("--bad")]);
+        Arguments ([Argument ("--bad")]);
    begin
-      Assert (Env /= "", "env executable is available for UTF-8 locale process test");
       declare
-         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Result : constant Captured_Process :=
+           Run_Awk_With_Environment
+             ("awk Greek diagnostic", [Argument ("LC_ALL=el")], Args, Err_To_Out => True);
          Output : constant String := Output_String (Result);
       begin
          Assert (Result.Status = 2, "Greek process diagnostic exits with usage status");
@@ -63,16 +56,16 @@ package body Awk_Tests.Process_Diagnostics.Locale_Cases.Rendering_Cases.Locale_S
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant Process_Arguments :=
-        Arguments
-          ([Argument ("LC_ALL=zz_ZZ.UTF-8"),
-            Argument (Awk_From_Tests_Directory),
-            Argument ("--bad")]);
+        Arguments ([Argument ("--bad")]);
    begin
-      Assert (Env /= "", "env executable is available for unsupported-locale process test");
       declare
-         Result : constant Captured_Process := Run_Command_Err_To_Out (Env, Args);
+         Result : constant Captured_Process :=
+           Run_Awk_With_Environment
+             ("awk unsupported-locale diagnostic",
+              [Argument ("LC_ALL=zz_ZZ.UTF-8")],
+              Args,
+              Err_To_Out => True);
          Output : constant String := Output_String (Result);
       begin
          Assert (Result.Status = 2, "unsupported locale diagnostic exits with usage status");

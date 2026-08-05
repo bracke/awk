@@ -46,6 +46,15 @@ package Awk_Tests.Process_Support is
       Input : String := "") return Captured_Process;
    --  Run the built awk executable from tests/ with stderr merged into output.
 
+   function Run_Awk_With_Environment
+     (Label      : String;
+      Env        : Argument_Items;
+      Args       : Process_Arguments;
+      Err_To_Out : Boolean := False;
+      Input      : String := "") return Captured_Process;
+   --  Run the built awk executable from the repository root with environment
+   --  assignments applied by the process-support environment launcher.
+
    function Run_Command_Err_To_Out
      (Command : String;
       Args    : Process_Arguments;

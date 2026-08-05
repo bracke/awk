@@ -1,7 +1,6 @@
 with AUnit.Assertions;
 
 with Awk_Tests.Process_Support;
-with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process_Options.Version_Cases is
@@ -33,17 +32,13 @@ package body Awk_Tests.Process_Options.Version_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env  : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args : constant Process_Arguments :=
-        Arguments
-          ([Argument ("LC_ALL=da"),
-            Argument (Awk_From_Repository_Root),
-            Argument ("--version")]);
+        Arguments ([Argument ("--version")]);
    begin
-      Assert (Env /= "", "env executable is available for localized version process test");
       declare
          Result : constant Captured_Process :=
-           Run_Process ("awk localized version", "..", Env, Args);
+           Run_Awk_With_Environment
+             ("awk localized version", [Argument ("LC_ALL=da")], Args);
       begin
          Assert (Result.Status = 0, "localized process version exits successfully");
          Assert (Project_Tools.Text.Contains

@@ -1,7 +1,6 @@
 with AUnit.Assertions;
 
 with Awk_Tests.Process_Support;
-with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process_Options.Help_Cases is
@@ -70,17 +69,13 @@ package body Awk_Tests.Process_Options.Help_Cases is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env  : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args : constant Process_Arguments :=
-        Arguments
-          ([Argument ("NO_COLOR=1"),
-            Argument (Awk_From_Repository_Root),
-            Argument ("--color=auto"),
-            Argument ("--help")]);
+        Arguments ([Argument ("--color=auto"), Argument ("--help")]);
    begin
-      Assert (Env /= "", "env executable is available for environment-bound process test");
       declare
-         Result : constant Captured_Process := Run_Process ("awk help auto no color", "..", Env, Args);
+         Result : constant Captured_Process :=
+           Run_Awk_With_Environment
+             ("awk help auto no color", [Argument ("NO_COLOR=1")], Args);
       begin
          Assert (Result.Status = 0, "process help auto with NO_COLOR exits successfully");
          Assert (Project_Tools.Text.Contains

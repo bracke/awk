@@ -5,7 +5,6 @@ with Awk_Tests.Process_IO;
 with Awk_Tests.Process_Language;
 with Awk_Tests.Process_Options;
 with Awk_Tests.Process_Support;
-with Project_Tools.Processes;
 with Project_Tools.Text;
 
 package body Awk_Tests.Process is
@@ -22,21 +21,19 @@ package body Awk_Tests.Process is
      (T : in out AUnit.Test_Cases.Test_Case'Class)
    is
       pragma Unreferenced (T);
-      Env    : constant String := Project_Tools.Processes.Locate_Command ("env");
       Args   : constant Process_Arguments :=
         Arguments
-          ([Argument ("AWK_PROCESS_ENV=visible"),
-            Argument ("AWK_PROCESS_EMPTY="),
-            Argument (Awk_From_Repository_Root),
-            Argument
+          ([Argument
               ("BEGIN { print ENVIRON[""AWK_PROCESS_ENV""]; "
                & "print ""empty="" ENVIRON[""AWK_PROCESS_EMPTY""] }"),
             Argument ("unused=value")]);
    begin
-      Assert (Env /= "", "env executable is available for environment-bound process test");
       declare
          Result : constant Captured_Process :=
-           Run_Process ("awk process environment", "..", Env, Args);
+           Run_Awk_With_Environment
+             ("awk process environment",
+              [Argument ("AWK_PROCESS_ENV=visible"), Argument ("AWK_PROCESS_EMPTY=")],
+              Args);
       begin
          Assert (Result.Status = 0, "process environment propagation exits successfully");
          Assert (Project_Tools.Text.Contains (Output_String (Result), "visible" & LF),

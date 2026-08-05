@@ -36,6 +36,15 @@ package body Awk_Tests.Process_Support is
       Input : String := "") return Captured_Process
    is (Awk_Tests.Process_Support.Processes.Run_Awk_Err_To_Out (Args, Input));
 
+   function Run_Awk_With_Environment
+     (Label      : String;
+      Env        : Argument_Items;
+      Args       : Process_Arguments;
+      Err_To_Out : Boolean := False;
+      Input      : String := "") return Captured_Process
+   is (Awk_Tests.Process_Support.Processes.Run_Awk_With_Environment
+         (Label, Env, Args, Err_To_Out, Input));
+
    function Run_Command_Err_To_Out
      (Command : String;
       Args    : Process_Arguments;

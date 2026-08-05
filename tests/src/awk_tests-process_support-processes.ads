@@ -3,6 +3,13 @@ package Awk_Tests.Process_Support.Processes is
      (Args  : Process_Arguments;
       Input : String := "") return Captured_Process;
 
+   function Run_Awk_With_Environment
+     (Label      : String;
+      Env        : Argument_Items;
+      Args       : Process_Arguments;
+      Err_To_Out : Boolean := False;
+      Input      : String := "") return Captured_Process;
+
    function Run_Command_Err_To_Out
      (Command : String;
       Args    : Process_Arguments;
