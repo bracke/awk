@@ -49,6 +49,16 @@ min_split_bodies = 5
 usecase = "process usage option diagnostics"
 
 [[body]]
+path = "tests/src/awk_tests-process_diagnostics-locale_cases.adb"
+split_prefix = "tests/src/awk_tests-process_diagnostics-locale_cases"
+target_lines = 10
+max_lines = 120
+min_headroom_lines = 40
+max_bytes = 50000
+min_split_bodies = 2
+usecase = "process localized diagnostic and interpreter failure cases"
+
+[[body]]
 path = "tests/src/awk_tests-process_io.adb"
 split_prefix = "tests/src/awk_tests-process_io"
 target_lines = 11
