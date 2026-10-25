@@ -11,7 +11,7 @@ package body File_IO is
       if not Ada.Directories.Exists (Path) then
          return Open_Failed;
       end if;
-      SIO.Open (File, SIO.In_File, Path);
+      SIO.Open (File, SIO.In_File, Path, Form => "shared=no");
       Opened := True;
 
       while not SIO.End_Of_File (File) loop
@@ -58,7 +58,7 @@ package body File_IO is
       if Append and then Ada.Directories.Exists (Path) then
          SIO.Open (File, Mode, Path);
       else
-         SIO.Create (File, SIO.Out_File, Path);
+         SIO.Create (File, SIO.Out_File, Path, Form => "shared=no");
       end if;
 
       while Position <= Content'Last loop

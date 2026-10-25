@@ -9,7 +9,7 @@ package body Input_Streams is
       if not Ada.Directories.Exists (Path) then
          return Open_Failed;
       end if;
-      SIO.Open (Stream.File, SIO.In_File, Path);
+      SIO.Open (Stream.File, SIO.In_File, Path, Form => "shared=no");
       Stream.Opened := True;
       Stream.Is_Stdin := False;
       Stream.Stdin_Done := False;
